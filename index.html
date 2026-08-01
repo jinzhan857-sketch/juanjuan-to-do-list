@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FFF3F6">
+<title>卷王家的小宠 · 和卷卷一起，每一天都有意义！</title>
+<style>
+/* ============================================================
+   主题变量 — 马卡龙极简可爱风（亮 / 暗 自动切换）
+============================================================ */
+:root{
+  --bg:#FFF6F0;
+  --bg2:#FFEFF4;
+  --card:#FFFFFF;
+  --card2:#FFF9F5;
+  --text:#4A3B42;
+  --text2:#9B8A92;
+  --text3:#C4B4BC;
+  --pink:#FF9EB5;
+  --pink-soft:#FFD9E3;
+  --mint:#7DD8B9;
+  --mint-soft:#D8F5EA;
+  --lav:#A99BE0;
+  --lav-soft:#E9E3FA;
+  --peach:#FFB37E;
+  --peach-soft:#FFE8D6;
+  --blue:#7FC5EA;
+  --blue-soft:#DFF1FB;
+  --yellow:#FFD166;
+  --yellow-soft:#FFF3D1;
+  --red:#F97B7B;
+  --red-soft:#FFE3E3;
+  --shadow:0 4px 16px rgba(255,158,181,.16);
+  --shadow2:0 8px 28px rgba(74,59,66,.12);
+  --nav-bg:rgba(255,255,255,.92);
+  --line:#F4E4EA;
+  --cat-body:#FCE9D8;
+  --cat-stripe:#F5C99B;
+  --cat-ear:#FFB8C6;
+  --r-lg:22px; --r-md:16px; --r-sm:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#211C24;
+    --bg2:#28212C;
+    --card:#2E2733;
+    --card2:#352D3B;
+    --text:#F2E8EE;
+    --text2:#B3A2AC;
+    --text3:#7A6C75;
+    --pink:#E88BA4;
+    --pink-soft:#4A3340;
+    --mint:#6FC5A8;
+    --mint-soft:#2A3F38;
+    --lav:#9C8DD6;
+    --lav-soft:#37304A;
+    --peach:#E8A46F;
+    --peach-soft:#463527;
+    --blue:#74B4D6;
+    --blue-soft:#27394446;
+    --yellow:#E6BE5E;
+    --yellow-soft:#453B22;
+    --red:#E57373;
+    --red-soft:#4A2E2E;
+    --shadow:0 4px 16px rgba(0,0,0,.28);
+    --shadow2:0 8px 28px rgba(0,0,0,.4);
+    --nav-bg:rgba(40,33,44,.94);
+    --line:#3D3442;
+    --cat-body:#E8D4C0;
+    --cat-stripe:#D8AE7E;
+    --cat-ear:#E8A0B0;
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg);
+  background-image:radial-gradient(circle at 15% 10%,var(--bg2) 0,transparent 45%),radial-gradient(circle at 90% 30%,var(--bg2) 0,transparent 40%);
+  color:var(--text);
+  max-width:520px;margin:0 auto;
+  min-height:100vh;
+  user-select:none;
+  overscroll-behavior-y:contain;
+}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--text);background:var(--card2);border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;outline:none;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--pink)}
+::placeholder{color:var(--text3)}
+
+/* ---------- 页面容器 ---------- */
+.page{display:none;padding:14px 16px calc(86px + env(safe-area-inset-bottom));min-height:100vh;animation:pageIn .25s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- 底部导航 ---------- */
+#nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:520px;height:calc(64px + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:var(--nav-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  display:flex;z-index:50;
+}
+#nav .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;color:var(--text2);transition:.2s}
+#nav .nav-item .ico{font-size:22px;transition:transform .25s}
+#nav .nav-item.active{color:var(--pink);font-weight:600}
+#nav .nav-item.active .ico{transform:translateY(-2px) scale(1.12)}
+
+/* ---------- 通用组件 ---------- */
+.card{background:var(--card);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.row{display:flex;align-items:center}
+.grow{flex:1}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:11px 20px;border-radius:999px;font-size:15px;font-weight:600;
+  background:linear-gradient(135deg,var(--pink),#FFB6A3);color:#fff;
+  box-shadow:0 4px 12px rgba(255,158,181,.4);transition:.15s;
+}
+.btn:active{transform:scale(.95)}
+.btn.ghost{background:var(--card2);color:var(--text);box-shadow:none;border:1.5px solid var(--line)}
+.btn.mint{background:linear-gradient(135deg,var(--mint),#9AE0B5);box-shadow:0 4px 12px rgba(125,216,185,.4)}
+.btn.sm{padding:7px 14px;font-size:13px}
+.btn:disabled{opacity:.5;pointer-events:none}
+.chip{
+  display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border-radius:999px;
+  font-size:12px;background:var(--card2);border:1.5px solid var(--line);color:var(--text2);
+  transition:.15s;cursor:pointer;
+}
+.chip.on{background:var(--pink-soft);border-color:var(--pink);color:var(--pink);font-weight:600}
+.tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600}
+.sec-title{font-size:15px;font-weight:700;margin:4px 2px 10px;display:flex;align-items:center;gap:6px}
+.hint{font-size:12px;color:var(--text2);line-height:1.6}
+.divider{height:1px;background:var(--line);margin:12px 0}
+.empty{padding:36px 0;text-align:center;color:var(--text3);font-size:13px;line-height:2}
+.empty .big{font-size:40px}
+
+/* ---------- 顶部信息条 ---------- */
+#home-stats{display:flex;gap:10px;margin-bottom:14px}
+#home-stats .stat{
+  flex:1;background:var(--card);border-radius:var(--r-md);padding:10px 6px;text-align:center;box-shadow:var(--shadow);
+}
+#home-stats .num{font-size:19px;font-weight:800;color:var(--pink)}
+#home-stats .stat:nth-child(2) .num{color:var(--mint)}
+#home-stats .stat:nth-child(3) .num{color:var(--peach)}
+#home-stats .lbl{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ---------- 宠物区 ---------- */
+#pet-card{position:relative;overflow:hidden;background:linear-gradient(165deg,var(--card) 55%,var(--pink-soft));padding:14px 14px 16px;border:1.5px solid var(--line)}
+#pet-stage{position:relative;height:200px;overflow:hidden;border-radius:18px;background:radial-gradient(125% 95% at 50% 0%,var(--card2),transparent 72%)}
+#cat-pos{position:absolute;bottom:6px;left:50%;width:150px;height:160px;transform:translateX(-50%) scale(.7);transform-origin:bottom center;transition:left 2.7s cubic-bezier(.34,1.15,.64,1);z-index:2;cursor:pointer}
+#cat-wrap{position:relative;width:100%;height:100%;cursor:pointer}
+#cat-wrap svg{width:100%;height:100%;overflow:visible}
+#cat-inner{width:100%;height:100%;transition:transform 1.05s ease,opacity 1.05s ease}
+#cat-inner.swap{animation:catSwap 1.2s ease}
+@keyframes catSwap{0%{opacity:.2;transform:scale(.88) translateY(5px)}55%{opacity:1}100%{opacity:1;transform:scale(1) translateY(0)}}
+.cat-idle{animation:catBob 3s ease-in-out infinite}
+@keyframes catBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.cat-happy{animation:catJump .6s ease 2}
+@keyframes catJump{0%,100%{transform:translateY(0) }30%{transform:translateY(-18px) rotate(-4deg)}60%{transform:translateY(0)}80%{transform:translateY(-8px) rotate(3deg)}}
+.cat-sad{animation:catSad 4s ease-in-out infinite}
+@keyframes catSad{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(2px) rotate(-2deg)}}
+.cat-tap{animation:catTap .4s ease}
+@keyframes catTap{0%{transform:scale(1)}40%{transform:scale(.92,.85)}70%{transform:scale(1.05,1.02)}100%{transform:scale(1)}}
+#pet-bubble{
+  position:absolute;top:2px;left:50%;transform:translateX(-50%);
+  background:var(--card);border:1.5px solid var(--line);border-radius:14px;
+  padding:7px 12px;font-size:12px;color:var(--text);max-width:82%;text-align:center;
+  box-shadow:var(--shadow);opacity:0;transition:.3s;pointer-events:none;z-index:3;line-height:1.5;
+}
+#pet-bubble.show{opacity:1}
+#pet-bubble::after{content:"";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:10px;height:10px;background:var(--card);border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line)}
+#pet-meta{display:flex;align-items:center;gap:8px;margin-top:6px}
+#pet-name{font-weight:800;font-size:16px}
+#pet-level{background:var(--lav-soft);color:var(--lav);font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px}
+#pet-state-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px}
+.satiety-bar{height:12px;background:var(--card2);border:1.5px solid var(--line);border-radius:99px;overflow:hidden;margin-top:8px;position:relative}
+.satiety-bar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--peach),var(--pink));transition:width .6s ease;min-width:0}
+.satiety-txt{font-size:11px;color:var(--text2);margin-top:4px;display:flex;justify-content:space-between}
+#fridge-btn{
+  position:absolute;right:10px;top:10px;z-index:4;
+  background:var(--blue-soft);border:1.5px solid var(--line);border-radius:14px;
+  padding:6px 10px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;box-shadow:var(--shadow);
+}
+#fridge-btn .cnt{background:var(--pink);color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:1px 6px}
+#growth-line{font-size:11px;color:var(--text2);margin-top:6px}
+#growth-line b{color:var(--lav)}
+
+/* ---------- 提醒条 ---------- */
+.notice{
+  display:flex;align-items:center;gap:8px;background:var(--yellow-soft);
+  border:1.5px dashed var(--yellow);border-radius:var(--r-md);
+  padding:9px 12px;font-size:12.5px;margin-bottom:12px;color:var(--text);line-height:1.5;
+}
+.notice.red{background:var(--red-soft);border-color:var(--red)}
+.notice.blue{background:var(--blue-soft);border-color:var(--blue)}
+
+/* ---------- 日期切换 ---------- */
+#day-switch{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 10px}
+#day-switch .d-btn{width:34px;height:34px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);font-size:15px;color:var(--text2)}
+#day-switch .d-btn:disabled{opacity:.35}
+#day-title{font-weight:800;font-size:16px}
+#day-sub{font-size:11px;color:var(--text2);text-align:center;margin-top:1px}
+
+/* ---------- 任务卡片 ---------- */
+.task{
+  background:var(--card);border-radius:var(--r-md);padding:13px 14px;margin-bottom:10px;
+  box-shadow:var(--shadow);position:relative;transition:.2s;animation:pageIn .25s ease;
+}
+.task.done-card{opacity:.72}
+.task .t-title{font-size:15px;font-weight:600;line-height:1.4;word-break:break-all}
+.task .t-title.strike{text-decoration:line-through;color:var(--text2)}
+.task .t-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;align-items:center}
+.task .t-time{font-size:11.5px;color:var(--text2);background:var(--card2);padding:2px 8px;border-radius:8px;border:1px solid var(--line)}
+.task .t-score{font-size:12px;font-weight:700;color:var(--peach)}
+.task .t-actions{display:flex;gap:8px;margin-top:10px}
+.task .status-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.coef-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.coef{
+  font-size:10.5px;padding:2px 7px;border-radius:8px;background:var(--lav-soft);color:var(--lav);
+  display:inline-flex;align-items:center;gap:3px;cursor:pointer;font-weight:600;
+}
+.coef .qm{display:inline-flex;width:12px;height:12px;border-radius:50%;background:var(--lav);color:#fff;font-size:9px;align-items:center;justify-content:center;font-style:normal}
+
+/* ---------- FAB ---------- */
+#fab{
+  position:fixed;right:calc(50% - 250px);bottom:calc(84px + env(safe-area-inset-bottom));z-index:49;
+  width:56px;height:56px;border-radius:50%;font-size:26px;color:#fff;
+  background:linear-gradient(135deg,var(--pink),var(--peach));
+  box-shadow:0 6px 20px rgba(255,158,181,.55);transition:.2s;
+}
+@media (max-width:520px){#fab{right:18px}}
+#fab:active{transform:scale(.9) rotate(90deg)}
+
+/* ---------- 创建页 ---------- */
+.form-block{margin-bottom:16px}
+.form-label{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.form-label .opt{font-weight:400;font-size:11px;color:var(--text3)}
+.seg{display:flex;background:var(--card2);border:1.5px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;padding:8px 4px;border-radius:9px;font-size:13px;color:var(--text2);transition:.15s}
+.seg button.on{background:var(--card);color:var(--pink);font-weight:700;box-shadow:var(--shadow)}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:8px}
+#ai-result{
+  border:1.5px dashed var(--mint);background:var(--mint-soft);border-radius:var(--r-md);
+  padding:12px;font-size:13px;display:none;animation:pageIn .3s;line-height:1.7;
+}
+#ai-result.show{display:block}
+#ai-result .score-line{font-size:15px;font-weight:800;color:var(--mint)}
+#estimate-box{background:var(--peach-soft);border-radius:var(--r-md);padding:12px;margin-top:12px;font-size:13px;line-height:1.8;display:none}
+#estimate-box.show{display:block}
+#estimate-box .big{font-size:22px;font-weight:800;color:var(--peach)}
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.time-grid .chip{justify-content:center;padding:8px 4px}
+.exact-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.exact-row input{text-align:center}
+
+/* ---------- 日历 ---------- */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-head .m-title{font-weight:800;font-size:16px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-grid .wd{font-size:11px;color:var(--text3);padding:4px 0}
+.cal-cell{
+  aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;position:relative;color:var(--text);
+}
+.cal-cell.dim{color:var(--text3)}
+.cal-cell.today{background:var(--pink-soft);color:var(--pink);font-weight:800}
+.cal-cell.sel{outline:2px solid var(--pink);outline-offset:-2px;border-radius:10px}
+.cal-cell .dot{width:4px;height:4px;border-radius:50%;background:var(--mint);position:absolute;bottom:5px}
+.week-day-block{margin-bottom:12px}
+.week-day-head{font-size:13px;font-weight:700;color:var(--text2);margin:8px 2px 6px;display:flex;gap:8px;align-items:center}
+.week-day-head.today-head{color:var(--pink)}
+.mini-task{background:var(--card);border-radius:var(--r-sm);box-shadow:var(--shadow);padding:9px 12px;margin-bottom:6px;font-size:13px;display:flex;align-items:center;gap:8px}
+.mini-task .dotc{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ---------- 我的页 ---------- */
+.me-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.me-grid .stat{background:var(--card);border-radius:var(--r-md);padding:14px;box-shadow:var(--shadow)}
+.me-grid .num{font-size:22px;font-weight:800}
+.me-grid .lbl{font-size:11px;color:var(--text2);margin-top:3px}
+.set-item{display:flex;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+.set-item:last-child{border-bottom:none}
+.set-item .ico{width:30px;font-size:17px}
+.set-item .arr{color:var(--text3)}
+
+/* ---------- 弹窗 ---------- */
+.mask{
+  position:fixed;inset:0;background:rgba(40,25,35,.45);z-index:100;display:none;
+  align-items:flex-end;justify-content:center;backdrop-filter:blur(2px);
+}
+.mask.show{display:flex}
+.mask.center{align-items:center;padding:24px}
+.sheet{
+  background:var(--bg);width:100%;max-width:520px;border-radius:24px 24px 0 0;
+  padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow-y:auto;animation:sheetUp .3s ease;
+}
+@keyframes sheetUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+.dialog{
+  background:var(--bg);border-radius:20px;padding:20px;width:100%;max-width:340px;
+  animation:popIn .25s ease;max-height:80vh;overflow-y:auto;
+}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+.sheet-title{font-size:17px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.close-x{width:30px;height:30px;border-radius:50%;background:var(--card2);color:var(--text2);font-size:14px}
+.status-opt{
+  display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--r-md);
+  padding:13px 14px;margin-bottom:9px;box-shadow:var(--shadow);cursor:pointer;border:2px solid transparent;transition:.15s;
+}
+.status-opt:active{transform:scale(.98)}
+.status-opt .emo{font-size:22px}
+.status-opt .s-name{font-weight:700;font-size:14px}
+.status-opt .s-desc{font-size:11px;color:var(--text2);margin-top:1px}
+.status-opt .s-score{margin-left:auto;font-weight:800;font-size:15px}
+
+/* ---------- 冰箱 ---------- */
+.fridge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.food-item{
+  background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);
+  padding:10px 4px;text-align:center;cursor:pointer;transition:.15s;
+}
+.food-item:active{transform:scale(.92)}
+.food-item .f-emo{font-size:26px}
+.food-item .f-name{font-size:11px;margin-top:3px}
+.food-item .f-val{font-size:10px;color:var(--peach);font-weight:700}
+
+/* ---------- 浮动积分/庆祝 ---------- */
+.float-score{
+  position:fixed;z-index:200;font-size:22px;font-weight:800;color:var(--peach);
+  pointer-events:none;animation:floatUp 1.4s ease forwards;text-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(.6)}15%{opacity:1;transform:translateY(-10px) scale(1.15)}100%{opacity:0;transform:translateY(-90px) scale(1)}}
+.confetti{position:fixed;z-index:199;pointer-events:none;font-size:18px;animation:confFall 1.6s ease-in forwards}
+@keyframes confFall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(120px) rotate(360deg)}}
+.fly-food{position:fixed;z-index:201;font-size:26px;pointer-events:none;transition:all .8s cubic-bezier(.5,-.3,.6,1)}
+.heart-pop{position:absolute;font-size:16px;pointer-events:none;animation:heartUp 1s ease forwards;z-index:5}
+@keyframes heartUp{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-46px) scale(1.2)}}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-80px);z-index:300;
+  background:var(--card);color:var(--text);box-shadow:var(--shadow2);border-radius:99px;
+  padding:10px 20px;font-size:13px;transition:.3s;max-width:86%;text-align:center;border:1.5px solid var(--line);
+}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#degrade-tip{
+  display:none;background:var(--blue-soft);font-size:11.5px;color:var(--text2);
+  padding:6px 14px;text-align:center;border-radius:0 0 14px 14px;
+}
+#degrade-tip.show{display:block}
+
+/* 报告 */
+.report-seg{margin-bottom:12px}
+.report-row{display:flex;justify-content:space-between;padding:9px 2px;font-size:13.5px;border-bottom:1px dashed var(--line)}
+.report-row b{color:var(--pink)}
+.bar-row{margin:7px 0}
+.bar-row .b-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:3px}
+.bar-row .b-track{height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar-row .b-fill{height:100%;border-radius:99px}
+
+/* ---------- 圆圈三圆点图标（替代感叹号） ---------- */
+.coef .qm{display:inline-flex;width:14px;height:14px;border-radius:50%;background:var(--lav);color:#fff;font-size:9px;align-items:center;justify-content:center;font-style:normal;letter-spacing:-1px}
+
+/* ---------- 宠物场景元素 ---------- */
+#pet-stage{overflow:hidden}
+.scene-floor{position:absolute;left:0;right:0;bottom:0;height:60px;background:linear-gradient(180deg,rgba(245,201,155,0),rgba(245,201,155,.22));border-top:2px solid var(--line);border-radius:0 0 18px 18px;z-index:0;overflow:hidden}
+.scene-floor::before{content:"";position:absolute;left:8%;right:8%;top:20px;height:1.5px;background:var(--line);opacity:.7}
+.scene-floor::after{content:"";position:absolute;left:15%;right:15%;top:36px;height:1.5px;background:var(--line);opacity:.45}
+.scene-item{position:absolute;cursor:pointer;z-index:3;transition:transform .2s;filter:drop-shadow(0 3px 4px rgba(0,0,0,.12));font-size:30px;line-height:1;user-select:none}
+.scene-item:active{transform:scale(.88)}
+#sc-fridge{right:4px;bottom:30px;width:48px;text-align:center;z-index:1}
+#sc-fridge .fr-box{width:46px;height:54px;margin:0 auto;background:linear-gradient(160deg,var(--blue-soft),var(--card2));border:2px solid var(--line);border-radius:10px 10px 8px 8px;position:relative}
+#sc-fridge .fr-box::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24px;height:2px;background:var(--line)}
+#sc-fridge .fr-label{font-size:10px;color:var(--text2);margin-top:2px}
+#sc-fridge .fr-cnt{position:absolute;top:-6px;right:-6px;background:var(--pink);color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:1px 6px;z-index:3}
+#sc-yarn{left:12px;bottom:18px;font-size:24px}
+#sc-bowl{left:48px;bottom:12px;font-size:24px}
+.cat-scene{transition:transform .4s ease}
+
+/* 行为状态动画（纯 CSS） */
+.cat-behavior-walk{animation:catWalk 1.5s ease-in-out infinite}
+@keyframes catWalk{0%,100%{transform:translateX(-12px)}50%{transform:translateX(12px)}}
+.cat-behavior-drink{animation:catDrink 1.3s ease-in-out infinite}
+@keyframes catDrink{0%,100%{transform:translateX(-16px) rotate(-6deg)}50%{transform:translateX(-20px) rotate(-10deg) translateY(4px)}}
+.cat-behavior-yarn{animation:catYarn .8s ease-in-out infinite}
+@keyframes catYarn{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.cat-eating{animation:catEat .5s ease-in-out 4}
+@keyframes catEat{0%,100%{transform:scale(1)}50%{transform:scale(1.06,.94) translateY(2px)}}
+
+/* ---------- 创建页时间精度两行 ---------- */
+.seg button .l1{display:block;font-size:13px}
+.seg button .l2{display:block;font-size:9px;opacity:.7;margin-top:1px}
+
+/* ---------- 任务标签（AI 自动 + 圆角 chip） ---------- */
+#c-tag-area{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.tag-chip{
+  display:flex;align-items:center;justify-content:center;width:100%;min-height:40px;padding:6px 4px;border-radius:12px;
+  font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);
+  background:var(--card2);color:var(--text);transition:.15s;
+}
+.tag-chip .ico{font-size:12px}
+.tag-chip:active{transform:scale(.95)}
+.tag-chip.on{background:var(--pink-soft);border-color:var(--pink);color:var(--pink)}
+.tag-sel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tag-sel{
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px;border-radius:14px;
+  background:var(--card);box-shadow:var(--shadow);font-size:13px;font-weight:600;cursor:pointer;transition:.15s;border:2px solid transparent;
+}
+.tag-sel:active{transform:scale(.96)}
+.tag-sel.cur{border-color:var(--pink);background:var(--pink-soft);color:var(--pink)}
+.tag-sel .te{font-size:22px}
+.tag-sel .sd{font-size:9px;color:var(--text3);font-weight:400}
+</style>
+</head>
+<body>
+<div id="degrade-tip">🔌 AI 未配置或不可用，当前为本地评分模式（我的 → 大模型配置 可开启 AI）</div>
+<!-- ==================== 首页 ==================== -->
+<div class="page active" id="page-home">
+  <div id="home-stats">
+    <div class="stat"><div class="num" id="st-today-score">0</div><div class="lbl">今日积分</div></div>
+    <div class="stat"><div class="num" id="st-today-done">0</div><div class="lbl">完成任务</div></div>
+    <div class="stat"><div class="num" id="st-streak">0</div><div class="lbl">连续打卡</div></div>
+  </div>
+
+  <div id="notice-area"></div>
+
+  <div class="card" id="pet-card">
+    <div id="pet-stage">
+      <div id="pet-bubble"></div>
+      <div class="scene-floor"></div>
+      <div class="scene-item" id="sc-fridge" title="冰箱">
+        <div class="fr-box"><span class="fr-cnt" id="fridge-cnt">0</span></div>
+        <div class="fr-label">冰箱</div>
+      </div>
+      <div class="scene-item" id="sc-yarn" title="毛线球">🧶</div>
+      <div class="scene-item" id="sc-bowl" title="水碗">🥣</div>
+      <div id="cat-pos"><div id="cat-wrap" class="cat-scene"><div id="cat-inner"></div></div></div>
+    </div>
+    <div id="pet-meta">
+      <span id="pet-name">🐱 卷卷</span>
+      <span id="pet-level">Lv.1</span>
+      <span id="pet-state-tag"></span>
+    </div>
+    <div class="satiety-bar"><div class="fill" id="satiety-fill"></div></div>
+    <div class="satiety-txt"><span>当前饱度 <b id="satiety-num">0</b>/<b id="satiety-max">10</b><span id="satiety-line"></span></span><span id="satiety-hint"></span></div>
+    <div id="growth-line">成长积分 <b id="growth-num">0</b> · <span id="growth-next"></span></div>
+  </div>
+
+  <div id="day-switch">
+    <button class="d-btn" id="day-prev">‹</button>
+    <div style="text-align:center">
+      <div id="day-title">今日待办</div>
+      <div id="day-sub"></div>
+    </div>
+    <button class="d-btn" id="day-next">›</button>
+  </div>
+  <div id="home-tasks"></div>
+</div>
+
+<!-- ==================== 创建页 ==================== -->
+<div class="page" id="page-create">
+  <div class="sec-title">✏️ 发布任务 <span class="hint" style="font-weight:400">提前规划，积分更高哦～</span></div>
+  <div class="card">
+    <!-- 执行日期（置顶） -->
+    <div class="form-block">
+      <div class="form-label">📅 执行日期 <span class="opt">默认今天，可选过去日期补录</span></div>
+      <div class="cal-head">
+        <button class="d-btn" id="c-cal-prev" style="background:var(--card2);border-radius:50%;width:30px;height:30px">‹</button>
+        <span class="m-title" id="c-cal-title"></span>
+        <button class="d-btn" id="c-cal-next" style="background:var(--card2);border-radius:50%;width:30px;height:30px">›</button>
+      </div>
+      <div class="cal-grid" id="c-cal"></div>
+      <div class="hint" id="c-date-hint" style="margin-top:6px"></div>
+    </div>
+    <!-- 想做什么（其下新增 AI 识别） -->
+    <div class="form-block">
+      <div class="form-label">想做什么？<span class="opt">口语化描述，AI 自动识别时间/标签</span></div>
+      <textarea id="c-title" rows="2" placeholder="例如：明天下午 3 点到 5 点学习 vibe coding"></textarea>
+      <button class="btn mint" id="btn-ai" style="width:100%;margin-top:10px">🤖 AI 识别</button>
+    </div>
+    <!-- 时间精度 -->
+    <div class="form-block">
+      <div class="form-label">⏰ 时间精度</div>
+      <div class="seg" id="c-timetype">
+        <button data-v="allday" class="on"><span class="l1">全天可做</span><span class="l2">+0%</span></button>
+        <button data-v="slot"><span class="l1">选时段</span><span class="l2">+10%</span></button>
+        <button data-v="exact"><span class="l1">精确时间</span><span class="l2">+15%</span></button>
+      </div>
+      <div class="time-grid" id="c-slots" style="display:none;margin-top:10px"></div>
+      <div class="exact-row" id="c-exact" style="display:none">
+        <input type="time" id="c-start" value="14:00"> <span>至</span> <input type="time" id="c-end" value="15:00">
+      </div>
+      <div class="hint" id="c-slot-hint" style="margin-top:6px"></div>
+    </div>
+    <!-- 任务标签（AI 自动，点击可改） -->
+    <div class="form-block">
+      <div class="form-label">🏷️ 任务标签 <span class="opt">AI 自动识别，点下方标签可改</span></div>
+      <div id="c-tag-area"></div>
+    </div>
+    <div id="ai-result" style="margin-top:12px"></div>
+    <div id="estimate-box"></div>
+    <button class="btn" id="btn-save" style="width:100%;margin-top:14px">🐾 发布任务</button>
+  </div>
+</div>
+
+<!-- ==================== 计划页 ==================== -->
+<div class="page" id="page-plan">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <div class="seg" style="flex:1;max-width:210px" id="plan-view">
+      <button data-v="day">日</button>
+      <button data-v="week" class="on">周</button>
+      <button data-v="month">月</button>
+    </div>
+    <button class="btn ghost sm" id="btn-report">📊 统计报告</button>
+  </div>
+  <div class="cal-head">
+    <button class="d-btn" id="plan-prev" style="background:var(--card);border-radius:50%;width:32px;height:32px;box-shadow:var(--shadow)">‹</button>
+    <span class="m-title" id="plan-title"></span>
+    <button class="d-btn" id="plan-next" style="background:var(--card);border-radius:50%;width:32px;height:32px;box-shadow:var(--shadow)">›</button>
+  </div>
+  <div id="plan-body"></div>
+</div>
+
+<!-- ==================== 我的页 ==================== -->
+<div class="page" id="page-me">
+  <div class="sec-title">🙋 我的</div>
+  <div class="me-grid">
+    <div class="stat"><div class="num" style="color:var(--pink)" id="me-today">0</div><div class="lbl">当日积分</div></div>
+    <div class="stat"><div class="num" style="color:var(--mint)" id="me-streak">0</div><div class="lbl">连续打卡天数</div></div>
+    <div class="stat"><div class="num" style="color:var(--peach)" id="me-total">0</div><div class="lbl">累计总积分</div></div>
+    <div class="stat"><div class="num" style="color:var(--lav)" id="me-rate">0%</div><div class="lbl">任务完成率</div></div>
+  </div>
+  <div class="card">
+    <div class="sec-title" style="margin-top:0">🐱 卷卷的信息</div>
+    <div id="me-pet-info" class="hint" style="font-size:13px"></div>
+  </div>
+  <div class="card">
+    <div class="set-item" id="row-llm"><span class="ico">🤖</span><span class="grow">大模型配置</span><span class="arr" id="llm-status">未配置 ›</span></div>
+    <div class="set-item" id="row-data"><span class="ico">📦</span><span class="grow">数据出入与同步</span><span class="arr">›</span></div>
+    <div class="set-item" id="row-cloud"><span class="ico">☁️</span><span class="grow">云端同步</span><span class="arr" style="color:var(--text3)">即将上线</span></div>
+  </div>
+  <div class="card">
+    <div class="sec-title" style="margin-top:0">🧬 我的精力</div>
+    <div class="hint" style="margin-bottom:10px">影响卷卷的饭量与饱线（高精力人饱线高，成长快；轻计划人饱线低，更轻松）</div>
+    <div class="seg" id="person-seg" style="max-width:340px">
+      <button data-v="J">高精力计划</button>
+      <button data-v="P">随性轻计划</button>
+    </div>
+  </div>
+  <div class="hint" style="text-align:center;margin-top:18px">卷王家的小宠 V1.0 · 和卷卷一起，每一天都有意义！<br>主题跟随系统深浅色自动切换 🌗</div>
+</div>
+
+<!-- ==================== 底部导航 ==================== -->
+<div id="nav">
+  <button class="nav-item active" data-page="home"><span class="ico">🏠</span>首页</button>
+  <button class="nav-item" data-page="create"><span class="ico">➕</span>创建</button>
+  <button class="nav-item" data-page="plan"><span class="ico">📅</span>计划</button>
+  <button class="nav-item" data-page="me"><span class="ico">🐾</span>我的</button>
+</div>
+<button id="fab">＋</button>
+
+<!-- ==================== 弹窗：完成状态 ==================== -->
+<div class="mask" id="mask-status">
+  <div class="sheet">
+    <div class="sheet-title"><span>选择完成状态</span><button class="close-x" data-close="mask-status">✕</button></div>
+    <div class="hint" id="status-task-name" style="margin-bottom:12px"></div>
+    <div id="status-opts"></div>
+    <div class="hint" id="status-warn"></div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：系数解释 ==================== -->
+<div class="mask center" id="mask-coef">
+  <div class="dialog">
+    <div class="sheet-title" style="font-size:15px"><span id="coef-title">系数说明</span><button class="close-x" data-close="mask-coef">✕</button></div>
+    <div class="hint" id="coef-body" style="font-size:13px"></div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：冰箱 ==================== -->
+<div class="mask" id="mask-fridge">
+  <div class="sheet">
+    <div class="sheet-title"><span>🧊 可爱小冰箱</span><button class="close-x" data-close="mask-fridge">✕</button></div>
+    <div class="hint" style="margin-bottom:12px">多余的食物都存在这里～点食物拿出来喂卷卷：补到饱线内正常转成长积分；超出饱线的部分转成长积分（冰箱投喂仅结算 50%）</div>
+    <div class="fridge-grid" id="fridge-grid"></div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：任务详情/编辑 ==================== -->
+<div class="mask" id="mask-task">
+  <div class="sheet" id="task-detail-body"></div>
+</div>
+
+<!-- ==================== 弹窗：统计报告 ==================== -->
+<div class="mask" id="mask-report">
+  <div class="sheet">
+    <div class="sheet-title"><span>📊 统计报告</span><button class="close-x" data-close="mask-report">✕</button></div>
+    <div class="seg report-seg" id="report-seg">
+      <button data-v="week" class="on">本周</button>
+      <button data-v="month">本月</button>
+      <button data-v="quarter">本季</button>
+      <button data-v="year">今年</button>
+    </div>
+    <div id="report-body"></div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：大模型配置详情 ==================== -->
+<div class="mask" id="mask-llm">
+  <div class="sheet">
+    <div class="sheet-title"><span>🤖 大模型配置</span><button class="close-x" data-close="mask-llm">✕</button></div>
+    <div class="form-block">
+      <div class="form-label">接口地址</div>
+      <input id="cfg-url" placeholder="https://api.deepseek.com/v1/chat/completions">
+    </div>
+    <div class="form-block">
+      <div class="form-label">模型名称 <span class="opt">默认 deepseek</span></div>
+      <input id="cfg-model" placeholder="deepseek">
+    </div>
+    <div class="form-block">
+      <div class="form-label">API Key <span class="opt">仅保存在本机浏览器，不会上传</span></div>
+      <input id="cfg-key" type="password" placeholder="sk-...">
+    </div>
+    <button class="btn sm" id="btn-save-cfg">保存配置</button>
+    <span class="hint" id="cfg-status" style="margin-left:10px"></span>
+    <div class="hint" style="margin-top:14px;line-height:1.8;background:var(--card2);border-radius:12px;padding:10px 12px">
+      推荐使用 <b>DeepSeek 官方 API</b>：<br>
+      ① 前往 <b>platform.deepseek.com</b> 注册并完成实名认证，并充值 1 元以上<br>
+      ② 官网左侧菜单选择「API keys」，点击「创建 API key」<br>
+      ③ 复制生成的 <b>sk 开头</b>密钥，粘贴在上方 API Key 后，保存配置即可
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：数据出入与同步 ==================== -->
+<div class="mask" id="mask-data">
+  <div class="sheet">
+    <div class="sheet-title"><span>📦 数据出入与同步</span><button class="close-x" data-close="mask-data">✕</button></div>
+    <div class="set-item" id="btn-export" style="border-bottom:1px solid var(--line)"><span class="ico">📤</span><span class="grow">导出备份（JSON）</span><span class="arr">›</span></div>
+    <div class="set-item" id="btn-import" style="border-bottom:1px solid var(--line)"><span class="ico">📥</span><span class="grow">导入备份（JSON）</span><span class="arr">›</span></div>
+    <div class="set-item" id="btn-reset"><span class="ico">🗑️</span><span class="grow" style="color:var(--red)">清空全部数据</span><span class="arr">›</span></div>
+    <input type="file" id="import-file" accept=".json" style="display:none">
+    <div class="hint" style="margin-top:12px">所有数据仅保存在本机浏览器（IndexedDB），不上传服务器。</div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：任务标签选择 ==================== -->
+<div class="mask" id="mask-tag">
+  <div class="sheet">
+    <div class="sheet-title"><span>🏷️ 选择任务标签</span><button class="close-x" data-close="mask-tag">✕</button></div>
+    <div class="tag-sel-grid" id="tag-sel-grid"></div>
+    <div class="row" style="gap:10px;margin-top:14px">
+      <input id="tag-custom-input" placeholder="自定义标签（≤6字）" maxlength="6">
+      <button class="btn sm" id="tag-custom-ok">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 弹窗：通用确认 ==================== -->
+<div class="mask center" id="mask-confirm">
+  <div class="dialog">
+    <div style="font-size:15px;font-weight:700;margin-bottom:10px" id="confirm-title"></div>
+    <div class="hint" id="confirm-body" style="margin-bottom:16px"></div>
+    <div class="row" style="gap:10px">
+      <button class="btn ghost sm grow" data-close="mask-confirm">取消</button>
+      <button class="btn sm grow" id="confirm-ok">确定</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+"use strict";
+/* ============================================================
+   CONFIG — 全部刚性规则常量（维度3/4 规格）
+============================================================ */
+const CONFIG = {
+  // 8 时段：key, 名称, 起止, 精度加成（百分点）
+  SLOTS: [
+    {key:'midnight', name:'半夜', start:'00:00', end:'03:00', bonus:0   },
+    {key:'dawn',     name:'凌晨', start:'03:00', end:'06:00', bonus:0   },
+    {key:'early',    name:'清晨', start:'06:00', end:'09:00', bonus:0.10},
+    {key:'morning',  name:'上午', start:'09:00', end:'12:00', bonus:0.10},
+    {key:'noon',     name:'中午', start:'11:30', end:'13:30', bonus:0.10},
+    {key:'afternoon',name:'下午', start:'13:30', end:'17:30', bonus:0.10},
+    {key:'dusk',     name:'黄昏', start:'17:30', end:'19:30', bonus:0.10},
+    {key:'evening',  name:'晚上', start:'19:30', end:'24:00', bonus:0.10},
+  ],
+  EXACT_EXTRA: 0.05,            // 精确时间段在时段基础上额外 +5%
+  // 完成状态
+  STATUS: [
+    {key:'done',   name:'完成目标',   coef:0.70, emo:'🎉', desc:'目标达成，卷卷最爱你！'},
+    {key:'doing',  name:'正在完成中', coef:0.50, emo:'💪', desc:'还在进行中，也很棒'},
+    {key:'failed', name:'完成失败',   coef:0.40, emo:'😢', desc:'尝试过了就不算输'},
+    {key:'paused', name:'暂时搁置',   coef:0.30, emo:'⏸️', desc:'先放一放，改天再战'},
+    {key:'skipped',name:'没有去做',   coef:0.00, emo:'😴', desc:'躺平了，没有积分哦'},
+  ],
+  // 补录系数（按补录目标日期距今天数）：0=今天 1=昨天 2+=前天及更早
+  BACKFILL: {0:0.10, 1:0.05, 2:0},
+  MONEY_BACKFILL_BONUS: 0.10,   // 金钱复盘补录：括号内 +10%
+  // 超时确认惩罚（小时）
+  OVERDUE: [
+    {h:168, mul:0,    label:'超1周未确认', why:'超过任务时间 1 周才确认状态，积分清零。'},
+    {h:72,  mul:0.25, label:'超72h确认',  why:'超过 24 小时确认状态 ×50%，超过 72 小时再 ×50%，合计 ×25%。'},
+    {h:24,  mul:0.5,  label:'超24h确认',  why:'超过任务时间 24 小时才确认完成状态，状态系数 ×50%。'},
+  ],
+  // 改时间惩罚（以“何时改”距原时间点的小时数为准）
+  TIMECHANGE: [
+    {h:12, mul:0.7, label:'超12h改时'},
+    {h:6,  mul:0.8, label:'超6h改时'},
+    {h:1,  mul:0.9, label:'超1h改时'},
+  ],
+  CONTENT_UP_RATE: 0.8,         // 时间点后改内容升分：(新-旧)×0.8+旧
+  STATUS_EDIT_MAX: 2,           // 完成状态最多修改 2 次
+  FREE_EDIT_MS: 3600e3,         // 创建 1 小时内无损修改
+  // 食物换算（按积分向上取档），2-3 分档规格未指定，按面包补齐
+  FOODS: [
+    {max:1,  name:'饼干',   emo:'🍪'},
+    {max:2,  name:'鸡块',   emo:'🍗'},
+    {max:3,  name:'面包',   emo:'🍞'},
+    {max:4,  name:'面包',   emo:'🍞'},
+    {max:5,  name:'猫粮',   emo:'🥣'},
+    {max:6,  name:'小鱼干', emo:'🐟'},
+    {max:7,  name:'猫粮',   emo:'🥣'},
+    {max:8,  name:'肉肉',   emo:'🥩'},
+    {max:9,  name:'鱼',     emo:'🐠'},
+    {max:10, name:'三文鱼', emo:'🍣'},
+  ],
+  SICK_DAYS: 3,    // 连续 3 日 24 点结算时饱度低于饱线 30% → 生病
+  DEATH_DAYS: 21,  // 连续多日饱度低于饱线 30% → 离开
+  LEVELS: [0,40,90,150,220,300,390,490,500,700],  // 达到阈值→对应等级 1..10
+  TAGS: ['日常生活','学业事务','职场工作','技能学习','金钱复盘','休闲娱乐','社交约定','旅行出行'],
+  TAG_COLORS: {'日常生活':'lav','学业事务':'blue','职场工作':'mint','技能学习':'pink','金钱复盘':'yellow','休闲娱乐':'peach','社交约定':'red','旅行出行':'lav'},
+  // AI 旧分类 → 新标签映射（保留 DeepSeek 提示词中的旧分类，前端映射）
+  TAG_MAP: {'成长学习':'学业事务','职场工作':'职场工作','社交外出':'社交约定','生活事务':'日常生活','金钱复盘':'金钱复盘','娱乐休闲':'休闲娱乐'},
+  // 精力双档位阈值（旧 J/P 自动映射：J→高精力计划，P→随性轻计划）
+  PERSON: {
+    J:{ label:'高精力计划', eatMax:8, full:4 },
+    P:{ label:'随性轻计划', eatMax:4, full:2 },
+  },
+};
+
+// 个人类型动态阈值
+function petProfile(){ return CONFIG.PERSON[S.pet.personType] || CONFIG.PERSON.P; }
+function petEatMax(){ return petProfile().eatMax; }
+function petFullLine(){ return petProfile().full; }
+function petSickPoint(){ return r1(petFullLine()*0.30); }   // 生病阈值：饱度低于饱线 30%
+function petDeathPoint(){ return r1(petFullLine()*0.30); }  // 离开阈值：饱度低于饱线 30%
+function mapTag(old){ return CONFIG.TAG_MAP[old] || old; }
+
+/* ============================================================
+   PET_LINES — 宠物台词库（软萌治愈风，行为 × 好感度三档 / 对话 12 档 / 情绪）
+   行为台词：idle/walk/drink/yarn/table × {high,mid,low} 各 10 条，约 50% 带「喵」
+   进食台词：feed × {high,mid,low} 各 10 条
+   对话台词：health(full/mid/hungry/sick) × affinity(high/mid/low) 共 12 档，每档 5 条（仅 1 条带喵）
+============================================================ */
+const PET_LINES = {
+  behavior:{
+    idle:{ high:['喵～今天也要加油','阳光正好～','卷卷陪着你','要好好规划哦','喵呜好安心','风很温柔呢','我们一起卷','今天也要元气满','蹭蹭你～喵','午后时光真好'],
+           mid:['发呆中…','在想今晚吃什么','喵？你也在吗','日子慢慢过','有点小无聊','盯——','尾巴晃了晃','在等任务呢','喵，摸鱼一下','风铃响啦'],
+           low:['好安静啊','喵…有点闷','没劲呢','想睡一会儿','发着呆发着呆','咕…饿了？','影子好长','世界慢下来','喵，发会儿呆','没什么想做'] },
+    walk:{ high:['散步去～喵','走走更健康','逛逛小屋','脚步轻快喵','东嗅嗅西闻闻','今天多走走','喵，跟上来','巡视领地中','晃悠晃悠','踏踏踏～'],
+           mid:['溜达溜达','去那边看看','喵，走两步','晃到左边','又晃回来','地板凉凉的','慢慢挪动','巡逻一下下','脚步哒哒','绕圈圈中'],
+           low:['懒懒地走','拖着步子','喵…走不动','挪一挪也好','晃到角落','脚步好沉','慢慢腾腾','晃悠一下','喵，不想动','挪两步歇歇'] },
+    drink:{ high:['咕嘟咕嘟喵','水好甜呀','喝饱饱～','喵呜解渴了','小口小口喝','清爽一下','喝水也开心','滋溜滋溜','凉凉的好舒服','干杯喵（水）'],
+           mid:['舔舔水碗','喝口水先','喵，渴了','小舌头喝水','润润嗓子','低头喝两口','水波荡漾','喵呜解解渴','啜一口','舔了舔嘴'],
+           low:['喵…渴','喝一点点','舔了下碗','没力气多喝','水凉凉的','小口抿着','喵，润润唇','喝完发呆','碗空了一半','舔舔嘴角'] },
+    yarn:{ high:['毛线球！喵','滚来滚去～','爪子拨弄中','喵呜好玩','追着线团跑','毛线缠脚啦','扑！扑！','玩得不亦乐乎','线球滚远了','喵，再来一次'],
+           mid:['拨弄毛线','滚小球','喵，好玩','线团缠住了','拨一下停一下','追着线跑','爪子拍拍','线球晃悠悠','玩一会儿','喵呜团团转'],
+           low:['拨了下毛线','没劲玩','喵…线团','推了推球','懒得追了','线球滚走','碰一下就好','发呆看线','喵，不想动','线团凉凉的'] },
+  },
+  feed:{ high:['喵呜好吃','好满足～','鱼干我爱','三文鱼yy','吃饱饱幸福','喵，谢谢投喂','美味喵','幸福满溢','吧唧吧唧','最爱小鱼干'],
+         mid:['咪呜好吃','味道不错','喵，谢谢','慢慢嚼','好香呀','小口吃着','满足喵','填饱肚子','吧唧','好吃喵'],
+         low:['喵…吃','一点点也好','有吃的了','舔了舔','喵，谢','勉强吃口','味道还行','小口抿','吃饱一点','有鱼就好'] },
+  dialogue:{
+    full_high:['今天超圆满喵','卷卷好满足','和你一起棒','圆满的一天','喵呜幸福满'],
+    full_mid:['今天挺充实','完成得不错','喵，还不错','充实的一天','挺好的呢'],
+    full_low:['今天还行吧','完成了一些','喵，普普通通','凑合过吧','不算差呢'],
+    mid_high:['状态不错喵','稳步推进中','喵呜有干劲','今日尚可','保持节奏哦'],
+    mid_mid:['过得去吧','慢慢来也行','喵，还成','平稳的一天','不急不躁'],
+    mid_low:['一般般啦','没特别感觉','喵…就这样','平淡日子','还好吧'],
+    hungry_high:['饿但开心喵','有你陪着呢','喵呜会等饭','饿也值得','被爱着呢'],
+    hungry_mid:['肚子咕咕叫','喵，有点饿','想吃小鱼干','饿着等任务','饭点到了吗'],
+    hungry_low:['好饿喵…','没吃饱呢','肚子空空','喵，饿扁了','想吃东西'],
+    sick_high:['生病也被宠','喵呜有你陪','病中也温暖','被照顾着呢','慢慢会好哒'],
+    sick_mid:['不太舒服喵','想快快好起','病恹恹的','喵，难受','需要多关爱'],
+    sick_low:['生病好难受','喵…没精神','身体软软的','好想休息','难受喵'],
+  },
+  depressed:['不想动…就缩着','喵…觉得没意思','今天也不想努力','好累，趴一会','没人陪我玩吗'],
+  happy:['喵呜超级开心！','今天也要发光！','最喜欢你啦～','幸福冒泡泡','卷卷爱你哟'],
+};
+function affinityTier(){ const a=S.pet.affinity; return a>=8?'high':a>=4?'mid':'low'; }
+function pickLine(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function behaviorLine(){
+  const b = S.pet.behavior || 'idle';
+  return pickLine((PET_LINES.behavior[b]||PET_LINES.behavior.idle)[affinityTier()]);
+}
+function feedLine(){ return pickLine(PET_LINES.feed[affinityTier()]); }
+function dialogueLine(){
+  const a = S.pet.affinity;
+  if(a<=2) return pickLine(PET_LINES.depressed);
+  if(a>=8) return pickLine(PET_LINES.happy);
+  let hk = 'mid'; const sat=petSatiety();
+  if(!S.pet.alive) hk='sick';
+  else if(S.pet.sick) hk='sick';
+  else if(sat>=petFullLine()) hk='full';
+  else if(sat < petFullLine()*0.45) hk='hungry';
+  const tier = a>=6?'high':a>=4?'mid':'low';
+  return pickLine(PET_LINES.dialogue[hk+'_'+tier]);
+}
+
+/* ============================================================
+   工具函数
+============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const pad = n => String(n).padStart(2,'0');
+const fmtDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr = () => fmtDate(new Date());
+const parseDate = s => { const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); };
+const dayDiff = (a,b) => Math.round((parseDate(a)-parseDate(b))/864e5); // a-b 自然日差
+const addDays = (s,n) => { const d=parseDate(s); d.setDate(d.getDate()+n); return fmtDate(d); };
+const r1 = n => Math.round(n*10)/10;                 // 保留1位小数
+const pct = n => Math.round(n*1000)/10 + '%';
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const minOf = t => { const [h,m]=t.split(':').map(Number); return h*60+m; };
+const weekCN = ['周日','周一','周二','周三','周四','周五','周六'];
+
+function toast(msg, ms=2200){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tm); t._tm = setTimeout(()=>t.classList.remove('show'), ms);
+}
+
+// 任务的“原定时间点”（用于超时/改时判定）：精确→结束时间；时段→时段结束；全天→当日24点
+function taskDeadline(task){
+  const d = parseDate(task.execDate);
+  let end = '24:00';
+  if(task.timeType==='exact' && task.endTime) end = task.endTime;
+  else if(task.timeType==='slot' && task.slot){
+    const s = CONFIG.SLOTS.find(x=>x.key===task.slot); if(s) end = s.end;
+  }
+  const m = end==='24:00' ? 1440 : minOf(end);
+  return d.getTime() + m*60000;
+}
+function slotByKey(k){ return CONFIG.SLOTS.find(s=>s.key===k); }
+function slotForTime(hm){ // 精确时间自动归入时段（按开始时间，优先专属时段）
+  const m = minOf(hm);
+  const hit = CONFIG.SLOTS.filter(s=> m>=minOf(s.start) && m<(s.end==='24:00'?1440:minOf(s.end)));
+  if(!hit.length) return CONFIG.SLOTS[0];
+  return hit.sort((a,b)=>b.bonus-a.bonus || (minOf(a.end==='24:00'?'23:59':a.end)-minOf(a.start))-(minOf(b.end==='24:00'?'23:59':b.end)-minOf(b.start)))[0];
+}
+function timeLabel(task){
+  if(task.timeType==='exact') return `${task.startTime}-${task.endTime}`;
+  if(task.timeType==='slot')  return slotByKey(task.slot)?.name || '时段';
+  return '全天';
+}
+
+/* ============================================================
+   DB — IndexedDB 封装（stores: tasks / kv）
+============================================================ */
+const DB = {
+  _db:null,
+  open(){
+    return new Promise((res,rej)=>{
+      const rq = indexedDB.open('juanjuan-pet', 1);
+      rq.onupgradeneeded = e => {
+        const db = e.target.result;
+        if(!db.objectStoreNames.contains('tasks')) db.createObjectStore('tasks',{keyPath:'id'});
+        if(!db.objectStoreNames.contains('kv'))    db.createObjectStore('kv');
+      };
+      rq.onsuccess = ()=>{ DB._db = rq.result; res(); };
+      rq.onerror = ()=>rej(rq.error);
+    });
+  },
+  _tx(store,mode){ return DB._db.transaction(store,mode).objectStore(store); },
+  put(store,val,key){ return new Promise((res,rej)=>{ const r = key!==undefined?DB._tx(store,'readwrite').put(val,key):DB._tx(store,'readwrite').put(val); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+  get(store,key){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readonly').get(key); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+  del(store,key){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readwrite').delete(key); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+  all(store){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readonly').getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); },
+  clear(store){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readwrite').clear(); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+};
+
+/* ============================================================
+   全局状态（内存镜像，改动后写回 DB）
+============================================================ */
+const S = {
+  tasks: [],            // 全部任务
+  pet: null,            // 宠物状态
+  dayStats: {},         // {date:{points, done, total}}
+  customTags: [],
+  homeDate: todayStr(), // 首页当前浏览日期
+};
+function defaultPet(){
+  return {
+    personType:'P',                       // 默认 随性轻计划（轻松型）；可在「我的-精力」切换
+    satietyTask: 5, satietyFridge: 0,    // 当前饱度（任务粮 + 冰箱粮）
+    growth: 0, fridge: [],
+    lastSettle: todayStr(),
+    lowStreakSick: 0, lowStreakDeath: 0,
+    sick:false, alive:true,
+    streak: 0, lastStreakDate: null,
+    todayIntake: 0, intakeDate: todayStr(),
+    affinity: 5,                          // 好感度 1-10
+    behavior: 'idle',                    // idle/walk/drink/yarn
+    hungryStreak: 0, affNoClickStreak: 0,
+    clickCount: 0, lastClickDate: null, lastClickBonusDate: null,
+    lastNoon: null, lastEve: null, lastDecayDay: null,
+    bornAt: Date.now(),
+  };
+}
+// 老用户升级兼容：补齐缺失字段，不丢失原有数据
+function migratePet(p){
+  const d = defaultPet();
+  for(const k in d){ if(p[k] === undefined) p[k] = d[k]; }
+  if(p.behavior === 'table') p.behavior = 'idle';   // 旧「椅子」行为已移除
+  if(p.personType !== 'J' && p.personType !== 'P') p.personType = 'P';
+  return p;
+}
+async function saveTask(t){ await DB.put('tasks', t); const i=S.tasks.findIndex(x=>x.id===t.id); if(i>=0) S.tasks[i]=t; else S.tasks.push(t); }
+async function removeTask(id){ await DB.del('tasks', id); S.tasks = S.tasks.filter(t=>t.id!==id); }
+async function savePet(){ await DB.put('kv', S.pet, 'pet'); }
+async function saveDayStats(){ await DB.put('kv', S.dayStats, 'dayStats'); }
+async function saveTags(){ await DB.put('kv', S.customTags, 'customTags'); }
+function petSatiety(){ return r1(S.pet.satietyTask + S.pet.satietyFridge); }
+function petLevel(){
+  const g = S.pet.growth; let lv = 1;
+  CONFIG.LEVELS.forEach((th,i)=>{ if(g>=th) lv = i+1; });
+  return Math.min(lv, 10);
+}
+function levelNextText(){
+  const lv = petLevel();
+  if(lv>=10) return '已经是满级卷卷啦！';
+  const next = CONFIG.LEVELS[lv];
+  return `距 Lv.${lv+1} 还差 ${r1(Math.max(0,next-S.pet.growth))} 成长值`;
+}
+/* ============================================================
+   ScoreEngine — 积分引擎（前端全权计算，AI 不参与算分）
+   公式：基础分 × (基础规划系数 + 时间精度加成 + 特殊类型加成)
+         × 完成状态系数 × 超时确认惩罚 × 改时间惩罚
+   括号内百分点相加；括号外倍率相乘；结果 ≥0，保留 1 位小数
+============================================================ */
+const ScoreEngine = {
+
+  // ---- 基础规划系数（含补录判定）----
+  planCoef(task){
+    const createDay = fmtDate(new Date(task.createdAt));
+    const ahead = dayDiff(task.execDate, createDay);   // 执行日 - 创建日
+    if(task.isBackfill || ahead < 0){
+      // 补录已完成历史/当日任务
+      const back = Math.max(0, dayDiff(todayStr(), task.execDate)); // 距今天数
+      const c = back>=2 ? CONFIG.BACKFILL[2] : CONFIG.BACKFILL[back];
+      const dText = back===0?'今日':back===1?'昨日':'前天及更早';
+      return {coef:c, label:`补录${dText} ${pct(c)}`,
+        why:`复盘补录规则：补录今日已完成任务 ×10%，昨日 ×5%，前天及更早 ×0%。本任务补录的是${dText}的任务，基础规划系数为 ${pct(c)}。`};
+    }
+    if(ahead >= 3) return {coef:0.90, label:'提前3天+ 90%', why:'提前 3 天及更早创建的任务，基础规划系数 90%。提前规划是卷王的美德！'};
+    if(ahead === 2) return {coef:0.85, label:'提前2天 85%', why:'提前 2 天（前天创建）规划的任务，基础规划系数 85%。'};
+    if(ahead === 1) return {coef:0.80, label:'提前1天 80%', why:'提前 1 天（昨天创建）规划的任务，基础规划系数 80%。'};
+    // 当日创建当日任务：按创建时刻
+    const h = new Date(task.createdAt).getHours() + new Date(task.createdAt).getMinutes()/60;
+    if(h < 12)  return {coef:0.70, label:'当日午前 70%', why:'当日中午 12:00 前创建的当日任务，基础规划系数 70%。'};
+    if(h < 18)  return {coef:0.50, label:'当日午后 50%', why:'当日 12:00-18:00 创建的当日任务，基础规划系数 50%。'};
+    return {coef:0.30, label:'当日晚建 30%', why:'当日 18:00 之后创建的当日任务，基础规划系数 30%。临时抱佛脚要扣分哦～'};
+  },
+
+  // ---- 时间精度加成 ----
+  precision(task){
+    if(task.timeType==='slot' && task.slot){
+      const s = slotByKey(task.slot);
+      if(!s || s.bonus===0) return {coef:0, label:`${s?s.name:'时段'} +0%`, why:`选择了「${s?s.name:''}」时段。半夜(00:00-03:00)与凌晨(03:00-06:00)时段无精度加成(+0%)，其余六个时段 +10%。`};
+      return {coef:s.bonus, label:`${s.name}时段 +10%`, why:`选定了「${s.name}」时段（${s.start}-${s.end}），时间精度加成 +10%（百分点，加在括号内）。`};
+    }
+    if(task.timeType==='exact' && task.startTime){
+      const s = slotForTime(task.startTime);
+      const total = s.bonus + CONFIG.EXACT_EXTRA;
+      return {coef:total, label:`精确时间 +${Math.round(total*100)}%`,
+        why:`设定了精确时间段 ${task.startTime}-${task.endTime}，自动归入「${s.name}」时段（时段加成 ${pct(s.bonus)}），精确时间额外 +5%，合计 +${Math.round(total*100)}%。`};
+    }
+    return {coef:0, label:'全天 +0%', why:'仅设定「全天可做」，无时间精度加成。选定时段可 +10%，精确时间可再 +5% 哦～'};
+  },
+
+  // ---- 特殊类型加成（金钱复盘补录 +10%）----
+  special(task){
+    if((task.isBackfill || dayDiff(task.execDate, fmtDate(new Date(task.createdAt)))<0) && task.category==='金钱复盘'){
+      return {coef:CONFIG.MONEY_BACKFILL_BONUS, label:'金钱复盘 +10%',
+        why:'涉及金钱收支、记账、理财的复盘补录任务，在补录系数基础上统一 +10%（百分点，加在括号内）。记账是好习惯！'};
+    }
+    return null;
+  },
+
+  // ---- 完成状态系数 ----
+  statusCoef(key){
+    const s = CONFIG.STATUS.find(x=>x.key===key);
+    return {coef:s.coef, label:`${s.name} ${pct(s.coef)}`,
+      why:`完成状态五档系数：完成目标 70% / 正在完成中 50% / 完成失败 40% / 暂时搁置 30% / 没有去做 0%。你选择了「${s.name}」，状态系数 ${pct(s.coef)}。`};
+  },
+
+  // ---- 超时确认惩罚 ----
+  overdue(task, confirmAt){
+    const ddl = taskDeadline(task);
+    const hrs = (confirmAt - ddl) / 3600e3;
+    for(const o of CONFIG.OVERDUE){
+      if(hrs > o.h) return {coef:o.mul, label:`${o.label} ×${pct(o.mul)}`, why:o.why + `（本任务超时约 ${Math.floor(hrs)} 小时确认）`};
+    }
+    return null;
+  },
+
+  // ---- 改时间惩罚（记录在 task.timeChangeMul）----
+  timeChangePenalty(task, changeAt, oldDeadline){
+    const hrs = (changeAt - oldDeadline) / 3600e3;
+    for(const t of CONFIG.TIMECHANGE){
+      if(hrs > t.h) return {mul:t.mul, label:`${t.label} ×${pct(t.mul)}`,
+        why:`任务原定时间点已过 ${Math.floor(hrs)} 小时后才修改时间：超过 1 小时 ×90%，超过 6 小时 ×80%，超过 12 小时 ×70%（以“何时改”为准，与改到多远无关）。`};
+    }
+    return null; // 时间点未过或1小时内，无惩罚
+  },
+
+  // ---- 改内容升分规则：(新-旧)×0.8+旧；降分直接按新分 ----
+  mergeBaseScore(oldBase, newBase){
+    if(newBase > oldBase) return r1((newBase - oldBase) * CONFIG.CONTENT_UP_RATE + oldBase);
+    return newBase;
+  },
+
+  // ---- 核心结算 ----
+  compute(task, statusKey, confirmAt){
+    const parts = [];
+    const plan = this.planCoef(task);       parts.push({...plan, type:'add'});
+    const prec = this.precision(task);      parts.push({...prec, type:'add'});
+    const spec = this.special(task);        if(spec) parts.push({...spec, type:'add'});
+    let bracket = plan.coef + prec.coef + (spec?spec.coef:0);
+    bracket = Math.max(0, bracket);
+    let score = task.baseScore * bracket;
+    let detail = {bracket};
+
+    if(statusKey){
+      const st = this.statusCoef(statusKey); parts.push({...st, type:'mul'});
+      score *= st.coef;
+      const od = this.overdue(task, confirmAt || Date.now());
+      if(od){ parts.push({...od, type:'mul'}); score *= od.coef; }
+    }
+    if(task.timeChangeMul && task.timeChangeMul < 1){
+      parts.push({coef:task.timeChangeMul, label:task.timeChangeLabel, why:task.timeChangeWhy, type:'mul'});
+      score *= task.timeChangeMul;
+    }
+    return {score: Math.max(0, r1(score)), parts, ...detail};
+  },
+
+  // ---- 创建时预估（按“完成目标”满档，不含惩罚）----
+  estimate(task){
+    const plan = this.planCoef(task);
+    const prec = this.precision(task);
+    const spec = this.special(task);
+    const bracket = Math.max(0, plan.coef + prec.coef + (spec?spec.coef:0));
+    const full = r1(task.baseScore * bracket * 0.7);
+    return {full: r1(full * 2), bracket, parts:[plan, prec, ...(spec?[spec]:[])]};
+  },
+};
+
+// ---- 食物换算：积分 → 食物列表（>10 拆成两个物品凑积分数）----
+function foodForScore(score){
+  score = r1(score);
+  if(score <= 0) return [];
+  const pick = v => {
+    const f = CONFIG.FOODS.find(x => v <= x.max) || CONFIG.FOODS[CONFIG.FOODS.length-1];
+    return {name:f.name, emo:f.emo, value:r1(v), id:uid()};
+  };
+  if(score <= 10) return [pick(score)];
+  const a = 10, b = Math.min(10, r1(score - 10));
+  return [pick(a), ...(b>0?[pick(b)]:[])];
+}
+/* ============================================================
+   AIService — DeepSeek 调用（原生 fetch）+ 缓存 + 本地降级
+   大模型仅负责：语义解析 / 基础价值分 / 分类 / 判定说明 / 时间识别
+============================================================ */
+const AI_SYSTEM_PROMPT = `你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0-10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。
+
+【三大评判维度】（可自主调配权重，权重变化须在判定理由注明；可新增情感价值 / 长期复利等补充维度，须说明）
+1. 社会契约强度：任务绑定他人、规则的约束程度，违约带来的代价高低
+2. 认知摩擦系数：完成任务需要大脑切换思维模式的频次、动脑复杂程度
+3. 资产沉淀可能性：做完能否留存可长期重复使用的资料、能力、内容、成品
+
+【标准锚点分值对照表】（所有任务必须匹配相似度最高的 2-3 个锚点，依靠内插 / 外推计算分数，可结合大众普遍认知小幅浮动，浮动原因写进理由）
+0 分 打游戏：纯个人行为，无思维摩擦，无任何可沉淀产出
+1 分 吃饭：个人刚需，思维消耗极低，无沉淀资产
+2 分 通勤 / 排队办事：时间被硬性限制，动脑少，无长期产出
+3 分 健身 / 跑步：需要体力专注，有身体层面收获，无数字化可复用资产
+3.5 分 聚餐：带有轻度人际约束，脑力消耗低，无留存产出
+4.5 分 约会 / 陪伴家人：轻度人情契约，存在情绪精力消耗，无实物资产沉淀
+5.5 分 无汇报纯开会：带有强制履约约束，中等动脑消耗，无法沉淀复用内容
+6 分 写日记 / 个人复盘：自主安排，思考成本高，能沉淀自我成长类个人资产
+7 分 听讲座：存在轻微履约约束，高密度信息接收，可沉淀笔记类轻量化产出
+8 分 运营小红书 / 撰写博客：轻度对外履约，动脑成本高，产出可反复使用的内容资产
+9 分 开展分享会：履约约束强，思考筹备成本高，产出可复用的完整内容资产
+10 分 独立完成 Vibe Coding 开发项目：脑力摩擦拉满，兼顾逻辑、审美、调试，产出可长期复用的完整系统
+
+【特殊边界】
+- 任务描述模糊宽泛（如「做事」「处理琐事」），base_score 置为 null、vague 置 true，并在 reason 中明确请用户补充具体对象 / 动作 / 产出，绝不臆造分数。
+- 同名任务场景差异大（如开会分旁听 / 主持），在 reason 中写明本次打分的前提假设。
+- 结构逻辑完全一致、仅叫法不同的任务，分数保持一致，reason 标注「与 XX 任务结构等价」。
+
+【输出】
+严格只返回 JSON，不输出任何多余文字、解释或 markdown 标记。字段：
+task(原样回显用户任务文案),
+base_score(数值 0-10 保留 1 位小数；模糊任务为 null),
+vague(布尔，模糊任务为 true),
+reason(判定理由：20-50 字，写清为何值此分、哪些维度因素影响价值与分数),
+advice(AI 建议：20-50 字，结合记忆 / 上下文 / 日常场景给出相关建议),
+category(从「成长学习 / 职场工作 / 社交外出 / 生活事务 / 金钱复盘 / 娱乐休闲」中选一),
+detected_time(识别到的执行时间描述字符串，无法识别为 null)`;
+
+const AIService = {
+  cache: {},   // key: title → result
+  degraded: false,
+
+  getCfg(){
+    return {
+      url:   localStorage.getItem('ai_url')   || 'https://api.deepseek.com/v1/chat/completions',
+      model: localStorage.getItem('ai_model') || 'deepseek',
+      key:   localStorage.getItem('ai_key')   || '',
+    };
+  },
+  saveCfg(url, model, key){
+    localStorage.setItem('ai_url',   url.trim()   || 'https://api.deepseek.com/v1/chat/completions');
+    localStorage.setItem('ai_model', model.trim() || 'deepseek');
+    localStorage.setItem('ai_key',   key.trim());
+    this.cache = {};
+  },
+  setDegraded(on){
+    this.degraded = on;
+    $('#degrade-tip').classList.toggle('show', on);
+  },
+
+  // 评估任务：返回 {base_score, reason, category, detected_time, source}
+  async evaluate(title){
+    const cacheKey = title.trim();
+    if(this.cache[cacheKey]) return this.cache[cacheKey];
+    const cfg = this.getCfg();
+    if(!cfg.key){ this.setDegraded(true); return this._local(title); }
+    try{
+      const resp = await fetch(cfg.url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+        body: JSON.stringify({
+          model: cfg.model,
+          messages: [
+            {role:'system', content: AI_SYSTEM_PROMPT},
+            {role:'user',   content: `今天是${todayStr()} ${weekCN[new Date().getDay()]}。待办任务：${title}`},
+          ],
+          temperature: 0.1,
+          max_tokens: 200,
+          stream: false,
+        }),
+      });
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      const data = await resp.json();
+      let txt = data.choices?.[0]?.message?.content || '';
+      txt = txt.replace(/```json|```/g,'').trim();
+      const j = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+      const vague = !!j.vague || j.base_score === null || j.base_score === undefined;
+      const out = {
+        base_score: vague ? null : Math.max(0, Math.min(10, r1(Number(j.base_score)||0))),
+        vague,
+        reason: String(j.reason || (vague ? '任务描述太模糊，请补充具体对象、动作与产出后再评分' : 'AI 已评分')).slice(0,60),
+        advice: String(j.advice || '').slice(0,60),
+        category: mapTag(j.category || this._localCategory(title)),
+        detected_time: j.detected_time || null,
+        source:'ai',
+      };
+      this.setDegraded(false);
+      this.cache[cacheKey] = out;
+      return out;
+    }catch(e){
+      console.warn('AI 调用失败，降级本地评分：', e);
+      this.setDegraded(true);
+      return this._local(title);
+    }
+  },
+
+  // ---- 本地关键词降级引擎 ----
+  _local(title){
+    const t = title.toLowerCase();
+    const raw = title.trim();
+    // 模糊任务：纯泛词、无具体对象 / 动作 / 产出，则要求用户补充，不打分
+    const vagueWords = ['做事','处理琐事','处理事情','事情','琐事','杂事','杂活','一些事','干点事','随便做点','弄一下','搞一下','干活','任务','todo','stuff','things','something','搞事情'];
+    if(vagueWords.includes(raw) || raw.length===1 || /^(做|弄|搞|整|处理|完成|搞定)$/.test(raw)){
+      return {vague:true, base_score:null,
+        reason:'任务描述过于宽泛，请补充具体对象、动作与产出后再评分',
+        advice:'例如「写周报复盘」「陪家人吃饭」会比「做事」更容易被准确估值',
+        category:this._localCategory(title), detected_time:this._localTime(title), source:'local'};
+    }
+    // 12 锚点本地映射（离线降级使用，与 AI 锚点体系一致）
+    const rules = [
+      {re:/(打游戏|玩游戏|刷剧|刷抖音|刷视频|看剧|追剧|看视频|刷b站|刷手机|躺平|睡懒觉)/, s:0, cat:'娱乐休闲',
+        r:'纯个人无约束娱乐，零思维摩擦、无沉淀产出，归零分红线。',
+        a:'放松可以，但它不贡献价值分，记得搭配点正经事～'},
+      {re:/(吃饭|早餐|午餐|晚餐|夜宵|做饭|煮饭|点外卖|下厨)/, s:1, cat:'生活事务',
+        r:'个人刚需，思维消耗极低且无沉淀资产，对标吃饭锚点。',
+        a:'好好吃饭是基本盘，但价值分就这一分，别指望它拉分。'},
+      {re:/(通勤|上下班|上班|下班|排队|取号|办事|坐车|地铁|公交|开车)/, s:2, cat:'生活事务',
+        r:'时间被硬性限制、动脑少、无长期产出，对标通勤锚点。',
+        a:'通勤碎片时间可以听点东西，但本任务本身价值有限。'},
+      {re:/(健身|跑步|运动|瑜伽|游泳|骑行|锻炼|打球|撸铁)/, s:3, cat:'生活事务',
+        r:'需体力专注、有身体层面收获，无可复用数字资产。',
+        a:'坚持运动身体是本钱，记录进步曲线会更好坚持。'},
+      {re:/(聚餐|饭局|团建|朋友吃饭|请客|聚会吃饭|约饭)/, s:3.5, cat:'社交外出',
+        r:'带轻度人际约束、脑力消耗低、无留存产出，对标聚餐锚点。',
+        a:'聚会是关系维护，适度就好，别光吃忘了正事。'},
+      {re:/(约会|陪家人|陪伴|陪父母|陪孩子|陪对象|看家人|陪爸妈)/, s:4.5, cat:'社交外出',
+        r:'轻度人情契约，存在情绪精力消耗，无实物资产沉淀。',
+        a:'高质量陪伴很珍贵，放下手机专心聊会更值。'},
+      {re:/(开会|参会|旁听|例会|周会|站会|早会)/, s:5.5, cat:'职场工作',
+        r:'带强制履约约束、中等动脑消耗、难沉淀复用内容。',
+        a:'开会前先列问题，避免被动旁听浪费时间。'},
+      {re:/(写日记|日记|复盘|周报复盘|自我总结|写总结|反思|月度复盘)/, s:6, cat:'生活事务',
+        r:'自主安排、思考成本高、沉淀自我成长类个人资产。',
+        a:'复盘是复利行为，坚持写会越来越值钱。'},
+      {re:/(听讲座|听课|听分享|网课|线上课|讲座|培训课|听报告)/, s:7, cat:'成长学习',
+        r:'轻微履约约束、高密度信息接收、可沉淀笔记类产出。',
+        a:'听完顺手整理成笔记，价值立刻翻倍。'},
+      {re:/(运营小红书|写博客|公众号|自媒体|写文章|做账号|发笔记|更新博客)/, s:8, cat:'成长学习',
+        r:'轻度对外履约、动脑成本高、产出可反复使用的内容资产。',
+        a:'内容资产会持续复利，坚持更新比追爆款更重要。'},
+      {re:/(分享会|内部分享|做培训|演讲分享|组织分享|技术分享)/, s:9, cat:'职场工作',
+        r:'履约约束强、筹备成本高、产出可复用的完整内容资产。',
+        a:'把分享内容沉淀成模板，下次直接复用。'},
+      {re:/(vibe\s*coding|用\s*ai.{0,6}(独立)?(制作|开发|做).{0,6}(app|应用|网页|网站|项目)|独立开发|开发项目|做\s*(app|网站|小程序|系统)|写代码项目)/, s:10, cat:'成长学习',
+        r:'脑力摩擦拉满、兼顾逻辑审美调试、产出可长期复用系统。',
+        a:'做成可复用系统最划算，记得开源或沉淀组件库。'},
+      {re:/(记账|理财|对账|报销|复盘.{0,4}(收支|花销|钱)|基金|股票|收支记录)/, s:6, cat:'金钱复盘',
+        r:'自主安排的金钱复盘，思考成本高、沉淀可复用理财资产。',
+        a:'记账是理财第一步，长期看复利惊人。'},
+    ];
+    const hit = rules.find(x=>x.re.test(t));
+    const out = hit
+      ? {base_score:hit.s, reason:hit.r, advice:hit.a, category:hit.cat, vague:false, source:'local'}
+      : {base_score:2, reason:'普通任务，按基础档给 2 分，补充细节可更精准估值。', advice:'把任务写具体点（对象 / 动作 / 产出），评分会更准。', category:this._localCategory(title), vague:false, source:'local'};
+    out.detected_time = this._localTime(title);
+    this.cache[title.trim()] = out;
+    return out;
+  },
+  _localCategory(title){
+    const t = title;
+    if(/(记账|理财|对账|报销|收支|基金|股票)/.test(t)) return '金钱复盘';
+    if(/(开会|工作|文档|周报|方案|汇报|面试|答辩|客户)/.test(t)) return '职场工作';
+    if(/(约|聚餐|聚会|朋友|开黑|派对|约会|展览|博物馆|外出)/.test(t)) return '社交外出';
+    if(/(学习|复习|背单词|刷题|读书|看书|上课|网课|考研|考试)/.test(t)) return '成长学习';
+    if(/(剧|游戏|抖音|视频|电影|音乐|b站)/.test(t)) return '娱乐休闲';
+    return '生活事务';
+  },
+  _localTime(title){
+    const m1 = title.match(/(今天|明天|后天|大后天)/);
+    const m2 = title.match(/(凌晨|清晨|早上|上午|中午|下午|傍晚|黄昏|晚上|半夜|夜里)/);
+    const m3 = title.match(/(\d{1,2})[点:：](\d{0,2})/);
+    let parts = [];
+    if(m1) parts.push(m1[1]);
+    if(m2) parts.push(m2[1]);
+    if(m3) parts.push(m3[0]);
+    return parts.length ? parts.join(' ') : null;
+  },
+};
+/* ============================================================
+   PetSystem — 饱食度 / 成长值 / 等级 / 生病死亡 / 每日结算
+============================================================ */
+const PetSystem = {
+
+  // 任务积分 → 食物 → 自动喂养（多余进冰箱）
+  // 任务积分 → 食物 → 三档自动喂养（多余进冰箱）
+  async award(score){
+    if(score <= 0) return {fed:0, foods:[]};
+    const foods = foodForScore(score);
+    let fedTotal = 0;
+    for(const f of foods){
+      const {fed, overflow} = this._feedValue(f.value, false);
+      fedTotal = r1(fedTotal + fed);
+      this._touchIntake();
+      S.pet.todayIntake = r1(S.pet.todayIntake + fed);
+      if(overflow > 0.05) S.pet.fridge.push({name:f.name, emo:f.emo, value:overflow, id:uid()});
+    }
+    await savePet();
+    return {fed:fedTotal, foods};
+  },
+
+  // 记录当日积分与完成数（按确认日归属）
+  async recordToday(score, doneInc){
+    const d = todayStr();
+    if(!S.dayStats[d]) S.dayStats[d] = {points:0, done:0};
+    S.dayStats[d].points = r1(S.dayStats[d].points + score);
+    S.dayStats[d].done  += doneInc;
+    if(doneInc > 0 && S.pet.lastStreakDate !== d){
+      S.pet.streak = (S.pet.lastStreakDate === addDays(d,-1)) ? S.pet.streak + 1 : 1;
+      S.pet.lastStreakDate = d;
+      await savePet();
+    }
+    await saveDayStats();
+  },
+
+  // 三档喂养：0~饱线 只加当前饱度；饱线~上限 加饱度+成长（冰箱喂养×50%）；超上限进冰箱
+  _feedValue(value, fromFridge){
+    let v = r1(value), fed = 0;
+    const full = petFullLine(), max = petEatMax();
+    let sat = petSatiety();
+    if(sat < full){                                   // 档1：0~饱线，仅进食
+      const add = Math.min(v, full - sat);
+      S.pet.satietyTask = r1(S.pet.satietyTask + add);
+      v = r1(v - add); fed = r1(fed + add);
+    }
+    sat = petSatiety();
+    if(v > 0.05 && sat < max){                        // 档2：饱线~上限，进食+成长
+      const add = Math.min(v, max - sat);
+      S.pet.satietyTask = r1(S.pet.satietyTask + add);
+      const g = fromFridge ? add*0.5 : add;
+      if(S.pet.alive) S.pet.growth = r1(S.pet.growth + g);
+      v = r1(v - add); fed = r1(fed + add);
+    }
+    return {fed, overflow:r1(v)};
+  },
+
+  // 冰箱手动喂食（按三档规则，超出饱线部分只结算 50% 成长）
+  async feedFromFridge(itemId){
+    const i = S.pet.fridge.findIndex(f=>f.id===itemId);
+    if(i < 0) return null;
+    const f = S.pet.fridge[i];
+    const room = petEatMax() - petSatiety();
+    if(room <= 0.05){ toast('卷卷已经吃得饱饱的啦～'); return null; }
+    const {fed, overflow} = this._feedValue(f.value, true);
+    if(fed <= 0){ toast('卷卷已经吃得饱饱的啦～'); return null; }
+    if(overflow > 0.05) S.pet.fridge[i] = {...f, value:overflow};
+    else S.pet.fridge.splice(i,1);
+    this._touchIntake();
+    S.pet.todayIntake = r1(S.pet.todayIntake + fed);
+    await savePet();
+    return {fed, food:f};
+  },
+
+  _touchIntake(){
+    const d = todayStr();
+    if(S.pet.intakeDate !== d){ S.pet.intakeDate = d; S.pet.todayIntake = 0; }
+  },
+
+  // 一次自然消耗：今日饱度 -1，等额转成长（12点/18点各一次）
+  _decayOne(){
+    if(!S.pet.alive) return;
+    let need = 1;
+    const fromTask = Math.min(need, S.pet.satietyTask);
+    S.pet.satietyTask = r1(S.pet.satietyTask - fromTask);
+    need = r1(need - fromTask);
+    const fromFridge = Math.min(need, S.pet.satietyFridge);
+    S.pet.satietyFridge = r1(S.pet.satietyFridge - fromFridge);
+    const deducted = r1(fromTask + fromFridge);
+    if(S.pet.alive) S.pet.growth = r1(S.pet.growth + deducted);
+  },
+
+  // 实时衰减：12点、18点各 -1 饱度（当天只触发一次）
+  tickDecay(){
+    const t = todayStr();
+    const mins = new Date().getHours()*60 + new Date().getMinutes();
+    let changed = false;
+    if(mins >= 720 && S.pet.lastNoon !== t){ this._decayOne(); S.pet.lastNoon = t; changed = true; }
+    if(mins >= 1080 && S.pet.lastEve !== t){ this._decayOne(); S.pet.lastEve = t; changed = true; }
+    if(changed){ savePet(); if(window.PetView) PetView.render(); }
+  },
+
+  // 每日 0 点结算（打开应用时补跑漏掉的天数）
+  async settleDays(){
+    let changed = false;
+    let guard = 0;
+    while(S.pet.lastSettle < todayStr() && guard++ < 400){
+      const D = S.pet.lastSettle;
+      const stats = S.dayStats[D] || {points:0, done:0};
+      // 当日自然消耗：12点、18点各 -1（补跑漏掉的天数）
+      this._decayOne(); this._decayOne();
+      // 生病 / 死亡判定（阈值随精力档位缩放：连续 3 日 24 点结算时饱度低于饱线 30% → 生病；连续多日 → 离开）
+      const lowSat = petSatiety() < petSickPoint();
+      S.pet.lowStreakSick  = lowSat ? S.pet.lowStreakSick  + 1 : 0;
+      S.pet.lowStreakDeath = lowSat ? S.pet.lowStreakDeath + 1 : 0;
+      S.pet.sick = S.pet.lowStreakSick >= CONFIG.SICK_DAYS;
+      if(S.pet.lowStreakDeath >= CONFIG.DEATH_DAYS) S.pet.alive = false;
+      // 好感度结算
+      this._settleAffinity(D, stats);
+      // 断卡
+      if(stats.done === 0 && S.pet.lastStreakDate !== todayStr()) S.pet.streak = 0;
+      S.pet.lastSettle = addDays(D, 1);
+      changed = true;
+    }
+    this._touchIntake();
+    if(changed) await savePet();
+    return changed;
+  },
+
+  // 好感度每日结算：健康 +1；连续饥饿(≥2天) -1；生病 -2；当天无点击 -1（最多3天）
+  _settleAffinity(D, stats){
+    let delta = 0;
+    const neglect = petSatiety() < petSickPoint();
+    if(!S.pet.alive){ /* 离开后不再变动 */ }
+    else if(S.pet.sick){ delta -= 2; S.pet.hungryStreak = (S.pet.hungryStreak||0)+1; }
+    else if(neglect){ S.pet.hungryStreak = (S.pet.hungryStreak||0)+1; if(S.pet.hungryStreak >= 2) delta -= 1; }
+    else { S.pet.hungryStreak = 0; delta += 1; }
+    // 无点击互动惩罚
+    if(S.pet.lastClickBonusDate !== D){
+      S.pet.affNoClickStreak = (S.pet.affNoClickStreak||0) + 1;
+      if(S.pet.affNoClickStreak <= 3) delta -= 1;
+    } else {
+      S.pet.affNoClickStreak = 0;
+    }
+    S.pet.affinity = Math.max(1, Math.min(10, S.pet.affinity + delta));
+  },
+
+  // 情绪优先级：情绪 > 健康 > 行为
+  mood(){
+    if(!S.pet.alive) return 'dead';
+    if(S.pet.affinity <= 2) return 'depressed';
+    if(S.pet.affinity >= 8) return 'happy';
+    if(S.pet.sick) return 'sick';
+    this._touchIntake();
+    const sat = petSatiety();
+    if(sat <= 0.05 || sat < petFullLine()*0.45) return 'hungry';
+    if(S.pet.todayIntake >= petFullLine()) return 'happy';
+    return 'normal';
+  },
+
+  async revive(){
+    const growth = 0;
+    S.pet = defaultPet();
+    S.pet.growth = growth;
+    await savePet();
+  },
+};
+
+/* ============================================================
+   PetView — SVG 小猫卷卷（正常/开心/饥饿/生病/死亡）+ 动画音效
+============================================================ */
+const PetView = {
+  posture:'sit', _pos:50,
+  faceMarkup(mood){
+    let eyes, mouth, extra='', cheekOp=.6;
+    if(mood==='happy'){
+      eyes = `<path d="M56 68 q6 -8 12 0" class="ln"/><path d="M88 68 q6 -8 12 0" class="ln"/>`;
+      mouth = `<path d="M70 82 q8 9 16 0" class="ln"/><path d="M74 84 q4 5 8 0" fill="#F79" opacity=".7"/>`;
+      extra = `<text x="118" y="46" font-size="13">💕</text>`;
+    } else if(mood==='hungry'){
+      eyes = `<path d="M55 70 q7 4 13 0" class="ln"/><path d="M87 70 q7 4 13 0" class="ln"/>`;
+      mouth = `<path d="M71 86 q7 -6 14 0" class="ln"/>`;
+      extra = `<ellipse cx="108" cy="78" rx="4" ry="6" fill="#8FCBEF" opacity=".9"><animate attributeName="cy" values="78;84;78" dur="1.6s" repeatCount="indefinite"/></ellipse><text x="20" y="46" font-size="12">💭🍚</text>`;
+      cheekOp=.3;
+    } else if(mood==='sick'){
+      eyes = `<path d="M54 64 l10 8 M64 64 l-10 8" class="ln"/><path d="M88 64 l10 8 M98 64 l-10 8" class="ln"/>`;
+      mouth = `<path d="M70 86 q8 -5 16 0" class="ln"/>`;
+      extra = `<rect x="100" y="52" width="22" height="7" rx="3.5" fill="#fff" stroke="#E88" transform="rotate(28 100 52)"/><circle cx="103" cy="56" r="3" fill="#E66" transform="rotate(28 100 52)"/><text x="24" y="44" font-size="13">🤒</text>`;
+      cheekOp=.2;
+    } else if(mood==='depressed'){
+      eyes = `<path d="M55 70 q7 3 13 0" class="ln"/><path d="M87 70 q7 3 13 0" class="ln"/>`;
+      mouth = `<path d="M71 87 q7 4 14 0" class="ln"/>`;
+      extra = `<text x="22" y="44" font-size="13">💧</text>`;
+      cheekOp=.15;
+    } else if(mood==='dead'){
+      eyes = `<path d="M54 64 l10 8 M64 64 l-10 8" class="ln"/><path d="M88 64 l10 8 M98 64 l-10 8" class="ln"/>`;
+      mouth = `<line x1="72" y1="86" x2="84" y2="86" class="ln"/>`;
+      extra = `<text x="60" y="30" font-size="15">👼</text>`;
+      cheekOp=0;
+    } else {
+      eyes = `<circle cx="61" cy="67" r="4.5" fill="#4A3B42"/><circle cx="93" cy="67" r="4.5" fill="#4A3B42"/><circle cx="62.6" cy="65.4" r="1.6" fill="#fff"/><circle cx="94.6" cy="65.4" r="1.6" fill="#fff"/>`;
+      mouth = `<path d="M73 80 q4 4 8 0 M77 80 v-3" class="ln"/>`;
+    }
+    return `<g>
+      <path d="M30 70 h14 M30 78 q7 -1 14 2 M120 70 h-14 M120 78 q-7 -1 -14 2" class="ln" stroke-width="1.8" opacity=".7"/>
+      <ellipse cx="50" cy="78" rx="7" ry="4.5" fill="var(--cat-ear)" opacity="${cheekOp}"/>
+      <ellipse cx="102" cy="78" rx="7" ry="4.5" fill="var(--cat-ear)" opacity="${cheekOp}"/>
+      ${eyes}
+      <path d="M74 74 q2 2 4 0 q-2 3 -4 0" fill="#E8A0B0" stroke="#4A3B42" stroke-width="1.6"/>
+      ${mouth}
+      ${extra}
+    </g>`;
+  },
+
+  catSVG(mood, posture){
+    posture = posture || 'sit';
+    const face = this.faceMarkup(mood);
+    const dead = mood==='dead';
+    const tail = (x,y)=> `<path d="M${x} ${y} q26 -4 20 -28 q-3 -10 -12 -10" fill="none" stroke="var(--cat-stripe)" stroke-width="10" stroke-linecap="round">${dead?'':'<animateTransform attributeName="transform" type="rotate" values="0 '+x+' '+y+';6 '+x+' '+y+';0 '+x+' '+y+'" dur="2.4s" repeatCount="indefinite"/>'}</path>`;
+    // 统一双耳：绘制在头圆之前（位于头后），从头顶左右自然露出，耳基被头自然遮挡；大小/角度/配色各姿势一致
+    const r2 = n=>Math.round(n*10)/10;
+    const ears = (hx,hy,rx,ry)=>{
+      const P=d=>[hx+rx*Math.cos(d*Math.PI/180), hy-ry*Math.sin(d*Math.PI/180)];
+      const ba=P(110), bb=P(140), tl=[hx-rx*0.60, hy-ry*1.25];
+      const bar=P(70), bbr=P(40), tr=[hx+rx*0.60, hy-ry*1.25];
+      const tri=(t,a,b)=>`<path d="M${r2(t[0])} ${r2(t[1])} L${r2(a[0])} ${r2(a[1])} L${r2(b[0])} ${r2(b[1])} Z" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.4" stroke-linejoin="round"/>`;
+      const inn=(t,a,b)=>{const f=.5,i1=[t[0]+(a[0]-t[0])*f,t[1]+(a[1]-t[1])*f],i2=[t[0]+(b[0]-t[0])*f,t[1]+(b[1]-t[1])*f];return `<path d="M${r2(t[0])} ${r2(t[1])} L${r2(i1[0])} ${r2(i1[1])} L${r2(i2[0])} ${r2(i2[1])} Z" fill="var(--cat-ear)"/>`;};
+      return tri(tl,ba,bb)+inn(tl,ba,bb)+tri(tr,bar,bbr)+inn(tr,bar,bbr);
+    };
+    let body='';
+    if(posture==='stand'){
+      body = `
+        ${tail(116,116)}
+        <ellipse cx="75" cy="98" rx="38" ry="46" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        ${ears(76,54,40,34)}
+        <ellipse cx="76" cy="54" rx="40" ry="34" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        <path d="M60 22 q4 7 0 11 M76 20 q3 8 0 12 M92 22 q-4 7 0 11" class="ln" stroke="var(--cat-stripe)" stroke-width="4"/>
+        <path d="M44 100 q6 6 0 14 M106 100 q-6 6 0 14" stroke="var(--cat-stripe)" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="58" cy="146" rx="10" ry="13" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <ellipse cx="94" cy="146" rx="10" ry="13" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <path d="M54 148 v5 M62 148 v5 M90 148 v5 M98 148 v5" class="ln" stroke-width="1.4" opacity=".5"/>
+        <g transform="translate(0,-16)">${face}</g>`;
+    } else if(posture==='side'){
+      body = `
+        ${tail(22,112)}
+        <ellipse cx="78" cy="112" rx="54" ry="32" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        ${ears(112,74,38,34)}
+        <ellipse cx="112" cy="74" rx="38" ry="34" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        <path d="M122 44 q4 8 0 12 M134 46 q3 8 0 12" class="ln" stroke="var(--cat-stripe)" stroke-width="4"/>
+        <ellipse cx="98" cy="140" rx="13" ry="8" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <ellipse cx="120" cy="140" rx="13" ry="8" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <path d="M94 138 v4 M104 138 v4 M116 138 v4 M126 138 v4" class="ln" stroke-width="1.4" opacity=".5"/>
+        <g transform="translate(36,8)">${face}</g>`;
+    } else if(posture==='lie'){
+      body = `
+        ${tail(126,120)}
+        <ellipse cx="75" cy="126" rx="58" ry="26" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        ${ears(42,116,32,30)}
+        <ellipse cx="42" cy="116" rx="32" ry="30" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        <path d="M28 92 q4 7 0 11 M44 90 q3 8 0 12" class="ln" stroke="var(--cat-stripe)" stroke-width="4"/>
+        <ellipse cx="58" cy="148" rx="12" ry="7" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <ellipse cx="92" cy="148" rx="12" ry="7" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <g transform="translate(-34,50)">${face}</g>`;
+    } else {
+      body = `
+        ${tail(118,118)}
+        <ellipse cx="75" cy="105" rx="48" ry="42" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        ${ears(76,66,44,38)}
+        <ellipse cx="76" cy="66" rx="44" ry="38" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.6"/>
+        <path d="M60 32 q4 8 0 12 M76 30 q3 9 0 13 M92 32 q-4 8 0 12" class="ln" stroke="var(--cat-stripe)" stroke-width="4"/>
+        <path d="M42 108 q6 6 0 14 M108 108 q-6 6 0 14" stroke="var(--cat-stripe)" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="58" cy="142" rx="12" ry="8" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <ellipse cx="94" cy="142" rx="12" ry="8" fill="var(--cat-body)" stroke="#4A3B42" stroke-width="2.2"/>
+        <path d="M54 140 v4 M60 140 v4 M90 140 v4 M96 140 v4" class="ln" stroke-width="1.4" opacity=".5"/>
+        ${face}`;
+    }
+    return `<svg viewBox="0 0 150 160" xmlns="http://www.w3.org/2000/svg">
+      <style>.ln{fill:none;stroke:#4A3B42;stroke-width:2.6;stroke-linecap:round}</style>
+      <g ${dead?'opacity=".9"':''}>${body}</g>
+    </svg>`;
+  },
+
+  render(){
+    const mood = PetSystem.mood();
+    const inner = $('#cat-inner') || $('#cat-wrap');
+    inner.innerHTML = this.catSVG(mood, this.posture || 'sit');
+    const wrap = $('#cat-wrap');
+    // 行为动画类 + 情绪底色类（行为优先级低于情绪，但始终展示）
+    const beh = {idle:'cat-idle', walk:'cat-behavior-walk', drink:'cat-behavior-drink', yarn:'cat-behavior-yarn'}[S.pet.behavior] || 'cat-idle';
+    wrap.className = beh + (mood==='dead' ? '' : (mood==='hungry'||mood==='sick') ? ' cat-sad' : '');
+    const pos = $('#cat-pos'); if(pos) pos.style.left = (this._pos!=null ? this._pos : 50) + '%';
+    // 状态标签
+    const tag = $('#pet-state-tag');
+    const tagMap = {
+      normal:['状态不错','var(--mint-soft)','var(--mint)'],
+      happy:['心情超好！','var(--pink-soft)','var(--pink)'],
+      depressed:['有点低落…','var(--blue-soft)','var(--lav)'],
+      hungry:['饿肚子了…','var(--yellow-soft)','var(--peach)'],
+      sick:['生病了 🤒','var(--red-soft)','var(--red)'],
+      dead:['离开了…','var(--card2)','var(--text2)'],
+    };
+    const [txt,bg,fg] = tagMap[mood] || tagMap.normal;
+    tag.textContent = txt; tag.style.background = bg; tag.style.color = fg;
+    // 当前饱度（按精力档位上限）
+    const sat = petSatiety();
+    $('#satiety-fill').style.width = Math.min(100, sat/petEatMax()*100) + '%';
+    $('#satiety-num').textContent = sat;
+    $('#satiety-max').textContent = petEatMax();
+    $('#satiety-line').textContent = `（饱线 ${petFullLine()}）`;
+    $('#satiety-hint').textContent = `今日进食 ${S.pet.todayIntake} 点`;
+    $('#pet-level').textContent = 'Lv.' + petLevel();
+    $('#growth-num').textContent = S.pet.growth;
+    $('#growth-next').textContent = levelNextText();
+    $('#fridge-cnt').textContent = S.pet.fridge.length;
+  },
+
+  bubble(msg, ms=2600){
+    const b = $('#pet-bubble');
+    b.textContent = msg; b.classList.add('show');
+    clearTimeout(b._tm); b._tm = setTimeout(()=>b.classList.remove('show'), ms);
+  },
+
+  // 触发一次行为（场景互动）：切换行为并冒一句台词，重置随机倒计时
+  triggerBehavior(b){
+    if(!S.pet.alive) return;
+    S.pet.behavior = b;
+    this.bubble(behaviorLine());
+    this.render();
+    this._resetBehaviorTimer();
+  },
+
+  // 行为随机切换循环：每 2~5 分钟随机切换一次行为
+  startBehaviorLoop(){
+    this._resetBehaviorTimer();
+  },
+  _resetBehaviorTimer(){
+    clearTimeout(this._behTm);
+    const next = 120000 + Math.random()*180000;
+    this._behTm = setTimeout(()=>{
+      if(S.pet.alive){
+        const beh = ['idle','walk','drink','yarn'];
+        S.pet.behavior = beh[Math.floor(Math.random()*beh.length)];
+        this.render(); this.bubble(behaviorLine());
+      }
+      this._resetBehaviorTimer();
+    }, next);
+  },
+
+  // 切换姿势（带轻微过渡动画）
+  setPosture(p){
+    this.posture = p;
+    const inner = $('#cat-inner'); if(!inner) return;
+    inner.innerHTML = this.catSVG(PetSystem.mood(), p);
+    inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
+  },
+  // 在 5 个横向位置间随机移动（避免与当前相同）
+  moveCat(){
+    const slots=[12,32,50,68,88];
+    let idx;
+    do { idx = Math.floor(Math.random()*slots.length); } while(slots[idx]===this._pos);
+    this._pos = slots[idx];
+    const pos = $('#cat-pos'); if(pos) pos.style.left = this._pos + '%';
+  },
+  // 缓慢自动游走，让小猫更生动
+  startWander(){
+    clearTimeout(this._wanderTm);
+    const tick = ()=>{ this.moveCat(); this._wanderTm = setTimeout(tick, 14000 + Math.random()*10000); };
+    this._wanderTm = setTimeout(tick, 14000 + Math.random()*10000);
+  },
+
+  tap(){
+    const wrap = $('#cat-wrap');
+    wrap.classList.remove('cat-tap'); void wrap.offsetWidth; wrap.classList.add('cat-tap');
+    Sound.meow();
+    // 好感度：点击互动 +1（每天最多 3 次）
+    const today = todayStr();
+    if(S.pet.lastClickDate !== today){ S.pet.clickCount = 0; S.pet.lastClickDate = today; }
+    if((S.pet.clickCount||0) < 3){
+      S.pet.clickCount = (S.pet.clickCount||0) + 1;
+      S.pet.lastClickBonusDate = today;
+      S.pet.affinity = Math.min(10, S.pet.affinity + 1);
+      savePet();
+    }
+    this.bubble(dialogueLine());
+    // 爱心（情绪不太低落时）
+    if(S.pet.affinity >= 4){
+      const h = document.createElement('div');
+      h.className='heart-pop'; h.textContent='💗';
+      h.style.left = (40+Math.random()*60) + 'px'; h.style.top = '30px';
+      wrap.appendChild(h); setTimeout(()=>h.remove(), 1000);
+    }
+    // 点击切换姿势（顺序循环，避免连续重复）+ 随机移动位置
+    const order=['sit','side','stand','lie'];
+    const ci = order.indexOf(this.posture||'sit');
+    this.setPosture(order[(ci+1)%order.length]);
+    this.moveCat();
+  },
+
+  celebrate(score, foods){
+    // 积分浮出
+    const f = document.createElement('div');
+    f.className = 'float-score'; f.textContent = '+' + score + ' 分';
+    f.style.left = '50%'; f.style.top = '38%'; f.style.transform='translateX(-50%)';
+    document.body.appendChild(f); setTimeout(()=>f.remove(), 1500);
+    // 彩纸
+    const emos = ['🎉','✨','🌸','💮','⭐','🎀'];
+    for(let i=0;i<10;i++){
+      const c = document.createElement('div');
+      c.className='confetti'; c.textContent = emos[i%emos.length];
+      c.style.left = (10+Math.random()*80)+'%'; c.style.top = (20+Math.random()*20)+'%';
+      c.style.animationDelay = (Math.random()*0.4)+'s';
+      document.body.appendChild(c); setTimeout(()=>c.remove(), 2100);
+    }
+    // 食物飞向猫
+    const catRect = $('#cat-wrap').getBoundingClientRect();
+    (foods||[]).slice(0,2).forEach((fd,i)=>{
+      const el = document.createElement('div');
+      el.className='fly-food'; el.textContent = fd.emo;
+      el.style.left='75%'; el.style.top='55%';
+      document.body.appendChild(el);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        el.style.left = (catRect.left + catRect.width/2 - 12) + 'px';
+        el.style.top  = (catRect.top + catRect.height/2) + 'px';
+        el.style.opacity = '0'; el.style.transform = 'scale(.4)';
+      }));
+      setTimeout(()=>el.remove(), 900+i*100);
+    });
+    // 猫进食动画 + 满足台词
+    const wrap = $('#cat-wrap');
+    wrap.classList.add('cat-eating');
+    this.bubble(feedLine());
+    setTimeout(()=>this.render(), 1400);
+    Sound.yay();
+  },
+};
+
+/* ---------- 音效（WebAudio，无外部资源）---------- */
+const Sound = {
+  _ctx:null,
+  ctx(){ if(!this._ctx) try{ this._ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} return this._ctx; },
+  _tone(freq, dur, delay=0, type='sine', vol=.12){
+    const c = this.ctx(); if(!c) return;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, c.currentTime+delay);
+    g.gain.linearRampToValueAtTime(vol, c.currentTime+delay+.02);
+    g.gain.exponentialRampToValueAtTime(.001, c.currentTime+delay+dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(c.currentTime+delay); o.stop(c.currentTime+delay+dur+.05);
+  },
+  meow(){ this._tone(620,.12); this._tone(840,.16,.1); },
+  yay(){ [523,659,784,1047].forEach((f,i)=>this._tone(f,.14,i*.08,'triangle',.1)); },
+  feed(){ this._tone(440,.08); this._tone(587,.1,.09); },
+};
+/* ============================================================
+   UI — 页面渲染与交互
+============================================================ */
+const UI = {
+  planView:'week',
+  planCursor: todayStr(),
+  editingId: null,      // 正在编辑的任务
+  cState: null,         // 创建页状态
+
+  /* ---------- 导航 ---------- */
+  switchPage(name){
+    $$('.page').forEach(p=>p.classList.remove('active'));
+    $('#page-'+name).classList.add('active');
+    $$('#nav .nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===name));
+    $('#fab').style.display = name==='create' ? 'none' : '';
+    if(name==='home') this.renderHome();
+    if(name==='create' && !this.cState) this.resetCreate();
+    if(name==='create') this.renderCreate();
+    if(name==='plan') this.renderPlan();
+    if(name==='me') this.renderMe();
+    window.scrollTo(0,0);
+  },
+
+  /* ---------- 首页 ---------- */
+  renderHome(){
+    const d = todayStr();
+    const st = S.dayStats[d] || {points:0, done:0};
+    $('#st-today-score').textContent = r1(st.points);
+    $('#st-today-done').textContent = st.done;
+    $('#st-streak').textContent = S.pet.streak;
+    PetView.render();
+    this.renderNotices();
+    this.renderDaySwitch();
+    this.renderHomeTasks();
+  },
+
+  renderNotices(){
+    const area = $('#notice-area'); area.innerHTML = '';
+    const add = (html, cls='') => { const n=document.createElement('div'); n.className='notice '+cls; n.innerHTML=html; area.appendChild(n); return n; };
+    if(!S.pet.alive){
+      const n = add('😭 卷卷因为长期没有吃饱离开了……<button class="btn sm" id="btn-revive" style="margin-left:auto">重新领养</button>','red');
+      n.querySelector('#btn-revive').onclick = async()=>{ await PetSystem.revive(); toast('新的卷卷来啦，这次要好好照顾它！'); this.renderHome(); };
+      return;
+    }
+    if(S.pet.sick) add(`🤒 卷卷生病了！连续 3 天饱度低于饱线 30% 就会生病，今天多完成任务让它好起来吧！`,'red');
+    if(S.pet.todayIntake < petFullLine() && S.pet.fridge.length > 0){
+      const n = add(`🍚 卷卷今天还没吃饱（${r1(S.pet.todayIntake)}/${petFullLine()}）～冰箱里有 ${S.pet.fridge.length} 份存粮，点这里去喂它！`);
+      n.style.cursor='pointer'; n.onclick = ()=>this.openFridge();
+    }
+    const now = Date.now();
+    const overdue = S.tasks.filter(t=>!t.status && taskDeadline(t) < now);
+    if(overdue.length) add(`⏰ 有 <b>${overdue.length}</b> 个任务已过时间待确认状态，超 24 小时确认会扣分哦！`,'blue');
+  },
+
+  renderDaySwitch(){
+    const d = S.homeDate, t = todayStr();
+    const diff = dayDiff(d, t);
+    const title = diff===0?'今日待办':diff===1?'明日计划':diff===-1?'昨日回顾':
+      `${parseDate(d).getMonth()+1}月${parseDate(d).getDate()}日`;
+    $('#day-title').textContent = title;
+    $('#day-sub').textContent = `${d} ${weekCN[parseDate(d).getDay()]}` + (diff>1?` · ${diff}天后`:diff<-1?` · ${-diff}天前`:'');
+  },
+
+  renderHomeTasks(){
+    const box = $('#home-tasks');
+    const list = S.tasks.filter(t=>t.execDate===S.homeDate)
+      .sort((a,b)=> (a.status?1:0)-(b.status?1:0) || taskDeadline(a)-taskDeadline(b));
+    if(!list.length){
+      box.innerHTML = `<div class="empty"><div class="big">🐾</div>这一天还没有任务哦<br>点击右下角 ＋ 创建，提前规划积分更高！</div>`;
+      return;
+    }
+    box.innerHTML = '';
+    list.forEach(t=>box.appendChild(this.taskCard(t)));
+  },
+
+  taskCard(t){
+    const el = document.createElement('div');
+    el.className = 'task' + (t.status ? ' done-card':'');
+    const stInfo = t.status ? CONFIG.STATUS.find(s=>s.key===t.status) : null;
+    const tagColor = CONFIG.TAG_COLORS[t.category] || 'pink';
+    const est = ScoreEngine.estimate(t);
+    let scoreHtml, coefHtml = '';
+    if(t.status){
+      scoreHtml = `<span class="t-score">获得 ${t.finalScore} 分</span>`;
+      coefHtml = `<div class="coef-row">` + (t.parts||[]).map((p,i)=>
+        `<span class="coef" data-tid="${t.id}" data-pi="${i}">${esc(p.label)}<i class="qm">⋯</i></span>`).join('') + `</div>`;
+    } else {
+      scoreHtml = `<span class="t-score">预估 ${est.full} 分 ⭐${t.baseScore}</span>`;
+    }
+    el.innerHTML = `
+      <div class="t-title ${t.status==='done'?'strike':''}">${esc(t.title)}</div>
+      <div class="t-meta">
+        <span class="tag" style="background:var(--${tagColor}-soft);color:var(--${tagColor})">${esc(t.category)}</span>
+        <span class="t-time">🕐 ${timeLabel(t)}</span>
+        ${t.isBackfill?'<span class="tag" style="background:var(--lav-soft);color:var(--lav)">补录</span>':''}
+        ${scoreHtml}
+      </div>
+      ${coefHtml}
+      <div class="t-actions">
+        ${t.status
+          ? `<span class="status-pill" style="background:var(--mint-soft);color:var(--mint)">${stInfo.emo} ${stInfo.name}</span>
+             ${t.statusEditCount < CONFIG.STATUS_EDIT_MAX ? `<button class="btn ghost sm" data-act="restatus">修改状态(剩${CONFIG.STATUS_EDIT_MAX - t.statusEditCount}次)</button>`:''}`
+          : `<button class="btn sm" data-act="status">✅ 标记状态</button>
+             <button class="btn ghost sm" data-act="detail">详情</button>`}
+      </div>`;
+    el.querySelectorAll('.coef').forEach(c=>c.onclick = e=>{ e.stopPropagation(); this.showCoef(t, +c.dataset.pi); });
+    el.querySelectorAll('[data-act]').forEach(b=>b.onclick = e=>{
+      e.stopPropagation();
+      const act = b.dataset.act;
+      if(act==='status'||act==='restatus') this.openStatusSheet(t.id);
+      if(act==='detail') this.openTaskDetail(t.id);
+    });
+    el.onclick = ()=>this.openTaskDetail(t.id);
+    return el;
+  },
+
+  showCoef(t, pi){
+    const p = (t.parts||[])[pi]; if(!p) return;
+    $('#coef-title').textContent = p.label;
+    $('#coef-body').innerHTML = esc(p.why) + `<div class="divider"></div><b>计分公式：</b>基础分 × (规划系数 + 精度加成 + 特殊加成) × 状态系数 × 超时惩罚 × 改时惩罚<br>括号内百分点相加，括号外倍率相乘，最低 0 分。`;
+    this.mask('mask-coef', true);
+  },
+
+  /* ---------- 状态确认弹窗 ---------- */
+  openStatusSheet(id){
+    const t = S.tasks.find(x=>x.id===id); if(!t) return;
+    if(t.status && t.statusEditCount >= CONFIG.STATUS_EDIT_MAX){ toast('状态修改次数已用完（最多 2 次）'); return; }
+    $('#status-task-name').innerHTML = `任务：<b>${esc(t.title)}</b>（基础分 ${t.baseScore}）`;
+    const box = $('#status-opts'); box.innerHTML = '';
+    const confirmAt = t.isBackfill ? taskDeadline(t) : Date.now();  // 补录不叠加超时惩罚
+    CONFIG.STATUS.forEach(s=>{
+      const res = ScoreEngine.compute(t, s.key, confirmAt);
+      const opt = document.createElement('div');
+      opt.className = 'status-opt';
+      opt.innerHTML = `<span class="emo">${s.emo}</span>
+        <div><div class="s-name">${s.name} <span style="color:var(--text3);font-weight:400;font-size:11px">系数${pct(s.coef)}</span></div>
+        <div class="s-desc">${s.desc}</div></div>
+        <span class="s-score" style="color:${res.score>0?'var(--peach)':'var(--text3)'}">+${res.score}</span>`;
+      opt.onclick = ()=>this.confirmStatus(t, s.key, confirmAt);
+      box.appendChild(opt);
+    });
+    const od = ScoreEngine.overdue(t, confirmAt);
+    $('#status-warn').innerHTML = (od ? `⚠️ ${od.why}` : '') +
+      (t.status ? `<br>本次为第 ${t.statusEditCount+1} 次修改（最多 ${CONFIG.STATUS_EDIT_MAX} 次），将按当前时间重新结算。` : '');
+    this.mask('mask-status', true);
+  },
+
+  async confirmStatus(t, key, confirmAt){
+    const res = ScoreEngine.compute(t, key, confirmAt);
+    const oldScore = t.status ? t.finalScore : 0;
+    const wasDone = t.status === 'done';
+    if(t.status) t.statusEditCount++;
+    t.status = key;
+    t.statusAt = Date.now();
+    t.finalScore = res.score;
+    t.parts = res.parts.map(p=>({label:p.label, why:p.why, type:p.type}));
+    await saveTask(t);
+    const delta = r1(res.score - oldScore);
+    await PetSystem.recordToday(delta, (key==='done'?1:0) - (wasDone?1:0));
+    let fedInfo = {foods:[]};
+    if(delta > 0) fedInfo = await PetSystem.award(delta);
+    this.mask('mask-status', false);
+    if(res.score > 0){
+      PetView.celebrate(res.score, foodForScore(delta>0?delta:res.score));
+      PetView.bubble(delta>0?'喵呜～有吃的了，谢谢你！':'状态更新啦～');
+    } else {
+      toast(key==='skipped' ? '标记为没有去做，0 分…卷卷有点饿' : '已结算 0 分');
+      PetView.bubble('呜…没有小鱼干吃了喵…');
+    }
+    this.renderHome();
+  },
+
+  /* ---------- 任务详情 ---------- */
+  openTaskDetail(id){
+    const t = S.tasks.find(x=>x.id===id); if(!t) return;
+    const est = ScoreEngine.estimate(t);
+    const stInfo = t.status ? CONFIG.STATUS.find(s=>s.key===t.status) : null;
+    const body = $('#task-detail-body');
+    body.innerHTML = `
+      <div class="sheet-title"><span>任务详情</span><button class="close-x" data-close="mask-task">✕</button></div>
+      <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
+        <div class="t-title" style="font-size:16px">${esc(t.title)}</div>
+        <div class="divider"></div>
+        <div class="hint" style="font-size:13px;line-height:2">
+          📅 执行日期：${t.execDate}（${weekCN[parseDate(t.execDate).getDay()]}）<br>
+          🕐 时间：${timeLabel(t)}　🏷️ ${esc(t.category)} ${t.isBackfill?'（补录任务）':''}<br>
+          ⭐ 基础价值分：<b>${t.baseScore}</b> 分<br>
+          📝 判定理由：${esc(t.aiReason||'')}<br>
+          💡 AI 建议：${esc(t.aiAdvice||'')}<br>
+          ✍️ 创建于：${new Date(t.createdAt).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}<br>
+          ${t.status
+            ? `${stInfo.emo} 状态：${stInfo.name} · 已获得 <b style="color:var(--peach)">${t.finalScore}</b> 分`
+            : `💰 预估积分：<b style="color:var(--peach)">${est.full}</b> 分（按完成目标） · 可兑换 ${foodForScore(est.full).map(f=>f.emo+f.name).join('、')||'—'}`}
+        </div>
+        ${t.parts ? `<div class="coef-row">${t.parts.map((p,i)=>`<span class="coef" data-pi="${i}">${esc(p.label)}<i class="qm">⋯</i></span>`).join('')}</div>`:''}
+      </div>
+      <div class="row" style="gap:10px;margin-top:4px">
+        ${!t.status ? `<button class="btn sm grow" id="td-status">✅ 标记状态</button>`:''}
+        <button class="btn ghost sm grow" id="td-edit">✏️ 编辑</button>
+        <button class="btn ghost sm grow" id="td-del" style="color:var(--red)">🗑️ 删除</button>
+      </div>
+      <div class="hint" style="margin-top:10px">编辑规则：创建 1 小时内且未过原定时间修改无损；时间点过后改时间将按超时时长扣减（×90%/×80%/×70%）。删除任务不扣分。</div>`;
+    body.querySelectorAll('.coef').forEach(c=>c.onclick=()=>this.showCoef(t, +c.dataset.pi));
+    const sbtn = body.querySelector('#td-status');
+    if(sbtn) sbtn.onclick = ()=>{ this.mask('mask-task',false); this.openStatusSheet(t.id); };
+    body.querySelector('#td-edit').onclick = ()=>{ this.mask('mask-task',false); this.startEdit(t.id); };
+    body.querySelector('#td-del').onclick = ()=>{
+      this.mask('mask-task',false);
+      this.confirm('删除任务', `确定删除「${esc(t.title)}」吗？删除不扣积分。`, async()=>{
+        await removeTask(t.id); toast('已删除'); this.renderHome();
+      });
+    };
+    this.mask('mask-task', true);
+  },
+
+  /* ---------- 创建 / 编辑 ---------- */
+  resetCreate(){
+    this.editingId = null;
+    this.cState = {
+      date: todayStr(), calMonth: todayStr().slice(0,7),
+      timeType:'allday', slot:'afternoon', start:'14:00', end:'15:00',
+      tag:'', ai:null, aiTitle:'',
+    };
+    const t = $('#c-title'); if(t) t.value='';
+  },
+
+  startEdit(id){
+    const t = S.tasks.find(x=>x.id===id); if(!t) return;
+    this.editingId = id;
+    this.cState = {
+      date: t.execDate, calMonth: t.execDate.slice(0,7),
+      timeType: t.timeType, slot: t.slot||'afternoon',
+      start: t.startTime||'14:00', end: t.endTime||'15:00',
+      tag: mapTag(t.category), ai: {base_score:t.baseScore, reason:t.aiReason, advice:t.aiAdvice, category:mapTag(t.category), source:t.aiSource}, aiTitle: t.title,
+    };
+    $('#c-title').value = t.title;
+    this.switchPage('create');
+    toast('编辑模式：保存后按规则重新计分');
+  },
+
+  renderCreate(){
+    const c = this.cState;
+    // 日历
+    const [y,m] = c.calMonth.split('-').map(Number);
+    $('#c-cal-title').textContent = `${y}年${m}月`;
+    const grid = $('#c-cal'); grid.innerHTML = '';
+    weekCN.slice(1).concat(weekCN[0]).forEach(w=>{ const d=document.createElement('div'); d.className='wd'; d.textContent=w.replace('周',''); grid.appendChild(d); });
+    const first = new Date(y, m-1, 1);
+    let startIdx = (first.getDay()+6)%7;
+    const days = new Date(y, m, 0).getDate();
+    for(let i=0;i<startIdx;i++) grid.appendChild(document.createElement('div'));
+    for(let d=1; d<=days; d++){
+      const ds = `${y}-${pad(m)}-${pad(d)}`;
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell' + (ds===todayStr()?' today':'') + (ds===c.date?' sel':'');
+      cell.textContent = d;
+      cell.onclick = ()=>{ c.date = ds; this.renderCreate(); };
+      grid.appendChild(cell);
+    }
+    // 日期提示
+    const diff = dayDiff(c.date, todayStr());
+    const hintEl = $('#c-date-hint');
+    if(diff < 0){
+      const back = -diff;
+      const coef = back>=2 ? 0 : CONFIG.BACKFILL[back===0?0:1];
+      hintEl.innerHTML = `📝 选择了过去日期 → 将作为<b>复盘补录</b>任务（${back===1?'昨日 ×5%':back>=2?'前天及更早 ×0%':'今日 ×10%'}${'，金钱复盘再 +10%'}）`;
+    } else {
+      const map = {0:'今天创建今天做：午前70% / 午后50% / 晚间30%',1:'提前 1 天规划 → 系数 80% 👍',2:'提前 2 天规划 → 系数 85% 👍👍'};
+      hintEl.innerHTML = '⏳ ' + (map[diff] || `提前 ${diff} 天规划 → 系数 90%，太棒了！`);
+    }
+    // 时间精度
+    $$('#c-timetype button').forEach(b=>b.classList.toggle('on', b.dataset.v===c.timeType));
+    $('#c-slots').style.display = c.timeType==='slot' ? 'grid':'none';
+    $('#c-exact').style.display = c.timeType==='exact' ? 'flex':'none';
+    if(c.timeType==='slot'){
+      const sg = $('#c-slots'); sg.innerHTML='';
+      CONFIG.SLOTS.forEach(s=>{
+        const ch = document.createElement('button');
+        ch.className = 'chip' + (c.slot===s.key?' on':'');
+        ch.innerHTML = `${s.name}<span style="font-size:9px">${s.bonus?'+10%':'+0%'}</span>`;
+        ch.onclick = ()=>{ c.slot=s.key; this.renderCreate(); };
+        sg.appendChild(ch);
+      });
+      const s = slotByKey(c.slot);
+      $('#c-slot-hint').textContent = s ? `「${s.name}」${s.start}-${s.end}${s.bonus?'，精度加成 +10%':'，此时段无加成(+0%)'}` : '';
+    } else if(c.timeType==='exact'){
+      $('#c-start').value = c.start; $('#c-end').value = c.end;
+      const s = slotForTime(c.start);
+      $('#c-slot-hint').textContent = `自动归入「${s.name}」时段（${s.bonus?'+10%':'+0%'}）+ 精确时间 +5% = +${Math.round((s.bonus+0.05)*100)}%`;
+    } else $('#c-slot-hint').textContent = '仅全天可做无加成，选时段 +10%，精确时间最高 +15%';
+    // 标签：9 个统一圆角框，3 行 3 列均分排布（8 标准 + 1 自定义入口）
+    const tw = $('#c-tag-area'); tw.innerHTML='';
+    const baseTags = CONFIG.TAGS;
+    const hasCustom = c.tag && !baseTags.includes(c.tag);
+    baseTags.concat([null]).forEach(tag=>{
+      const ch = document.createElement('button');
+      if(tag===null){
+        ch.className='tag-chip'+(hasCustom?' on':'');
+        ch.textContent = hasCustom ? c.tag : '自定义';
+        ch.onclick = ()=>UI.openTagSelector();
+      } else {
+        ch.className='tag-chip'+(c.tag===tag?' on':'');
+        ch.textContent = tag;
+        ch.onclick = ()=>{ c.tag=tag; this.renderCreate(); };
+      }
+      tw.appendChild(ch);
+    });
+    // AI 结果 & 预估
+    this.renderAIResult();
+    $('#btn-save').innerHTML = this.editingId ? '💾 保存修改' : '🐾 发布任务';
+  },
+
+  renderAIResult(){
+    const c = this.cState;
+    const box = $('#ai-result');
+    if(!c.ai){ box.classList.remove('show'); $('#estimate-box').classList.remove('show'); return; }
+    box.classList.add('show');
+    box.innerHTML = `<div class="score-line">⭐ 基础价值分：${c.ai.base_score} 分 ${c.ai.source==='local'?'<span style="font-size:10px;color:var(--text3)">(本地评分)</span>':'<span style="font-size:10px;color:var(--text3)">(AI评分)</span>'}</div>
+      📝 判定理由：${esc(c.ai.reason)}<br>
+      💡 AI 建议：${esc(c.ai.advice||'')}<br>
+      🏷️ 分类：${esc(c.ai.category)}${c.ai.detected_time?`　🕐 识别时间：${esc(c.ai.detected_time)}`:''}`;
+    // 预估
+    const draft = this.buildDraft();
+    const est = ScoreEngine.estimate(draft);
+    const eb = $('#estimate-box'); eb.classList.add('show');
+    const foods = foodForScore(est.full);
+    eb.innerHTML = `预估完成积分（按“完成目标”结算）<br><span class="big">${est.full} 分</span>
+      <span style="margin-left:8px">${foods.length?('≈ '+foods.map(f=>f.emo+f.name).join(' + ')):'（0分没有食物哦）'}</span>
+      <div class="coef-row">${est.parts.map(p=>`<span class="coef">${esc(p.label)}</span>`).join('')}<span class="coef">完成目标 70%</span></div>`;
+  },
+
+  renderAIResultVague(msg){
+    const box = $('#ai-result');
+    box.classList.add('show');
+    box.innerHTML = `<div class="score-line" style="color:var(--red)">⚠️ 任务描述太模糊，暂不打分</div>
+      📝 ${esc(msg||'请补充具体对象、动作与产出后再评分')}<br>
+      💡 例如「写周报复盘」「陪家人吃饭」会比「做事」更容易被准确估值。`;
+    $('#estimate-box').classList.remove('show');
+  },
+
+  buildDraft(){
+    const c = this.cState;
+    const old = this.editingId ? S.tasks.find(x=>x.id===this.editingId) : null;
+    return {
+      id: old ? old.id : uid(),
+      title: $('#c-title').value.trim(),
+      createdAt: old ? old.createdAt : Date.now(),
+      execDate: c.date,
+      timeType: c.timeType,
+      slot: c.timeType==='slot' ? c.slot : (c.timeType==='exact'? slotForTime(c.start).key : null),
+      startTime: c.timeType==='exact' ? c.start : null,
+      endTime: c.timeType==='exact' ? c.end : null,
+      category: c.tag || '日常生活',
+      baseScore: c.ai ? c.ai.base_score : 2,
+      aiReason: c.ai ? c.ai.reason : '',
+      aiAdvice: c.ai ? (c.ai.advice||'') : '',
+      aiSource: c.ai ? c.ai.source : 'local',
+      isBackfill: dayDiff(c.date, todayStr()) < 0 || (old?old.isBackfill:false),
+      status: null, statusAt: null, statusEditCount: 0,
+      finalScore: 0, parts: null,
+      timeChangeMul: old ? old.timeChangeMul : null,
+      timeChangeLabel: old ? old.timeChangeLabel : null,
+      timeChangeWhy: old ? old.timeChangeWhy : null,
+    };
+  },
+
+  async onAIClick(){
+    const title = $('#c-title').value.trim();
+    if(!title){ toast('先写下想做什么吧～'); return; }
+    const btn = $('#btn-ai');
+    btn.disabled = true; btn.textContent = '🤖 卷卷正在思考…';
+    try{
+      const res = await AIService.evaluate(title);
+      if(res.vague){
+        // 模糊任务：不强塞分数，提示用户补充具体信息
+        this.cState.ai = null; this.cState.aiTitle = '';
+        this.renderCreate();
+        this.renderAIResultVague(res.reason || '任务描述太模糊，请补充具体对象、动作与产出后再评分');
+        return;
+      }
+      this.cState.ai = res; this.cState.aiTitle = title;
+      const tag = mapTag(res.category);
+      if(CONFIG.TAGS.includes(tag)) this.cState.tag = tag;
+      this._applyDetectedTime(res.detected_time);   // 自动填充识别到的时间
+      this.renderCreate();
+    } finally {
+      btn.disabled = false; btn.innerHTML = '🤖 AI 识别';
+    }
+  },
+
+  // 解析 AI 识别到的时间，自动填充时间精度
+  _applyDetectedTime(dt){
+    if(!dt) return;
+    const c = this.cState;
+    const range = dt.match(/(\d{1,2})[:：](\d{2})\s*[-~]\s*(\d{1,2})[:：](\d{2})/);
+    if(range){ c.timeType='exact'; c.start=`${range[1].padStart(2,'0')}:${range[2]}`; c.end=`${range[3].padStart(2,'0')}:${range[4]}`; return; }
+    const single = dt.match(/(\d{1,2})[:：](\d{2})/);
+    if(single){ c.timeType='exact'; c.start=`${single[1].padStart(2,'0')}:${single[2]}`; c.end=`${single[1].padStart(2,'0')}:${String(Math.min(59,(+single[2])+30)).padStart(2,'0')}`; return; }
+    const slotKw = [['半夜','midnight'],['凌晨','dawn'],['清晨','early'],['上午','morning'],['中午','noon'],['下午','afternoon'],['黄昏','dusk'],['傍晚','dusk'],['晚上','evening'],['夜里','evening']];
+    for(const [kw,k] of slotKw){ if(dt.includes(kw)){ c.timeType='slot'; c.slot=k; return; } }
+  },
+
+  async onSave(){
+    const title = $('#c-title').value.trim();
+    if(!title){ toast('任务内容不能为空'); return; }
+    const btn = $('#btn-save'); btn.disabled = true;
+    try{
+      // 发布时若未识别或标题变化 → 自动跑一次 AI 识别（只填补空字段）
+      if(!this.cState.ai || this.cState.aiTitle !== title){
+        const res = await AIService.evaluate(title);
+        if(res.vague){ toast('任务描述太模糊，请补充具体对象、动作与产出后再发布'); return; }
+        this.cState.ai = res; this.cState.aiTitle = title;
+        if(!this.cState.tag){ const tag = mapTag(res.category); if(CONFIG.TAGS.includes(tag)) this.cState.tag = tag; }
+        if(this.cState.timeType==='allday') this._applyDetectedTime(res.detected_time);
+        this.renderCreate();
+      }
+      if(this.editingId) await this.applyEdit(title);
+      else await this.applyCreate();
+    } finally { btn.disabled = false; }
+  },
+
+  async applyCreate(){
+    const t = this.buildDraft();
+    await saveTask(t);
+    const est = ScoreEngine.estimate(t);
+    this.resetCreate();
+    S.homeDate = t.execDate >= todayStr() ? t.execDate : todayStr();
+    if(t.isBackfill){
+      toast('补录任务已创建，来标记它的完成状态吧！');
+      this.switchPage('home');
+      S.homeDate = t.execDate; this.renderHome();
+      this.openStatusSheet(t.id);
+    } else {
+      toast(`任务创建成功！预估 ${est.full} 分 🎉`);
+      PetView.bubble('喵！新计划安排上了，期待你完成～');
+      this.switchPage('home');
+    }
+  },
+
+  async applyEdit(title){
+    const old = S.tasks.find(x=>x.id===this.editingId);
+    const draft = this.buildDraft();
+    const now = Date.now();
+    const oldDeadline = taskDeadline(old);
+    const freeEdit = (now - old.createdAt < CONFIG.FREE_EDIT_MS) && now < oldDeadline;
+    const timeChanged = old.execDate!==draft.execDate || old.timeType!==draft.timeType || old.slot!==draft.slot || old.startTime!==draft.startTime || old.endTime!==draft.endTime;
+    const titleChanged = old.title !== title;
+
+    const finishEdit = async (t)=>{
+      t.status = old.status; t.statusAt = old.statusAt; t.statusEditCount = old.statusEditCount;
+      if(t.status){ // 已结算过 → 重新结算
+        const res = ScoreEngine.compute(t, t.status, t.statusAt||now);
+        const delta = r1(res.score - old.finalScore);
+        t.finalScore = res.score; t.parts = res.parts.map(p=>({label:p.label,why:p.why,type:p.type}));
+        await PetSystem.recordToday(delta, 0);
+        if(delta>0) await PetSystem.award(delta);
+      }
+      await saveTask(t);
+      this.editingId = null; this.resetCreate();
+      this.switchPage('home'); toast('修改已保存，积分已按规则重算');
+    };
+
+    if(freeEdit){
+      draft.title = title;
+      draft.timeChangeMul = null; draft.timeChangeLabel=null; draft.timeChangeWhy=null;
+      await finishEdit(draft); return;
+    }
+    // 改时间惩罚
+    if(timeChanged && now > oldDeadline){
+      const p = ScoreEngine.timeChangePenalty(old, now, oldDeadline);
+      if(p){ draft.timeChangeMul = Math.min(p.mul, old.timeChangeMul||1); draft.timeChangeLabel = p.label; draft.timeChangeWhy = p.why; }
+    }
+    // 改内容
+    if(titleChanged && now > oldDeadline){
+      // 询问是小改动还是大幅变更
+      this.confirm('任务内容有变化', '这次修改是同一件事的<b>小调整</b>，还是<b>完全换了一个任务</b>？<br><br>· 小调整：升分部分按 80% 折算合并<br>· 完全更换：旧任务记为「没有去做」，新任务按复盘补录计分', async()=>{
+        // 确定 = 小调整（合并计分）
+        draft.title = title;
+        draft.baseScore = ScoreEngine.mergeBaseScore(old.baseScore, this.cState.ai.base_score);
+        draft.aiReason = this.cState.ai.reason + `（改内容合并计分：旧${old.baseScore}→新${this.cState.ai.base_score}）`;
+        await finishEdit(draft);
+      }, '小调整', async()=>{
+        // 取消按钮 = 完全更换
+        old.status = 'skipped'; old.finalScore = 0; old.statusAt = now;
+        old.parts = [{label:'内容大幅变更', why:'任务内容大幅度更变：旧任务自动设定为「没有去做」（0分），新内容作为复盘补录任务重新计分。', type:'mul'}];
+        await saveTask(old);
+        const nt = this.buildDraft();
+        nt.id = uid(); nt.title = title; nt.createdAt = now; nt.isBackfill = true;
+        nt.baseScore = this.cState.ai.base_score; nt.aiReason = this.cState.ai.reason;
+        await saveTask(nt);
+        this.editingId = null; this.resetCreate();
+        this.switchPage('home'); toast('旧任务已记为“没有去做”，新任务已按补录创建');
+        this.openStatusSheet(nt.id);
+      }, '完全更换');
+      return;
+    }
+    if(titleChanged){
+      draft.title = title;
+      draft.baseScore = this.cState.ai.base_score;
+      draft.aiReason = this.cState.ai.reason;
+    }
+    await finishEdit(draft);
+  },
+
+  /* ---------- 冰箱 ---------- */
+  openFridge(){
+    const g = $('#fridge-grid');
+    if(!S.pet.fridge.length){
+      g.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="big">🧊</div>冰箱空空的～<br>完成任务多出来的食物会存到这里</div>`;
+    } else {
+      g.innerHTML = '';
+      S.pet.fridge.forEach(f=>{
+        const el = document.createElement('div');
+        el.className='food-item';
+        el.innerHTML = `<div class="f-emo">${f.emo}</div><div class="f-name">${f.name}</div><div class="f-val">+${f.value} 饱食</div>`;
+        el.onclick = async()=>{
+          const res = await PetSystem.feedFromFridge(f.id);
+          if(res){ Sound.feed(); toast(`卷卷吃掉了 ${f.emo}${f.name}，饱食度 +${res.fed}`); PetView.bubble('好吃喵～谢谢投喂！'); this.openFridge(); PetView.render(); this.renderNotices(); }
+        };
+        g.appendChild(el);
+      });
+    }
+    this.mask('mask-fridge', true);
+  },
+
+  /* ---------- 标签选择器 ---------- */
+  openTagSelector(){
+    const grid = $('#tag-sel-grid'); grid.innerHTML='';
+    const cats = CONFIG.TAGS.concat(S.customTags);
+    if(!cats.includes(this.cState.tag) && this.cState.tag) cats.push(this.cState.tag);
+    cats.forEach(tag=>{
+      const el = document.createElement('div');
+      el.className = 'tag-sel' + (this.cState.tag===tag?' cur':'');
+      el.innerHTML = `<span class="te">🏷️</span><span>${tag}</span>`;
+      el.onclick = ()=>{ this.cState.tag = tag; this.mask('mask-tag', false); this.renderCreate(); };
+      grid.appendChild(el);
+    });
+    this.mask('mask-tag', true);
+  },
+
+  /* ---------- 计划页 ---------- */
+  renderPlan(){
+    $$('#plan-view button').forEach(b=>b.classList.toggle('on', b.dataset.v===this.planView));
+    const cur = parseDate(this.planCursor);
+    const body = $('#plan-body'); body.innerHTML='';
+    const mkMini = t => {
+      const el = document.createElement('div');
+      el.className='mini-task';
+      const color = t.status==='done'?'var(--mint)':t.status?'var(--text3)':'var(--peach)';
+      el.innerHTML = `<span class="dotc" style="background:${color}"></span>
+        <span class="grow" style="${t.status==='done'?'text-decoration:line-through;color:var(--text2)':''}">${esc(t.title)}</span>
+        <span style="font-size:11px;color:var(--text2)">${timeLabel(t)}</span>
+        <span style="font-size:11px;font-weight:700;color:var(--peach)">${t.status? '+'+t.finalScore : '≈'+ScoreEngine.estimate(t).full}</span>`;
+      el.onclick = ()=>this.openTaskDetail(t.id);
+      return el;
+    };
+    if(this.planView==='day'){
+      $('#plan-title').textContent = `${cur.getMonth()+1}月${cur.getDate()}日 ${weekCN[cur.getDay()]}`;
+      const list = S.tasks.filter(t=>t.execDate===this.planCursor).sort((a,b)=>taskDeadline(a)-taskDeadline(b));
+      if(!list.length) body.innerHTML = `<div class="empty"><div class="big">📭</div>这一天没有任务</div>`;
+      else list.forEach(t=>body.appendChild(mkMini(t)));
+    }
+    if(this.planView==='week'){
+      const monday = new Date(cur); monday.setDate(cur.getDate() - (cur.getDay()+6)%7);
+      const mStr = fmtDate(monday), sunStr = addDays(mStr,6);
+      $('#plan-title').textContent = `${monday.getMonth()+1}/${monday.getDate()} - ${parseDate(sunStr).getMonth()+1}/${parseDate(sunStr).getDate()}`;
+      for(let i=0;i<7;i++){
+        const ds = addDays(mStr,i);
+        const blk = document.createElement('div'); blk.className='week-day-block';
+        const head = document.createElement('div');
+        head.className = 'week-day-head'+(ds===todayStr()?' today-head':'');
+        head.innerHTML = `${weekCN[parseDate(ds).getDay()]} <span style="font-weight:400">${ds.slice(5)}</span>${ds===todayStr()?' · 今天':''}`;
+        blk.appendChild(head);
+        const list = S.tasks.filter(t=>t.execDate===ds).sort((a,b)=>taskDeadline(a)-taskDeadline(b));
+        if(!list.length){ const e=document.createElement('div'); e.className='hint'; e.style.cssText='padding:2px 4px 6px;font-size:11px;color:var(--text3)'; e.textContent='暂无安排'; blk.appendChild(e); }
+        else list.forEach(t=>blk.appendChild(mkMini(t)));
+        body.appendChild(blk);
+      }
+    }
+    if(this.planView==='month'){
+      const y=cur.getFullYear(), m=cur.getMonth();
+      $('#plan-title').textContent = `${y}年${m+1}月`;
+      const grid = document.createElement('div'); grid.className='cal-grid';
+      weekCN.slice(1).concat(weekCN[0]).forEach(w=>{ const d=document.createElement('div'); d.className='wd'; d.textContent=w.replace('周',''); grid.appendChild(d); });
+      const first=new Date(y,m,1); const startIdx=(first.getDay()+6)%7; const days=new Date(y,m+1,0).getDate();
+      for(let i=0;i<startIdx;i++) grid.appendChild(document.createElement('div'));
+      for(let d=1;d<=days;d++){
+        const ds = `${y}-${pad(m+1)}-${pad(d)}`;
+        const cell = document.createElement('div');
+        cell.className='cal-cell'+(ds===todayStr()?' today':'');
+        cell.textContent=d;
+        if(S.tasks.some(t=>t.execDate===ds)) cell.innerHTML += '<span class="dot"></span>';
+        cell.onclick = ()=>{ this.planCursor=ds; this.planView='day'; this.renderPlan(); };
+        grid.appendChild(cell);
+      }
+      const card = document.createElement('div'); card.className='card'; card.appendChild(grid);
+      body.appendChild(card);
+    }
+  },
+
+  planMove(dir){
+    const cur = parseDate(this.planCursor);
+    if(this.planView==='day') cur.setDate(cur.getDate()+dir);
+    if(this.planView==='week') cur.setDate(cur.getDate()+dir*7);
+    if(this.planView==='month') cur.setMonth(cur.getMonth()+dir);
+    this.planCursor = fmtDate(cur);
+    this.renderPlan();
+  },
+
+  /* ---------- 统计报告 ---------- */
+  renderReport(period){
+    $$('#report-seg button').forEach(b=>b.classList.toggle('on', b.dataset.v===period));
+    const now = new Date(); let start, end;
+    if(period==='week'){ start = new Date(now); start.setDate(now.getDate()-(now.getDay()+6)%7); end = new Date(start); end.setDate(start.getDate()+6); }
+    if(period==='month'){ start = new Date(now.getFullYear(), now.getMonth(), 1); end = new Date(now.getFullYear(), now.getMonth()+1, 0); }
+    if(period==='quarter'){ const q=Math.floor(now.getMonth()/3)*3; start = new Date(now.getFullYear(), q, 1); end = new Date(now.getFullYear(), q+3, 0); }
+    if(period==='year'){ start = new Date(now.getFullYear(), 0, 1); end = new Date(now.getFullYear(), 11, 31); }
+    const sStr = fmtDate(start), eStr = fmtDate(end);
+    const inRange = t => t.execDate >= sStr && t.execDate <= eStr;
+    const tasks = S.tasks.filter(inRange);
+    const confirmed = tasks.filter(t=>t.status);
+    const done = tasks.filter(t=>t.status==='done');
+    let points = 0;
+    Object.entries(S.dayStats).forEach(([d,v])=>{ if(d>=sStr && d<=todayStr()) points = r1(points+v.points); });
+    const dueTasks = tasks.filter(t=>t.execDate <= todayStr());
+    const rate = dueTasks.length ? Math.round(done.length/dueTasks.length*100) : 0;
+    // 分类占比
+    const catCnt = {};
+    tasks.forEach(t=>catCnt[t.category]=(catCnt[t.category]||0)+1);
+    const maxCnt = Math.max(1,...Object.values(catCnt));
+    // 平均提前量
+    const planned = tasks.filter(t=>!t.isBackfill);
+    const avgAhead = planned.length ? r1(planned.reduce((s,t)=>s+Math.max(0,dayDiff(t.execDate, fmtDate(new Date(t.createdAt)))),0)/planned.length) : 0;
+    const colors = ['var(--pink)','var(--mint)','var(--peach)','var(--lav)','var(--blue)','var(--yellow)'];
+    $('#report-body').innerHTML = `
+      <div class="card" style="margin-bottom:10px">
+        <div class="report-row"><span>期间总积分</span><b>${points} 分</b></div>
+        <div class="report-row"><span>任务完成率（完成目标/应完成）</span><b>${rate}%</b></div>
+        <div class="report-row"><span>创建任务 / 已确认 / 完成目标</span><b>${tasks.length} / ${confirmed.length} / ${done.length}</b></div>
+        <div class="report-row"><span>平均规划提前量</span><b>${avgAhead} 天</b></div>
+        <div class="report-row" style="border:none"><span>当前连续打卡</span><b>${S.pet.streak} 天</b></div>
+      </div>
+      <div class="card">
+        <div class="sec-title" style="margin-top:0;font-size:13px">各分类任务占比</div>
+        ${Object.keys(catCnt).length ? Object.entries(catCnt).sort((a,b)=>b[1]-a[1]).map(([c,n],i)=>`
+          <div class="bar-row">
+            <div class="b-label"><span>${esc(c)}</span><span>${n} 个 · ${Math.round(n/tasks.length*100)}%</span></div>
+            <div class="b-track"><div class="b-fill" style="width:${n/maxCnt*100}%;background:${colors[i%6]}"></div></div>
+          </div>`).join('') : '<div class="hint">暂无数据</div>'}
+      </div>`;
+  },
+
+  /* ---------- 我的页 ---------- */
+  renderMe(){
+    const d = todayStr();
+    const st = S.dayStats[d] || {points:0};
+    let total = 0; Object.values(S.dayStats).forEach(v=>total=r1(total+v.points));
+    const due = S.tasks.filter(t=>t.execDate<=d);
+    const done = due.filter(t=>t.status==='done');
+    $('#me-today').textContent = r1(st.points);
+    $('#me-streak').textContent = S.pet.streak;
+    $('#me-total').textContent = total;
+    $('#me-rate').textContent = (due.length?Math.round(done.length/due.length*100):0)+'%';
+    const born = Math.max(1, Math.ceil((Date.now()-S.pet.bornAt)/864e5));
+    $('#me-pet-info').innerHTML = `等级 Lv.${petLevel()} · 成长积分 ${S.pet.growth}<br>当前饱度 ${petSatiety()}/${petEatMax()}$（饱线 ${petFullLine()}） · 冰箱存粮 ${S.pet.fridge.length} 份<br>好感度 ${S.pet.affinity}/10 · 已陪伴 ${born} 天 ${S.pet.alive?(S.pet.sick?'· 生病中 🤒':'· 健康 💚'):'· 已离开 😢'}<br><span style="font-size:11px;color:var(--text3)">${CONFIG.PERSON[S.pet.personType].label} · 饱度低于饱线 30% 连续 3 天会生病哦</span>`;
+    const cfg = AIService.getCfg();
+    $('#cfg-url').value = cfg.url; $('#cfg-model').value = cfg.model; $('#cfg-key').value = cfg.key;
+    $('#cfg-status').textContent = cfg.key ? '✅ 已配置 AI 评分' : '未配置，使用本地评分';
+    $('#llm-status').textContent = cfg.key ? '已配置AI ›' : '未配置 ›';
+    $$('#person-seg button').forEach(b=>b.classList.toggle('on', b.dataset.v===S.pet.personType));
+  },
+
+  /* ---------- 通用 ---------- */
+  mask(id, show){ $('#'+id).classList.toggle('show', show); },
+  confirm(title, body, ok, okText='确定', onCancel=null, cancelText='取消'){
+    $('#confirm-title').textContent = title;
+    $('#confirm-body').innerHTML = body;
+    const okBtn = $('#confirm-ok');
+    okBtn.textContent = okText;
+    const cancelBtn = $('#mask-confirm [data-close]');
+    cancelBtn.textContent = cancelText;
+    okBtn.onclick = ()=>{ this.mask('mask-confirm',false); ok&&ok(); };
+    cancelBtn.onclick = ()=>{ this.mask('mask-confirm',false); onCancel&&onCancel(); };
+    this.mask('mask-confirm', true);
+  },
+};
+/* ============================================================
+   App — 初始化 / 事件绑定 / 数据导入导出
+============================================================ */
+const App = {
+  async init(){
+    await DB.open();
+    S.tasks = await DB.all('tasks');
+    S.pet = migratePet((await DB.get('kv','pet')) || defaultPet());
+    S.dayStats = (await DB.get('kv','dayStats')) || {};
+    S.customTags = (await DB.get('kv','customTags')) || [];
+    if(!(await DB.get('kv','pet'))) await savePet();
+    await PetSystem.settleDays();
+    AIService.setDegraded(!AIService.getCfg().key);
+    this.bind();
+    UI.resetCreate();
+    UI.switchPage('home');
+    setTimeout(()=>PetView.bubble('喵～欢迎回来！和卷卷一起，每一天都有意义！', 3200), 600);
+    // 跨 0 点自动结算
+    setInterval(async()=>{
+      if(S.pet.lastSettle < todayStr()){ await PetSystem.settleDays(); UI.renderHome(); }
+    }, 60000);
+    this.selfTest();
+  },
+
+  bind(){
+    // 导航
+    $$('#nav .nav-item').forEach(b=>b.onclick = ()=>UI.switchPage(b.dataset.page));
+    $('#fab').onclick = ()=>{ UI.resetCreate(); UI.switchPage('create'); };
+    // 弹窗关闭
+    $$('[data-close]').forEach(b=>b.onclick = ()=>UI.mask(b.dataset.close,false));
+    $$('.mask').forEach(m=>m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('show'); }));
+    // 宠物
+    $('#cat-wrap').onclick = ()=>PetView.tap();
+    $('#sc-fridge').onclick = ()=>UI.openFridge();
+    $('#sc-bowl').onclick  = ()=>PetView.triggerBehavior('drink');
+    $('#sc-yarn').onclick  = ()=>PetView.triggerBehavior('yarn');
+    // 首页日期切换（按钮 + 滑动）
+    $('#day-prev').onclick = ()=>{ S.homeDate = addDays(S.homeDate,-1); UI.renderDaySwitch(); UI.renderHomeTasks(); };
+    $('#day-next').onclick = ()=>{ S.homeDate = addDays(S.homeDate, 1); UI.renderDaySwitch(); UI.renderHomeTasks(); };
+    let tx=null;
+    $('#home-tasks').addEventListener('touchstart', e=>tx=e.touches[0].clientX, {passive:true});
+    $('#home-tasks').addEventListener('touchend', e=>{
+      if(tx===null) return;
+      const dx = e.changedTouches[0].clientX - tx; tx=null;
+      if(Math.abs(dx) > 60){ S.homeDate = addDays(S.homeDate, dx<0?1:-1); UI.renderDaySwitch(); UI.renderHomeTasks(); }
+    }, {passive:true});
+    // 创建页
+    $('#c-cal-prev').onclick = ()=>{ const [y,m]=UI.cState.calMonth.split('-').map(Number); const d=new Date(y,m-2,1); UI.cState.calMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`; UI.renderCreate(); };
+    $('#c-cal-next').onclick = ()=>{ const [y,m]=UI.cState.calMonth.split('-').map(Number); const d=new Date(y,m,1);   UI.cState.calMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`; UI.renderCreate(); };
+    $$('#c-timetype button').forEach(b=>b.onclick = ()=>{ UI.cState.timeType=b.dataset.v; UI.renderCreate(); });
+    $('#c-start').onchange = e=>{ UI.cState.start=e.target.value; UI.renderCreate(); };
+    $('#c-end').onchange   = e=>{ UI.cState.end=e.target.value; UI.renderCreate(); };
+    $('#c-title').addEventListener('input', ()=>{
+      // 内容变化后旧 AI 结果失效（不实时调用，等按钮触发）
+      if(UI.cState.ai && UI.cState.aiTitle !== $('#c-title').value.trim()){ /* 保留展示，保存时自动重估 */ }
+    });
+    $('#btn-ai').onclick = ()=>UI.onAIClick();
+    $('#btn-save').onclick = ()=>UI.onSave();
+    // 计划页
+    $$('#plan-view button').forEach(b=>b.onclick = ()=>{ UI.planView=b.dataset.v; UI.renderPlan(); });
+    $('#plan-prev').onclick = ()=>UI.planMove(-1);
+    $('#plan-next').onclick = ()=>UI.planMove(1);
+    $('#btn-report').onclick = ()=>{ UI.renderReport('week'); UI.mask('mask-report',true); };
+    $$('#report-seg button').forEach(b=>b.onclick = ()=>UI.renderReport(b.dataset.v));
+    // 我的页
+    $('#btn-save-cfg').onclick = ()=>{
+      AIService.saveCfg($('#cfg-url').value, $('#cfg-model').value, $('#cfg-key').value);
+      AIService.setDegraded(!AIService.getCfg().key);
+      toast('配置已保存到本机浏览器'); UI.renderMe();
+    };
+    $('#btn-export').onclick = ()=>this.exportData();
+    $('#btn-import').onclick = ()=>$('#import-file').click();
+    $('#import-file').onchange = e=>this.importData(e);
+    $('#btn-reset').onclick = ()=>UI.confirm('清空全部数据','⚠️ 将删除所有任务、积分与宠物数据，且不可恢复。确定吗？', async()=>{
+      await DB.clear('tasks'); await DB.clear('kv');
+      S.tasks=[]; S.dayStats={}; S.customTags=[]; S.pet=defaultPet(); await savePet();
+      toast('已重置，和新的卷卷重新开始吧！'); UI.switchPage('home');
+    });
+    // 我的页 → 设置入口
+    $('#row-llm').onclick = ()=>UI.mask('mask-llm', true);
+    $('#row-data').onclick = ()=>UI.mask('mask-data', true);
+    // 性格倾向（J/P）
+    $$('#person-seg button').forEach(b=>b.onclick = ()=>{
+      S.pet.personType = b.dataset.v; savePet(); UI.renderMe(); PetView.render();
+    });
+    // 标签选择器：自定义确认
+    $('#tag-custom-ok').onclick = ()=>{
+      const v = $('#tag-custom-input').value.trim();
+      if(v){ const name=v.slice(0,6); if(!S.customTags.includes(name)){ S.customTags.push(name); saveTags(); } UI.cState.tag=name; UI.mask('mask-tag',false); UI.renderCreate(); }
+    };
+    // 宠物行为循环 + 姿态游走 + 自然衰减
+    PetView.startBehaviorLoop();
+    PetView.moveCat(); PetView.startWander();
+    setInterval(()=>PetSystem.tickDecay(), 60000);
+    PetSystem.tickDecay();
+  },
+
+  exportData(){
+    const data = {
+      app:'卷王家的小宠', version:'1.0', exportedAt:new Date().toISOString(),
+      tasks:S.tasks, pet:S.pet, dayStats:S.dayStats, customTags:S.customTags,
+    };
+    const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `卷王家的小宠_备份_${todayStr()}.json`;
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('数据已导出 📤');
+  },
+
+  importData(e){
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async()=>{
+      try{
+        const data = JSON.parse(reader.result);
+        if(!Array.isArray(data.tasks)) throw new Error('格式不正确');
+        UI.confirm('导入数据预览', `即将导入并覆盖当前数据：<br>· 任务 <b>${data.tasks.length}</b> 个<br>· 卷卷等级 Lv.${petLevel()} · 成长积分 ${data.pet?.growth||0} · 好感度 ${data.pet?.affinity||0}/10<br>· 累计积分 ${Object.values(data.dayStats||{}).reduce((s,v)=>r1(s+(v.points||0)),0)} 分<br><br>确定覆盖导入吗？`, async()=>{
+          await DB.clear('tasks');
+          for(const t of data.tasks) await DB.put('tasks', t);
+          S.tasks = data.tasks;
+          S.pet = data.pet || defaultPet();
+          S.dayStats = data.dayStats || {};
+          S.customTags = data.customTags || [];
+          await savePet(); await saveDayStats(); await saveTags();
+          toast('导入成功 📥'); UI.switchPage('home');
+        });
+      }catch(err){ toast('导入失败：'+err.message); }
+      e.target.value='';
+    };
+    reader.readAsText(file);
+  },
+
+  // 积分引擎自测（仅控制台输出）
+  selfTest(){
+    const A = (name, got, want) => console[Math.abs(got-want)<0.01?'log':'error'](`[自测] ${name}: ${got} (期望 ${want})`);
+    const mk = o => ({id:'t', title:'x', baseScore:10, createdAt:Date.now(), execDate:todayStr(), timeType:'allday', slot:null, startTime:null, endTime:null, category:'成长学习', isBackfill:false, timeChangeMul:null, ...o});
+    const yest = addDays(todayStr(),-1);
+    // 提前1天 + 晚上时段 + 完成目标 = 10×(80%+10%)×70% = 6.3
+    const t1 = mk({createdAt: parseDate(yest).getTime()+10*3600e3, execDate: todayStr(), timeType:'slot', slot:'evening'});
+    A('提前1天+晚上+完成', ScoreEngine.compute(t1,'done', taskDeadline(t1)).score, 6.3);
+    // 半夜时段 +0%：10×80%×70% = 5.6
+    const t2 = mk({createdAt: parseDate(yest).getTime()+10*3600e3, timeType:'slot', slot:'midnight'});
+    A('提前1天+半夜+完成', ScoreEngine.compute(t2,'done',taskDeadline(t2)).score, 5.6);
+    // 精确时间 = 时段+5%：10×(80%+15%)×70% = 6.65 → 6.7
+    const t3 = mk({createdAt: parseDate(yest).getTime()+10*3600e3, timeType:'exact', startTime:'14:00', endTime:'15:00'});
+    A('提前1天+精确+完成', ScoreEngine.compute(t3,'done',taskDeadline(t3)).score, 6.7);
+    // 超24h确认+正在完成中：10×80%×50%×50% = 2
+    const t4 = mk({createdAt: parseDate(addDays(todayStr(),-3)).getTime()+10*3600e3, execDate: addDays(todayStr(),-2)});
+    A('超时24h+进行中', ScoreEngine.compute(t4,'doing', taskDeadline(t4)+30*3600e3).score, 2.0);
+    // 补录昨日金钱：10×(5%+10%)×70% = 1.05 → 1.1
+    const t5 = mk({isBackfill:true, execDate:yest, category:'金钱复盘'});
+    A('补录昨日金钱', ScoreEngine.compute(t5,'done', taskDeadline(t5)).score, 1.1);
+    // 改内容升分 (10-2)*0.8+2 = 8.4
+    A('改内容升分', ScoreEngine.mergeBaseScore(2,10), 8.4);
+    // 当日18点后创建：10×30%×70% = 2.1
+    const d18 = new Date(); d18.setHours(19,0,0,0);
+    const t6 = mk({createdAt:d18.getTime()});
+    A('当日晚建+完成', ScoreEngine.compute(t6,'done', taskDeadline(t6)).score, 2.1);
+    // 食物拆分：13分 → 三文鱼(10)+面包(3)
+    const f = foodForScore(13);
+    console.log('[自测] 13分食物:', f.map(x=>x.name+x.value).join('+'), f.length===2?'✓':'✗');
+  },
+};
+
+App.init();
+</script>
+</body>
+</html>
