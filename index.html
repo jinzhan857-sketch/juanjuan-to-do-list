@@ -1510,11 +1510,13 @@ const AIService = {
     try{return JSON.parse(text.slice(start,end+1));}
     catch(_){const error=new Error('模型返回了不完整的 JSON');error.code='retryable_model_reply';throw error;}
   },
-  async customRequest(messages,maxTokens=900,config=null){
+  async customRequest(messages,maxTokens=900,config=null,options={}){
     const c=config||this.customConfig();
+    const timeoutMs=Math.min(Math.max(Number(options.timeoutMs)||20000,1000),20000);
+    const retries=Math.min(Math.max(Number(options.retries??1),0),1);
     if(!this.validEndpoint(c.endpoint)||!c.model||!c.key) throw new Error('请先完成自定义 API 配置');
     const request=async()=>{
-      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),20000);
+      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),timeoutMs);
       try{
         const resp=await fetch(c.endpoint,{method:'POST',headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.model,messages,temperature:.1,max_tokens:maxTokens,response_format:{type:'json_object'},stream:false}),signal:controller.signal});
         let data={}; try{data=await resp.json();}catch(_){}
@@ -1526,16 +1528,20 @@ const AIService = {
       }finally{clearTimeout(timer);}
     };
     let lastError;
-    for(let attempt=0;attempt<2;attempt++){
+    for(let attempt=0;attempt<=retries;attempt++){
       try{return await request();}
       catch(error){
         lastError=error;
         const retryable=error?.code==='retryable_model_reply'||error?.name==='TypeError'||Number(error?.status)>=500;
-        if(!retryable||attempt===1) throw error;
+        if(!retryable||attempt===retries) throw error;
         await new Promise(resolve=>setTimeout(resolve,450));
       }
     }
     throw lastError;
+  },
+  taskWorkflowResult(message,context={}){
+    const result=this._localAgent(message,context,'task');
+    return ['proposal','batch_proposal','multi_proposal','query'].includes(result.type)?result:null;
   },
   cleanAgentItem(input={}){
     const categories=CONFIG.TAGS, timeTypes=['allday','slot','exact']; const score=Number(input.base_score); const item={};
@@ -1601,21 +1607,29 @@ const AIService = {
   },
 
   async agent(message, context, role='chat'){
+    const workflow=role==='task'?this.taskWorkflowResult(message,context):null;
+    if(workflow){
+      this.setDegraded(false);
+      return workflow;
+    }
     try{
       if(this.source()==='custom'){
         const prompt=role==='task'?`${CUSTOM_AGENT_PROMPT}\n${TASK_EXECUTION_RULES}`:role==='planning'?CUSTOM_PLANNING_PROMPT:CUSTOM_CHAT_PROMPT;
-        const data=await this.customRequest([{role:'system',content:prompt},{role:'user',content:`今天是${todayStr()}。以下是当前设备中的相关资料和最近对话，仅用于理解请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${message}`}],900);
+        const data=await this.customRequest([{role:'system',content:prompt},{role:'user',content:`今天是${todayStr()}。以下是当前设备中的相关资料和最近对话，仅用于理解请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${message}`}],900,null,{timeoutMs:9000,retries:0});
         this.setDegraded(false); return this.normalizeAgent(data);
       }
-      const resp=await fetch('/api/ai',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({mode:'agent',message,context,agent_role:role,client_date:todayStr(),device_id:this.getDeviceId()}),
-      });
-      let data={}; try{ data=await resp.json(); }catch(_){}
-      if(!resp.ok) throw new Error(data.error||'卷卷暂时无法回复');
-      this.setDegraded(false);
-      return data;
+      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),9000);
+      try{
+        const resp=await fetch('/api/ai',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({mode:'agent',message,context,agent_role:role,client_date:todayStr(),device_id:this.getDeviceId()}),signal:controller.signal,
+        });
+        let data={}; try{ data=await resp.json(); }catch(_){}
+        if(!resp.ok) throw new Error(data.error||'卷卷暂时无法回复');
+        this.setDegraded(false);
+        return data;
+      }finally{ clearTimeout(timer); }
     }catch(error){
       console.warn('Agent 调用失败：',error);
       this.setDegraded(true);
@@ -1636,11 +1650,11 @@ const AIService = {
       const question=goal?`为了让${goal}计划适合你，你每周愿意稳定投入几天？`:'你现在最想优先解决哪个目标或压力点？';
       return {type:goal?'clarify':'chat',reply:`卷卷看到的现实：${reality}。\n建议路线：先在不挤占已有承诺的前提下安排小步试行，再根据完成情况调整。\n下一步：${question}`};
     }
-    const year=todayStr().slice(0,4), months=text.match(/(\d{1,2})月\s*(?:到|至|-|—|－)\s*(\d{1,2})月/), weekday=text.match(/(?:每周|全部|所有)?周([一二三四五六日天])/), time=parseExactTime(text);
+    const year=todayStr().slice(0,4), months=text.match(/(\d{1,2})\s*月?\s*(?:到|至|-|—|－|～|~)\s*(\d{1,2})\s*月/), weekday=text.match(/(?:每(?:个)?|全部|所有)?周([一二三四五六日天])/), time=parseExactTime(text);
     const weekMap={一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7};
     const courseCode=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0]||'';
     const noteMatch=text.match(/(?:地址|地点)\s*([^，。；！？]+)/);
-    const classroomMatch=text.match(/教室\s*[:：]?\s*([^，。；！？]+)/);
+    const classroomMatch=text.match(/教室\s*[:：]?\s*([^，。；！？]+)/)||text.match(/\b([A-Za-z]{1,4}\s*\d{2,4})\s*教室/i);
     const teacherMatch=text.match(/(?:教授|老师)\s*(?:为|是|[:：])?\s*([^，。；！？]+)/);
     const courseMatch=text.match(/([A-Z]{2,}\d{3,}\s*[^，。；！？]*?)(?=\s*(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/i);
     const structuredNote=[classroomMatch?.[1]&&`教室：${classroomMatch[1].trim()}`,teacherMatch?.[1]&&`教授：${teacherMatch[1].trim()}`,noteMatch?.[1]&&`地点：${noteMatch[1].trim()}`].filter(Boolean).join('\n');
@@ -1654,7 +1668,7 @@ const AIService = {
       return {type:'batch_proposal',reply:`我找到了「${courseCode}」的每周安排，先请你确认整组修改范围。`,action:{kind:'update_schedule_batch',rule:{date_from:dateFrom,date_to:dateTo,weekdays:[weekMap[weekday[1]]],match_title:courseCode,match_start_time:time?.start||existing[0]?.start_time||null,match_end_time:time?.end||existing[0]?.end_time||null},item:{note:noteChange?.[1]||noteMatch?.[1]||''}}};
     }
     if(isBatch&&time){
-      const plainTitle=text.replace(/\d{1,2}月\s*(?:到|至|-|—|－)\s*\d{1,2}月|每(?:个)?周[一二三四五六日天]|(?:凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里|半夜)?\s*\d{1,2}(?:[.:：]\d{1,2}|点(?:半|\d{1,2}分?)?)\s*(?:到|至|-|—|～|~)\s*\d{1,2}(?:[.:：]\d{1,2}|点(?:半|\d{1,2}分?)?)|(?:教室|教授|老师|地点|地址)[^，。；！？]*/g,' ').replace(/(?:建立|创建|安排|帮我|请|将|把|日程|日历|规划|排进|都上课|上课)/g,' ').replace(/[，。；！？]/g,' ').replace(/\s+/g,' ').trim();
+      const plainTitle=text.replace(/\d{1,2}\s*月?\s*(?:到|至|-|—|－|～|~)\s*\d{1,2}\s*月|每(?:个)?周[一二三四五六日天]|(?:凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里|半夜)?\s*\d{1,2}(?:[.:：]\d{1,2}|点(?:半|\d{1,2}分?)?)\s*(?:到|至|-|—|～|~)\s*\d{1,2}(?:[.:：]\d{1,2}|点(?:半|\d{1,2}分?)?)|(?:教室|教授|老师|地点|地址)[^，。；！？]*/g,' ').replace(/(?:建立|创建|安排|帮我|请|将|把|日程|日历|规划|排进|都上课|上课)/g,' ').replace(/[，。；！？]/g,' ').replace(/\s+/g,' ').trim();
       const title=courseMatch?.[1].trim()||courseCode||plainTitle||'课程';
       return {type:'batch_proposal',reply:'我已整理好重复课程，请确认后创建。',action:{kind:'create_schedule_batch',rule:{date_from:`${year}-${pad(months[1])}-01`,date_to:fmtDate(new Date(Number(year),Number(months[2]),0)),weekdays:[weekMap[weekday[1]]],title,note:structuredNote||noteMatch?.[1]||'',time_type:'exact',slot:null,start_time:time.start,end_time:time.end,category:'学业事务',base_score:7}}};
     }
@@ -4379,11 +4393,13 @@ const App = {
     const routingOk=UI.resolveAgentRole('建立多个日程，每周五晚上上课')==='task'&&UI.resolveAgentRole('我想减肥，帮我规划并排进日历')==='planning'&&UI.resolveAgentRole('给我讲个笑话')==='chat';
     UI.agentSelectedRole=savedRole;
     console[routingOk?'log':'error'](`[自测] 三角色自动分流: ${routingOk?'✓':'✗'}`);
-    const roleTestText='建立多个日程 9月到11月的每个周五 晚上7点到9点半都上课 IDAT7224工程技术中的深度学习 教室KK201 教授为Dr.CK Chan';
+    const roleTestText='9-11月每个周五晚上19.00-21.30，都设置日程叫：IDAT7224工程技术中的深度学习，KK201教室 教授Dr. C.K. Chan';
     const taskRoleResult=AIService._localAgent(roleTestText,{tasks:[],todos:[]},'task');
     const planningRoleResult=AIService._localAgent(roleTestText,{tasks:[],todos:[]},'planning');
-    const roleWorkflowOk=taskRoleResult.type==='batch_proposal'&&taskRoleResult.action?.rule?.title==='IDAT7224工程技术中的深度学习'&&planningRoleResult.type==='recommendation'&&planningRoleResult.recommendations?.[0]?.action?.kind==='create_schedule_batch';
+    const roleWorkflowOk=taskRoleResult.type==='batch_proposal'&&taskRoleResult.action?.rule?.title.includes('IDAT7224')&&taskRoleResult.action?.rule?.note.includes('KK201')&&planningRoleResult.type==='recommendation'&&planningRoleResult.recommendations?.[0]?.action?.kind==='create_schedule_batch';
     console[roleWorkflowOk?'log':'error'](`[自测] 规划交接事务确认卡: ${roleWorkflowOk?'✓':'✗'}`);
+    const taskWorkflowFirst=typeof AIService.taskWorkflowResult==='function'&&AIService.taskWorkflowResult(roleTestText,{tasks:[],todos:[]})?.type==='batch_proposal';
+    console[taskWorkflowFirst?'log':'error'](`[自测] 完整事务优先走工作流: ${taskWorkflowFirst?'✓':'✗'}`);
     const planningInside={id:'planning_inside_test',title:'规划范围内日程',execDate:todayStr(),createdAt:0};
     const planningOutside={id:'planning_outside_test',title:'规划范围外日程',execDate:addDays(todayStr(),14),createdAt:0};
     S.tasks.push(planningInside,planningOutside);
