@@ -4,7 +4,7 @@
 
 ## 当前接手结论：任务 #40
 
-2026 年 11 月 15 日，已查明 GitHub Pages 的 404 原因：当前账号下私有仓库的 Pages 不可用，设置页要求升级或公开。展确认公开仓库并免费恢复原 Pages，替代本次早先保持私有的偏好。已启用 Actions 来源，新增手动发布工作流；部署和实机验收见 [#40](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)。本任务不改应用行为、不调用模型、不迁移资料。发布方式以[发布说明](development/RELEASE.md)为准，下方的私有仓库和旧站点描述保留作历史。
+2026 年 11 月 15 日，已查明 GitHub Pages 的 404 原因：当前账号下私有仓库的 Pages 不可用，设置页要求升级或公开。展确认公开仓库并免费恢复原 Pages，替代本次早先保持私有的偏好。已启用 Actions 来源，新增手动发布工作流；Pages 已成功发布，原网址桌面探测和 Chrome 加载通过，展已确认手机能正常打开；证据见[验收报告](audit/2026-11-15/issue40-pages.md)。任务记录见 [#40](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)。本任务不改应用行为、不调用模型、不迁移资料。发布方式以[发布说明](development/RELEASE.md)为准，下方的私有仓库和旧站点描述保留作历史。
 
 ## 当前接手结论：任务 #5
 
