@@ -1,0 +1,195 @@
+{
+  "date": "2026-11-15",
+  "timeZone": "Asia/Shanghai",
+  "method": "Agent-operated desktop in-app browser, actual filechooser, FileReader, application confirmation, export download and reload. No production data.",
+  "origin": "http://127.0.0.1:56482/",
+  "database": "juanjuan-issue37-synthetic",
+  "sourceSha256": "b5c2e029f0c338955562d07d5597d992f16eb2f688332c20c3d7179ceec85517",
+  "steps": [
+    {
+      "step": "successful import",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    },
+    {
+      "step": "repeat same import",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    },
+    {
+      "step": "duplicate id rejected",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    },
+    {
+      "step": "damaged JSON rejected",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    },
+    {
+      "step": "invalid status rejected",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    },
+    {
+      "step": "cancel preview with existing data",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    },
+    {
+      "step": "exported file restored",
+      "pass": true,
+      "tasks": 3,
+      "todos": 1,
+      "chats": 1,
+      "messages": 1,
+      "memories": 1,
+      "operations": 0,
+      "images": 1,
+      "growth": 12,
+      "points": {
+        "2026-11-15": {
+          "points": 12,
+          "done": 1
+        }
+      },
+      "diskHash": "56607d63b51fd5ba8c7603a30da84052d58a447edceb83abe82bc46a33ac8ef3",
+      "memoryHash": "a101873bbae1a6b3c6bad298ea2f43e122f2bd2593f91cdeb1260c75e3577738"
+    }
+  ],
+  "reload": {
+    "pass": true,
+    "tasks": 3,
+    "todos": 1,
+    "messages": 1,
+    "images": 1,
+    "growth": 12,
+    "points": 12,
+    "diskHash": "cd93c52c339d68ff7f0f9dc0593b7d5c37cda8df308d5cb6b3a9c6f5618496c7",
+    "memoryHash": "c36e0d40d3186889e7b6d312afa534a7f5241cbfe98be6894c6a761ab7f0f41f",
+    "note": "Full App.init includes existing kv normalization; reload invariants are business counts, content, image decoding and points, not identical full-app hashes."
+  },
+  "image": {
+    "complete": true,
+    "width": 32,
+    "height": 32
+  },
+  "node": {
+    "tests": 242,
+    "pass": 242,
+    "fail": 0,
+    "skipped": 0
+  },
+  "nativeFaultChecks": {
+    "pass": 11,
+    "fail": 0
+  },
+  "uiRegression": {
+    "before": {
+      "tests": 119,
+      "pass": 118,
+      "fail": 1
+    },
+    "after": {
+      "tests": 119,
+      "pass": 119,
+      "fail": 0
+    }
+  },
+  "realModelCalls": 0,
+  "notClaimed": [
+    "User personally performed the tests",
+    "Android/iPhone physical file picker",
+    "Real device disk exhausted or power loss"
+  ]
+}

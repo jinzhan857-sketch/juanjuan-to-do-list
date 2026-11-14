@@ -14,6 +14,7 @@ async function fixture(t){
   const json=expr=>JSON.parse(run('JSON.stringify('+expr+')'));
   await run('DB.open()');t.after(()=>run('DB._db.close()'));
   run(require('./helpers/storage-fixture.cjs'));
+  run('UI.mask=()=>{}'); // DOM boundary only; storage and import callbacks remain real.
   await run("DB.batch([...DATA_STORES.flatMap(store=>S[store].map(value=>({store,value}))),...DATA_KV.map(key=>({store:'kv',key,value:S[key]}))])");
   ctx.localStorage={setItem(){},removeItem(){}};
   const snapshot=async()=>JSON.parse(JSON.stringify(await run("DB.snapshot(['tasks','todos','chats','messages','memories','operations','kv'])")));
@@ -300,6 +301,16 @@ test('concurrent undo restores one batch and leaves one undone operation',async 
   await a.run("Promise.all([UI.undoAgentOperation('m'),UI.undoAgentOperation('m')])");
   const saved=await a.snapshot();assert.equal(saved.operations.length,1);assert.equal(saved.operations[0].status,'undone');
   assert.equal(saved.tasks.find(task=>task.id==='a').note,'old');
+});
+for(const outcome of ['success','failure'])test('file import '+outcome+' only closes data window after commit',async t=>{
+ const a=await fixture(t);a.ctx.FileReader=class{readAsText(value){this.result=value;a.ctx.readDone=this.onload();}};
+ a.run("UI.confirm=(title,body,ok)=>importOK=ok;closedMasks=[];UI.mask=(id,show)=>closedMasks.push({id,show});UI.switchPage=()=>{};");
+ const data=a.backup();data.tasks[0].note='imported';a.ctx.event={target:{files:[JSON.stringify(data)],value:'selected'}};
+ const before=await a.snapshot(),memory=a.memory();a.run('App.importData(event)');await a.ctx.readDone;
+ assert.deepEqual(a.json('closedMasks'),[]);
+ if(outcome==='failure')a.fail('kv');await a.run('importOK()');
+ if(outcome==='success'){assert.deepEqual(a.json('closedMasks'),[{id:'mask-data',show:false}]);assert.equal((await a.snapshot()).tasks.find(x=>x.id==='a').note,'imported');}
+ else{assert.deepEqual(a.json('closedMasks'),[]);assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);}
 });
 for(const field of ['finalScore','statusEditCount'])test('settled schedule cannot import without '+field,async t=>{
  const a=await fixture(t),before=await a.snapshot(),memory=a.memory();a.ctx.data=a.backup();a.ctx.field=field;
