@@ -20,4 +20,13 @@
 
 ## 交付与边界
 
-干净下载、GitHub Actions 和 PR 的最终证据在验收后追加。未完成对应验收前不关闭任务。三项业务问题继续分别留给 #4、#5、#7；完整发布与恢复仍在后续任务。
+交付：[PR #26](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/26)。实现提交 `33d96b3`，归档与换行修正提交 `6cff306b2accd2bc8af7b0268284cee37db9a78d`。文档验收记录随后补充，不改变已验证的工具链与应用文件。
+
+- [x] 从授权远端新克隆及直接下载 GitHub ZIP，分别执行 `npm ci --ignore-scripts` 和 `npm run check`，均为 26 项稳定断言、7 项工程测试通过，三项问题继续复现。
+- [x] 干净克隆实际执行 `npm run dev`，4173 返回 HTTP 200；两种副本的工程测试均实际启动源码和产物预览、验证页面字节与文件访问边界。
+- [x] 两种副本的 build-info 源提交均为 `6cff306b2accd2bc8af7b0268284cee37db9a78d`，克隆 dirty 为 false，ZIP 为 null。页面输出 SHA256 均为 `fd394d5232234e3e17cb034e2cf9c833059bb24f91ac1bc75755fb05e645ad33`。
+- [x] [分支 CI 43620814530](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43620814530) 与 [PR CI 43620819416](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43620819416) 成功，Windows 和 Ubuntu 均完成源码与无 Git 归档的完整检查。构建失败路径返回非零，未跳过关键检查。
+- [x] 实际下载两平台 CI 上传包，各仅含 `dist/index.html`、`dist/build-info.json`、`.reports/baseline.json`。两平台来源文件、源码提交和输出哈希一致，dirty 均为 false；不包含密钥、私人资料或备份。
+- [x] 原始两份应用源码及历史检查脚本相对基点无 Git 差异，个人备份仍被忽略。
+
+原始下载与运行日志留在被忽略的 `private/issue3-validation/`，不作为日常命令的依赖。GitHub 运行及任务保留最终成果链接，不覆盖首次失败记录。三项业务问题继续分别留给 #4、#5、#7；完整发布与恢复仍在后续任务。

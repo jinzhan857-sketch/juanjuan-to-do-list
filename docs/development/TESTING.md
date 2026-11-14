@@ -12,6 +12,8 @@
 
 `.github/workflows/check.yml` 在 main、codex 分支推送及面向 main 的 PR 上运行，在 Windows 和 Ubuntu 对检出副本与无 Git 归档分别执行全部检查。仅只读仓库权限，不注入 secrets，不使用 `continue-on-error`。上传仅限 dist 的两个生成文件及合成报告，失败详情留在日志。
 
+本地复验无 Git 归档用 `npm run check:archive`。它归档当前已提交的 HEAD，在系统临时目录执行安装和全部检查，核对来源后清理；不包含未提交改动，也不代替 GitHub ZIP 实际下载验证。#3 的两种下载与 CI 证据见[交付报告](../audit/2026-11-15/issue3-toolchain.md)。
+
 任务 #2 已保存原始新增源码并补充验证，以下命令适用于克隆和 ZIP 下载。版本、干净副本结果及验收见[基线交付报告](../audit/2026-11-14/issue2-baseline.md)。旧版本缺失函数的失败证据保留在[当前状态的历史记录](../STATUS.md)。
 
 ```powershell
