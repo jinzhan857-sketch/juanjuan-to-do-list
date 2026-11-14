@@ -213,6 +213,79 @@ const actionCases=[
  ['update_schedule_batch','action'],
  ['delete_schedule_batch',"{...action,kind:'delete_schedule_batch'}"]
 ];
+
+const damagedBusinessFields=[
+ ['status','invalid-status'],['status',''],['status','DONE'],['status',0],['status',false],['status',{}],['status',[]],
+ ['finalScore','7'],['finalScore',null],['finalScore',-1],['finalScore',Infinity],['finalScore',NaN],
+ ['statusEditCount','1'],['statusEditCount',-1],['statusEditCount',0.5],['statusEditCount',null],
+ ['statusAt','2026-11-15'],['statusAt',-1],['statusAt',Infinity]
+];
+for(const [field,value] of damagedBusinessFields)test('damaged business field rejects entire import: '+field+' '+String(value),async t=>{
+ const a=await fixture(t),before=await a.snapshot(),memory=a.memory(),data=a.backup();
+ data.tasks[0][field]=value;a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'));
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+ a.run('DB._db.close()');await a.run('DB.open()');assert.deepEqual(await a.snapshot(),before);
+});
+for(const status of [undefined,null,'done','doing','failed','paused','skipped'])test('valid status round trips without altering other records: '+String(status),async t=>{
+ const a=await fixture(t),data=a.backup();
+ if(status===undefined)delete data.tasks[0].status;else data.tasks[0].status=status;
+ data.tasks[0].finalScore=1.5;data.tasks[0].statusEditCount=0;data.tasks[0].statusAt=null;
+ a.ctx.data=data;await a.run('replaceBackup(data)');
+ const disk=await a.snapshot();assert.deepEqual(disk.tasks.find(x=>x.id==='a'),data.tasks[0]);
+ assert.deepEqual(disk.todos,data.todos);assert.deepEqual(a.json('S.pet'),data.pet);
+ a.ctx.document={querySelector:()=>({querySelector:()=>({}),querySelectorAll:()=>[],classList:{add(){},remove(){}}})};
+ a.run('UI.mask=()=>{}');assert.doesNotThrow(()=>a.run("UI.openTaskDetail('a')"));
+});
+for(const side of ['before','after'])for(const [field,value] of [['status','invalid-status'],['finalScore',-3],['statusEditCount',0.5]])test('damaged '+side+' snapshot blocks import and undo: '+field,async t=>{
+ const a=await fixture(t);await a.run("UI.confirmAgentAction('m')");
+ a.ctx.field=field;a.ctx.badValue=value;a.ctx.side=side;
+ a.run('S.operations[0][side][0][field]=badValue');await a.run("DB.put('operations',S.operations[0])");
+ const before=await a.snapshot(),memory=a.memory();a.ctx.data=a.backup();
+ await assert.rejects(a.run('replaceBackup(data)'));
+ await a.run("UI.undoAgentOperation('m')");
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+ assert.match(a.json('notices').at(-1),/不合法/);
+});
+for(const value of ['3',-1,null,Infinity])test('todo score cannot bypass common record validation: '+String(value),async t=>{
+ const a=await fixture(t),before=await a.snapshot();a.ctx.data=a.backup();a.ctx.badValue=value;
+ a.run('data.todos[0].finalScore=badValue');await assert.rejects(a.run('replaceBackup(data)'));assert.deepEqual(await a.snapshot(),before);
+});
+test('multiple date request cannot create a confirmation card or write through UI',async t=>{
+ const a=await fixture(t),before=await a.snapshot(),memory=a.memory();
+ for(const request of ['11月9日不要改，只改11月16日同名课程备注改成带电脑','11月16日保留，删除11月9日同名课程']){
+  a.ctx.request=request;
+  assert.equal(a.run("AIService._localAgent(request,UI.agentContext('chat',request,'task'),'task').type"),'clarify');
+  for(const target_id of ['a','b']){a.ctx.proposal={kind:'delete_schedule',target_id,item:{}};assert.equal(a.run('UI.validateAgentRequest(proposal,request).ok'),false);}
+ }
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+for(const damage of ["data.tasks[0].status='invalid-status'","data.tasks[0].finalScore='7'","data.tasks[0].statusEditCount=0.5"])test('file import refuses damaged fields before showing overwrite confirmation: '+damage,async t=>{
+ const a=await fixture(t),before=await a.snapshot(),memory=a.memory();a.ctx.data=a.backup();a.run(damage);
+ a.ctx.FileReader=class{readAsText(value){this.result=value;a.ctx.readDone=this.onload();}};
+ a.run('previewCount=0;UI.confirm=()=>previewCount++');a.ctx.event={target:{files:[JSON.stringify(a.ctx.data)],value:'selected'}};
+ a.run('App.importData(event)');await a.ctx.readDone;
+ assert.equal(a.run('previewCount'),0);assert.match(a.json('notices').at(-1),/导入失败/);
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+for(const [score,count,time] of [[0,0,null],[1.5,1,0],[10,2,1794700800000]])test('valid settlement fields survive import: '+JSON.stringify([score,count,time]),async t=>{
+ const a=await fixture(t),data=a.backup();Object.assign(data.tasks[0],{status:'done',finalScore:score,statusEditCount:count,statusAt:time});a.ctx.data=data;
+ await a.run('replaceBackup(data)');assert.deepEqual((await a.snapshot()).tasks.find(x=>x.id==='a'),data.tasks[0]);
+});
+for(const source of ['custom','hosted'])for(const target_id of ['a','b'])test('actual send flow refuses '+source+' model guess '+target_id+' for multiple dates',async t=>{
+ const a=await fixture(t),before=await a.snapshot();
+ const input={value:'11月9日不要改，只改11月16日同名课程备注改成带电脑'};a.ctx.document={querySelector:()=>input};
+ a.ctx.output={type:'proposal',reply:'请确认',action:{kind:'update_schedule',target_id,item:{note:'new'}}};
+ a.ctx.modelSource=source;let calls=0;
+ a.ctx.fetch=async()=>{calls++;return {ok:true,json:async()=>a.ctx.output};};
+ a.ctx.customModel=async()=>{calls++;return a.ctx.output;};
+ a.run("AIService.source=()=>modelSource;AIService.customRequest=customModel;AIService.setDegraded=()=>{};AIService.getDeviceId=()=> 'syntheticdevice0123456789abcd';UI.currentAgentChat=()=>S.chats[0];UI.resolveAgentRole=()=> 'task';UI.resizeAgentInput=()=>{};UI.agentThinking=false;UI.agentRequestSerial=0;");
+ await a.run('UI.sendAgentMessage()');assert.equal(calls,1);
+ const disk=await a.snapshot(),last=a.json('S.messages.at(-1)');
+ assert.equal(last.type,'clarify');assert.equal(last.meta.action,undefined);assert.match(last.content,/多个日期/);
+ for(const store of ['tasks','todos','operations','kv'])assert.deepEqual(disk[store],before[store]);
+ assert.deepEqual(disk.messages.find(x=>x.id===last.id),last);
+});
 for(const [kind,expression] of actionCases)test('valid '+kind+' history exports and undoes without losing records',async t=>{
   const a=await fixture(t),before=a.memory();a.run('action='+expression+';UI.captureAgentScope(action)');
   await a.run('UI.executeAgentAction(action,S.messages[0])');a.ctx.data=a.backup();

@@ -1377,10 +1377,15 @@ function validateStoredRecord(item,schedule){
     if(item.note!==undefined&&typeof item.note!=='string')fail('备注字段不合法');
     if(item.done!==undefined&&typeof item.done!=='boolean')fail('待办完成状态不合法');
     if(typeof item.baseScore!=='number'||!Number.isFinite(item.baseScore)||item.baseScore<0||item.baseScore>10)fail('基础分不合法');
+    if(item.finalScore!==undefined&&(typeof item.finalScore!=='number'||!Number.isFinite(item.finalScore)||item.finalScore<0))fail('所得分不合法');
     for(const key of ['images','links'])if(item[key]!==undefined&&!Array.isArray(item[key]))fail('附件字段必须是数组');
     if((item.images||[]).length>5||(item.images||[]).some(img=>!object(img)||typeof img.data!=='string'||!/^data:image\//.test(img.data)))fail('图片格式或数量不合法');
     if((item.links||[]).length>5||(item.links||[]).some(link=>typeof link!=='string'||!/^https?:\/\//i.test(link)))fail('链接格式或数量不合法');
   if(schedule){const task=item;
+
+    if(task.status!==undefined&&task.status!==null&&!CONFIG.STATUS.some(status=>status.key===task.status))fail('日程状态不合法');
+    if(task.statusEditCount!==undefined&&(!Number.isInteger(task.statusEditCount)||task.statusEditCount<0))fail('状态修改次数不合法');
+    if(task.statusAt!==undefined&&task.statusAt!==null&&(typeof task.statusAt!=='number'||!Number.isFinite(task.statusAt)||task.statusAt<0))fail('状态结算时间不合法');
 
     if(!validDateStr(task.execDate)||!['allday','slot','exact'].includes(task.timeType))fail('日程日期或时间类型不合法');
     if(task.timeType==='exact'&&(!validTimeStr(task.startTime)||!validTimeStr(task.endTime)||minOf(task.endTime)<=minOf(task.startTime)))fail('日程具体时间不合法');
@@ -1903,6 +1908,10 @@ const AIService = {
 
   scheduleRequestScope(message,tasks){
     const text=String(message||'').split(/备注|改成|改为/)[0];
+    // Resolve every date constraint before selecting a target. Never let the first
+    // date silently win over a later exclusion, correction or alternative.
+    const dates=new Set([...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)].map(match=>parseNaturalDate(match[0])).filter(Boolean));
+    if(dates.size>1)return {error:'原话涉及多个日期，请只说明这次要修改或删除的日期，再重新确认。'};
     const code=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0];
     let targets=tasks.filter(task=>code?String(task.title).toUpperCase().includes(code.toUpperCase()):task.title&&text.includes(task.title));
     const group=/(全部|所有|整组|每(?:个)?(?:周|星期))/.test(text);
