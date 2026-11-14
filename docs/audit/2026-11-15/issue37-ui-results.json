@@ -191,5 +191,14 @@
     "User personally performed the tests",
     "Android/iPhone physical file picker",
     "Real device disk exhausted or power loss"
-  ]
+  ],
+  "integration": {
+    "base": "b27a168 (PR #50 merged by another chat)",
+    "sourceSha256": "829d8f9a12c090414994b8dc5cf126fca5ac026d520dc30e8b0f9624a8dd646d",
+    "tests": 312,
+    "pass": 312,
+    "fail": 0,
+    "actualRecoveryUi": "passed after merging main",
+    "publisherFilesPreserved": true
+  }
 }

@@ -9,6 +9,7 @@ const inspector=fs.readFileSync(path.join(__dirname,'helpers/storage-ui-inspecto
 const banner='<aside id="storage-inspector" style="position:fixed;z-index:99999;left:4px;bottom:80px;max-width:96vw;max-height:150px;overflow:auto;background:white;border:2px solid green;padding:6px;font:12px monospace;pointer-events:none"><strong>#37 隔离验收，仅合成库，网络已禁用</strong><pre id="storage-inspector-result">等待数据库初始化</pre></aside>';
 const html=source.replace('</body>',banner+'<script>'+inspector+'</script></body>');
 const server=http.createServer((req,res)=>{
+ if(req.url==='/quick-score.mjs'){res.setHeader('Content-Type','text/javascript; charset=utf-8');res.end(fs.readFileSync(path.join(root,'src/rules/quick-score.mjs')));return;}
  if(!['/','/index.html'].includes(req.url)){res.writeHead(404).end();return;}
  res.setHeader('Content-Type','text/html;charset=utf-8');res.setHeader('Cache-Control','no-store');
  res.setHeader('Content-Security-Policy',"connect-src 'none'; img-src 'self' data:; font-src 'self'");res.end(html);

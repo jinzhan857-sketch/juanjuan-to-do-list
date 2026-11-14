@@ -12,5 +12,6 @@ test('real import UI harness isolates database and network without replacing app
  const scripts=text=>[...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
  const originals=scripts(original),served=scripts(html);assert.deepEqual(served.slice(0,originals.length),originals);assert.equal(served.length,originals.length+1);
  served.forEach(code=>new vm.Script(code));assert.doesNotMatch(html,/indexedDB\.open\('juanjuan-pet'/);
+ const scoring=await fetch(info.url+'quick-score.mjs');assert.equal(scoring.status,200);assert.equal(await scoring.text(),fs.readFileSync(path.join(root,'src/rules/quick-score.mjs'),'utf8'));
  for(const route of ['api/ai','.env','.git/config','private/backup.json','docs/'])assert.equal((await fetch(info.url+route)).status,404);
 });

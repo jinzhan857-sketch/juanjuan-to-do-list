@@ -14,7 +14,7 @@ function fixture(t, beforeCleanup = async () => {}) {
     assert.ok(path.resolve(dir).startsWith(path.resolve(os.tmpdir()) + path.sep + 'juanjuan-toolchain-'));
     fs.rmSync(dir, {recursive: true, force: true});
   });
-  for (const file of ['scripts/build.cjs', 'scripts/serve.cjs', 'index.html', 'api/ai.js', 'package.json', 'package-lock.json', '.node-version']) {
+  for (const file of ['src/rules/quick-score.mjs', 'scripts/build.cjs', 'scripts/serve.cjs', 'index.html', 'api/ai.js', 'package.json', 'package-lock.json', '.node-version']) {
     fs.mkdirSync(path.dirname(path.join(dir, file)), {recursive: true});
     fs.copyFileSync(path.join(root, file), path.join(dir, file));
   }
@@ -31,7 +31,7 @@ test('build preserves bytes, records archive provenance, and repeats determinist
   assert.equal(JSON.parse(first).dirty, null);
   assert.equal(build(dir).status, 0);
   assert.equal(fs.readFileSync(path.join(dir, 'dist/build-info.json'), 'utf8'), first);
-  assert.deepEqual(fs.readdirSync(path.join(dir, 'dist')).sort(), ['build-info.json', 'index.html']);
+  assert.deepEqual(fs.readdirSync(path.join(dir, 'dist')).sort(), ['build-info.json', 'index.html', 'quick-score.mjs']);
 });
 test('syntax failure returns nonzero and preserves previous output', t => {
   const dir = fixture(t);
@@ -82,6 +82,7 @@ for (const built of [false, true]) test(`${built ? 'dist' : 'source'} preview se
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('cache-control'), 'no-store');
   assert.deepEqual(Buffer.from(await response.arrayBuffer()), fs.readFileSync(path.join(dir, 'index.html')));
+  assert.equal((await fetch(origin+'/quick-score.mjs')).status,200);
   for (const url of ['/api/ai', '/api/ai.js', '/.env', '/.git/config', '/private/backup.json', '/docs/', '/%2e%2e/package.json']) {
     assert.equal((await fetch(origin + url)).status, 404, url);
   }
