@@ -2,6 +2,8 @@
 
 本次将展电脑上的两份新增源码完整保存到独立分支，供下载与后续修复使用。没有修改应用行为，没有部署网站，也没有实施 #3。任务和最终成果链接统一保留在 [#2](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2)，总计划为 [#1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)。
 
+交付：[PR #24](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24)。本地文档检查为 30 份 Markdown、139 条本地链接、2 个标题锚点，失败 0。检查结果的具体时间与运行环境保留于下方 JSON 报告。
+
 ## 保存依据与完整性
 
 起点为 `848456a880c2e4d966b950424cf711b9727d02a1`，仅 `index.html` 和 `api/ai.js` 未提交。它们与首次盘点的 SHA256 一致。与应用起点 `b35936b0c760b57263b068c3a1f204f28bfeb24d` 比较，前端增加 358 行、删除 65 行，API 增加 24 行、删除 8 行。

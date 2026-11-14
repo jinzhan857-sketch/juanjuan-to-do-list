@@ -4,7 +4,7 @@
 
 ## 本次基线交付
 
-任务 #2 已保存原始新增代码，应用源码提交为 `1236ef9109db88acfcb2a8b2261ff45722b3ffb4`。两份源码与接手时原文件逐字节一致，原始副本留在被忽略的 `private/issue2-original/`，个人备份未提交。完整功能分类、验收和报告见[基线交付报告](audit/2026-11-14/issue2-baseline.md)。
+任务 #2 已保存原始新增代码，交付为 [PR #24](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24)，应用源码提交为 `1236ef9109db88acfcb2a8b2261ff45722b3ffb4`。两份本地源码与接手时原文件逐字节一致，提交仅规范换行，原始副本留在被忽略的 `private/issue2-original/`，个人备份未提交。完整功能分类、验收和报告见[基线交付报告](audit/2026-11-14/issue2-baseline.md)。
 
 - [x] 保存原始成果并建立对应源码基线。
 - [x] 26 项局部断言通过，保留三项已知问题的实际输出。
