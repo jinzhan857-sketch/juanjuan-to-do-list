@@ -13,7 +13,7 @@ assert.equal(report.checks.length, 26, 'Baseline assertion count changed; review
 assert.equal(report.failed, 0);
 assert.deepEqual(report.observations, {
   hostedContextDropsSeriesId: true,
-  explicitDateRoutedToBatch: 'update_schedule_batch',
+  explicitDateRoutedToBatch: 'update_schedule',
   rememberedLocationOverridesExplicitCity: '香港'
 }, 'Known issue observations changed; inspect results rather than silently skipping them');
-console.log('26 stable assertions passed. Three known issues reproduced and remain unresolved (#4, #5, #7).');
+console.log('26 stable assertions passed. Single-day probe now returns update_schedule (#4); two known issues remain (#5, #7).');
