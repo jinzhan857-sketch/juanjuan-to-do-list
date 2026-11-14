@@ -1,0 +1,915 @@
+{
+  "checkedAt": "2026-11-14T19:09:31.628Z",
+  "repository": "jinzhan857-sketch/juanjuan-to-do-list",
+  "issues": [
+    {
+      "number": 1,
+      "state": "open",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1",
+      "updatedAt": "2026-11-14T19:03:30Z",
+      "body": "# 卷卷开发总计划\n\n先完成当前版本稳定性和发布表单，再按职责拆分、完整验收，随后建设 3.0。更新日期：2026 年 11 月 15 日。本页维护任务顺序、前置和成果入口，详细规则与测试放在各自 Issue。\n\n入口：[项目首页](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/)、[接手状态](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[架构](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md)、[3.0 共识](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。后端优先 JavaScript，以[决策 0002](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/decisions/0002-backend-language.md)替代旧 D0.1 的 Python 偏好。\n\n## 现在先做什么\n\n下一批优先 [#47](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47)，协调 [#43](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/43)、[#44](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/44) 一起处理发布表单。[#6](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6) 已验收合入，当前已满足 #47 的主要开始条件；执行前核对最新 main，保护其他聊天的工作成果。[#7](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7) 已有 PR #48 待审查，保留其成果，不因优先级调整覆盖或取消。\n\n[#47](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47) 是发布双按钮、自动规则评分、识别后可编辑、新建 AI 失败自动发布的唯一详细实施说明，已包含独立规则文档、唯一可执行评分模块、合成用例和测试要求。不提供人工选档或手动改分，分类可改。旧建议中统一分数、人工选档、修改后强制重识别等已被否决，不再作为实施依据。\n\n本轮顺序不要求按 Issue 数字从小到大执行，也不等待整个 #11 或完整 #9 才实现 #47。仅提前拆出评分所需的小模块，整体模块拆分仍由 #9 承接。\n\n## 任务关系怎么读\n\n- 硬前置：依赖任务的相关成果验收并合入后才能实施；只完成代码但 PR 未合入不算满足。\n- 同轮协作：可以在同一个 PR 中处理共同区域，分别核对原 Issue 验收，不互相等待关闭。\n- 配套验证：实现与测试相互配合，不能设计成双方必须先关闭的循环。\n- 最终验收：前面各项交付汇总后验证完整旅程，不用它替代每项自己的测试。\n- 原始 19 项同时核对原生子任务状态；后续新增任务由下方链接清单跟踪，未声称已建立所有原生父子或阻塞关系。\n- 已完成成果与历史记录保留。勾选仅表示任务验收，不表示线上网站已自动更新。\n\n## 主线与关键协作\n\n```mermaid\nflowchart TD\n  A[\"#2、#3 保存源码与工程基础\"] --> B[\"#6 数据保存保护\"]\n  B --> C[\"优先 #47 发布双按钮与自动评分\"]\n  D[\"#43 日期失效\"] -. 同轮分别验收 .-> C\n  E[\"#44 整月日历\"] -. 同轮分别验收 .-> C\n  B -. 配套故障验证 .-> F[\"#37 存储测试\"]\n  C -. 配套请求验证 .-> G[\"#38 异常请求\"]\n  C --> H[\"#9 按职责拆分\"]\n  I[\"其他业务修复，前置见下表\"] --> H\n  H --> J[\"#10 当前版本完整验收\"]\n  F --> J\n  G --> J\n  J --> K[\"#14 后端，另需 #11、#12\"]\n```\n\n该图展示主要路径，不替代下表的完整前置。\n\n| 任务 | 硬前置 | 同轮、配套与后续 |\n| --- | --- | --- |\n| #47 发布双按钮 | #6，工程基础 #2、#3 已完成 | 与 #43、#44 同轮；自身先测失败与取消，#38 再专项复验；#11 引用规则，#9 在后 |\n| #43 日期失效 | #2、#3 | 与 #47 同轮，先修根因再验证发布，独立验收 |\n| #44 整月日历 | #2、#3 | 与 #47 同轮，不依赖 #43 先关闭，独立验收 |\n| #6 数据保护与 #37 专项测试 | #6 依赖 #2、#3；#37 可在工程基础上准备测试 | #6 已完成，#37 剩余文件选择和设备提示体验仍验收；二者不互相等待关闭 |\n| #27 转换附件 | #2、#3、#6 | 与转换、撤销实际数据一起验收 |\n| #8 统计与 #28 编辑计分 | #8 依赖 #2；#28 依赖 #6、#8 | 先统一统计基线，再修编辑差额；#28 不反过来阻塞 #8 |\n| #30 批量校验 | #5 | 复用组身份合同，拒绝时零写入 |\n| #31 上下文选择 | #4、#5 | 核对超过 100 条资料的实际目标 |\n| #29 额度与 #38 请求异常 | #2、#3 | #29 修可信计数日期；#38 配套复验超时、取消和重试，不相互等待关闭 |\n| #32、#33 导航与输入缺陷 | #2、#3 | 分别定位和验收；#34 后续新布局仍需回归，不借换布局自动关闭 |\n| #39 备注重复 | #2、#3 | 先查来源，必要时展提供最小脱敏样例 |\n| #9 整体模块拆分 | #3、#4、#5、#6、#7、#8、#27、#28、#30、#43、#47 | #37 关键数据保护证据到位；不要求等待其剩余人工体验项全部关闭 |\n| #10 当前版本验收 | #3 至 #9，以及 #27 至 #33、#37 至 #40、#43、#44、#47 | 完整人工项、运行发布与恢复在此汇总；不重复已完成 #40 的恢复 |\n| #11 3.0 规则 | 无未满足硬前置 | 可讨论其他规则，已拆出的 #47 不等整个 #11 |\n| #12 托管、#13 同步设计 | #11 | 两项都保留；#12 验证托管，#13 定数据和账户行为 |\n| #14 后端 | #10、#11、#12 | 先跑通一条完整事务 |\n| #15 账户与同步 | #13、#14 | 旧资料、离线修改和跨账户隔离必须验收 |\n| #16 AI | #14、#15 | 后续才进入配置和记忆建设 |\n| #17 配置、#18 记忆 | #17 依赖 #16；#18 依赖 #17 | #18 可交付有证据的“不扩大”结论 |\n| #19 通知与数据库检查 | #12、#15 | 调度不依赖个人电脑开机 |\n| #34 双端布局、#41 小猫美术 | #9 的必要边界、#11 的具体范围确认 | 样稿可提前准备；列入 3.0，不能阻塞当前 Bug 修复 |\n| #20 3.0 验收 | #15、#16、#17、#18、#19、#34、#41 | 核对真实设备、旧资料、文档和发布恢复 |\n\n## 当前版本任务清单\n\n### 已完成基础与访问恢复\n\n- [x] [#2：保存电脑上的最新代码，让 GitHub 下载后也能检查](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2)。已验收，成果与原始源码基线见任务内 PR #24。\n- [x] [#3：统一启动、打包和自动检查的方法](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3)。已验收，统一启动、构建和检查，成果见 PR #26。\n- [x] [#4：修复“只改一天，却改到整组”的问题](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4)。已验收，单天范围和确认快照保护，成果见 PR #35。\n- [x] [#5：让 AI 正确识别同一组重复日程](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5)。已验收，组身份传递和校验，成果见 PR #36。\n- [x] [#6：防止导入或批量修改中途失败造成数据丢失](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6)。已验收，可靠事务和故障保护，成果见 PR #46；#37 保留独立人工验收。\n- [x] [#40：排查并恢复卷卷 GitHub Pages 地址在电脑和手机均返回 404](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)。已恢复原 Pages，PR #42 与 #45、发布 43625176652，展已确认手机能打开。\n\n### 下一批优先：发布表单\n\n- [ ] [#47：发布日程与待办改为左侧 AI 识别、右侧快速发布，优先实施](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47)。详细交互与规则以该任务为准，#6 之后直接优先处理。\n- [ ] [#43：修复 AI 识别后已选执行日期失效，必须再次选日期才能发布](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/43)。与 #47 同轮，修已选日期识别后失效。\n- [ ] [#44：发布日程的执行日期默认显示整月，移除展开和收起](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/44)。与 #47 同轮，整月常显并移除展开收起。\n\n### 其他修复与专项验证\n\n- [ ] [#7：查询天气时优先使用用户这次说的城市](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7)。已有 PR #48，待审查合入，未提前勾选。\n- [ ] [#8：修复完成数量和统计报告对不上的问题](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/8)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#27：修复助手将日程转成待办时丢失图片和链接](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/27)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#28：统一助手与表单编辑日程的积分重算和改时规则](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/28)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#29：修复公共 AI 额度使用客户端日期导致计数可绕过](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/29)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#30：补齐批量修改遗漏的标题分数和时间字段校验](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/30)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#31：修复事务上下文只取最早 100 条导致近期日程遗漏](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/31)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#32：修复底部导航切换时滚动条闪现引起页面横向跳动](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/32)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#33：修复助手输入聚焦误判键盘弹出导致底部导航消失](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/33)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#37：专项验证导入格式、重复记录与事务失败后的数据恢复](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37)。关键自动化和原生数据库证据已取得，剩余人工体验项继续验收。\n- [ ] [#38：统一验证并修复请求超时、取消后返回、重试与额度计数](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/38)。按上方任务关系推进，证据与状态详见任务正文。\n- [ ] [#39：定位并修复课程教授备注重复的问题](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/39)。按上方任务关系推进，证据与状态详见任务正文。\n\n### 模块拆分与当前版本收尾\n\n- [ ] [#9：拆清页面、数据、积分和 AI 代码](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/9)。按上方硬前置和关键验证证据进入，小批拆分，每批回归。\n- [ ] [#10：验证下载、运行、发布和恢复的完整流程](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/10)。汇总完整用户流程、发布和恢复验收，保留未测范围。\n\n## 3.0 任务清单\n\n- [ ] [#11：确定 3.0 的发布规则、数据格式和验收标准](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#12：验证免费服务能否支撑香港和大陆使用](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/12)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#13：确定登录、跨设备同步和旧数据保留规则](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/13)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#14：搭建后端，跑通一条完整事务流程](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/14)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#15：实现邮箱登录、跨设备同步和数据恢复](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/15)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#16：接通三种 AI 模式，管理工具权限和体验额度](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/16)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#17：让提示词和工作流可调整，错误可追查](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/17)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#18：试验自动整理记忆，验证能否纠错和追溯来源](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/18)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#19：实现少量网页通知和每周两次数据库检查](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/19)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#34：完善电脑与手机自适应布局，提供布局切换方案](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/34)。按上方依赖和任务正文推进，不把设计当作实现。\n- [ ] [#41：在 3.0 完成卷卷小猫新美术与基础动作改版](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/41)。新美术和基础动作纳入 3.0；城镇、文明和宇宙成长仍待另定范围。\n- [ ] [#20：完成 3.0 实机验收、演示和发布](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/20)。按上方依赖和任务正文推进，不把设计当作实现。\n\n## 当前发布与范围共识\n\n正式网址：<https://jinzhan857-sketch.github.io/juanjuan-to-do-list/>。展在了解公开影响后确认公开仓库并免费恢复 Pages，替代此前的私有偏好。个人备份、密钥仍不入库，尚未选择开源许可证。只通过手动 Pages 工作流发布检查通过的 main 产物；后续代码合入不自动上线，GitHub Pages 不执行 api/ai.js。历史 Sites 不作为本次正式入口。\n\n当前发布表单的全部细节以 #47 为准；产品实施后同步相关正式说明，不在总计划另维护第二套评分表。小猫新美术属于 #41 的 3.0 范围，不提前混入当前修复；世界成长玩法未默认承诺。\n\n## 如何交付与停止\n\n每项任务保留 PR、源码和配置版本、命令、实际结果、未测范围及遗留问题。验收后才关闭并勾选，不删除已完成、取消或被替代的历史。\n\n人工实测前，执行者准备合成样本、设备要求、步骤与预期，再请展反馈；不在正式资料上故障注入。出现越范围写入、丢资料、重复结算、关键测试退步、密钥泄漏或无法恢复时停止对应合入或发布，保留证据。真实模型调用、部署和真实数据迁移按具体授权执行，资料整理不自动授权这些动作。\n\n## 已完成的准备工作\n\n完成后保留原条目与证据，继续追加新成果，不删除历史。以下是准备工作，不计作下面 19 项开发任务已完成。\n\n- [x] 盘点当前功能、代码差异和已知问题，保留[首次盘点](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/CURRENT_STATE.md)。\n- [x] 将 3.0 完整方案保存到 GitHub 与飞书，保留待定事项。\n- [x] 建立项目首页、文档目录与 19 个开发子任务，见 [PR #21](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/21)。\n- [x] 整理名称、中文解释、流程图和共用接手入口，并完成默认首页核对。成果：[PR #22](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/22)、[首页复核修正 PR #23](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/23)。\n\n- [x] 2026 年 11 月 15 日：更正后端语言实现偏好，保留稳定性要求和历史决策。成果：[PR #25](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/25)、[决策 0002](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/decisions/0002-backend-language.md)。仅更正说明，不代表 #12、#14 或其他开发任务已完成。\n\n## 整理前的历史记录\n\n以下原文保存本次整理前的任务说明、成果链接和决策过程，仅作历史快照；当前顺序、状态和关系以本页上方及具体任务最新正文为准。此后不在快照内更新进度。\n\n<details>\n<summary>展开整理前原文，非当前执行计划</summary>\n\n# 卷卷开发总计划\n\n先整理当前版本，再按已确认的目标建设 3.0。看下面的流程图理解大顺序，点任务查看具体操作、依赖和验收。图中按阶段归组，准确开始条件以每项任务为准。\n\n入口：[项目首页](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/)、[当前状态与接手说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[完整 3.0 方案](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。\n\n当前后端实现方向以[决策 0002](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/decisions/0002-backend-language.md)为准：优先采用 JavaScript，替代 D0.1 中的 Python 优先偏好。独立后端职责与稳定性要求不变，框架与托管组合由 #12 验证。原 D0.1 与飞书全文保留历史版本，本次未同步改写全文。\n\n## 近期优先：发布日程与待办的双按钮\n\n- [ ] [左侧 AI 识别、右侧快速发布（#47）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47)。展于 2026 年 11 月 15 日明确要求提前。原归 #11，现独立实现；日程和待办都覆盖。\n\n不等待整个 3.0、#11 全部设计或 #9 完整拆分。先完成正在进行的数据保护任务的必要整合，再优先推进 #47 的最小规则确认和实现，同时协调 #43 日期失效、#44 整月日历。快速发布必须不调用模型，具体规则分和编辑权限先经展确认，不凭空定值。其他已知缺陷继续保留，不因优先级调整取消。\n\n## 已完成的准备工作\n\n完成后保留原条目与证据，继续追加新成果，不删除历史。以下是准备工作，不计作下面 19 项开发任务已完成。\n\n- [x] 盘点当前功能、代码差异和已知问题，保留[首次盘点](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/CURRENT_STATE.md)。\n- [x] 将 3.0 完整方案保存到 GitHub 与飞书，保留待定事项。\n- [x] 建立项目首页、文档目录与 19 个开发子任务，见 [PR #21](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/21)。\n- [x] 整理名称、中文解释、流程图和共用接手入口，并完成默认首页核对。成果：[PR #22](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/22)、[首页复核修正 PR #23](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/23)。\n\n- [x] 2026 年 11 月 15 日：更正后端语言实现偏好，保留稳定性要求和历史决策。成果：[PR #25](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/25)、[决策 0002](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/decisions/0002-backend-language.md)。仅更正说明，不代表 #12、#14 或其他开发任务已完成。\n\n## 开发顺序流程图\n\n```mermaid\nflowchart TD\n  A[保存现有成果 #2] --> B[建立检查并修复问题，含新增缺陷清单]\n  B --> C[拆清代码并验收当前版本 #9 和 #10]\n  D[明确产品规则 #11] --> E[验证托管和同步设计 #12 和 #13]\n  C --> F[后端、账户和 AI #14 至 #16]\n  E --> F\n  F --> G[配置和记忆 #17 和 #18]\n  F --> H[普通通知和数据库检查 #19]\n  G --> I[完整验收与发布 #20]\n  H --> I\n```\n\n## 任务清单\n\n验收通过后关闭对应子任务并核对本清单的勾选状态，保留任务条目和交付链接。原始 19 项任务同时核对原生子任务状态；本轮新增任务通过下方链接清单统一跟踪，尚未建立原生父子关系，不把原生统计当作全部新增任务的数量。取消或被替代的任务注明原因，不静默删除。\n\n### 阶段一：保存现有成果\n\n- [x] [保存电脑上的最新代码，让 GitHub 下载后也能检查（#2）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2)。开始前：本轮资料整理交付后，可按授权启动。已于 2026 年 11 月 14 日验收并合入 main。成果：[PR #24](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24)、[验收报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-14/issue2-baseline.md)。\n\n### 阶段二：建立检查并修复已知问题\n\n- [x] [统一启动、打包和自动检查的方法（#3）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3)。开始前：#2 已验收并合入 main。 已于 2026 年 11 月 15 日验收并合入 main。成果：[PR #26](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/26)、[验收报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue3-toolchain.md)、[CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621013299)。未部署，三项已知问题仍保留。\n- [x] [修复“只改一天，却改到整组”的问题（#4）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4)。开始前：#2 已验收并合入 main。 已于 2026 年 11 月 15 日验收并合入 main。成果：[PR #35](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/35)、[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue4-scope.md)、[CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622174726)。\n- [x] [让 AI 正确识别同一组重复日程（#5）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5)。开始前：#2 已验收并合入 main。2026 年 11 月 15 日已实现、复审验收并合入 main。成果：[PR #36](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/36)、[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue5-series.md)、[CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43623344256)、[复审记录](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/36#issuecomment-6881789368)。Windows、Ubuntu 全部通过，未部署或调用真实模型。后续任务继续逐项核对各自依赖，不自动实施。\n- [x] [防止导入或批量修改中途失败造成数据丢失（#6）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6)。开始前：#2、#3 已验收并合入 main。2026 年 11 月 15 日复审补齐撤销快照保护后已合入 main。成果：[PR #46](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/46)、[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue6-atomicity.md)、[最新 CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43627235855)。113 项 Node 测试、原生浏览器和双平台检查通过，未部署；#37 保持独立验收。\n- [x] [查询天气时优先使用用户这次说的城市（#7）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7)。开始前：#2 已验收并合入 main。2026 年 11 月 15 日复审补齐查询解析、普通聊天与错误响应保护后验收合入 main。成果：[PR #48](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/48)、[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue7-weather.md)、[最终 CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43629827479)、[复审记录](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/48#issuecomment-6882674252)。26 项稳定断言、160 项 Node 测试和 7 项隔离浏览器流程通过，Windows 与 Ubuntu 源码和归档检查成功；合入提交 bbb4a94。真实预报接口本机探测超时已单独记录，未发布，#37 继续独立验收。\n- [ ] [修复完成数量和统计报告对不上的问题（#8）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/8)。开始前：#2 已验收并合入 main。\n\n### 阶段二补充：2026 年 11 月 15 日新增问题\n\n每个能独立修复和验收的问题使用独立 Issue。同一根因的复现变体、失败分支和测试要求补进原任务，不重复建单。新增记录链接如下，原有 #4 至 #8 继续保留。登记不等于修复，具体证据、开始条件与验收以各 Issue 为准。\n\n- [ ] [修复助手将日程转成待办时丢失图片和链接（#27）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/27)。优先级：高，数据保留。开始前：#2、#3、#6 验收合入后实施。\n- [ ] [统一助手与表单编辑日程的积分重算和改时规则（#28）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/28)。优先级：高，业务一致性。开始前：#6、#8 验收合入后实施；先核对已有积分规则，不发明新分值。\n- [ ] [修复公共 AI 额度使用客户端日期导致计数可绕过（#29）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/29)。优先级：高，公共服务开放前阻塞。开始前：#2、#3 已验收即可实施；实际公共接口发布前必须完成。\n- [ ] [补齐批量修改遗漏的标题分数和时间字段校验（#30）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/30)。优先级：中，执行前校验。开始前：#5 验收合入后实施，避免与组目标合同修改冲突。\n- [ ] [修复事务上下文只取最早 100 条导致近期日程遗漏（#31）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/31)。优先级：中，资料范围。开始前：#4、#5 验收合入后实施，沿用明确的单条与组身份规则。\n- [ ] [修复底部导航切换时滚动条闪现引起页面横向跳动（#32）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/32)。优先级：中，主要导航体验。开始前：#2、#3 已验收即可实施；与其他 index.html 修改串行整合。\n- [ ] [修复助手输入聚焦误判键盘弹出导致底部导航消失（#33）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/33)。优先级：中，输入与导航体验。开始前：#2、#3 已验收即可实施；与 UI01 分别修复和验收，避免同时改同一布局。\n\n### 当前版本专项补充：验证、恢复与访问\n\n2026 年 11 月 15 日展明确要求以下三类风险独立立项，并补充电脑和手机均无法访问的 404 故障。调查中区分用户现象、代码风险、已复现原因与实际修复，不因待测试而遗忘。\n\n- [ ] [专项验证导入格式、重复记录与事务失败后的数据恢复（#37）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37)。与 #6 配套，专项测试独立跟踪，不重复实现。 本轮已保存 [#6 配套关键矩阵](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/atomic-data-writes/docs/audit/2026-11-15/issue37-storage-matrix.md)，自动化与原生数据库验证通过；实际文件选择和设备提示体验仍待人工复验，保持独立任务。\n- [ ] [统一验证并修复请求超时、取消后返回、重试与额度计数（#38）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/38)。与 #29 配套，验证超时、取消、重试和计数。\n- [ ] [定位并修复课程教授备注重复的问题（#39）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/39)。先定位来源，再修复和验证，必要时由展协助最小样例实测。\n- [x] [排查并恢复卷卷 GitHub Pages 地址在电脑和手机均返回 404（#40）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)。高优先级，立即只读调查，不等待布局或模块拆分；恢复发布按具体授权执行。\n\n### 阶段三：拆清代码，验收当前版本\n\n- [ ] [拆清页面、数据、积分和 AI 代码（#9）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/9)。开始前：#3、#4、#5、#6、#7、#8、#27、#28、#30、#37、#43、#47 已完成相关验收，代码成果合入 main。\n- [ ] [验证下载、运行、发布和恢复的完整流程（#10）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/10)。开始前：#3、#4、#5、#6、#7、#8、#9、#27、#28、#29、#30、#31、#32、#33、#37、#38、#39、#40、#43、#44、#47 已完成相关验收，代码成果合入 main。\n\n### 阶段四：明确 3.0 规则与使用条件\n\n- [ ] [确定 3.0 的发布规则、数据格式和验收标准（#11）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11)。开始前：本轮资料整理交付后，可按授权启动。\n- [ ] [验证免费服务能否支撑香港和大陆使用（#12）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/12)。开始前：#11 已验收并合入 main。\n- [ ] [确定登录、跨设备同步和旧数据保留规则（#13）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/13)。开始前：#11 已验收并合入 main。\n\n### 阶段五：接通后端、账户与 AI\n\n- [ ] [搭建后端，跑通一条完整事务流程（#14）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/14)。开始前：#10、#11、#12 已验收并合入 main。\n- [ ] [实现邮箱登录、跨设备同步和数据恢复（#15）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/15)。开始前：#13、#14 已验收并合入 main。\n- [ ] [接通三种 AI 模式，管理工具权限和体验额度（#16）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/16)。开始前：#14、#15 已验收并合入 main。\n\n### 阶段六：完善配置、记忆与通知\n\n- [ ] [让提示词和工作流可调整，错误可追查（#17）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/17)。开始前：#16 已验收并合入 main。\n- [ ] [试验自动整理记忆，验证能否纠错和追溯来源（#18）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/18)。开始前：#17 已验收并合入 main。\n- [ ] [实现少量网页通知和每周两次数据库检查（#19）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/19)。开始前：#12、#15 已验收并合入 main。\n\n### 阶段七：完整验收与发布\n\n- [ ] [完成 3.0 实机验收、演示和发布（#20）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/20)。开始前：#15、#16、#17、#18、#19、#34、#41 已验收并合入 main。\n\n## 稳定性、模块拆分与布局完善\n\n2026 年 11 月 15 日补充：先保护数据和确认范围，统一编辑、计分与字段校验，再按 #9 小批拆分界面组件和业务模块，最后由 #10 验收完整流程。每个修复形成能核对实际数据的回归用例，不等待一个无法证明的“永远零 Bug”状态，也不靠单纯拆文件宣称完成组件化。\n\n- 同一问题只保留一份主要记录。复现条件、已确认事实、待验证原因、验收和 PR 放在具体 Issue，本页只维护入口和推进依赖。\n- 优先处理误改、丢资料、积分不一致与公共额度保护；界面缺陷也必须在当前版本验收前完成相关复验。\n- #6 已补充导入结构检查、事务完成、确认后状态变化等要求；#8 统计先验收，再由 #28 统一编辑计分，不互相等待。\n- [ ] [完善电脑与手机自适应布局，提供布局切换方案（#34）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/34)。属于 3.0 布局完善，先在 #11 确认具体方案，#9 形成必要边界后实施。推荐自动适配加手动切换，尚未冻结页面设计，不复制两套业务。\n- #32、#33 是已存在的布局 Bug，#34 是产品布局完善，分别验收。原定 3.0 任务与其余依赖继续保留，本轮没有实施应用或部署。\n\n## 最新范围与实测安排\n\n- #34 的双端布局样稿、滚动与导航规则可以提前准备，实际实现仍先确认范围；#32、#33 必须分别验证电脑和手机，不以换布局代替根因修复。\n- #40 的地址为 https://jinzhan857-sketch.github.io/juanjuan-to-do-list/ 。展反馈电脑手机均 404，审查请求同样返回 Site not found。发布访问问题与界面、业务登录分开调查，不擅自公开私有仓库或购买服务。\n- [ ] [在 3.0 完成卷卷小猫新美术与基础动作改版（#41）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/41)。已按展最新要求纳入 3.0 和 #20 验收，当前修复阶段不立即实施。家园和文明成长仍为待确认玩法，不自动扩成完整游戏。\n- 人工测试不是甩给展自行排查。执行者先准备合成样本、设备与浏览器要求、操作步骤、预期结果和记录方式，再让展补齐真实手机或特定资料现象的反馈；真实数据不用于破坏性故障试验。\n\n## 如何开始与完成\n\n1. 阅读 AGENTS.md 和当前状态，核对本地未提交成果。先从 #2 开始，#3 等待 #2 验收；#11 的产品规则设计可按授权先讨论。不能只按编号连续实施。\n2. 每个任务使用单独工作分支，保留原验收条件；任务页面记录 PR、检查命令、真实结果与遗留事项。\n3. 验收后更新任务状态、勾选并补成果链接，已完成条目继续保留。变更依赖时同步本页和子任务正文。\n4. 记忆试验 #18 可以交付“暂不扩大”的有证据结论，不要求强行上线完整 Wiki。小程序或 App、短信微信登录与会员机制仍属后续方向。\n\n## 标签与资料维护\n\n“当前版本”“3.0版本”区分阶段，“方案设计”“问题修复”“功能与工程改进”“文档说明”区分工作类型，“可以开始”表示前置已满足，不代替验收。完整标签用途和维护方法见[路线图说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/ROADMAP.md)。本页维护任务进度，飞书不另维护一份进度。\n\n## 什么情况先停下\n\n发现可能覆盖原始数据、跨账户或跨组误改、未确认写入、关键检查退步、密钥泄漏或无法恢复时，停止相关合入与发布并保留证据。整理文档不授权部署、真实数据迁移或收费资源创建。宠物、积分、旧数据和历史失败记录继续保留。\n\n\n## 2026 年 11 月 15 日已确认的发布共识\n\n展明确选择：GitHub 主代码仓库保持私有，网站链接任何人都能打开使用，优先现有资源和免费方案；不以公开主代码仓库或购买套餐作为默认解决办法。公开网站的浏览器前端可被访问者查看，服务端密钥、权限与私人数据不能放入公开产物。免登录本地试用与未来账户隔离按既有方案推进，网站公开不等于用户数据公开。\n\n\n## 最新确认：公开仓库，免费恢复原 Pages（替代早先私有偏好）\n\n2026 年 11 月 15 日，展在了解代码、文档、Actions 历史和日志公开及推送规则影响后，明确再次确认“公开仓库并恢复网站”。仓库现已改为 public，不购买套餐或新建付费服务。此选择替代上文“主仓库必须保持私有”的本轮早先共识，历史保留，不再据旧偏好阻止 Pages 恢复。\n\n已读取 Pages 设置，私有时明确提示 Upgrade or make this repository public to enable Pages；公开后可配置，现已选择 GitHub Actions。新增 [PR #42](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/42) 只部署检查通过的 dist，使用手动 main 发布，不自动发布后续每个改动。原网址为 https://jinzhan857-sketch.github.io/juanjuan-to-do-list/ 。部署结果以 #40 后续验收为准。\n\n历史 Sites 版本 8 可在桌面浏览器打开，但展反馈手机系统浏览器仍无法访问，不作为已验收替代入口。私人资料、备份和密钥继续不入库，尚未添加开源许可证。公开前对 122 个历史文本对象做常见密钥格式和私人备份路径扫描，无匹配；该有限扫描不等于对所有潜在敏感信息的绝对保证。\n\n\n## 2026 年 11 月 15 日发布表单新增反馈\n\n- [ ] [AI 识别后已选执行日期失效，必须再次选择才能发布（#43）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/43)。高优先级，核心发布流程；先复现，检查手动日期、识别结果和缺失标记。作为 #9 拆分前新增保护基线。\n- [ ] [发布日程默认整月，移除展开和收起（#44）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/44)。展已确认的交互变更，仅针对发布表单，纳入 #10 界面验收。\n\n#32、#33、#43、#44 已补充展提供的原图和区域说明。#40 已成功恢复原网址，Pages 发布 43625176652 成功，展确认真实手机能正常打开；部署提交为 5552bac，报告见 docs/audit/2026-11-15/issue40-pages.md。仓库公开的最新选择替代之前私有偏好，其他 Bug 不因网站恢复而关闭。\n\n\n</details>\n"
+    },
+    {
+      "number": 2,
+      "state": "closed",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2",
+      "updatedAt": "2026-11-14T15:52:54Z",
+      "body": "## 这项任务是做什么的\n\n电脑里的卷卷已经增加了一些功能，但 GitHub 保存的还是较旧的应用代码。现在的检查脚本又用到了新功能，所以别人下载仓库后会遇到缺少函数的错误。这项工作先把应该保留的最新代码整理并保存进去，再让代码和检查脚本对应起来。\n\n## 做完会得到什么\n\n下载仓库的人能拿到明确的一份代码，按说明运行对应检查；哪些功能仍有问题，也能直接查到。\n\n下面是开发时要核对的具体操作与技术依据。不熟悉文件名和编号时，可读 [GitHub 阅读指南](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/guide/README.md)。\n\n## 问题依据\n根页面和 API 有未提交成果，当前盘点检查针对本地版本，干净下载的应用代码与之不同。\n\n本轮追加证据：提取 [增加 3.0 方案时的仓库记录](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/commit/b8c36bd5ac46051d5442b30fbff62c5bbb6de3ce) 中已提交的应用代码运行盘点脚本，会在已知问题探测处报 AIService.weatherLocation is not a function 并中断。本地未提交版本含该函数。因此本任务必须让交付源码与检查入口匹配，并在干净下载中实际执行，不能只补文档或隐藏报错。\n\n## 具体操作\n- 核对与 [整理前的应用代码记录](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/commit/b35936b0c760b57263b068c3a1f204f28bfeb24d) 的差异，按功能归类，保留原始代码副本。\n- 将适合保留的源码放到单独的工作分支，记录已有失败，不顺带修复全部问题。\n- 建立与代码版本对应的检查结果，明确哪些成果可合入、哪些仍停留分支。\n\n## 先完成哪些任务\n本轮文档与任务导航可用后可以开始。\n\n属于当前代工程整理，任务编号 C01。父路线图：#1。未满足前置条件前可以阅读或补充设计，不提前实施依赖功能。\n\n## 要改哪些文件\n- `index.html`\n- `api/ai.js`\n- `docs/STATUS.md`\n- `docs/audit/2026-11-14/check-baseline.cjs`\n\n背景：[当前状态](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[当前架构](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md)、[完整共识稿](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。\n\n## 怎样算完成\n- [x] 原始改动无遗漏，个人备份未提交。\n- [x] 接手者能从仓库得到明确版本的源码和对应报告。\n- [x] 本地新增能力、未发布状态和失败项均可追踪，不能只靠展的电脑。\n\n## 什么情况先停下\n发现来源不明的改动或可能覆盖原始成果时，停止覆盖和合入，保留差异。\n\n## 完成后记录\n2026 年 11 月 14 日验收完成，已由 [PR #24](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24) 合入 main，保留全部原始要求与历史。\n\n- [x] 原始两份源码完整保存，原文件副本与差异留在本地忽略目录，个人备份和密钥未提交。\n- [x] [源码提交 1236ef9](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/commit/1236ef9109db88acfcb2a8b2261ff45722b3ffb4) 与对应检查、报告可从仓库获取。\n- [x] 本地新增能力已分类，未发布状态与三项已知问题完整保留。\n- [x] 远端干净克隆与无 Git 的 ZIP 解压目录均实际运行，26 项断言通过，0 项断言失败。\n\n执行命令：`node docs/audit/2026-11-14/check-baseline.cjs`、`node scripts/check-docs.cjs`、`git diff --check`。文档检查为 30 份 Markdown、139 条本地链接、2 个标题锚点，失败 0。\n\n[完整验收与功能分类](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-14/issue2-baseline.md)、[干净克隆报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-14/issue2-clean-clone.json)、[ZIP 报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-14/issue2-zip.json)、[更新后的接手说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)。\n\n遗留：#4 指定单天误走整组、#5 托管上下文丢失组身份、#7 记忆地点覆盖明确城市仍复现。dist 保留旧发布文件；#3 未实施。未部署、未迁移真实数据、未调用真实模型。\n"
+    },
+    {
+      "number": 3,
+      "state": "closed",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3",
+      "updatedAt": "2026-11-14T17:27:25Z",
+      "body": "## 这项任务是做什么的\n\n现在打开网页、准备发布文件和执行检查，还没有统一可靠的命令。修改源码后，准备发布的 dist 文件夹也不会自动跟着更新。这项工作把这些步骤固定下来。\n\n## 做完会得到什么\n\n接手者照着说明就能启动和打包；GitHub 能自动执行必要检查；发布文件能说明来自哪份源码。\n\n下面是开发时要核对的具体操作与技术依据。不熟悉文件名和编号时，可读 [GitHub 阅读指南](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/guide/README.md)。\n\n## 问题依据\n根目录和 dist 目前脱节，没有统一构建或项目级依赖锁定。\n\n## 具体操作\n- 选择最小工具链，固定必要工具版本，提供预览、构建与检查命令。\n- 明确 dist 的生成策略，避免手工复制漂移；保留原应用行为。\n- 把稳定的基线与问题用例分清，建立必要 CI，不能通过排除关键失败伪装全通过。\n\n## 先完成哪些任务\n等待 [保存电脑上的最新代码，让 GitHub 下载后也能检查（#2）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2) 完成验收并将依赖成果合入 main。\n\n属于当前代工程整理，任务编号 C02。父路线图：#1。未满足前置条件前可以阅读或补充设计，不提前实施依赖功能。\n\n## 要改哪些文件\n- `index.html`\n- `dist/index.html`\n- `docs/development/README.md`\n- `docs/development/TESTING.md`\n- `.github/workflows/`\n\n背景：[当前状态](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[当前架构](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md)、[完整共识稿](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。\n\n## 怎样算完成\n- [x] 干净下载后按文档能启动和生成产物。\n- [x] 产物能追到源码提交，构建失败有明确退出码。\n- [x] 必要自动检查在 GitHub 有实际运行记录，不包含密钥和个人资料。\n\n## 什么情况先停下\n产物改变核心行为或测试被静默跳过时，停止合入。\n\n## 完成后记录\n完成时补充 PR、代码提交、执行命令、实际结果、验证报告、更新文档和遗留问题的链接，再核对是否关闭任务。初始登记时未实施、没有交付；当前结果以上方清单和下方验收记录为准。\n\n\n## 2026 年 11 月 15 日验收交付\n\n已通过 [PR #26](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/26) 合入 main，合入提交 `f6e15f05192d2c3fadb119939ec3e037c2369f19`。实现提交为 `33d96b3`、`6cff306`，验收文档提交为 `be840a0`。\n\n执行 `npm ci --ignore-scripts`、`npm run dev`、`npm run build`、`npm run check`、`npm run check:archive`。干净远端克隆和 GitHub ZIP 实际运行，26 项稳定断言、7 项工程测试通过，三项已知问题独立复现。构建失败路径明确非零，未跳过关键检查。\n\n[最终 PR CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621013299) 与 [最终分支 CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621008727) 的 Windows、Ubuntu 均通过，源码及无 Git 归档均实际执行。首次 Windows 路径失败保留在 [43620626082](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43620626082)，修正后重新验证。\n\n[交付报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue3-toolchain.md)、[开发命令](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/README.md)、[测试说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/TESTING.md)、[发布边界](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/RELEASE.md)。\n\n零第三方依赖，dist 从源码生成并记录来源，克隆、ZIP 与两平台 CI 页面哈希一致。已实际核对 CI 上传包，仅含页面、来源记录和合成报告，不含密钥、私人资料或备份。应用源码与历史检查脚本未变，未部署、迁移或调用真实模型。#4、#5、#7 仍未修复，本次未展开其他开发任务。\n\n合入 main 后的检查也已通过：[main CI 43621095168](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621095168)。\n"
+    },
+    {
+      "number": 4,
+      "state": "closed",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4",
+      "updatedAt": "2026-11-14T17:40:04Z",
+      "body": "## 这项任务是做什么的\n\n用户只要求修改某一天的日程时，卷卷有时会把请求理解成修改整组重复日程。这项工作查明原因，保证修改范围符合用户本意。\n\n## 做完会得到什么\n\n只改一天就只影响那一天；整组修改会列明范围；无法确定时先追问。\n\n下面是开发时要核对的具体操作与技术依据。不熟悉文件名和编号时，可读 [GitHub 阅读指南](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/guide/README.md)。\n\n## 问题依据\n已复现“只改某一天备注”被本地处理为 update_schedule_batch，影响范围错误。\n\n## 具体操作\n- 先用合成同组多条日程复现，定位目标解析与范围选择根因。\n- 修复单条与整组识别，歧义追问，确认与执行阶段核对范围。\n- 覆盖同名不同组、缺少日期、明确全部和只改一天等情况。\n\n## 先完成哪些任务\n等待 [保存电脑上的最新代码，让 GitHub 下载后也能检查（#2）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2) 完成验收并将依赖成果合入 main。\n\n属于当前代工程整理，任务编号 C03。父路线图：#1。未满足前置条件前可以阅读或补充设计，不提前实施依赖功能。\n\n## 要改哪些文件\n- `index.html`\n- `docs/audit/2026-11-14/check-baseline.cjs`\n- `docs/architecture/AI.md`\n\n背景：[当前状态](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[当前架构](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md)、[完整共识稿](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。\n\n## 怎样算完成\n- [x] 指定单天只提出并修改目标一条，其他日期和其他组不变。\n- [x] 明确整组可执行，范围不唯一时不猜测写入。\n- [x] 断言检查最终数据和影响条数，不只检查回复。\n\n## 什么情况先停下\n任何越范围写入或仅靠新增关键词特例绕过根因，都不能合入。\n\n## 完成后记录\n完成时补充 PR、代码提交、执行命令、实际结果、验证报告、更新文档和遗留问题的链接，再核对是否关闭任务。初始登记时尚未实施，当前成果见下方验收记录。\n\n\n## 2026 年 11 月 15 日验收\n\n已通过 [PR #35](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/35) 合入 main，合入提交 `5e009c4009ed931d43d475ecc8b2b0631eb765f8`。实现 `dddef03`，证据 `0b542a4`，固定测试时钟 `c7feb84`。\n\n根因是把已有日期范围当作整组意图，单条分支又取首条同名记录。现先判断单条或整组并唯一匹配，模型建议对照原请求，确认卡与执行绑定目标快照；范围变化时拒绝写入。旧待确认卡须重新生成，不增加兼容逻辑。\n\n执行 npm run check、npm run check:archive，26 项原稳定断言及 24 项 Node 测试全部通过、0 跳过，其中 17 项为新增范围回归。实际核对合成持久写入、删除 ID、最终记录、其他日期、宠物与积分字段，不只检查回复。旧 main 的复现失败日志保留，历史脚本与归档未修改。\n\n最终 [PR CI 43622174726](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622174726) 和 [分支 CI 43622170527](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622170527) 均在 Windows、Ubuntu 完成源码和无 Git 归档检查。\n\n[交付报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue4-scope.md)、[AI 说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/AI.md)、[测试说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/TESTING.md)。\n\n仅处理 #4。#5、#7 的两项问题继续独立探测并复现；#6 的中途失败恢复尚未实施。未部署、迁移或调用真实模型，不在日常浏览器试验数据写入。\n"
+    },
+    {
+      "number": 5,
+      "state": "closed",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5",
+      "updatedAt": "2026-11-14T17:55:44Z",
+      "body": "## 这项任务是做什么的\n\n同一门课可能每周出现，也可能与另一组日程同名。目前向 AI 传递资料时会丢掉区分组别的编号，需要让这条信息完整传递并正确校验。\n\n## 做完会得到什么\n\nAI 和程序能分清同名的不同日程组，修改时不会把另一组一起选中。\n\n下面是开发时要核对的具体操作与技术依据。不熟悉文件名和编号时，可读 [GitHub 阅读指南](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/guide/README.md)。\n\n## 问题依据\ncompactAgentContext 重建日程对象时丢弃 series_id，模型拿不到前端已有的组身份。\n\n## 具体操作\n- 建立前端上下文、服务端压缩、模型结构、确认及目标选择的字段测试。\n- 保留必要组身份并验证长度和类型，拒绝无依据目标。\n- 验证同名不同组及缺少组身份的行为，避免前后端合同再次漂移。\n\n## 先完成哪些任务\n等待 [保存电脑上的最新代码，让 GitHub 下载后也能检查（#2）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2) 完成验收并将依赖成果合入 main。\n\n属于当前代工程整理，任务编号 C04。父路线图：#1。未满足前置条件前可以阅读或补充设计，不提前实施依赖功能。\n\n## 要改哪些文件\n- `api/ai.js`\n- `index.html`\n- `docs/architecture/AI.md`\n\n背景：[当前状态](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[当前架构](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md)、[完整共识稿](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。\n\n## 怎样算完成\n- [x] 合法 series_id 往返不丢失，非法值按合同处理。\n- [x] 同名课程不误匹配其他组，确认范围和实际执行一致。\n- [x] 保留不调用模型的接口测试，以及可选真实链路验证要求。\n\n## 什么情况先停下\n不能通过放宽范围匹配或无验证复制所有上下文字段来修复。\n\n## 完成后记录\n2026 年 11 月 15 日：实现与本地、远端自动验收通过，经复审后已通过 PR #36 合入 main，本任务关闭。合入提交为 6647c9c6febc807232eb9ac74fa373d1db5edf41，原有验收条目与历史证据继续保留。\n\n成果：[PR #36](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/36)、[提交 ee226db](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/commit/ee226db603665d74e158f3acb716fb9109e48c59)、[验证报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue5-series.md)、[AI 合同](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/AI.md)、[测试说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/TESTING.md)、[CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43623344256)。\n\n验证：新增 25 项组身份回归，在原 main 上 8 通过、17 失败；修复后 25 项全通过。npm run check 的构建、文档、26 项基线断言和 49 项 Node 测试通过；git diff --check 和 npm run check:archive 通过。PR CI 的 Windows 与 Ubuntu 均通过完整检查及无 Git 归档检查，产物与合成报告已上传。\n\n合法编号原样往返，非法编号不强制转换或截短，托管接口拒绝本次上下文没有的编号。已有身份的组漏掉编号时拒绝确认和执行。同名多组仍追问，实际修改、删除、撤销只作用于确认目标，确认后组成员变化停止写入。\n\n未部署、未迁移真实数据、未调用真实模型；真实链路可选验证要求保留在报告中。#7 的旧城市覆盖仍复现，其余任务未实施。\n\n\n复审补充：再次执行完整检查通过，额外核对错选已有组、同日同时的同名组、混合有无编号、确认后新增组成员，均拦截且无写入。[复审记录](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/36#issuecomment-6881789368)。"
+    },
+    {
+      "number": 6,
+      "state": "closed",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6",
+      "updatedAt": "2026-11-14T18:35:38Z",
+      "body": "## 这项任务是做什么的\n\n导入备份和一次修改多条日程时，目前会一条条保存。中途报错可能只完成一半，导入还可能先清掉旧资料。这项工作补上整体保存和失败恢复的保护。\n\n## 做完会得到什么\n\n批量操作成功时结果一致；失败时原始资料完整或可以恢复；不会只完成一半却显示全部成功。\n\n下面是开发时要核对的具体操作与技术依据。不熟悉文件名和编号时，可读 [GitHub 阅读指南](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/guide/README.md)。\n\n## 问题依据\n导入先清空再逐条写入，批量操作也逐条提交，中断会留下部分状态。\n\n## 具体操作\n- 检查 IndexedDB 事务真正完成、失败传播与内存镜像更新时机。\n- 为导入、批量变更及相关操作记录设计一致提交和恢复机制。\n- 用合成数据库故障注入，验证中途失败、重复确认和撤销前状态变化。\n\n## 先完成哪些任务\n等待 [保存电脑上的最新代码，让 GitHub 下载后也能检查（#2）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2)、[统一启动、打包和自动检查的方法（#3）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3) 完成验收并将依赖成果合入 main。\n\n属于当前代工程整理，任务编号 C05。父路线图：#1。未满足前置条件前可以阅读或补充设计，不提前实施依赖功能。\n\n## 要改哪些文件\n- `index.html`\n- `docs/architecture/DATA.md`\n- `docs/development/TESTING.md`\n\n背景：[当前状态](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md)、[当前架构](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md)、[完整共识稿](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/V3_CONSENSUS_DRAFT.md)。\n\n## 怎样算完成\n- [x] 失败后原始资料完整或能按经验证的机制恢复，不出现半批成功却声称全部完成。\n- [x] 日程、待办、操作记录和内存状态一致。\n- [x] 正常写入、失败、撤销和重复提交都有可重复检查。\n\n## 什么情况先停下\n未完成隔离故障测试前不得在真实数据上试导入，不新增未经展同意的兼容处理。\n\n## 完成后记录\n2026 年 11 月 15 日：实现和验收已完成，通过 [PR #46](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/46) 交付，经复审修复后已合入 main，本任务关闭。合入提交 7e43de22b9788181fab50e3ba912b306a7b1ebb1，历史验收和证据保留。\n\n成果：[最终提交](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/commit/d4e287bdd40065530647e1b5edccb3cb5c4a821a)、[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue6-atomicity.md)、[#37 矩阵](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue37-storage-matrix.md)、[CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43626081853)。工作区干净。\n\n验证：npm run check 的构建、文档、26 项稳定断言和 97 项 Node 测试全部通过，新增 48 项真实存储语义的合成故障测试。npm run check:archive 和 git diff --check 通过。后台浏览器在独立来源和专用合成库完成 7 项原生 IndexedDB 检查。Windows 与 Ubuntu CI 的完整检查、无 Git 归档和证据上传均通过。\n\n原 main 的隔离探测复现请求成功后中止仍报告成功，以及导入第二条失败后磁盘只剩一条、内存仍三条。修复后整批变更、操作记录、最终消息及撤销一起提交；事务完成才更新内存。导入整份校验，重复编号直接拒绝，不过滤、自动合并或增加兼容。还覆盖重复确认、直接并发、预览后变化、撤销前变化、kv 容量不足和提交后渲染失败的准确提示。\n\n按展确认保留另一聊天的 #40 文档与发布配置，已整合最新 main；未部署、未迁移真实资料、未调用模型。#37 关键故障证据已取得，人工文件选择与设备提示体验仍由独立任务跟踪；#8、#28 的单条计分及宠物奖励、#27 附件规则不在本轮顺带修复。\n\n\n## 2026 年 11 月 15 日审查补充\n\n以下保护实现仍由本任务负责；展现已要求专项测试单独立项，由 #37 跟踪格式、重复记录和故障恢复验证，避免遗漏。两项配套推进，不重复实现，也不互相等待关闭：\n\n- [x] DB 请求成功不等于事务提交成功，保存完成必须覆盖事务完成与 abort/error 传播，失败时内存与持久化一致。\n- [x] 清空旧库前完整校验导入结构，覆盖缺少 id、重复 id、非法日期和宠物及统计字段；预览说明过滤差异，不静默丢数据。\n- [x] 确认后执行前目标内容或组成员变化时，核对已确认目标和影响范围，必要时重新确认。\n- [x] 以合成数据库验证中途失败、重复确认、撤销前数据变化，以及业务记录与操作记录一致提交。\n\n关联独立缺陷：#27 转换附件保留、#28 编辑积分一致性。二者在本任务基础上分别修复验收，不因本任务完成自动关闭。\n\n\n## 专项交付关系\n\n#37 负责独立测试矩阵和人工复验结果。本任务实施写入保护并取得 #37 关键故障检查证据后验收，不能只凭正常路径关闭。无需等 #37 关闭才启动本任务。\n\n\n## 合入前最终复审与结果\n\n[复审记录](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/46#issuecomment-6882310849)。发现损坏撤销快照校验不足，5 项复现修复前均失败，现已补齐共用业务字段和快照结构校验；缺失快照、重复编号、非法日期和更新前后目标不一致均拒绝导入或撤销，不写回损坏数据。补测全部 10 种动作的正常导出撤销和并发撤销。\n\n最终提交 be2b5929e7b8e4d7d7f6f3c703be298d06c3ace4：64 项存储测试、113 项 Node 测试、构建、文档、26 项稳定断言、无 Git 归档及 diff 检查通过；[最新 Windows、Ubuntu CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43627235855) 全通过。后台浏览器原生 7 项复验也通过。此前 48 项和 97 项为首轮交付结果，最终数量以本段为准。\n\n#37 保持独立打开，人工文件选择和提示体验状态未改。下一项 #7 的[新聊天交接文档](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/HANDOFF_ISSUE7.md)已保存，本轮未实施地点修复，未部署或使用真实数据。"
+    },
+    {
+      "number": 37,
+      "state": "open",
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37",
+      "updatedAt": "2026-11-14T18:22:47Z",
+      "body": "## 目的与状态\n\n展要求将该风险单独立项，不能只留在审查备注。属于总计划 #1，是 #6 的专项复现、故障验证与验收任务。具体写入与恢复实现由 #6 负责，避免两个任务重复实现。当前属于代码风险和待补测项，不冒充已完成真实浏览器复现。\n\n## 开始条件和分工\n\n#2、#3 已完成即可准备测试，与 #6 配套推进，不要求等待 #6 关闭才开始；#6 也不以本任务启动为前置。#6 合入前应取得本任务关键保护检查的结果。\n\n## 测试与解决步骤\n\n- 使用合成备份，覆盖损坏 JSON、缺少字段、非法日期、缺少或重复 id、同一文件重复导入、非法宠物和统计字段、附件及聊天引用。\n- 清空前完成格式与数量核对。区分覆盖恢复和合并，不能擅自添加兼容或去重规则。\n- 在 IndexedDB 的请求成功后事务提交前、批量中途、操作记录保存、kv 保存等位置注入失败，覆盖容量不足和中断。\n- 核对原始数据库、内存镜像、宠物积分、附件、操作记录和重启后状态，发现问题交由 #6 修复后复验。\n\n## 验收\n\n- [x] 非法备份在覆盖前被拒绝并说明原因，原资料不变；过滤数量与预览一致。\n- [x] 重复记录有明确经确认的处理，不能静默覆盖或多记积分。\n- [x] 故障后要么整体成功，要么原数据完整或经演练可恢复，不出现半批成功却显示成功。\n- [ ] 保存自动化故障测试、浏览器复验和恢复报告，失败结论同样保留。\n\n## 展参与实测\n\n先准备不含私人内容的样本文件和逐步操作清单，由展在隔离浏览器中验证提示、取消和恢复体验。只有需要设备特有结果时再安排人工，不让展在正式资料上试清空或导入。记录预期、实际、设备和错误信息。\n\n\n## #6 配套关键证据，2026 年 11 月 15 日\n\n实施：[PR #46](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/46)；[独立矩阵](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/atomic-data-writes/docs/audit/2026-11-15/issue37-storage-matrix.md)；[恢复报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/atomic-data-writes/docs/audit/2026-11-15/issue6-atomicity.md)；[CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43626081853)。\n\n48 项存储测试、全部 97 项 Node 测试、干净归档与 Windows、Ubuntu CI 均通过。后台浏览器使用独立 4174 来源的专用合成库完成 7 项原生事务验证，包含请求成功后中止、整体回滚、内存附件积分保留、正常提交与撤销、非法备份拒绝及重开库一致。\n\n当前不静默过滤，非法文件和重复编号整份拒绝；重复导入为覆盖恢复，数量与积分不重复增加。未在真实资料上试验。\n\n自动化测试、原生数据库浏览器检查和恢复报告已保存，#6 所需关键证据已取得；最后一项暂不勾选，是因为实际文件选择、预览取消和设备提示体验尚未由展人工复验。样本生成命令和操作清单已写入矩阵，不要求在正式资料上执行。#37 保持独立打开，不因 #6 交付自动关闭。\n"
+    }
+  ],
+  "prs": [
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24",
+      "number": 24,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "body": "## 问题与结果\r\n\r\nCloses #2，关联总计划 #1。原仓库缺少本地新增函数，检查会中断。本次完整保存 index.html 和 api/ai.js 原始成果，按功能归类，建立源码与报告一致的基线。\r\n\r\n## 验证\r\n\r\n原有 21 项断言通过，补充 5 项后，本地、远端干净克隆及无 Git 的 ZIP 解压目录均为 26 项通过，0 项断言失败。三项已知问题仍复现并保留，不宣称已修复。\r\n\r\n执行命令：node docs/audit/2026-11-14/check-baseline.cjs；node scripts/check-docs.cjs；git diff --check。文档检查通过。原文件与私有副本一致，提交内容与原文件统一换行后逐字一致。\r\n\r\n报告：[基线交付与分类](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/2b21e73823433726268a0bbaa3358f8c412c12f6/docs/audit/2026-11-14/issue2-baseline.md)、[干净克隆](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/2b21e73823433726268a0bbaa3358f8c412c12f6/docs/audit/2026-11-14/issue2-clean-clone.json)、[ZIP](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/2b21e73823433726268a0bbaa3358f8c412c12f6/docs/audit/2026-11-14/issue2-zip.json)。源码提交：1236ef9109db88acfcb2a8b2261ff45722b3ffb4。报告被验证提交：ce6160648f51cf64da6062ceabf7c13b969c6d56。\r\n\r\n## 数据、发布与恢复\r\n\r\n原始文件和差异另存本地被忽略的 private/issue2-original/。没有提交个人备份或密钥，没有执行导入、迁移、真实模型调用或部署。dist 保持原发布内容，#3 未实施。\r\n\r\n## 文档与遗留事项\r\n\r\n更新 README、docs/STATUS.md、开发与测试入口。#4、#5、#7 的三项已知问题保留，导入保护与统计等仍按原任务处理。手机实机、天气网络和模型链路未验收。",
+      "title": "保存本地新增源码与可下载检查基线，完成 #2",
+      "base": "main",
+      "base_sha": "848456a880c2e4d966b950424cf711b9727d02a1",
+      "head": "codex/save-local-baseline",
+      "head_sha": "5d955e121006d85f3a3b5369faf07a5c8664b2a8",
+      "head_repo_id": 1319060556,
+      "head_repo_full_name": "jinzhan857-sketch/juanjuan-to-do-list",
+      "merge_commit_sha": "3b240524ae95317a79928a5c438e7c399db88e09",
+      "user": {
+        "login": "jinzhan857-sketch",
+        "name": "jinzhan857-sketch",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/250449029?v=4",
+        "id": 250449029
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-14T15:47:59Z",
+      "updated_at": "2026-11-14T15:50:02Z",
+      "closed_at": "2026-11-14T15:50:01Z",
+      "merged_at": "2026-11-14T15:50:01Z",
+      "commits": 4,
+      "changed_files": 10,
+      "additions": 767,
+      "deletions": 91,
+      "display_url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24",
+      "display_title": "保存本地新增源码与可下载检查基线，完成 #2"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/25",
+      "number": 25,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "body": "## 问题与结果\n\n关联 #1、#12、#14。将后端实现偏好更正为 JavaScript 优先，保留独立后端建设与全部稳定性要求。新增决策 0002 替代 D0.1 的 Python 优先偏好，更新决策索引、架构和接手入口。\n\n## 验证\n\nnode scripts/check-docs.cjs：31 份 Markdown、144 条本地链接、2 个标题锚点，失败 0。git diff --check 通过；index.html、api/ai.js、dist/index.html 无变更。\n\n## 数据、发布与恢复\n\n仅文档更新，没有运行时或数据改动，没有部署。原始 D0.1 与飞书副本保留作历史，本次未同步改写全文。\n\n## 文档与遗留事项\n\n决策：docs/decisions/0002-backend-language.md。Python 保留给有明确需要的分析、模型评估或训练工具。框架与托管组合在 #12 验证，#3 和其他开发任务未实施。",
+      "title": "Prefer JavaScript for the independent backend",
+      "base": "main",
+      "base_sha": "3b240524ae95317a79928a5c438e7c399db88e09",
+      "head": "codex/backend-language-decision",
+      "head_sha": "9dbd9c9ce5611ed6f9d731187dc712c1c23609fe",
+      "head_repo_id": 1319060556,
+      "head_repo_full_name": "jinzhan857-sketch/juanjuan-to-do-list",
+      "merge_commit_sha": "9b9ac1375d6cdb79bf8f4802def17f7b8e55fbea",
+      "user": {
+        "login": "jinzhan857-sketch",
+        "name": "jinzhan857-sketch",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/250449029?v=4",
+        "id": 250449029
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-14T16:39:42Z",
+      "updated_at": "2026-11-14T16:57:01Z",
+      "closed_at": "2026-11-14T16:57:01Z",
+      "merged_at": "2026-11-14T16:57:01Z",
+      "commits": 1,
+      "changed_files": 4,
+      "additions": 49,
+      "deletions": 2,
+      "display_url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/25",
+      "display_title": "Prefer JavaScript for the independent backend"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/26",
+      "number": 26,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "body": "## 问题与结果\n\n关联 #3。源码与 dist 手工维护导致漂移，启动和检查没有统一入口。现在使用固定 Node.js 24.16.0 与 npm 11.13.0 的自带能力，提供 dev、build、preview、check 命令，零第三方依赖。dist 改为生成目录，页面逐字节复制源码，另记录提交与输入输出哈希，GitHub ZIP 保留归档来源。\n\n## 验证\n\n干净克隆与直接下载的 GitHub ZIP 均执行 npm ci 和完整检查，26 项稳定断言、7 项工程测试全部通过，三项已知问题独立复现，未计为修复。两种下载的输出哈希一致。实际启动干净克隆的 npm run dev，4173 返回 HTTP 200。\n\nWindows 与 Ubuntu 的源码及无 Git 归档检查均成功：[分支 CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43620814530)、[PR CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43620819416)。首次 Windows 归档路径失败保留日志，已修正并重新验证，没有跳过检查。最终文档提交还须通过本 PR 最新检查再合入。\n\n## 数据、发布与恢复\n\nindex.html、api/ai.js 和历史检查脚本无改动，不部署、不迁移、不调用真实模型。静态预览不执行 AI 接口，只开放允许的页面与来源文件。CI 上传包已实际下载核对，只含两个生成文件和合成报告。旧 dist 保留在 Git 历史，私人备份仍被忽略。\n\n## 文档与遗留事项\n\n[交付报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/unified-toolchain/docs/audit/2026-11-15/issue3-toolchain.md)。开发、测试、发布与状态入口已更新。三项业务问题继续留给 #4、#5、#7；完整发布与恢复属于后续任务。本 PR 只处理 #3。\r\n",
+      "title": "Unify preview, build, and automated checks",
+      "base": "main",
+      "base_sha": "9b9ac1375d6cdb79bf8f4802def17f7b8e55fbea",
+      "head": "codex/unified-toolchain",
+      "head_sha": "be840a0b033eea1d5a46ab93d8551f5baa10c1b8",
+      "head_repo_id": 1319060556,
+      "head_repo_full_name": "jinzhan857-sketch/juanjuan-to-do-list",
+      "merge_commit_sha": "f6e15f05192d2c3fadb119939ec3e037c2369f19",
+      "user": {
+        "login": "jinzhan857-sketch",
+        "name": "jinzhan857-sketch",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/250449029?v=4",
+        "id": 250449029
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-14T17:21:46Z",
+      "updated_at": "2026-11-14T17:26:11Z",
+      "closed_at": "2026-11-14T17:26:11Z",
+      "merged_at": "2026-11-14T17:26:11Z",
+      "commits": 3,
+      "changed_files": 22,
+      "additions": 386,
+      "deletions": 4468,
+      "display_url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/26",
+      "display_title": "Unify preview, build, and automated checks"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/35",
+      "number": 35,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "body": "## 问题与结果\n\n关联 #4。指定单天修改会因可推算日期范围而误走整组，单条分支又取首条同名记录。现先解析单条或整组意图并要求唯一目标，范围不清时追问。模型建议与原请求核对，确认卡记录目标快照，执行前重新检查，拒绝扩大范围或对已变化记录写入。\n\n## 验证\n\n旧 main 上新回归用例实际失败，历史脚本及原始失败证据保留。npm run check 通过：26 项原稳定断言、17 项范围测试、7 项工程测试。npm run check:archive 通过。范围测试固定在 2026 年 11 月 15 日，核对实际合成持久写入、删除 ID、最终记录、其他日期、宠物与积分字段；包含确认点击、范围变化拒绝和带备注的课程创建。\n\n[首轮跨平台 CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621997437) 与 [PR CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622040515) 已通过；最终提交须等最新检查全部成功才合入。\n\n## 数据、发布与恢复\n\n不改 AI 接口、数据结构或计分规则，不部署、不迁移、不调用真实模型。没有快照的旧待确认卡须重新生成，不增加兼容逻辑。批量中途失败恢复仍属于 #6。\n\n## 文档与遗留事项\n\n[交付报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/fix-single-day-scope/docs/audit/2026-11-15/issue4-scope.md)。历史三项探测全部保留，单天探测现要求 update_schedule，#5 和 #7 仍复现。只处理 #4。\r\n",
+      "title": "Fix single-day schedule targeting and confirmation scope",
+      "base": "main",
+      "base_sha": "f6e15f05192d2c3fadb119939ec3e037c2369f19",
+      "head": "codex/fix-single-day-scope",
+      "head_sha": "c7feb84d39558e52bcf0acc65da1b671889f2c2c",
+      "head_repo_id": 1319060556,
+      "head_repo_full_name": "jinzhan857-sketch/juanjuan-to-do-list",
+      "merge_commit_sha": "5e009c4009ed931d43d475ecc8b2b0631eb765f8",
+      "user": {
+        "login": "jinzhan857-sketch",
+        "name": "jinzhan857-sketch",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/250449029?v=4",
+        "id": 250449029
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-14T17:36:32Z",
+      "updated_at": "2026-11-14T17:39:16Z",
+      "closed_at": "2026-11-14T17:39:15Z",
+      "merged_at": "2026-11-14T17:39:15Z",
+      "commits": 3,
+      "changed_files": 9,
+      "additions": 203,
+      "deletions": 22,
+      "display_url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/35",
+      "display_title": "Fix single-day schedule targeting and confirmation scope"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/36",
+      "number": 36,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "body": "## 问题与结果\n\nCloses #5。托管上下文丢弃 series_id，前后端还可能将非法编号强制转换或截短。现在合法编号完整往返，非法或未知编号追问，已有编号的日程若漏掉编号则拒绝确认，继续保留 #4 的原话范围和确认快照保护。同名不同组不会因标题相同被一起选中。\n\n仅执行 #5，基于已合入 PR #26、#35 的 main。不重做 #3、#4，不处理其他任务。\n\n## 验证\n\n代码提交：ee226db603665d74e158f3acb716fb9109e48c59，Node.js 24.16.0。\n\n新增 25 项合成回归，在原 main 上 8 通过、17 失败，修复后全通过。npm run check 的构建、文档、26 项基线断言、49 项 Node 测试通过；npm run check:archive 无 Git 归档检查通过；git diff --check 通过。托管 handler 与自定义路径采用模拟模型，不调用真实网络。[Windows、Ubuntu CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43623344256) 均已通过完整检查和无 Git 归档检查。\n\n## 数据、发布与恢复\n\n未部署、未迁移或编辑真实业务资料、未调用真实模型。无新增兼容路径。测试核对实际存储边界写入、删除、撤销、另一组不变与宠物保留。确认后组成员变化停止执行。\n\n## 文档与遗留事项\n\n[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/fix-series-identity/docs/audit/2026-11-15/issue5-series.md)、[AI 合同](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/fix-series-identity/docs/architecture/AI.md)、[测试说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/codex/fix-series-identity/docs/development/TESTING.md)与接手状态已更新。#7 旧城市覆盖仍复现，其他任务不变。真实模型识别质量须另行授权后按报告的隔离流程验证。",
+      "title": "修复重复日程组身份的传递与校验",
+      "base": "main",
+      "base_sha": "5e009c4009ed931d43d475ecc8b2b0631eb765f8",
+      "head": "codex/fix-series-identity",
+      "head_sha": "ee226db603665d74e158f3acb716fb9109e48c59",
+      "head_repo_id": 1319060556,
+      "head_repo_full_name": "jinzhan857-sketch/juanjuan-to-do-list",
+      "merge_commit_sha": "6647c9c6febc807232eb9ac74fa373d1db5edf41",
+      "user": {
+        "login": "jinzhan857-sketch",
+        "name": "jinzhan857-sketch",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/250449029?v=4",
+        "id": 250449029
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-14T17:51:11Z",
+      "updated_at": "2026-11-14T17:55:04Z",
+      "closed_at": "2026-11-14T17:55:04Z",
+      "merged_at": "2026-11-14T17:55:04Z",
+      "commits": 1,
+      "changed_files": 10,
+      "additions": 217,
+      "deletions": 18,
+      "display_url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/36",
+      "display_title": "修复重复日程组身份的传递与校验"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/46",
+      "number": 46,
+      "state": "closed",
+      "merged": true,
+      "mergeable": false,
+      "draft": false,
+      "body": "## 问题与结果\n\nCloses #6。原保存入口在单条请求成功时就返回，导入和批量动作分多次提交，中断可能先丢旧资料或只完成半批。\n\n现在等待 IndexedDB 事务完成，导入先整份校验，再将整批改动一次提交；失败保留原库与内存。提交成功后若界面刷新失败，会明确报告资料已保存，避免错误提示回滚。助手业务记录、操作记录和最终确认消息一起保存，撤销也采用整体事务。补上前置快照、重复确认和持久状态变化保护，并将相关聊天、标签、附件及资料框批量入口接入同一提交方法。\n\n本轮保留 #3 至 #5 成果。已按展确认整合 #40 最新 main，保留公开仓库及手动 Pages 发布说明，没有触发发布。\n\n## 验证\n\n应用实现提交 0ba4c9a，最终提交 be2b5929e7b8e4d7d7f6f3c703be298d06c3ace4。Node.js 24.16.0，fake-indexeddb 6.2.8 仅为固定开发依赖。\n\nnpm run check 的构建、文档、26 项稳定断言与 113 项 Node 测试全部通过。新增 64 项存储测试，覆盖请求成功后中止、业务中途、操作记录和消息写入失败、kv 容量不足、无效备份、重复导入、重复与并发确认、撤销和外部修改。npm run check:archive 无 Git 归档检查及 git diff --check 通过。[最新 Windows、Ubuntu CI](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43627235855) 的完整检查、归档与证据上传均通过。\n\n后台浏览器在独立 4174 来源的专用合成数据库运行 7 项原生 IndexedDB 验证，全部通过。原 main 的隔离复现证明请求成功后中止仍返回成功，以及导入第二条失败后数据库只剩一条、内存仍有三条。\n\n## 数据、发布与恢复\n\n未使用个人备份，未在真实数据上导入、清空或批量修改，未调用模型、部署或迁移。拒绝重复编号和非法备份，不新增兼容或自动去重规则。失败由数据库事务回滚，成功后才发布内存更新。localStorage 外观单独恢复，失败会明确提示业务成功但外观未完全恢复。\n\n## 文档与遗留事项\n\n[报告](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue6-atomicity.md)、[#37 专项矩阵](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue37-storage-matrix.md)、[数据说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/DATA.md)及测试、接手文档已更新。\n\n#37 的关键故障证据已取得，设备文件选择和提示体验尚未由展人工复验，保留其独立任务。#8、#28 的单条计分与宠物奖励一致性、#27 的转换附件规则不在本轮顺带修复，不宣称所有历史计分入口均已事务化。\n\n## 合入前复审\n\n发现并修复损坏撤销快照可导入的问题：新增 5 项复现修复前全部失败。现在导入和撤销共用完整记录与快照校验，拒绝缺失字段、重复快照编号和更新前后目标不一致。另补全部 10 种动作的正常历史导出与撤销、并发撤销，共新增 16 项测试。本地完整检查和无 Git 归档均通过，#37 保留独立状态。\n\n新增 [#7 交接入口](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/HANDOFF_ISSUE7.md)，本轮未实施天气地点修复。",
+      "title": "防止导入与批量写入失败留下半批数据",
+      "base": "main",
+      "base_sha": "7e8c56abe3985e0ed49484a5b056a14beb280756",
+      "head": "codex/atomic-data-writes",
+      "head_sha": "be2b5929e7b8e4d7d7f6f3c703be298d06c3ace4",
+      "head_repo_id": 1319060556,
+      "head_repo_full_name": "jinzhan857-sketch/juanjuan-to-do-list",
+      "merge_commit_sha": "7e43de22b9788181fab50e3ba912b306a7b1ebb1",
+      "user": {
+        "login": "jinzhan857-sketch",
+        "name": "jinzhan857-sketch",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/250449029?v=4",
+        "id": 250449029
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-14T18:19:08Z",
+      "updated_at": "2026-11-14T18:35:40Z",
+      "closed_at": "2026-11-14T18:34:38Z",
+      "merged_at": "2026-11-14T18:34:38Z",
+      "commits": 5,
+      "changed_files": 20,
+      "additions": 760,
+      "deletions": 173,
+      "display_url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/46",
+      "display_title": "防止导入与批量写入失败留下半批数据"
+    }
+  ],
+  "ci": [
+    {
+      "pr": 26,
+      "runs": [
+        {
+          "id": 43621013299,
+          "name": "Engineering checks",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 6,
+          "jobs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621013299/jobs",
+          "logs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621013299/logs",
+          "workflow_id": 418482840
+        }
+      ],
+      "jobs": [
+        {
+          "id": 132526474495,
+          "name": "check (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43621013299,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 132526474859,
+          "name": "check (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43621013299,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pr": 35,
+      "runs": [
+        {
+          "id": 43622174726,
+          "name": "Engineering checks",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 13,
+          "jobs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622174726/jobs",
+          "logs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622174726/logs",
+          "workflow_id": 418482840
+        }
+      ],
+      "jobs": [
+        {
+          "id": 132530064688,
+          "name": "check (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43622174726,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 132530064894,
+          "name": "check (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43622174726,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pr": 36,
+      "runs": [
+        {
+          "id": 43623344256,
+          "name": "Engineering checks",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 16,
+          "jobs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43623344256/jobs",
+          "logs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43623344256/logs",
+          "workflow_id": 418482840
+        }
+      ],
+      "jobs": [
+        {
+          "id": 132533667316,
+          "name": "check (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43623344256,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 132533667549,
+          "name": "check (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43623344256,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pr": 46,
+      "runs": [
+        {
+          "id": 43627235855,
+          "name": "Engineering checks",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 31,
+          "jobs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43627235855/jobs",
+          "logs_url": "https://api.github.com/repos/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43627235855/logs",
+          "workflow_id": 418482840
+        }
+      ],
+      "jobs": [
+        {
+          "id": 132545760819,
+          "name": "check (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43627235855,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 132545761087,
+          "name": "check (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 43627235855,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run npm ci --ignore-scripts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run npm run check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Verify archive without Git metadata",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Upload explicit generated files and synthetic report",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

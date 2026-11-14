@@ -142,3 +142,40 @@ test('local preview does not overwrite AI categories or reclassify existing reco
  a.run("UI.cState.ai={base_score:3,source:'rule'};UI.editingId='existing'");
  await a.run('UI.refreshRulePreview()');assert.equal(a.run('UI.cState.tag'),'职场工作');
 });
+
+for(const kind of ['schedule','todo']){
+ test('review: deleted edit draft never becomes a new record after restore '+kind,async t=>{
+  const a=await fixture(t,kind);await a.run('UI.onSave()');const store=kind==='todo'?'todos':'tasks';
+  a.run(kind==='todo'?"UI.openTodoEditor(S.todos[0].id)":"UI.startEdit(S.tasks[0].id)");a.run('UI.saveCreateDraft()');
+  await a.run("DB.del('"+store+"',S."+store+"[0].id)");a.run('S.'+store+'=[];UI.resetCreate();UI.restoreCreateDraft();AIService.evaluate=async()=>{throw Error("offline")}');
+  await a.run('UI.onAIClick()');await a.run('UI.onSave()');assert.equal((await a.snapshot())[store].length,0);
+ });
+ test('review: edit keeps historical rule score and version '+kind,async t=>{
+  const a=await fixture(t,kind);await a.run('UI.onSave()');const store=kind==='todo'?'todos':'tasks';
+  a.run('S.'+store+'[0].baseScore=4;S.'+store+'[0].scoreRule={id:"sustained",version:"earlier-synthetic",fallback:false}');await a.run("DB.put('"+store+"',S."+store+"[0])");
+  a.run(kind==='todo'?"UI.openTodoEditor(S.todos[0].id)":"UI.startEdit(S.tasks[0].id)");a.run("UI.cState.resultTitle='递交作业';UI.cState.resultNote='只修改文字'");await a.run('UI.onSave()');
+  const row=(await a.snapshot())[store][0];assert.equal(row.baseScore,4);assert.equal(row.scoreRule.version,'earlier-synthetic');
+ });
+}
+test('review: opening a publisher while save waits cannot replace its draft',async t=>{
+ const a=await fixture(t);a.run('UI.saveCreateDraft();originalDraft=UI.cState;UI.loadScoring=()=>new Promise(resolve=>resume=resolve);pending=UI.onSave();UI.openPublisher("todo")');
+ assert.equal(a.run('UI.cState===originalDraft'),true);a.run('resume(scoring)');await a.run('pending');assert.equal((await a.snapshot()).tasks.length,1);
+});
+test('review: saving waits for an attachment already being compressed',async t=>{
+ const a=await fixture(t);a.run('UI.renderPublishImages=()=>{};compressTodoImage=()=>new Promise(resolve=>imageReady=resolve);upload=UI.addPublishImages([{}]);pending=UI.onSave()');
+ a.run("imageReady({id:'late-image',name:'合成',data:'data:image/png;base64,AA=='})");await a.run('Promise.all([upload,pending])');assert.equal((await a.snapshot()).tasks[0].images.length,2);
+});
+
+test('review: failed compression blocks publication and keeps existing media',async t=>{
+ const a=await fixture(t);a.run("UI.renderPublishImages=()=>{};compressTodoImage=async()=>{throw Error('synthetic image failure')}");
+ await a.run('UI.addPublishImages([{}]);UI.onSave()');assert.equal((await a.snapshot()).tasks.length,0);assert.equal(a.run('UI.cState.images.length'),1);assert.match(a.notices.at(-1),/图片处理失败/);
+});
+test('review: title-only visible input remains recoverable as draft',async t=>{
+ const a=await fixture(t);a.element('#c-title').value='';
+ a.run("UI.cState.rawText='';UI.cState.resultTitle='标题里填写的事务';UI.cState.resultNote='';UI.cState.images=[];UI.saveCreateDraft();UI.resetCreate();UI.restoreCreateDraft()");
+ assert.equal(a.run('UI.cState.resultTitle'),'标题里填写的事务');
+});
+test('review: date conflict remains visible with date help expanded',async t=>{
+ const a=await fixture(t);a.run("UI.renderCreate=actualRender;UI.renderPublishImages=()=>{};UI.renderAIResult=()=>{};UI.refreshRulePreview=()=>{};UI.cState.dateInfo=true;UI.cState.dateConflict='AI建议 2026-12-03，已保留你选择的日期';S.customTags=[];UI.renderCreate()");
+ assert.match(a.element('#c-date-hint').textContent,/AI建议.*已保留/);
+});

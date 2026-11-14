@@ -1,0 +1,265 @@
+{
+  "executedAt": "2026-11-14T19:09:08.817Z",
+  "node": "v24.16.0",
+  "method": "git archive of exact PR heads, no Git metadata, synthetic tests only",
+  "rows": [
+    {
+      "task": "issue2",
+      "ref": "5d955e121006d85f3a3b5369faf07a5c8664b2a8",
+      "htmlSha256": "94e8a2b344c48367b0964d6c6b5f90c1d2ad19afb1483c26c0c4e5c2ab85a866",
+      "apiSha256": "654f83527d4379e6282ff46a77319f2c07fb9b9492f682d07bcb1d0d7ccbdfaa",
+      "steps": [
+        {
+          "command": "node docs/audit/2026-11-14/check-baseline.cjs",
+          "exit": 0,
+          "tail": [
+            "      \"sha256\": \"1dfe12ff611a9c561dcb1a34951c062a7e61b76d6df778ea5ae4b8c6fb5fe406\"",
+            "    },",
+            "    {",
+            "      \"path\": \"api/ai.js\",",
+            "      \"bytes\": 26432,",
+            "      \"lines\": 405,",
+            "      \"sha256\": \"654f83527d4379e6282ff46a77319f2c07fb9b9492f682d07bcb1d0d7ccbdfaa\"",
+            "    }",
+            "  ]",
+            "}",
+            ""
+          ]
+        },
+        {
+          "command": "node scripts/check-docs.cjs",
+          "exit": 0,
+          "tail": [
+            "{",
+            "  \"markdownFiles\": 30,",
+            "  \"localLinks\": 139,",
+            "  \"headingAnchors\": 2,",
+            "  \"failures\": []",
+            "}",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "task": "issue3",
+      "ref": "be840a0b033eea1d5a46ab93d8551f5baa10c1b8",
+      "htmlSha256": "fd394d5232234e3e17cb034e2cf9c833059bb24f91ac1bc75755fb05e645ad33",
+      "apiSha256": "986b4252bbb4ac6ec16dce13f0bb063ffe0decdfdc3dcb27cdb08ca2a6c8e95b",
+      "steps": [
+        {
+          "command": "cmd.exe /d /c npm ci --ignore-scripts",
+          "exit": 0,
+          "tail": [
+            "",
+            "up to date, audited 1 package in 474ms",
+            "",
+            "found 0 vulnerabilities",
+            ""
+          ]
+        },
+        {
+          "command": "cmd.exe /d /c npm run check",
+          "exit": 0,
+          "tail": [
+            "✔ source preview serves exact HTML and denies repository, private and API paths (165.587ms)",
+            "✔ dist preview serves exact HTML and denies repository, private and API paths (212.2305ms)",
+            "ℹ tests 7",
+            "ℹ suites 0",
+            "ℹ pass 7",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ todo 0",
+            "ℹ duration_ms 1153.6814",
+            ""
+          ]
+        }
+      ],
+      "build": {
+        "sourceCommit": "be840a0b033eea1d5a46ab93d8551f5baa10c1b8",
+        "dirty": null,
+        "sourceKind": "archive",
+        "node": "v24.16.0",
+        "inputs": {
+          "index.html": "fd394d5232234e3e17cb034e2cf9c833059bb24f91ac1bc75755fb05e645ad33",
+          "api/ai.js": "986b4252bbb4ac6ec16dce13f0bb063ffe0decdfdc3dcb27cdb08ca2a6c8e95b",
+          "package.json": "1fbacfe256cb41f51071265f866be3d2c817ddcde2f2e19df831fb20d38ba197",
+          "package-lock.json": "dbde5f742ce3c709989488133e09d34a7c854aa2a2838fc7f03acb9a4e3cc77c",
+          ".node-version": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+          "scripts/build.cjs": "05ceb0f9f61dc2c07aea0594895788032a3c8da6596d710d82dcdee0bb8b8a5d"
+        },
+        "output": {
+          "path": "index.html",
+          "sha256": "fd394d5232234e3e17cb034e2cf9c833059bb24f91ac1bc75755fb05e645ad33"
+        }
+      },
+      "outputEqualsSource": true
+    },
+    {
+      "task": "issue4",
+      "ref": "c7feb84d39558e52bcf0acc65da1b671889f2c2c",
+      "htmlSha256": "8c3da10fd2c9ad38c6a04f71e9c014773fdf1056a799c58743d1fdac5bed9624",
+      "apiSha256": "986b4252bbb4ac6ec16dce13f0bb063ffe0decdfdc3dcb27cdb08ca2a6c8e95b",
+      "steps": [
+        {
+          "command": "cmd.exe /d /c npm ci --ignore-scripts",
+          "exit": 0,
+          "tail": [
+            "",
+            "up to date, audited 1 package in 354ms",
+            "",
+            "found 0 vulnerabilities",
+            ""
+          ]
+        },
+        {
+          "command": "cmd.exe /d /c npm run check",
+          "exit": 0,
+          "tail": [
+            "✔ source preview serves exact HTML and denies repository, private and API paths (173.3546ms)",
+            "✔ dist preview serves exact HTML and denies repository, private and API paths (205.0379ms)",
+            "ℹ tests 24",
+            "ℹ suites 0",
+            "ℹ pass 24",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ todo 0",
+            "ℹ duration_ms 1126.2422",
+            ""
+          ]
+        }
+      ],
+      "build": {
+        "sourceCommit": "c7feb84d39558e52bcf0acc65da1b671889f2c2c",
+        "dirty": null,
+        "sourceKind": "archive",
+        "node": "v24.16.0",
+        "inputs": {
+          "index.html": "8c3da10fd2c9ad38c6a04f71e9c014773fdf1056a799c58743d1fdac5bed9624",
+          "api/ai.js": "986b4252bbb4ac6ec16dce13f0bb063ffe0decdfdc3dcb27cdb08ca2a6c8e95b",
+          "package.json": "ac1ba94413d1b879182f9fbcc1e2b0d3b6a2832c8560f3b0f08dbcfb33b5b859",
+          "package-lock.json": "dbde5f742ce3c709989488133e09d34a7c854aa2a2838fc7f03acb9a4e3cc77c",
+          ".node-version": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+          "scripts/build.cjs": "05ceb0f9f61dc2c07aea0594895788032a3c8da6596d710d82dcdee0bb8b8a5d"
+        },
+        "output": {
+          "path": "index.html",
+          "sha256": "8c3da10fd2c9ad38c6a04f71e9c014773fdf1056a799c58743d1fdac5bed9624"
+        }
+      },
+      "outputEqualsSource": true
+    },
+    {
+      "task": "issue5",
+      "ref": "ee226db603665d74e158f3acb716fb9109e48c59",
+      "htmlSha256": "2b11c3a877f30ecefb2fdf5925cc34d63520dcfe06aa1bc45e024fef9a611e99",
+      "apiSha256": "cbd3ed502baec82f87688b01f3bd76b6939b8404d6eeb64dab182dd92d001097",
+      "steps": [
+        {
+          "command": "cmd.exe /d /c npm ci --ignore-scripts",
+          "exit": 0,
+          "tail": [
+            "",
+            "up to date, audited 1 package in 365ms",
+            "",
+            "found 0 vulnerabilities",
+            ""
+          ]
+        },
+        {
+          "command": "cmd.exe /d /c npm run check",
+          "exit": 0,
+          "tail": [
+            "✔ source preview serves exact HTML and denies repository, private and API paths (226.0949ms)",
+            "✔ dist preview serves exact HTML and denies repository, private and API paths (265.5835ms)",
+            "ℹ tests 49",
+            "ℹ suites 0",
+            "ℹ pass 49",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ todo 0",
+            "ℹ duration_ms 1262.756",
+            ""
+          ]
+        }
+      ],
+      "build": {
+        "sourceCommit": "ee226db603665d74e158f3acb716fb9109e48c59",
+        "dirty": null,
+        "sourceKind": "archive",
+        "node": "v24.16.0",
+        "inputs": {
+          "index.html": "2b11c3a877f30ecefb2fdf5925cc34d63520dcfe06aa1bc45e024fef9a611e99",
+          "api/ai.js": "cbd3ed502baec82f87688b01f3bd76b6939b8404d6eeb64dab182dd92d001097",
+          "package.json": "d35845d4c43de6a385fa845dc76ee632f001f22d7909baffa9599859fbf5c96c",
+          "package-lock.json": "dbde5f742ce3c709989488133e09d34a7c854aa2a2838fc7f03acb9a4e3cc77c",
+          ".node-version": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+          "scripts/build.cjs": "05ceb0f9f61dc2c07aea0594895788032a3c8da6596d710d82dcdee0bb8b8a5d"
+        },
+        "output": {
+          "path": "index.html",
+          "sha256": "2b11c3a877f30ecefb2fdf5925cc34d63520dcfe06aa1bc45e024fef9a611e99"
+        }
+      },
+      "outputEqualsSource": true
+    },
+    {
+      "task": "issue6",
+      "ref": "be2b5929e7b8e4d7d7f6f3c703be298d06c3ace4",
+      "htmlSha256": "d8d51a73d1c45c99b42bfe0f5ffd34f32cacb67a1e41e28596bdac3193f72522",
+      "apiSha256": "cbd3ed502baec82f87688b01f3bd76b6939b8404d6eeb64dab182dd92d001097",
+      "steps": [
+        {
+          "command": "cmd.exe /d /c npm ci --ignore-scripts",
+          "exit": 0,
+          "tail": [
+            "",
+            "added 1 package, and audited 2 packages in 625ms",
+            "",
+            "found 0 vulnerabilities",
+            ""
+          ]
+        },
+        {
+          "command": "cmd.exe /d /c npm run check",
+          "exit": 0,
+          "tail": [
+            "✔ source preview serves exact HTML and denies repository, private and API paths (159.4834ms)",
+            "✔ dist preview serves exact HTML and denies repository, private and API paths (202.6497ms)",
+            "ℹ tests 113",
+            "ℹ suites 0",
+            "ℹ pass 113",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ todo 0",
+            "ℹ duration_ms 1190.8226",
+            ""
+          ]
+        }
+      ],
+      "build": {
+        "sourceCommit": "be2b5929e7b8e4d7d7f6f3c703be298d06c3ace4",
+        "dirty": null,
+        "sourceKind": "archive",
+        "node": "v24.16.0",
+        "inputs": {
+          "index.html": "d8d51a73d1c45c99b42bfe0f5ffd34f32cacb67a1e41e28596bdac3193f72522",
+          "api/ai.js": "cbd3ed502baec82f87688b01f3bd76b6939b8404d6eeb64dab182dd92d001097",
+          "package.json": "ad9a4c97e7735c4033637bfccf9daadd188e29d7a5acdbb4455c53941809808b",
+          "package-lock.json": "8bd4d02fd36b902235c9f3405f7b442057360b13c3822a5078ba2eaf2a8960c9",
+          ".node-version": "2722b61f414f07f08be7f1f1316012813818f26f1c40d6a24a748686cec7d2ff",
+          "scripts/build.cjs": "05ceb0f9f61dc2c07aea0594895788032a3c8da6596d710d82dcdee0bb8b8a5d"
+        },
+        "output": {
+          "path": "index.html",
+          "sha256": "d8d51a73d1c45c99b42bfe0f5ffd34f32cacb67a1e41e28596bdac3193f72522"
+        }
+      },
+      "outputEqualsSource": true
+    }
+  ]
+}
