@@ -68,7 +68,7 @@ npm run dev
 npm run check
 ```
 
-统一检查包含构建、文档链接、26 项稳定断言、三项历史问题探测和工程与范围测试。#4 已修复单天误走整组，组身份和旧记忆城市问题仍保留。原始证据见[基线报告](docs/audit/2026-11-14/issue2-baseline.md)，范围和 CI 方法见[测试与验收](docs/development/TESTING.md)。
+统一检查包含构建、文档链接、26 项稳定断言、三项历史问题探测和工程与范围测试。#4 已修复单天误走整组，组身份已由 #5 修复，旧记忆城市问题仍保留。原始证据见[基线报告](docs/audit/2026-11-14/issue2-baseline.md)，范围和 CI 方法见[测试与验收](docs/development/TESTING.md)。
 
 先完成当前代的资料、任务和工程整理，再按前置条件进入 3.0。GitHub 保存完整实施资料，飞书保留[3.0 全文副本](https://my.feishu.cn/wiki/XZEowYCowiqCGykqn9wcTNn7nfe)。任务进度以 Issue 为准。
 

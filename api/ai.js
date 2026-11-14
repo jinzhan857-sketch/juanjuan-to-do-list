@@ -33,7 +33,7 @@ task 和 note 由你负责。没有地点、材料、链接、限制条件、提
 
 const AGENT_SYSTEM_PROMPT = `你是「卷卷」，一个温和、简洁、可靠的个人事务助手。你负责理解用户的自然语言，但不能直接执行任何操作。程序会依据你返回的结构先展示确认卡，用户确认后才执行。
 
-支持单条事务、批量新建日程、整组修改和整组删除。用户明确说「全部」「每周」「每个周四」等整组范围时，返回 update_schedule_batch 或 delete_schedule_batch，并给出日期范围、重复星期、课程名称或课程编号等唯一匹配条件。上下文提供 series_id 时必须原样带回，优先按它定位整组。用户明确某个日期时只返回 update_schedule 或 delete_schedule，绝不误改整组。范围或课程不唯一时必须先追问。
+支持单条事务、批量新建日程、整组修改和整组删除。用户明确说「全部」「每周」「每个周四」等整组范围时，返回 update_schedule_batch 或 delete_schedule_batch，并给出日期范围、重复星期、课程名称或课程编号等唯一匹配条件。上下文提供 series_id 时必须在 rule.series_id 原样带回，优先按它定位整组。series_id 是 1 至 80 字符的不透明字符串，不能编造、截短或改写；没有组身份时返回 null。同名多组必须追问。用户明确某个日期时只返回 update_schedule 或 delete_schedule，绝不误改整组。范围或课程不唯一时必须先追问。
 
 严格只返回 JSON，不输出 Markdown 或其他文字。返回格式只能是以下五种之一：
 
@@ -41,7 +41,7 @@ const AGENT_SYSTEM_PROMPT = `你是「卷卷」，一个温和、简洁、可靠
 2．需要追问：{"type":"clarify","reply":"需要用户补充的具体问题"}
 3．本地查询：{"type":"query","reply":"查询说明","query":{"entity":"schedule 或 todo","date_from":"YYYY-MM-DD 或 null","date_to":"YYYY-MM-DD 或 null","status":"open、done、all","keyword":"关键词或空字符串"}}
 4．需要确认的操作：{"type":"proposal","reply":"准备做什么","action":{"kind":"操作类型","target_id":"已有事务编号或 null","item":{}}}
-5．批量日程确认：{"type":"batch_proposal","reply":"准备创建什么","action":{"kind":"create_schedule_batch 或 update_schedule_batch","rule":{"date_from":"YYYY-MM-DD","date_to":"YYYY-MM-DD","weekdays":[1],"title":"新建标题或匹配课程名称","match_title":"整组修改时的唯一课程名称或编号","match_start_time":"整组修改时原开始时间或 null","match_end_time":"整组修改时原结束时间或 null","note":"新建备注","time_type":"exact","slot":null,"start_time":"10:00","end_time":"13:00","category":"学业事务","base_score":7},"item":{"整组修改时要变更的字段":"值"}}}
+5．批量日程确认：{"type":"batch_proposal","reply":"准备创建什么","action":{"kind":"create_schedule_batch 或 update_schedule_batch","rule":{"date_from":"YYYY-MM-DD","date_to":"YYYY-MM-DD","weekdays":[1],"title":"新建标题或匹配课程名称","series_id":"上下文中的组编号或 null","match_title":"整组修改时的唯一课程名称或编号","match_start_time":"整组修改时原开始时间或 null","match_end_time":"整组修改时原结束时间或 null","note":"新建备注","time_type":"exact","slot":null,"start_time":"10:00","end_time":"13:00","category":"学业事务","base_score":7},"item":{"整组修改时要变更的字段":"值"}}}
 
 weekdays 使用 1 到 7 表示周一到周日。用户说“每天”时返回 [1,2,3,4,5,6,7]。批量范围必须包含明确的 date_from 和 date_to。title 是日程定义，只写核心事务或课程名。课程编号和课程名称要保留在 title，例如「IDAT7222 先进CADCAM与AI驱动制造系统」。教室、教授、地点、材料和提醒写入 note，每项单独一行并使用清晰前缀，例如「教室：HK Plaza 31 楼」「教授：Dr.CK Chan Ali」。绝不把日期、重复、时间、地点或教授混进 title。
 
@@ -210,6 +210,11 @@ function sanitizeBatchRule(input = {}) {
   };
 }
 
+// Group IDs are opaque: never coerce, trim or truncate them into another ID.
+function validSeriesId(value) {
+  return typeof value === 'string' && value.length >= 1 && value.length <= 80 && value === value.trim() && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
 function sanitizeBatchUpdateRule(input = {}) {
   const categories = ['日常生活', '学业事务', '职场工作', '技能学习', '金钱复盘', '休闲娱乐', '社交约定', '旅行出行'];
   return {
@@ -219,12 +224,12 @@ function sanitizeBatchUpdateRule(input = {}) {
     match_title: shortText(input.match_title || input.title, 120),
     match_start_time: validTime(input.match_start_time),
     match_end_time: validTime(input.match_end_time),
-    series_id: shortText(input.series_id, 80) || null,
+    series_id: input.series_id ?? null,
     category: categories.includes(input.category) ? input.category : null,
   };
 }
 
-function parseAgentResult(content) {
+function parseAgentResult(content, context) {
   const data = parseJsonContent(content);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
   const reply = shortText(data.reply, 600) || '我需要再确认一下你的意思。';
@@ -250,6 +255,10 @@ function parseAgentResult(content) {
   }
   if (type === 'batch_proposal') {
     const kind = ['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action.kind : 'create_schedule_batch';
+    const seriesId = data.action?.rule?.series_id;
+    if (kind !== 'create_schedule_batch' && seriesId != null && (!validSeriesId(seriesId) || (context && !context.tasks.some(task => task.series_id === seriesId)))) {
+      return {type: 'clarify', reply: '日程组编号无效或不在提供的资料中，请重新明确目标。'};
+    }
     return {
       type,
       reply,
@@ -294,7 +303,7 @@ function compactAgentContext(context = {}) {
   const examples = value => Array.isArray(value) ? value.slice(0, 3).map(item => shortText(item, 160)).filter(Boolean) : [];
   return {
     tasks: tasks.map(item => ({
-      id: shortText(item.id, 80), title: shortText(item.title, 120), note: shortText(item.note, 160),
+      id: shortText(item.id, 80), series_id: validSeriesId(item.series_id) ? item.series_id : null, title: shortText(item.title, 120), note: shortText(item.note, 160),
       exec_date: validDate(item.exec_date), time_type: shortText(item.time_type, 20), slot: shortText(item.slot, 20),
       start_time: validTime(item.start_time), end_time: validTime(item.end_time), category: shortText(item.category, 20), status: shortText(item.status, 20),
     })),
@@ -395,7 +404,7 @@ module.exports = async function handler(req, res) {
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
     const output = await response.json();
-    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content) : parseModelResult(output.choices?.[0]?.message?.content);
+    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
     await increaseMetric('success', date);
     return json(res, 200, result);
   } catch (error) {
