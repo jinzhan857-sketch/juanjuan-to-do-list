@@ -609,7 +609,6 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
       <textarea id="c-title" rows="4" maxlength="1500" placeholder="例如：明天下午 3 点到 5 点学习 vibe coding，资料链接是……"></textarea>
       <div class="publish-image-add"><button class="btn ghost sm" id="btn-c-images">＋ 添加图片</button><span class="hint grow">最多 5 张，自动压缩</span><button class="btn ghost sm" id="btn-clear-draft">清空重写</button><input id="c-images-input" type="file" accept="image/*" multiple></div>
       <div class="image-preview" id="c-image-preview"></div>
-      <button class="btn mint" id="btn-ai" style="width:100%;margin-top:10px">🤖 AI 识别</button>
     </div>
     <div class="publish-suggestion" id="c-type-suggest"><span>识别到明确时间，更适合放入日程。</span><button class="btn ghost sm" id="btn-switch-schedule">改为日程</button></div>
     <div class="publish-calendar" id="c-calendar-block">
@@ -620,11 +619,10 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
         <button class="d-btn" id="c-cal-next" style="background:var(--card);border-radius:50%;width:28px;height:28px">›</button>
       </div>
       <div class="cal-grid" id="c-cal"></div>
-      <button class="btn ghost sm" id="c-cal-toggle" style="width:100%;margin-top:8px"></button>
       <div class="hint" id="c-date-hint" style="margin-top:4px"></div>
     </div>
     <div class="publish-result" id="c-result-panel">
-      <div class="publish-result-title">卷卷识别结果，可直接修改</div>
+      <div class="publish-result-title">发布内容，可直接修改</div>
       <div class="form-block"><div class="form-label">任务定义</div><input id="c-result-title" maxlength="300" placeholder="任务标题"></div>
       <div class="form-block"><div class="form-label">📝 备注 <span class="opt">原话、链接和补充信息会尽量保留</span></div><textarea id="c-note" rows="4" maxlength="1500" placeholder="地点、材料、链接或注意事项"></textarea></div>
     <div id="c-schedule-fields">
@@ -646,12 +644,12 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
     <div class="form-block" id="c-todo-period"><div class="form-label">待办周期</div><div class="seg" id="c-period"><button data-v="week">周待办</button><button data-v="month">月待办</button><button data-v="quarter">季待办</button><button data-v="year">年待办</button></div></div>
     <!-- 任务标签（AI 自动，点击可改） -->
     <div class="form-block">
-      <div class="form-label">🏷️ 任务标签 <span class="opt">AI 自动识别，点下方标签可改</span></div>
+      <div class="form-label">🏷️ 任务标签 <span class="opt">分类可改，基础分只读</span></div>
       <div id="c-tag-area"></div>
     </div>
     <div id="ai-result" style="margin-top:12px"></div>
     <div id="estimate-box"></div>
-    <button class="btn" id="btn-save" style="width:100%;margin-top:14px">🐾 发布事务</button>
+    <div class="hint" id="c-summary" role="status"></div><div style="display:flex;gap:12px;margin-top:14px"><button class="btn mint" id="btn-ai" style="flex:1">AI 识别</button><button class="btn" id="btn-save" style="flex:1">快速发布</button></div>
     </div>
   </div>
 </div>
@@ -1830,19 +1828,20 @@ const AIService = {
   },
 
   // 评估任务：返回 {base_score, reason, category, detected_time, source}
-  async evaluate(title){
+  async evaluate(title, {signal}={}){
     const cacheKey = `${todayStr()}|${title.trim()}`;
     if(this.cache[cacheKey]) return this.cache[cacheKey];
     try{
       if(this.source()==='custom'){
-        const data=await this.customRequest([{role:'system',content:CUSTOM_SCORE_PROMPT},{role:'user',content:`今天是${todayStr()}。待办任务：${title}`}],300);
+        const data=await this.customRequest([{role:'system',content:CUSTOM_SCORE_PROMPT},{role:'user',content:`今天是${todayStr()}。待办任务：${title}`}],300,null,{signal,retries:0});
+        if(!data||typeof data!=='object'||(!data.vague&&typeof data.base_score!=='number'))throw new Error('模型返回结果不合法');
         const vague=!!data.vague||data.base_score===null||data.base_score===undefined; const score=Number(data.base_score);
         if(!vague&&(!Number.isFinite(score)||score<0||score>10))throw new Error('模型返回的分数不合法');
         const out={task:String(data.task||'').slice(0,300),note:String(data.note||'').slice(0,1500),base_score:vague?null:r1(score),vague,reason:String(data.reason||'').slice(0,60),advice:String(data.advice||'').slice(0,120),category:mapTag(data.category||this._localCategory(title)),detected_date:data.detected_date||null,detected_time:data.detected_time||null,model_raw:JSON.stringify(data),source:'custom'};
         this.setDegraded(false); this.cache[cacheKey]=out; return out;
       }
       const resp = await fetch('/api/ai', {
-        method:'POST',
+        method:'POST', signal,
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           title,
@@ -1853,6 +1852,7 @@ const AIService = {
       const data = await resp.json();
       if(!resp.ok) throw new Error(data.error || 'AI 服务暂不可用');
       const vague = !!data.vague || data.base_score === null || data.base_score === undefined;
+      if(!data||typeof data!=='object'||(!data.vague&&(!Number.isFinite(data.base_score)||data.base_score<0||data.base_score>10))) throw new Error('模型返回结果不合法');
       const out = {...data, category:mapTag(data.category || this._localCategory(title)), vague, model_raw:data.model_raw||JSON.stringify(data), source:'ai'};
       this.setDegraded(false);
       this.cache[cacheKey] = out;
@@ -1860,7 +1860,7 @@ const AIService = {
     }catch(e){
       console.warn('AI 调用失败：', e);
       this.setDegraded(true);
-      return this._local(title);
+      throw e;
     }
   },
 
@@ -1999,74 +1999,6 @@ const AIService = {
     return {type:'error',reply:'暂时无法识别这条请求。请写明要做什么、日期或课程名称，我会帮你整理成确认卡。'};
   },
 
-  // ---- 本地关键词降级引擎 ----
-  _local(title){
-    const t = title.toLowerCase();
-    const raw = title.trim().replace(/[。！？]+$/,'');
-    // 模糊任务：纯泛词、无具体对象 / 动作 / 产出，则要求用户补充，不打分
-    const vagueWords = ['做事','处理琐事','处理事情','去处理一下事情','事情','琐事','杂事','杂活','一些事','干点事','随便做点','弄一下','搞一下','干活','任务','学习','todo','stuff','things','something','搞事情'];
-    if(vagueWords.includes(raw) || raw.length===1 || /^(做|弄|搞|整|处理|完成|搞定|学习)$/.test(raw)){
-      return {vague:true, base_score:null,
-        reason:'任务描述过于宽泛，请补充具体对象、动作与产出后再评分',
-        advice:'请补充具体对象、动作与产出，例如「复习高数第三章并做十题」。',
-        category:this._localCategory(title), detected_date:parseNaturalDate(title), detected_time:this._localTime(title), source:'local'};
-    }
-    // 12 锚点本地映射（离线降级使用，与 AI 锚点体系一致）
-    const rules = [
-      {re:/(打游戏|玩游戏|刷剧|刷抖音|刷视频|看剧|追剧|看视频|刷b站|刷手机|躺平|睡懒觉)/, s:0, cat:'娱乐休闲',
-        r:'纯个人无约束娱乐，零思维摩擦、无沉淀产出，归零分红线。',
-        a:'放松可以，但它不贡献价值分，记得搭配点正经事～'},
-      {re:/(吃饭|早餐|午餐|晚餐|夜宵|做饭|煮饭|点外卖|下厨)/, s:1, cat:'生活事务',
-        r:'个人刚需，思维消耗极低且无沉淀资产，对标吃饭锚点。',
-        a:'好好吃饭是基本盘，但价值分就这一分，别指望它拉分。'},
-      {re:/(通勤|上下班|上班|下班|排队|取号|办事|坐车|地铁|公交|开车)/, s:2, cat:'生活事务',
-        r:'时间被硬性限制、动脑少、无长期产出，对标通勤锚点。',
-        a:'通勤碎片时间可以听点东西，但本任务本身价值有限。'},
-      {re:/(健身|跑步|运动|瑜伽|游泳|骑行|锻炼|打球|撸铁)/, s:3, cat:'生活事务',
-        r:'需体力专注、有身体层面收获，无可复用数字资产。',
-        a:'坚持运动身体是本钱，记录进步曲线会更好坚持。'},
-      {re:/(聚餐|饭局|团建|朋友吃饭|请客|聚会吃饭|约饭)/, s:3.5, cat:'社交外出',
-        r:'带轻度人际约束、脑力消耗低、无留存产出，对标聚餐锚点。',
-        a:'聚会是关系维护，适度就好，别光吃忘了正事。'},
-      {re:/(约会|陪家人|陪伴|陪父母|陪孩子|陪对象|看家人|陪爸妈)/, s:4.5, cat:'社交外出',
-        r:'轻度人情契约，存在情绪精力消耗，无实物资产沉淀。',
-        a:'高质量陪伴很珍贵，放下手机专心聊会更值。'},
-      {re:/(开会|参会|旁听|例会|周会|站会|早会)/, s:5.5, cat:'职场工作',
-        r:'带强制履约约束、中等动脑消耗、难沉淀复用内容。',
-        a:'开会前先列问题，避免被动旁听浪费时间。'},
-      {re:/(写日记|日记|复盘|周报复盘|自我总结|写总结|反思|月度复盘)/, s:6, cat:'生活事务',
-        r:'自主安排、思考成本高、沉淀自我成长类个人资产。',
-        a:'复盘是复利行为，坚持写会越来越值钱。'},
-      {re:/(听讲座|听课|听分享|网课|线上课|讲座|培训课|听报告)/, s:7, cat:'成长学习',
-        r:'轻微履约约束、高密度信息接收、可沉淀笔记类产出。',
-        a:'听完顺手整理成笔记，价值立刻翻倍。'},
-      {re:/(运营小红书|写博客|公众号|自媒体|写文章|做账号|发笔记|更新博客)/, s:8, cat:'成长学习',
-        r:'轻度对外履约、动脑成本高、产出可反复使用的内容资产。',
-        a:'内容资产会持续复利，坚持更新比追爆款更重要。'},
-      {re:/(分享会|内部分享|做培训|演讲分享|组织分享|技术分享)/, s:9, cat:'职场工作',
-        r:'履约约束强、筹备成本高、产出可复用的完整内容资产。',
-        a:'把分享内容沉淀成模板，下次直接复用。'},
-      {re:/(vibe\s*coding|用\s*ai.{0,6}(独立)?(制作|开发|做).{0,6}(app|应用|网页|网站|项目)|独立开发|开发项目|做\s*(app|网站|小程序|系统)|写代码项目)/, s:10, cat:'成长学习',
-        r:'脑力摩擦拉满、兼顾逻辑审美调试、产出可长期复用系统。',
-        a:'做成可复用系统最划算，记得开源或沉淀组件库。'},
-      {re:/(记账|理财|对账|报销|复盘.{0,4}(收支|花销|钱)|基金|股票|收支记录)/, s:6, cat:'金钱复盘',
-        r:'自主安排的金钱复盘，思考成本高、沉淀可复用理财资产。',
-        a:'记账是理财第一步，长期看复利惊人。'},
-    ];
-    const hit = rules.find(x=>x.re.test(t));
-    const out = hit
-      ? {base_score:hit.s, reason:hit.r, advice:hit.a, category:hit.cat, vague:false, source:'local'}
-      : {base_score:2, reason:'普通事务，按基础档估值。', advice:this._localAdvice(title), category:this._localCategory(title), vague:false, source:'local'};
-    out.category = this._localCategory(title);
-    out.task = localPublishContent(title).title;
-    out.note = localPublishContent(title).note;
-    out.advice = this._localAdvice(title);
-    out.model_raw = null;
-    out.detected_time = this._localTime(title);
-    out.detected_date = parseNaturalDate(title);
-    this.cache[`${todayStr()}|${title.trim()}`] = out;
-    return out;
-  },
   _localCategory(title){
     const t = title;
     if(/(记账|理财|对账|报销|收支|花了多少钱|基金|股票|银行卡|银行页面|银行业务)/.test(t)) return '金钱复盘';
@@ -2142,24 +2074,35 @@ const PetSystem = {
   },
 
   // 三档喂养：0~饱线 只加当前饱度；饱线~上限 加饱度+成长（冰箱喂养×50%）；超上限进冰箱
-  _feedValue(value, fromFridge){
+  _feedValue(value, fromFridge, pet=S.pet){
     let v = r1(value), fed = 0;
-    const full = petFullLine(), max = petEatMax();
-    let sat = petSatiety();
+    const profile=CONFIG.PERSON[pet.personType]||CONFIG.PERSON.P,full=profile.full,max=profile.eatMax;
+    let sat = r1(pet.satietyTask+pet.satietyFridge);
     if(sat < full){                                   // 档1：0~饱线，仅进食
       const add = Math.min(v, full - sat);
-      S.pet.satietyTask = r1(S.pet.satietyTask + add);
+      pet.satietyTask = r1(pet.satietyTask + add);
       v = r1(v - add); fed = r1(fed + add);
     }
-    sat = petSatiety();
+    sat = r1(pet.satietyTask+pet.satietyFridge);
     if(v > 0.05 && sat < max){                        // 档2：饱线~上限，进食+成长
       const add = Math.min(v, max - sat);
-      S.pet.satietyTask = r1(S.pet.satietyTask + add);
+      pet.satietyTask = r1(pet.satietyTask + add);
       const g = fromFridge ? add*0.5 : add;
-      if(S.pet.alive) S.pet.growth = r1(S.pet.growth + g);
+      if(pet.alive) pet.growth = r1(pet.growth + g);
       v = r1(v - add); fed = r1(fed + add);
     }
     return {fed, overflow:r1(v)};
+  },
+
+  prepareAward(score){
+    const pet=copyData(S.pet);
+    for(const f of foodForScore(score)){
+      const {fed,overflow}=this._feedValue(f.value,false,pet);
+      if(pet.intakeDate!==todayStr()){pet.intakeDate=todayStr();pet.todayIntake=0;}
+      pet.todayIntake=r1(pet.todayIntake+fed);
+      if(overflow>0.05)pet.fridge.push({name:f.name,emo:f.emo,value:overflow,id:uid()});
+    }
+    return pet;
   },
 
   // 冰箱手动喂食（按三档规则，超出饱线部分只结算 50% 成长）
@@ -2587,7 +2530,7 @@ const UI = {
   /* ---------- 导航 ---------- */
   switchPage(name){
     const leavingCreate=$('.page.active')?.id==='page-create'&&name!=='create';
-    if(leavingCreate) this.saveCreateDraft();
+    if(leavingCreate){this.cancelRecognition();if(!this.cState?.saved)this.saveCreateDraft();}
     $$('.page').forEach(p=>p.classList.remove('active'));
     const page = $('#page-'+name); if(!page) return;
     if(name!=='agent') this.setAgentKeyboard(false);
@@ -3549,7 +3492,7 @@ const UI = {
           ⭐ 基础价值分：<b>${t.baseScore}</b> 分<br>
           📝 判定理由：${esc(t.aiReason||'')}<br>
           ${t.note?`📌 备注：${esc(t.note)}<br>`:''}
-          💡 AI 建议：${esc(t.aiAdvice||'')}<br>
+          评分建议：${esc(t.aiAdvice||'')}<br>
           ✍️ 创建于：${new Date(t.createdAt).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}<br>
           ${t.status
             ? `${stInfo.emo} 状态：${stInfo.name} · 已获得 <b style="color:var(--peach)">${t.finalScore}</b> 分`
@@ -3590,10 +3533,12 @@ const UI = {
 
   /* ---------- 创建 / 编辑 ---------- */
   resetCreate(kind='schedule'){
+    if(this.cState?.saving&&!this.cState.saved)return;
+    this.cancelRecognition();
     this.editingId = null;
     this.todoEditingId = null;
     this.cState = {
-      kind, recognized:false, rawText:'', resultTitle:'', resultNote:'', images:[], missingDate:false,
+      draftId:uid(), userFields:{}, kind, recognized:false, rawText:'', resultTitle:'', resultNote:'', images:[], missingDate:false,
       date: todayStr(), calMonth: todayStr().slice(0,7),
       timeType:'allday', slot:'afternoon', start:'14:00', end:'15:00',
       tag:'', period:'week', ai:null, aiTitle:'', modelRaw:null, reviewedResult:null,
@@ -3603,21 +3548,21 @@ const UI = {
   },
 
   saveCreateDraft(){
-    if(!this.cState) return;
+    if(!this.cState||this.cState.saved) return;
     const title=$('#c-title');
     if(title) this.cState.rawText=title.value;
     const hasContent=this.cState.rawText.trim()||this.cState.recognized||(this.cState.images||[]).length;
     if(!hasContent){localStorage.removeItem('juanjuan_create_draft');return;}
     try{
-      localStorage.setItem('juanjuan_create_draft',JSON.stringify({state:this.cState,editingId:this.editingId,todoEditingId:this.todoEditingId,savedAt:Date.now()}));
+      localStorage.setItem('juanjuan_create_draft',JSON.stringify({state:{...this.cState,saving:false},editingId:this.editingId,todoEditingId:this.todoEditingId,savedAt:Date.now()}));
     }catch(error){console.warn('草稿保存失败：',error);}
   },
 
   restoreCreateDraft(){
     try{
       const saved=JSON.parse(localStorage.getItem('juanjuan_create_draft')||'null');
-      if(!saved?.state) return false;
-      this.cState=saved.state;
+      if(!saved?.state||saved.state.saved) return false;
+      this.cancelRecognition();this.cState=saved.state;
       this.cState.images=Array.isArray(this.cState.images)?this.cState.images:[];
       this.editingId=S.tasks.some(t=>t.id===saved.editingId)?saved.editingId:null;
       this.todoEditingId=S.todos.some(t=>t.id===saved.todoEditingId)?saved.todoEditingId:null;
@@ -3641,8 +3586,10 @@ const UI = {
 
   startEdit(id){
     const t = S.tasks.find(x=>x.id===id); if(!t) return;
+    this.cancelRecognition();this.todoEditingId=null;
     this.editingId = id;
     this.cState = {
+      draftId:uid(), userFields:{date:true,time:true,tag:true},
       kind:'schedule', recognized:true, rawText:[t.title,t.note].filter(Boolean).join('，'), resultTitle:t.title, resultNote:t.note||'', images:(t.images||[]).map(x=>({...x})), missingDate:false,
       date: t.execDate, calMonth: t.execDate.slice(0,7),
       timeType: t.timeType, slot: t.slot||'afternoon',
@@ -3659,7 +3606,7 @@ const UI = {
     const c = this.cState;
     $$('#c-kind button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.kind));
     $('#c-calendar-block').classList.toggle('show',c.kind==='schedule');
-    $('#c-result-panel').classList.toggle('show',!!c.recognized);
+    $('#c-result-panel').classList.add('show');
     $('#c-schedule-fields').style.display=c.kind==='schedule'?'block':'none';
     $('#c-todo-period').style.display=c.kind==='todo'?'block':'none';
     $$('#c-period button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.period));
@@ -3680,14 +3627,10 @@ const UI = {
       const ds = `${y}-${pad(m)}-${pad(d)}`;
       const cell = document.createElement('div');
       cell.className = 'cal-cell' + (ds===todayStr()?' today':'') + (ds===c.date?' sel':'');
-      const row=Math.floor((startIdx+d-1)/7), selectedRow=Math.floor((startIdx+parseDate(c.date).getDate()-1)/7);
-      if(!c.calendarExpanded&&row!==selectedRow&&row!==selectedRow+1) cell.style.display='none';
       cell.textContent = d;
-      cell.onclick = ()=>{ c.date = ds; c.missingDate=false; this.renderCreate(); };
+      cell.onclick = ()=>{ if(c.saving)return;(c.userFields||={}).date=true;c.dateConflict='';c.date=ds;c.missingDate=false; this.renderCreate(); };
       grid.appendChild(cell);
     }
-    $('#c-cal-toggle').textContent=c.calendarExpanded?'⌃ 收起整个月':'⌄ 展开整个月';
-    $('#c-cal-toggle').onclick=()=>{c.calendarExpanded=!c.calendarExpanded;this.renderCreate();};
     $('#c-date-info').onclick=()=>{c.dateInfo=!c.dateInfo;this.renderCreate();};
     // 日期提示只在点击感叹号后显示，避免占用创建区域。
     const diff = dayDiff(c.date, todayStr());
@@ -3699,7 +3642,7 @@ const UI = {
       else hintEl.textContent=`提前 ${diff} 天规划，预估完成积分会更高。`;
     } else if(c.missingDate){
       hintEl.textContent='请补充具体日期后再发布日程。';
-    } else hintEl.textContent='';
+    } else hintEl.textContent=c.dateConflict||'';
     // 时间精度
     $$('#c-timetype button').forEach(b=>b.classList.toggle('on', b.dataset.v===c.timeType));
     $('#c-slots').style.display = c.timeType==='slot' ? 'grid':'none';
@@ -3710,7 +3653,7 @@ const UI = {
         const ch = document.createElement('button');
         ch.className = 'chip' + (c.slot===s.key?' on':'');
         ch.innerHTML = `${s.name}<span style="font-size:9px">${s.bonus?'+10%':'+0%'}</span>`;
-        ch.onclick = ()=>{ c.slot=s.key; this.renderCreate(); };
+        ch.onclick = ()=>{ (c.userFields||={}).time=true;c.slot=s.key; this.renderCreate(); };
         sg.appendChild(ch);
       });
       const s = slotByKey(c.slot);
@@ -3727,7 +3670,7 @@ const UI = {
       const ch = document.createElement('button');
       ch.className='tag-chip'+(c.tag===tag?' on':'');
       ch.textContent = tag;
-      ch.onclick = ()=>{ c.tag=tag; this.renderCreate(); };
+      ch.onclick = ()=>{ (c.userFields||={}).tag=true;c.tag=tag; this.renderCreate(); };
       tw.appendChild(ch);
     });
     const more = document.createElement('button');
@@ -3735,15 +3678,31 @@ const UI = {
     more.textContent='更多'; more.onclick=()=>this.openTagSelector(false); tw.appendChild(more);
     const custom = document.createElement('input');
     custom.className='tag-chip'; custom.placeholder='自定义'; custom.value=c.tag&&!top.includes(c.tag)?c.tag:'';
-    custom.onchange=()=>{const v=custom.value.trim().slice(0,6);if(v){c.tag=v;if(!S.customTags.includes(v)){S.customTags.push(v);saveTags();}this.renderCreate();}}; tw.appendChild(custom);
+    custom.onchange=()=>{const v=custom.value.trim().slice(0,6);if(v){(c.userFields||={}).tag=true;c.tag=v;if(!S.customTags.includes(v)){S.customTags.push(v);saveTags();}this.renderCreate();}}; tw.appendChild(custom);
     // AI 结果 & 预估
     this.renderAIResult();
-    $('#btn-save').innerHTML = (this.editingId||this.todoEditingId) ? '💾 保存修改' : `🐾 发布${c.kind==='todo'?'待办':'日程'}`;
-    this.saveCreateDraft();
+    $('#btn-save').textContent=c.saving?'保存中':(this.editingId||this.todoEditingId)?'保存修改':c.recognized?'确认发布':'快速发布';
+    $$('#page-create input, #page-create textarea, #page-create button').forEach(el=>{el.disabled=!!c.saving;});
+    $('#btn-save').disabled=!!(c.saving||this.recognition);$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';
+
+    this.renderPublishSummary();this.saveCreateDraft();
+    this.refreshRulePreview();
+  },
+
+  renderPublishSummary(){
+    const c=this.cState;
+    $('#c-summary').textContent=[c.resultTitle||c.rawText||'填写事务后发布',c.kind==='schedule'?c.date+' '+(c.timeType==='allday'?'全天':c.timeType==='exact'?c.start+' 至 '+c.end:slotByKey(c.slot)?.name):'待办，无执行日期',c.tag||'日常生活',c.ai?'基础分 '+c.ai.base_score+'，'+(c.ai.source==='rule'?'规则评分':'AI 评分'):'发布时自动规则评分'].join('；');
+  },
+
+  async refreshRulePreview(){
+    const c=this.cState;if(c.ai&&c.ai.source!=='rule')return;
+    const key=JSON.stringify([c.resultTitle||c.rawText,c.resultNote]);
+    try{const {quickScore}=await this.loadScoring();if(this.cState!==c||key!==JSON.stringify([c.resultTitle||c.rawText,c.resultNote])||c.saved||(c.ai&&c.ai.source!=='rule'))return;c.ai=quickScore({title:c.resultTitle||c.rawText,description:c.resultNote});this.renderAIResult();this.renderPublishSummary();}catch(_){}
   },
 
   setCreateKind(kind){
-    this.cState.kind=kind;
+    if(this.cState.saving)return;
+    this.cancelRecognition();this.cState.kind=kind;
     localStorage.setItem('juanjuan_publish_kind',kind);
     this.renderCreate();
   },
@@ -3755,10 +3714,12 @@ const UI = {
   },
 
   async addPublishImages(files){
-    const room=5-this.cState.images.length;
+    const c=this.cState;
+    if(c.saving)return;
+    const room=5-c.images.length;
     if(room<=0){toast('每个事务最多 5 张图片');return;}
     for(const file of [...files].slice(0,room)){
-      try{this.cState.images.push(await compressTodoImage(file));}catch(e){toast(e.message||'图片处理失败');}
+      try{const image=await compressTodoImage(file);if(this.cState!==c||c.saving||c.saved)return;c.images.push(image);}catch(e){toast(e.message||'图片处理失败');}
     }
     this.renderPublishImages(); this.saveCreateDraft(); $('#c-images-input').value='';
   },
@@ -3768,7 +3729,7 @@ const UI = {
     const box = $('#ai-result');
     if(!c.ai){ box.classList.remove('show'); $('#estimate-box').classList.remove('show'); return; }
     box.classList.add('show');
-    box.innerHTML = `💡 AI 建议：${esc(c.ai.advice||'')}<br>🏷️ 分类：${esc(c.ai.category)}<br><details><summary>AI 判定与理由</summary>📝 ${esc(c.ai.reason)}</details><div class="score-line" style="text-align:right;margin-top:6px">预估分：${c.ai.base_score} 分</div>`;
+    box.innerHTML = `${c.ai.source==='rule'?'规则评分':'AI 评分'}：${esc(c.ai.advice||'')}<br>🏷️ 分类：${esc(c.tag||'日常生活')}<br><details><summary>评分依据</summary>📝 ${esc(c.ai.reason)}</details><div class="score-line" style="text-align:right;margin-top:6px">预估分：${c.ai.base_score} 分</div>`;
     // 预估
     const draft = this.buildDraft();
     const est = c.kind==='todo'?{full:todoScore(c.ai.base_score),parts:[]} : ScoreEngine.estimate(draft);
@@ -3834,44 +3795,61 @@ const UI = {
       reason:String(modelResult.reason||'').slice(0,60),
       advice:String(modelResult.advice||AIService._localAdvice(rawText)).slice(0,120),
       category,
-      detected_date:detectedDate,
+      detected_date:validDateStr(modelResult.detected_date)?modelResult.detected_date:detectedDate,
       detected_time:exact?`${exact.start}-${exact.end}`:(modelResult.detected_time||null),
       source:modelResult.source||'local',
     };
   },
 
+  loadScoring(){return import('./quick-score.mjs');},
+  cancelRecognition(){
+    const request=this.recognition;
+    if(request){this.recognition=null;request.controller.abort();}
+  },
   async onAIClick(){
-    const title = $('#c-title').value.trim();
-    if(!title){ toast('先告诉卷卷你想做什么吧～'); return; }
-    const btn = $('#btn-ai');
-    btn.disabled = true; btn.textContent = '🤖 卷卷正在思考…';
+    if(this.recognition){this.cancelRecognition();this.renderCreate();return;}
+    const c=this.cState,title=$('#c-title').value.trim();
+    if(c.saving||c.saved)return;
+    if(!title){toast('请输入事务内容');return;}
+    const before={raw:title,title:c.resultTitle,note:c.resultNote,tag:c.tag,date:c.date,time:JSON.stringify([c.timeType,c.slot,c.start,c.end])};
+    const request={controller:new AbortController(),draft:c};
+    this.recognition=request;
+    let aiSucceeded=false;
+    const timer=setTimeout(()=>request.controller.abort(new Error('识别超时')),20000);
+    this.renderCreate();
     try{
-      const res = await AIService.evaluate(title);
-      const reviewed=this.reviewRecognition(res,title);
-      this.cState.modelRaw=res.model_raw||null;
-      this.cState.reviewedResult=reviewed;
-      if(res.vague){
-        // 模糊任务：不强塞分数，提示用户补充具体信息
-        this.cState.ai = null; this.cState.aiTitle = '';
-        this.renderCreate();
-        this.renderAIResultVague(res.reason || '任务描述太模糊，请补充具体对象、动作与产出后再评分');
-        return;
+      const aborted=new Promise((_,reject)=>request.controller.signal.addEventListener('abort',()=>reject(request.controller.signal.reason),{once:true}));
+      const res=await Promise.race([AIService.evaluate(title,{signal:request.controller.signal}),aborted]);
+      if(this.recognition!==request||this.cState!==c||c.saved)return;
+      if(res.vague){this.renderAIResultVague(res.reason);return;}
+      if(!Number.isFinite(res.base_score)||res.base_score<0||res.base_score>10)throw new Error('识别结果不合法');
+      aiSucceeded=true;
+      const {shortCopy}=await this.loadScoring();
+      if(this.recognition!==request||this.cState!==c)return;
+      const reviewed=this.reviewRecognition(res,title),user=c.userFields||{};
+      reviewed.reason=shortCopy(reviewed.reason);reviewed.advice=shortCopy(reviewed.advice);
+      c.ai=reviewed;c.recognized=true;c.modelRaw=res.model_raw||null;c.reviewedResult=reviewed;
+      if(!user.title&&c.resultTitle===before.title&&$('#c-title').value.trim()===before.raw)c.resultTitle=shortCopy(reviewed.task);
+      if(!user.note&&c.resultNote===before.note)c.resultNote=reviewed.note;
+      if(!user.tag&&c.tag===before.tag)c.tag=reviewed.category;
+      const date=reviewed.detected_date;
+      if(date&&c.kind==='schedule'){
+        if(user.date||c.date!==before.date){if(c.date!==date)c.dateConflict='AI建议 '+date+'，已保留你选择的 '+c.date;}
+        else {c.date=date;c.calMonth=date.slice(0,7);}
       }
-      this.cState.ai = reviewed; this.cState.aiTitle = title; this.cState.rawText=title; this.cState.recognized=true;
-      this.cState.resultTitle=reviewed.task;
-      this.cState.resultNote=reviewed.note;
-      const tag=reviewed.category;
-      if(CONFIG.TAGS.includes(tag)) this.cState.tag = tag;
-      const detectedDate=reviewed.detected_date;
-      if(detectedDate&&this.cState.kind==='schedule'){
-        this.cState.date=detectedDate;
-        this.cState.calMonth=detectedDate.slice(0,7);
-      }
-      this.cState.missingDate=this.cState.kind==='schedule'&&!detectedDate&&/(凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里|半夜|\d{1,2}[点:：])/.test(title);
-      this._applyDetectedTime(reviewed.detected_time, title);
-      this.renderCreate();
-    } finally {
-      btn.disabled = false; btn.innerHTML = '🤖 AI 识别';
+      c.missingDate=c.kind==='schedule'&&!validDateStr(c.date);
+      if(!user.time&&JSON.stringify([c.timeType,c.slot,c.start,c.end])===before.time)this._applyDetectedTime(reviewed.detected_time,title);
+      this.renderCreate();this.recognition=null;
+    }catch(error){
+      if(this.recognition!==request||this.cState!==c||c.saved)return;
+      this.recognition=null;
+      if(aiSucceeded){toast('识别成功，页面更新失败，草稿已保留');this.saveCreateDraft();return;}
+      if(this.editingId||this.todoEditingId){toast('AI识别失败，修改已保留，请保存修改');this.renderCreate();}
+      else await this.onSave({aiFailed:true});
+    }finally{
+      clearTimeout(timer);
+      if(this.recognition===request)this.recognition=null;
+      if(this.cState===c&&!c.saved){$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent='AI 识别';$('#btn-save').disabled=!!c.saving;}
     }
   },
 
@@ -3885,109 +3863,71 @@ const UI = {
     for(const [kw,k] of slotKw){ if(dt.includes(kw)){ c.timeType='slot'; c.slot=k; return; } }
   },
 
-  async onSave(){
-    const raw = $('#c-title').value.trim();
-    const title = this.cState.resultTitle.trim();
-    if(!raw){ toast('事务内容不能为空'); return; }
-    if(!this.cState.recognized||!this.cState.ai){toast('请先点击 AI 识别');return;}
-    if(this.cState.aiTitle!==raw){toast('原始内容有变化，请重新识别');return;}
-    if(!title){toast('任务定义不能为空');return;}
-    if(this.cState.kind==='schedule'&&this.cState.missingDate){toast('请先补充具体日期后再发布日程');return;}
-    const btn = $('#btn-save'); btn.disabled = true;
+  async onSave({aiFailed=false}={}){
+    const c=this.cState;
+    if(!c||c.saving||c.saved||this.recognition)return;
+    c.saving=true;
+    let committed=false;
     try{
-      if(this.cState.kind==='schedule'&&this.cState.timeType==='exact' && minOf(this.cState.end)<=minOf(this.cState.start)){
-        toast('结束时间需要晚于开始时间'); return;
+      c.rawText=$('#c-title').value;
+      c.draftId||=uid();
+      if(!c.resultTitle.trim())throw new Error('事务内容不能为空');
+      if(c.kind==='schedule'&&!validDateStr(c.date))throw new Error('请选择有效日期');
+      if(c.kind==='schedule'&&c.timeType==='exact'&&(!validTimeStr(c.start)||!validTimeStr(c.end)||minOf(c.end)<=minOf(c.start)))throw new Error('结束时间需要晚于开始时间');
+      this.renderCreate();
+      const {quickScore}=await this.loadScoring();
+      if(aiFailed||!c.ai||c.ai.source==='rule'){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;}
+      this.renderCreate();
+      const store=c.kind==='todo'?'todos':'tasks',id=this.todoEditingId||this.editingId;
+      const old=id?S[store].find(t=>t.id===id):null;
+      if(id&&!old)throw new Error('原事务已变化，请重新打开');
+      const expected=copyData({[store]:S[store]});
+      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultNote)])];
+      let value;
+      if(store==='todos'){
+        value={...copyData(old||{}),id:old?.id||c.draftId,title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source,aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,links:extractPublishLinks(c.rawText+'\n'+c.resultNote),images:copyData(c.images||[]),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null};
+      }else{
+        value={...copyData(old||{}),...this.buildDraft(),id:old?.id||c.draftId};
+        if(old){
+          value.status=old.status;value.statusAt=old.statusAt;value.statusEditCount=old.statusEditCount;value.finalScore=old.finalScore;value.parts=old.parts;
+          const changed=['execDate','timeType','slot','startTime','endTime'].some(k=>old[k]!==value[k]);
+          if(changed&&Date.now()>taskDeadline(old)){
+            const penalty=ScoreEngine.timeChangePenalty(old,Date.now(),taskDeadline(old));
+            if(penalty){value.timeChangeMul=Math.min(penalty.mul,old.timeChangeMul||1);value.timeChangeLabel=penalty.label;value.timeChangeWhy=penalty.why;}
+          }
+        }
       }
-      if(this.cState.kind==='todo') await this.applyTodo();
-      else if(this.editingId) await this.applyEdit(title);
-      else await this.applyCreate();
-    } finally { btn.disabled = false; }
-  },
-
-  async applyCreate(){
-    const t = this.buildDraft();
-    await saveTask(t);
-    const est = ScoreEngine.estimate(t);
-    localStorage.removeItem('juanjuan_create_draft');
-    this.resetCreate();
-    S.homeDate = t.execDate >= todayStr() ? t.execDate : todayStr();
-    if(t.isBackfill){
-      toast('补录任务已创建，来标记它的完成状态吧！');
-      this.switchPage('home');
-      S.homeDate = t.execDate; this.renderHome();
-      this.openStatusSheet(t.id);
-    } else {
-      toast(`任务创建成功！预估 ${est.full} 分 🎉`);
-      PetView.bubble('喵！新计划安排上了，期待你完成～');
-      this.switchPage('home');
-    }
-  },
-
-  async applyEdit(title){
-    const old = copyData(S.tasks.find(x=>x.id===this.editingId));
-    const draft = this.buildDraft();
-    const now = Date.now();
-    const oldDeadline = taskDeadline(old);
-    const freeEdit = (now - old.createdAt < CONFIG.FREE_EDIT_MS) && now < oldDeadline;
-    const timeChanged = old.execDate!==draft.execDate || old.timeType!==draft.timeType || old.slot!==draft.slot || old.startTime!==draft.startTime || old.endTime!==draft.endTime;
-    const titleChanged = old.title !== title;
-
-    const finishEdit = async (t)=>{
-      t.status = old.status; t.statusAt = old.statusAt; t.statusEditCount = old.statusEditCount;
-      if(t.status){ // 已结算过 → 重新结算
-        const res = ScoreEngine.compute(t, t.status, t.statusAt||now);
-        const delta = r1(res.score - old.finalScore);
-        t.finalScore = res.score; t.parts = res.parts.map(p=>({label:p.label,why:p.why,type:p.type}));
-        await PetSystem.recordToday(delta, 0);
-        if(delta>0) await PetSystem.award(delta);
+      value.links=preservedLinks;
+      value.scoreRule=c.ai.source==='rule'?{id:c.ai.ruleId,version:c.ai.version,fallback:c.ai.fallback}:null;
+      validateStoredRecord(value,store==='tasks');
+      const changes=[{store,value}];
+      if(old&&(old.status||old.done)){
+        const result=store==='todos'?{score:todoScore(value.baseScore),parts:[]}:ScoreEngine.compute(value,value.status,value.statusAt||Date.now());
+        value.finalScore=result.score;value.parts=result.parts;
+        const delta=r1(result.score-(old.finalScore||0));
+        if(delta){
+          const stats=copyData(S.dayStats),day=todayStr();
+          stats[day]||={points:0,done:0};stats[day].points=r1(stats[day].points+delta);
+          expected.kv={dayStats:copyData(S.dayStats),pet:copyData(S.pet)};
+          changes.push({store:'kv',key:'dayStats',value:stats});
+          if(delta>0)changes.push({store:'kv',key:'pet',value:PetSystem.prepareAward(delta)});
+        }
       }
-      await saveTask(t);
-      localStorage.removeItem('juanjuan_create_draft');
-      this.editingId = null; this.resetCreate();
-      this.switchPage('home'); toast('修改已保存，积分已按规则重算');
-    };
-
-    if(freeEdit){
-      draft.title = title;
-      draft.timeChangeMul = null; draft.timeChangeLabel=null; draft.timeChangeWhy=null;
-      await finishEdit(draft); return;
+      await commitDataChanges(changes,expected);
+      committed=true;c.saved=true;c.savedId=value.id;
+      try{localStorage.setItem('juanjuan_create_draft',JSON.stringify({state:{saved:true}}));localStorage.removeItem('juanjuan_create_draft');}catch(_){}
+      this.cancelRecognition();this.resetCreate(c.kind);
+      this.switchPage(store==='todos'?'todo':'home');
+      toast(aiFailed?'AI识别失败，已快速发布':old?'修改已保存':'发布成功');
+      return value;
+    }catch(error){
+      if(committed){toast('已保存，页面刷新失败，请重新打开查看');return;}
+      toast((aiFailed?'AI识别失败，快速发布未成功：':'保存未成功：')+error.message);
+      this.saveCreateDraft();
+    }finally{
+      c.saving=false;
+      if(this.cState===c&&!c.saved)this.renderCreate();
     }
-    // 改时间惩罚
-    if(timeChanged && now > oldDeadline){
-      const p = ScoreEngine.timeChangePenalty(old, now, oldDeadline);
-      if(p){ draft.timeChangeMul = Math.min(p.mul, old.timeChangeMul||1); draft.timeChangeLabel = p.label; draft.timeChangeWhy = p.why; }
-    }
-    // 改内容
-    if(titleChanged && now > oldDeadline){
-      // 询问是小改动还是大幅变更
-      this.confirm('任务内容有变化', '这次修改是同一件事的<b>小调整</b>，还是<b>完全换了一个任务</b>？<br><br>· 小调整：升分部分按 80% 折算合并<br>· 完全更换：旧任务记为「没有去做」，新任务按复盘补录计分', async()=>{
-        // 确定 = 小调整（合并计分）
-        draft.title = title;
-        draft.baseScore = ScoreEngine.mergeBaseScore(old.baseScore, this.cState.ai.base_score);
-        draft.aiReason = this.cState.ai.reason + `（改内容合并计分：旧${old.baseScore}→新${this.cState.ai.base_score}）`;
-        await finishEdit(draft);
-      }, '小调整', async()=>{
-        // 取消按钮 = 完全更换
-        old.status = 'skipped'; old.finalScore = 0; old.statusAt = now;
-        old.parts = [{label:'内容大幅变更', why:'任务内容大幅度更变：旧任务自动设定为「没有去做」（0分），新内容作为复盘补录任务重新计分。', type:'mul'}];
-        const expected=copyData({tasks:S.tasks});
-        const nt = this.buildDraft();
-        nt.id = uid(); nt.title = title; nt.createdAt = now; nt.isBackfill = true;
-        nt.baseScore = this.cState.ai.base_score; nt.aiReason = this.cState.ai.reason;
-        await commitDataChanges([{store:'tasks',value:old},{store:'tasks',value:nt}],expected);
-        localStorage.removeItem('juanjuan_create_draft');
-        this.editingId = null; this.resetCreate();
-        this.switchPage('home'); toast('旧任务已记为“没有去做”，新任务已按补录创建');
-        this.openStatusSheet(nt.id);
-      }, '完全更换');
-      return;
-    }
-    if(titleChanged){
-      draft.title = title;
-      draft.baseScore = this.cState.ai.base_score;
-      draft.aiReason = this.cState.ai.reason;
-    }
-    await finishEdit(draft);
   },
 
   /* ---------- 冰箱 ---------- */
@@ -4021,7 +3961,7 @@ const UI = {
       el.className = 'tag-sel' + (this.cState.tag===tag?' cur':'');
       const custom = S.customTags.includes(tag);
       el.innerHTML = `<span class="te">🏷️</span><span>${esc(tag)}</span>${custom?'<div class="tag-manage"><button data-act="rename">改名</button><button data-act="delete">删除</button></div>':''}`;
-      el.onclick = e=>{ if(e.target.closest('.tag-manage')) return; this.cState.tag = tag; this.mask('mask-tag', false); this.renderCreate(); };
+      el.onclick = e=>{ if(e.target.closest('.tag-manage')) return; (this.cState.userFields||={}).tag=true;this.cState.tag = tag; this.mask('mask-tag', false); this.renderCreate(); };
       if(custom){
         el.querySelector('[data-act="rename"]').onclick = e=>{ e.stopPropagation(); this.renameCustomTag(tag); };
         el.querySelector('[data-act="delete"]').onclick = e=>{ e.stopPropagation(); this.deleteCustomTag(tag); };
@@ -4030,13 +3970,6 @@ const UI = {
     });
     this.mask('mask-tag', true);
     if(focusCustom) setTimeout(()=>$('#tag-custom-input').focus(), 80);
-  },
-
-  async applyTodo(){
-    const old=this.todoEditingId?S.todos.find(x=>x.id===this.todoEditingId):null;
-    const c=this.cState;
-    const todo={...(old||{}),id:old?.id||uid(),title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source||'local',aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,pageResult:{title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活'},links:extractPublishLinks(`${c.rawText}\n${c.resultNote}`),images:(c.images||[]).slice(0,5),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null,sourceTaskId:old?.sourceTaskId||null};
-    await saveTodo(todo); localStorage.removeItem('juanjuan_create_draft'); this.resetCreate('todo'); this.switchPage('todo'); toast(old?'待办已更新':'待办已创建');
   },
 
   async renameCustomTag(oldName){
@@ -4643,16 +4576,16 @@ const App = {
     $('#c-images-input').onchange=e=>UI.addPublishImages(e.target.files);
     $('#c-cal-prev').onclick = ()=>{ const [y,m]=UI.cState.calMonth.split('-').map(Number); const d=new Date(y,m-2,1); UI.cState.calMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`; UI.renderCreate(); };
     $('#c-cal-next').onclick = ()=>{ const [y,m]=UI.cState.calMonth.split('-').map(Number); const d=new Date(y,m,1);   UI.cState.calMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`; UI.renderCreate(); };
-    $$('#c-timetype button').forEach(b=>b.onclick = ()=>{ UI.cState.timeType=b.dataset.v; UI.renderCreate(); });
-    $('#c-start').onchange = e=>{ UI.cState.start=e.target.value; UI.renderCreate(); };
-    $('#c-end').onchange   = e=>{ UI.cState.end=e.target.value; UI.renderCreate(); };
+    $$('#c-timetype button').forEach(b=>b.onclick = ()=>{ (UI.cState.userFields||={}).time=true;UI.cState.timeType=b.dataset.v; UI.renderCreate(); });
+    $('#c-start').onchange = e=>{ (UI.cState.userFields||={}).time=true;UI.cState.start=e.target.value; UI.renderCreate(); };
+    $('#c-end').onchange   = e=>{ (UI.cState.userFields||={}).time=true;UI.cState.end=e.target.value; UI.renderCreate(); };
     $('#c-title').addEventListener('input', ()=>{
-      UI.cState.rawText=$('#c-title').value;
+      UI.cState.rawText=$('#c-title').value;UI.cState.resultTitle=UI.cState.rawText.trim();$('#c-result-title').value=UI.cState.resultTitle;
       $('#c-type-suggest').classList.toggle('show',UI.cState.kind==='todo'&&!!parseExactTime(UI.cState.rawText));
-      UI.saveCreateDraft();
+      UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();
     });
-    $('#c-result-title').addEventListener('input',e=>{UI.cState.resultTitle=e.target.value;UI.saveCreateDraft();});
-    $('#c-note').addEventListener('input',e=>{UI.cState.resultNote=e.target.value;UI.saveCreateDraft();});
+    $('#c-result-title').addEventListener('input',e=>{(UI.cState.userFields||={}).title=true;UI.cState.resultTitle=e.target.value;UI.saveCreateDraft();UI.refreshRulePreview();});
+    $('#c-note').addEventListener('input',e=>{(UI.cState.userFields||={}).note=true;UI.cState.resultNote=e.target.value;UI.saveCreateDraft();UI.refreshRulePreview();});
     $('#btn-ai').onclick = ()=>UI.onAIClick();
     $('#btn-save').onclick = ()=>UI.onSave();
     // 待办页
