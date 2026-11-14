@@ -1,0 +1,30 @@
+{"request":"11月9日不要改，只改11月16日同名课程备注改成带电脑","selected":"a","accepted":true,"changed":["a"]}
+{"request":"11月9日保持不变，只改11月16日同名课程备注改成带电脑","selected":"a","accepted":true,"changed":["a"]}
+{"invalidStatusPersisted":"invalid-status"}
+{"detailError":"Cannot read properties of undefined (reading 'emo')"}
+{"request":"天气查上海","location":{"name":"香港","latitude":22.3193,"longitude":114.1694}}
+{
+  "source": "C:\\Users\\25470\\.codex\\worktrees\\audit-issues-1-6\\卷卷",
+  "results": [
+    {
+      "name": "single-day exclusion: 11月9日不要改，只改11月16日同名课程备注改成带电脑",
+      "pass": false,
+      "error": "only November 16 may change\n+ actual - expected\n\n  [\n+   'a'\n-   'b'\n  ]\n"
+    },
+    {
+      "name": "single-day exclusion: 11月9日保持不变，只改11月16日同名课程备注改成带电脑",
+      "pass": false,
+      "error": "only November 16 may change\n+ actual - expected\n\n  [\n+   'a'\n-   'b'\n  ]\n"
+    },
+    {
+      "name": "import rejects invalid schedule status before replacing data",
+      "pass": false,
+      "error": "invalid status must not enter the database\n\nfalse !== true\n"
+    },
+    {
+      "name": "explicit city after weather keyword overrides old memory",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\n'香港' !== '上海'\n"
+    }
+  ]
+}
