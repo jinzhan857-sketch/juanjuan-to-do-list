@@ -6,16 +6,33 @@
 
 ## 从这里开始
 
+看不懂文件名、编号或 GitHub 页面时，先读[GitHub 阅读指南](docs/guide/README.md)。只想知道下一步做什么，可以直接看[卷卷开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)。
+
 | 你想了解什么 | 入口 |
 | --- | --- |
 | 产品怎么用，现有规则是什么 | [产品与使用说明](docs/product/README.md) |
-| 当前做到了哪里，哪些有问题 | [当前状态与版本关系](docs/STATUS.md) |
+| 做到哪里、有哪些问题、接着做要注意什么 | [当前状态与接手说明](docs/STATUS.md) |
 | 第一次接手，应该按什么顺序阅读 | [文档导航](docs/README.md) |
 | 代码、AI 和数据如何工作 | [当前架构](docs/architecture/README.md) |
 | 本地怎么启动、检查与发布 | [开发说明](docs/development/README.md) |
-| 下一步做什么，有哪些前置条件 | [路线图入口](docs/ROADMAP.md) |
+| 开发顺序、勾选进度、下一步与前置条件 | [开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1) |
 | 3.0 的完整目标与范围 | [3.0 完整共识稿](docs/V3_CONSENSUS_DRAFT.md) |
 | Agent 接手时必须遵守什么 | [AGENTS.md](AGENTS.md) |
+
+## 文件夹分别放什么
+
+这里是固定的用途说明。上方文件列表右侧显示最近一次修改的提交说明，会随提交变化。
+
+| 目录或文件 | 中文用途 |
+| --- | --- |
+| `api/` | AI 服务接口，[打开说明](api/README.md) |
+| `docs/` | 产品、架构、开发和验证资料，[打开导航](docs/README.md) |
+| `scripts/` | 文档等开发辅助检查，[打开说明](scripts/README.md) |
+| `dist/` | 准备发布的网页文件，[查看版本与发布依据](docs/development/RELEASE.md) |
+| `diagrams/` | 历史设计图稿，[查看归档说明](diagrams/README.md) |
+| `.github/` | 任务与改动说明模板，[打开说明](.github/README.md) |
+| `.openai/` | 既有 Sites 发布配置，[查看发布说明](docs/development/RELEASE.md) |
+| `index.html` | 当前网页源码，[查看系统如何工作](docs/architecture/README.md) |
 
 ## 当前能力
 
