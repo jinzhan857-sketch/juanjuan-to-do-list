@@ -1,2 +1,22 @@
 # Local project data cache (not app source)
 .workbuddy/
+
+# Personal business backups and local working copies
+/卷卷AI_Todo_备份_*.json
+/backups/
+/private/
+/测试记录.md
+/测试集/
+
+# Design work stays local until reviewed individually
+/diagrams/*
+!/diagrams/README.md
+
+# Credentials, dependencies and machine output
+.env
+.env.*
+!.env.example
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
