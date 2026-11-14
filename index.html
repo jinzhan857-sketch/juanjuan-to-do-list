@@ -3663,6 +3663,19 @@ const UI = {
       const s = slotForTime(c.start);
       $('#c-slot-hint').textContent = `自动归入「${s.name}」时段（${s.bonus?'+10%':'+0%'}）+ 精确时间 +5% = +${Math.round((s.bonus+0.05)*100)}%`;
     } else $('#c-slot-hint').textContent = '';
+    this.renderCreateTags();
+    // AI 结果 & 预估
+    this.renderAIResult();
+    $('#btn-save').textContent=c.saving?'保存中':(this.editingId||this.todoEditingId)?'保存修改':c.recognized?'确认发布':'快速发布';
+    $$('#page-create input, #page-create textarea, #page-create button').forEach(el=>{el.disabled=!!c.saving;});
+    $('#btn-save').disabled=!!(c.saving||this.recognition);$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';
+
+    this.renderPublishSummary();this.saveCreateDraft();
+    this.refreshRulePreview();
+  },
+
+  renderCreateTags(){
+    const c=this.cState;
     // 标签：最常用四项 + 更多 + 自定义。
     const tw = $('#c-tag-area'); tw.innerHTML='';
     const top = frequentTags().slice(0,4);
@@ -3679,14 +3692,14 @@ const UI = {
     const custom = document.createElement('input');
     custom.className='tag-chip'; custom.placeholder='自定义'; custom.value=c.tag&&!top.includes(c.tag)?c.tag:'';
     custom.onchange=()=>{const v=custom.value.trim().slice(0,6);if(v){(c.userFields||={}).tag=true;c.tag=v;if(!S.customTags.includes(v)){S.customTags.push(v);saveTags();}this.renderCreate();}}; tw.appendChild(custom);
-    // AI 结果 & 预估
-    this.renderAIResult();
-    $('#btn-save').textContent=c.saving?'保存中':(this.editingId||this.todoEditingId)?'保存修改':c.recognized?'确认发布':'快速发布';
-    $$('#page-create input, #page-create textarea, #page-create button').forEach(el=>{el.disabled=!!c.saving;});
-    $('#btn-save').disabled=!!(c.saving||this.recognition);$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';
+  },
 
-    this.renderPublishSummary();this.saveCreateDraft();
-    this.refreshRulePreview();
+  updateRuleCategory(){
+    const c=this.cState;
+    if(c.userFields?.tag||this.editingId||this.todoEditingId||(c.ai&&c.ai.source!=='rule'))return false;
+    const category=mapTag(AIService._localCategory(c.resultTitle||c.rawText));
+    if(c.tag===category)return false;
+    c.tag=category;return true;
   },
 
   renderPublishSummary(){
@@ -3696,6 +3709,7 @@ const UI = {
 
   async refreshRulePreview(){
     const c=this.cState;if(c.ai&&c.ai.source!=='rule')return;
+    if(this.updateRuleCategory()){this.renderCreateTags();this.renderPublishSummary();this.saveCreateDraft();}
     const key=JSON.stringify([c.resultTitle||c.rawText,c.resultNote]);
     try{const {quickScore}=await this.loadScoring();if(this.cState!==c||key!==JSON.stringify([c.resultTitle||c.rawText,c.resultNote])||c.saved||(c.ai&&c.ai.source!=='rule'))return;c.ai=quickScore({title:c.resultTitle||c.rawText,description:c.resultNote});this.renderAIResult();this.renderPublishSummary();}catch(_){}
   },
@@ -3876,7 +3890,7 @@ const UI = {
       if(c.kind==='schedule'&&c.timeType==='exact'&&(!validTimeStr(c.start)||!validTimeStr(c.end)||minOf(c.end)<=minOf(c.start)))throw new Error('结束时间需要晚于开始时间');
       this.renderCreate();
       const {quickScore}=await this.loadScoring();
-      if(aiFailed||!c.ai||c.ai.source==='rule'){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;}
+      if(aiFailed||!c.ai||c.ai.source==='rule'){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;this.updateRuleCategory();}
       this.renderCreate();
       const store=c.kind==='todo'?'todos':'tasks',id=this.todoEditingId||this.editingId;
       const old=id?S[store].find(t=>t.id===id):null;
@@ -4587,8 +4601,8 @@ const App = {
       $('#c-type-suggest').classList.toggle('show',UI.cState.kind==='todo'&&!!parseExactTime(UI.cState.rawText));
       UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();
     });
-    $('#c-result-title').addEventListener('input',e=>{(UI.cState.userFields||={}).title=true;UI.cState.resultTitle=e.target.value;UI.saveCreateDraft();UI.refreshRulePreview();});
-    $('#c-note').addEventListener('input',e=>{(UI.cState.userFields||={}).note=true;UI.cState.resultNote=e.target.value;UI.saveCreateDraft();UI.refreshRulePreview();});
+    $('#c-result-title').addEventListener('input',e=>{(UI.cState.userFields||={}).title=true;UI.cState.resultTitle=e.target.value;UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();});
+    $('#c-note').addEventListener('input',e=>{(UI.cState.userFields||={}).note=true;UI.cState.resultNote=e.target.value;UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();});
     $('#btn-ai').onclick = ()=>UI.onAIClick();
     $('#btn-save').onclick = ()=>UI.onSave();
     // 待办页
@@ -4656,7 +4670,7 @@ const App = {
     // 标签选择器：自定义确认
     $('#tag-custom-ok').onclick = ()=>{
       const v = $('#tag-custom-input').value.trim();
-      if(v){ const name=v.slice(0,6); if(!S.customTags.includes(name)){ S.customTags.push(name); saveTags(); } UI.cState.tag=name; UI.mask('mask-tag',false); UI.renderCreate(); }
+      if(v){ const name=v.slice(0,6); if(!S.customTags.includes(name)){ S.customTags.push(name); saveTags(); } (UI.cState.userFields||={}).tag=true;UI.cState.tag=name; UI.mask('mask-tag',false); UI.renderCreate(); }
     };
     // 宠物行为循环 + 姿态游走 + 自然衰减
     PetView.startBehaviorLoop();

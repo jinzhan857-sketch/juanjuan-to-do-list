@@ -107,3 +107,38 @@ test('replaying persisted draft cannot overwrite its already saved record',async
  const a=await fixture(t);a.run('draft=copyData(UI.cState)');await a.run('UI.onSave()');const before=await a.snapshot();
  a.run("UI.cState=draft;UI.cState.resultTitle='不应覆盖'");await a.run('UI.onSave()');assert.deepEqual(await a.snapshot(),before);assert.match(a.notices.at(-1),/已保存/);
 });
+for(const kind of ['schedule','todo']){
+ test(kind+' homework quick publish and AI failure use academic category with unchanged score',async t=>{
+  for(const failedAI of [false,true]){
+   const a=await fixture(t,kind);
+   a.element('#c-title').value='递交作业';
+   a.run("UI.cState.rawText='递交作业';UI.cState.resultTitle='递交作业';UI.cState.resultNote='';AIService.evaluate=async()=>{throw Error('synthetic offline')}");
+   await a.run(failedAI?'UI.onAIClick()':'UI.onSave()');
+   const row=(await a.snapshot())[kind==='todo'?'todos':'tasks'][0];
+   assert.equal(row.category,'学业事务');assert.equal(row.baseScore,3);assert.equal(row.aiSource,'rule');
+  }
+ });
+ test(kind+' manual category remains independent from quick score',async t=>{
+  const a=await fixture(t,kind);a.element('#c-title').value='递交作业';
+  a.run("UI.cState.resultTitle='递交作业';UI.cState.tag='职场工作';UI.cState.userFields.tag=true");
+  await a.run('UI.onSave()');const row=(await a.snapshot())[kind==='todo'?'todos':'tasks'][0];
+  assert.equal(row.category,'职场工作');assert.equal(row.baseScore,3);
+ });
+}
+
+test('quick preview follows task text until category is explicitly selected',async t=>{
+ const a=await fixture(t);
+ a.run("UI.cState.resultTitle='递交作业';UI.cState.rawText='递交作业'");
+ await a.run('UI.refreshRulePreview()');assert.equal(a.run('UI.cState.tag'),'学业事务');assert.equal(a.run('UI.cState.ai.base_score'),3);
+ a.run("UI.cState.resultTitle='买牛奶'");
+ await a.run('UI.refreshRulePreview()');assert.equal(a.run('UI.cState.tag'),'日常生活');assert.equal(a.run('UI.cState.ai.base_score'),2);
+ a.run("UI.cState.tag='自选分类';UI.cState.userFields.tag=true;UI.cState.resultTitle='递交作业'");
+ await a.run('UI.refreshRulePreview()');assert.equal(a.run('UI.cState.tag'),'自选分类');assert.equal(a.run('UI.cState.ai.base_score'),3);
+});
+test('local preview does not overwrite AI categories or reclassify existing records',async t=>{
+ const a=await fixture(t);
+ a.run("UI.cState.resultTitle='递交作业';UI.cState.tag='职场工作';UI.cState.ai={base_score:8.4,source:'ai'}");
+ await a.run('UI.refreshRulePreview()');assert.equal(a.run('UI.cState.tag'),'职场工作');assert.equal(a.run('UI.cState.ai.base_score'),8.4);
+ a.run("UI.cState.ai={base_score:3,source:'rule'};UI.editingId='existing'");
+ await a.run('UI.refreshRulePreview()');assert.equal(a.run('UI.cState.tag'),'职场工作');
+});
