@@ -12,7 +12,7 @@ cd juanjuan-to-do-list
 git status --short --branch
 ```
 
-如果已有展的本地目录，直接使用现有目录并核对状态，不重复覆盖下载，不运行清理或强制重置。`index.html` 与 `api/ai.js` 有未提交成果，应先进入对应保存与验证任务。
+如果已有展的本地目录，直接使用现有目录并核对状态，不重复覆盖下载，不运行清理或强制重置。`index.html` 与 `api/ai.js` 的原始新增成果已通过 #2 保存，版本和未发布边界见[基线交付报告](../audit/2026-11-14/issue2-baseline.md)。仍需实际检查工作区，保护后续未提交成果。
 
 ## 启动静态预览
 
@@ -41,7 +41,7 @@ node scripts/check-docs.cjs
 git diff --check
 ```
 
-以上检查文档链接。业务盘点脚本依赖本地未提交函数，直接对已提交源码运行会因缺少 `weatherLocation` 中断，先按任务 #2 保存和统一基线。检查含义、合成数据和已知问题见[测试说明](TESTING.md)。当前没有 `npm run build` 或完整 CI，文档检查通过不意味着核心流程已通过。
+以上检查文档链接。业务检查使用 `node docs/audit/2026-11-14/check-baseline.cjs`，#2 已保存与检查匹配的源码。检查含义、合成数据和已知问题见[测试说明](TESTING.md)。当前没有 `npm run build` 或完整 CI，文档检查通过不意味着核心流程已通过。
 
 ## 修改与提交
 

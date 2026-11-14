@@ -1,0 +1,142 @@
+{
+  "auditDate": "2026-11-14",
+  "executedAt": "2026-11-14T15:46:45.374Z",
+  "timeZone": "Asia/Shanghai",
+  "runtime": "v24.16.0",
+  "headAtRun": "ce6160648f51cf64da6062ceabf7c13b969c6d56",
+  "worktreeStatus": "",
+  "method": "Node VM, App.init suppressed, isolated synthetic state, no DOM/browser storage/model/network calls. Existing browser selfTest not executed by this runner.",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 339397,
+      "lines": 4721,
+      "sha256": "fd394d5232234e3e17cb034e2cf9c833059bb24f91ac1bc75755fb05e645ad33"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 310923,
+      "lines": 4428,
+      "sha256": "29f2280f9e2e171a488b0ed3e88382b990324a1e6c74e94ae903b31acf52d9ff"
+    },
+    {
+      "path": "api/ai.js",
+      "bytes": 26027,
+      "lines": 405,
+      "sha256": "986b4252bbb4ac6ec16dce13f0bb063ffe0decdfdc3dcb27cdb08ca2a6c8e95b"
+    }
+  ],
+  "checks": [
+    {
+      "name": "index.html JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "dist/index.html JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "Invalid calendar date rejected",
+      "passed": true
+    },
+    {
+      "name": "Relative date conversion",
+      "passed": true
+    },
+    {
+      "name": "Chinese exact time range",
+      "passed": true
+    },
+    {
+      "name": "Todo score",
+      "passed": true
+    },
+    {
+      "name": "Link protocol filter",
+      "passed": true
+    },
+    {
+      "name": "Incomplete exact schedule rejected",
+      "passed": true
+    },
+    {
+      "name": "Missing deletion target rejected",
+      "passed": true
+    },
+    {
+      "name": "Seven-day recurring expansion",
+      "passed": true
+    },
+    {
+      "name": "Batch exact-time guard",
+      "passed": true
+    },
+    {
+      "name": "Role routing",
+      "passed": true
+    },
+    {
+      "name": "Weather asks for unknown location",
+      "passed": true
+    },
+    {
+      "name": "Weather explicit location",
+      "passed": true
+    },
+    {
+      "name": "Plain HTTP endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "Planning conflict calculation",
+      "passed": true
+    },
+    {
+      "name": "Series ID target selection",
+      "passed": true
+    },
+    {
+      "name": "User cancellation aborts request",
+      "passed": true
+    },
+    {
+      "name": "Weather city follow-up",
+      "passed": true
+    },
+    {
+      "name": "Planning evidence filters invalid kinds",
+      "passed": true
+    },
+    {
+      "name": "Custom profile group retained",
+      "passed": true
+    },
+    {
+      "name": "Frontend batch deletion preserves identity",
+      "passed": true
+    },
+    {
+      "name": "api/ai.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "API invalid date rejected",
+      "passed": true
+    },
+    {
+      "name": "API invalid time rejected",
+      "passed": true
+    },
+    {
+      "name": "API batch delete format",
+      "passed": true
+    }
+  ],
+  "observations": {
+    "hostedContextDropsSeriesId": true,
+    "explicitDateRoutedToBatch": "update_schedule_batch",
+    "rememberedLocationOverridesExplicitCity": "香港"
+  },
+  "passed": 26,
+  "failed": 0
+}

@@ -2,6 +2,17 @@
 
 更新日期：2026 年 11 月 14 日。本文供人和 Agent 共用。先看进度与接手结论，需要执行时再看下面的版本、检查与本地现场。详细历史证据见[首次现状清单](CURRENT_STATE.md)。
 
+## 本次基线交付
+
+任务 #2 已保存原始新增代码，交付为 [PR #24](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/24)，应用源码提交为 `1236ef9109db88acfcb2a8b2261ff45722b3ffb4`。两份本地源码与接手时原文件逐字节一致，提交仅规范换行，原始副本留在被忽略的 `private/issue2-original/`，个人备份未提交。完整功能分类、验收和报告见[基线交付报告](audit/2026-11-14/issue2-baseline.md)。
+
+- [x] 保存原始成果并建立对应源码基线。
+- [x] 26 项局部断言通过，保留三项已知问题的实际输出。
+- [x] 干净克隆及无 Git 的 ZIP 副本实际运行检查。
+- [ ] #3 统一启动、打包和 CI：本轮未实施。
+
+`dist/index.html` 仍是旧发布文件，源码保存不等于部署。GitHub 合入及任务状态以 [#2](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2) 交付记录为准。下文保留此前接手现场与失败证据，关于未提交文件的表述均为本任务开始前的历史状态。
+
 ## 工作记录与当前结论
 
 完成后勾选并保留条目、日期和证据；后续追加工作，不删除已完成成果。开发任务的详细进度只在[总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)维护。

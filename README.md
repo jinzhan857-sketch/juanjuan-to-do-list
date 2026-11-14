@@ -45,7 +45,7 @@
 | 备份与外观 | JSON 导入导出、主题与精力设置 |
 | 登录与云端同步 | 当前未实现，已纳入 3.0 方向 |
 
-能力存在不等于全部通过验收。单条与整组范围、组身份、地点优先级、导入失败保护等已有问题，详见[现状盘点](docs/CURRENT_STATE.md)。本地还有未发布的功能改动，不能把本地画面全部当作 GitHub 当前成果。
+能力存在不等于全部通过验收。单条与整组范围、组身份、地点优先级、导入失败保护等已有问题，详见[现状盘点](docs/CURRENT_STATE.md)。原本未提交的新增能力已由任务 #2 保存为源码基线，仍未发布，详见[基线交付报告](docs/audit/2026-11-14/issue2-baseline.md)。
 
 ## 本地预览
 
@@ -67,7 +67,7 @@ npx --yes http-server . -a 127.0.0.1 -p 4173 -c-1
 node scripts/check-docs.cjs
 ```
 
-这是文档本地链接与标题锚点检查。业务盘点脚本使用合成数据，但依赖尚未提交的本地函数；本轮确认直接对已提交应用运行会因缺少 `weatherLocation` 而中断。先完成[基线保存任务 #2](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2)，再建立可供干净下载运行的业务检查。范围和现有本地执行方法见[测试与验收](docs/development/TESTING.md)。
+这是文档本地链接与标题锚点检查。业务基线检查使用合成数据，可运行 `node docs/audit/2026-11-14/check-baseline.cjs`，当前 26 项局部断言通过，同时保留三项已知问题探测。源码与报告见[基线交付报告](docs/audit/2026-11-14/issue2-baseline.md)。统一启动、打包与 CI 留给 #3。范围和现有本地执行方法见[测试与验收](docs/development/TESTING.md)。
 
 先完成当前代的资料、任务和工程整理，再按前置条件进入 3.0。GitHub 保存完整实施资料，飞书保留[3.0 全文副本](https://my.feishu.cn/wiki/XZEowYCowiqCGykqn9wcTNn7nfe)。任务进度以 Issue 为准。
 
