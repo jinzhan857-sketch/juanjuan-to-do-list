@@ -58,7 +58,7 @@ npm ci --ignore-scripts
 npm run dev
 ```
 
-打开 <http://127.0.0.1:4173/>，停止服务按 `Ctrl+C`。私有仓库需要权限，也可以在 GitHub 下载 ZIP 后从解压目录运行两条 npm 命令。
+打开 <http://127.0.0.1:4173/>，停止服务按 `Ctrl+C`。也可以在 GitHub 下载 ZIP 后从解压目录运行两条 npm 命令。
 
 这只启动静态页面，不会启动 `api/ai.js`。生成产物执行 `npm run build`，预览产物执行 `npm run preview`，统一检查执行 `npm run check`。dist 是生成目录，不再入库。来源追踪与完整步骤见[开发说明](docs/development/README.md)。
 
@@ -72,4 +72,8 @@ npm run check
 
 先完成当前代的资料、任务和工程整理，再按前置条件进入 3.0。GitHub 保存完整实施资料，飞书保留[3.0 全文副本](https://my.feishu.cn/wiki/XZEowYCowiqCGykqn9wcTNn7nfe)。任务进度以 Issue 为准。
 
-当前仓库为私有。个人业务备份和密钥不属于工程资料；没有单独授权时，不复制到仓库或测试记录。项目尚未选择开源许可证。
+当前仓库按展于 2026 年 11 月 15 日的最新确认公开，以免费恢复 GitHub Pages。公开代码不代表已经选择开源许可证。个人业务备份和密钥不属于工程资料；没有单独授权时，不复制到仓库或测试记录。项目尚未选择开源许可证。
+
+## 网站访问
+
+正式静态入口为 <https://jinzhan857-sketch.github.io/juanjuan-to-do-list/>，按[发布说明](docs/development/RELEASE.md)手动发布已通过检查的 main 版本。GitHub Pages 不运行 AI 服务端，页面可打开不等于托管 AI 或跨设备同步已接通。
