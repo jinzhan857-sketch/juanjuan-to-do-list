@@ -32,5 +32,6 @@ jobs:
           path: |
             dist/index.html
             dist/build-info.json
+            dist/quick-score.mjs
             .reports/baseline.json
           if-no-files-found: error

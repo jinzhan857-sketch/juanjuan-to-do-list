@@ -6,6 +6,7 @@ const root = path.resolve(__dirname, '..');
 const built = process.argv.includes('--dist');
 const directory = path.join(root, built ? 'dist' : '.');
 const files = new Map([['/', ['index.html', 'text/html; charset=utf-8']], ['/index.html', ['index.html', 'text/html; charset=utf-8']]]);
+files.set('/quick-score.mjs', [built?'quick-score.mjs':'src/rules/quick-score.mjs','text/javascript; charset=utf-8']);
 if (built) files.set('/build-info.json', ['build-info.json', 'application/json; charset=utf-8']);
 const server = http.createServer((req, res) => {
   const route = files.get((req.url || '').split('?')[0]);

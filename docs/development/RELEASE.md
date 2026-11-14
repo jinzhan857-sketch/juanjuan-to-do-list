@@ -14,7 +14,7 @@ GitHub Pages 仅提供静态文件，不执行 api/ai.js。托管 AI 接口和�
 
 ## 当前构建流程
 
-#3 已提供 `npm ci --ignore-scripts` 与 `npm run check`，成功后生成 `dist/index.html` 和 `dist/build-info.json`，预览用 `npm run preview`。dist 不再入库，禁止手工复制维护，来源与哈希规则见[开发说明](README.md#构建与来源)。
+#3 已提供 `npm ci --ignore-scripts` 与 `npm run check`，成功后生成 `dist/index.html` 和 `dist/build-info.json`，预览用 `npm run preview`。dist 不再入库，禁止手工复制维护，评分模块 dist/quick-score.mjs 同为必要产物，不可遗漏；模块输入哈希随来源记录保存。来源与哈希规则见[开发说明](README.md#构建与来源)。
 
 正式发布应选已审查提交对应的干净 CI 产物，并保留运行链接、提交和哈希。dirty 为 true、来源缺失、检查失败或构建中断时停止发布；ZIP 的 dirty 为 null 不是已确认干净，应与对应提交的 CI 哈希核对。不能沿用旧残留产物。
 
