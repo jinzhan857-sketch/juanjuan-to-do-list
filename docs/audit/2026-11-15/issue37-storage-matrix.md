@@ -1,6 +1,6 @@
 # #37 存储专项检查矩阵
 
-本页独立跟踪 [#37](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37) 的关键保护证据，实施由 #6 负责。2026 年 11 月 15 日，合成数据、Node.js 24.16.0、fake-indexeddb 6.2.8。完整实现和运行结果见[#6 报告](issue6-atomicity.md)，不重复维护同一结果。
+本页独立跟踪 [#37](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37) 的关键保护证据，实施由 #6 负责。2026 年 11 月 15 日，合成数据、Node.js 24.16.0、fake-indexeddb 6.2.8。展随后委托执行者完成剩余验收，实际文件选择、预览取消、重复导入、错误提示、导出恢复及重启检查已完成，新增界面问题已修复；最终结论和数据见[独立完成报告](issue37-completion.md)。下方旧清单和数量保留为首轮历史。
 
 ## 已执行矩阵
 

@@ -14,6 +14,8 @@
 | `weather-browser.cjs` | 原生浏览器的隔离天气消息流程检查 | `node scripts/weather-browser.cjs`，打开 4175 测试页 |
 | `storage-browser.cjs` | 原生浏览器的隔离数据库故障检查 | `node scripts/storage-browser.cjs`，打开 4174 测试页 |
 | `storage-samples.cjs` | 生成不含私人内容的备份样本 | `node scripts/storage-samples.cjs` |
+| `storage-ui-browser.cjs` | 用真正界面验证文件选择、导入取消和恢复，只操作独立合成库 | `node scripts/storage-ui-browser.cjs`，打开输出的随机本机地址 |
+| `storage-ui-browser.test.cjs` | 核对真实界面测试入口的数据库、网络和文件访问隔离 | 由 `npm run check` 调用 |
 | `helpers/` | 共用合成状态与浏览器检查逻辑 | 由测试入口加载 |
 | `check-archive.cjs` | 验证当前提交的无 Git 归档副本 | `npm run check:archive`，先提交，检查的是 HEAD |
 

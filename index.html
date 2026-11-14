@@ -4754,7 +4754,7 @@ const App = {
               if(UI.agentChatId)localStorage.setItem('juanjuan_active_chat',UI.agentChatId);else localStorage.removeItem('juanjuan_active_chat');
               this.syncAppearance();
             }catch(error){appearanceFailed=true;}
-            UI.switchPage('home');toast(appearanceFailed?'业务资料已导入，外观设置未完全恢复，请在设置中重选。':'导入成功，全部资料已保存');
+            UI.mask('mask-data',false);UI.switchPage('home');toast(appearanceFailed?'业务资料已导入，外观设置未完全恢复，请在设置中重选。':'导入成功，全部资料已保存');
           }catch(error){toast(completed?'资料已导入，界面刷新失败，请重新打开页面。':'导入未保存，原资料保留：'+error.message);}
           finally{running=false;}
         });

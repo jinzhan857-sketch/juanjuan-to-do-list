@@ -2,6 +2,12 @@
 
 测试要说明代码版本、输入、预期、实际结果和边界。语法通过、函数存在、历史记录声称通过，都不能单独代表业务正确。
 
+## #37 独立验收收尾
+
+当前统一检查为 312 项 Node 测试和 26 项稳定断言，存储专项 119 项；原生数据库 11 项已重新通过。实际文件导入、预览取消、重复导入、非法文件、导出恢复和重启体验已由执行者按展授权完成，见[#37 完成报告](../audit/2026-11-15/issue37-completion.md)。下方旧数量和待验收说明保留为各轮历史。
+
+复验真正界面：先 node scripts/storage-samples.cjs，再 node scripts/storage-ui-browser.cjs，后台打开输出的随机本机地址，只操作该来源下 juanjuan-issue37-synthetic 数据库。页面使用真实导入流程，观察面板只读；外部连接被禁用，不暴露仓库文件。node --test scripts/storage-ui-browser.test.cjs 检查该入口的隔离边界。
+
 ## #47、#43、#44 发布验收
 
 统一检查新增 scripts/quick-score.test.mjs 和 scripts/publisher.test.cjs，直接加载唯一评分模块，使用合成数据库验证实际记录、日期、附件、分数来源、取消、失败和重复提交。独立电脑浏览器入口为 node scripts/publisher-browser.cjs，使用 4176 来源与专用合成库，不调用模型。三项任务各自结果和手机待验步骤见[交付报告](../audit/2026-11-15/issue47-publisher.md)。真实手机与真实模型没有执行，不以离线替身声明通过。
