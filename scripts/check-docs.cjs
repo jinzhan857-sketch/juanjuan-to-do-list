@@ -5,7 +5,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const walk = dir => fs.readdirSync(dir, {withFileTypes:true}).flatMap(e =>
   e.isDirectory() ? walk(path.join(dir,e.name)) : e.name.endsWith('.md') ? [path.join(dir,e.name)] : []);
-const files = ['README.md','AGENTS.md','diagrams/README.md','api/README.md','scripts/README.md','.github/README.md'].map(p=>path.join(root,p)).concat(walk(path.join(root,'docs')));
+const files = ['README.md','AGENTS.md','diagrams/README.md','api/README.md','scripts/README.md','.github/TEMPLATES.md'].map(p=>path.join(root,p)).concat(walk(path.join(root,'docs')));
 const failures=[];
 let links=0, anchors=0;
 const anchorSet = file => {
