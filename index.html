@@ -3148,8 +3148,9 @@ const UI = {
     const message=S.messages.find(x=>x.id===messageId&&x.chatId===this.agentChatId);
     if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(messageId))return;
     this.agentActionsRunning.add(messageId);
-    try{const operation=await this.executeAgentAction(message.meta.action,message);this.renderAgent();toast(operation.summary);}
-    catch(error){toast('操作未保存：'+error.message);}
+    let operation;
+    try{operation=await this.executeAgentAction(message.meta.action,message);this.renderAgent();toast(operation.summary);}
+    catch(error){toast(operation?'操作已保存，界面刷新失败，请重新打开页面。':'操作未保存：'+error.message);}
     finally{this.agentActionsRunning.delete(messageId);}
   },
   async executeAgentAction(action,message){
@@ -3246,8 +3247,9 @@ const UI = {
     for(const item of before)changes.push({store:convert?'tasks':store,value:item});
     changes.push({store:'operations',value:{...copyData(operation),status:'undone',undoneAt:Date.now()}});
     changes.push({store:'messages',value:{...copyData(message),content:'已撤销：'+operation.summary,meta:{...message.meta,status:'undone'}}});
-    try{await commitDataChanges(changes,expected);this.renderAgent();toast('已撤销这次操作');}
-    catch(error){toast('撤销未保存：'+error.message);}
+    let committed=false;
+    try{await commitDataChanges(changes,expected);committed=true;this.renderAgent();toast('已撤销这次操作');}
+    catch(error){toast(committed?'撤销已保存，界面刷新失败，请重新打开页面。':'撤销未保存：'+error.message);}
   },
   renderChatList(){
     const chats=S.chats.slice().sort((a,b)=>b.updatedAt-a.updatedAt);
@@ -4440,8 +4442,8 @@ const UI = {
     const cancelBtn = $('#mask-confirm [data-close]');
     cancelBtn.textContent = cancelText;
     let running=false;
-    okBtn.onclick = async()=>{if(running)return;running=true;this.mask('mask-confirm',false);try{if(ok)await ok();}catch(error){toast('操作未保存：'+error.message);}finally{running=false;}};
-    cancelBtn.onclick = async()=>{if(running)return;running=true;this.mask('mask-confirm',false);try{if(onCancel)await onCancel();}catch(error){toast('操作未保存：'+error.message);}finally{running=false;}};
+    okBtn.onclick = async()=>{if(running)return;running=true;this.mask('mask-confirm',false);try{if(ok)await ok();}catch(error){toast('操作遇到错误：'+error.message);}finally{running=false;}};
+    cancelBtn.onclick = async()=>{if(running)return;running=true;this.mask('mask-confirm',false);try{if(onCancel)await onCancel();}catch(error){toast('操作遇到错误：'+error.message);}finally{running=false;}};
     this.mask('mask-confirm', true);
   },
 };
@@ -4694,7 +4696,7 @@ const App = {
               this.syncAppearance();
             }catch(error){appearanceFailed=true;}
             UI.switchPage('home');toast(appearanceFailed?'业务资料已导入，外观设置未完全恢复，请在设置中重选。':'导入成功，全部资料已保存');
-          }catch(error){toast('导入未保存，原资料保留：'+error.message);}
+          }catch(error){toast(completed?'资料已导入，界面刷新失败，请重新打开页面。':'导入未保存，原资料保留：'+error.message);}
           finally{running=false;}
         });
       }catch(error){toast('导入失败：'+error.message);}

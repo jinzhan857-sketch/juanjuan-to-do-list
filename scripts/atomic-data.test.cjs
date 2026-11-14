@@ -162,3 +162,24 @@ for(const fault of [false,true])test('tag rename '+(fault?'rolls back second tas
   if(fault){await assert.rejects(a.run("UI.renameCustomTag('合成')"));assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);}
   else{await a.run("UI.renameCustomTag('合成')");assert.ok(a.json('S.tasks').every(task=>task.category==='新标签'));assert.deepEqual(a.json('S.customTags'),['新标签']);}
 });
+
+test('renderer failure after confirmation reports saved data accurately',async t=>{
+  const a=await fixture(t);a.run("UI.renderAgent=()=>{throw Error('synthetic render failure')}");
+  await a.run("UI.confirmAgentAction('m')");
+  assert.equal((await a.snapshot()).operations.length,1);assert.match(a.json('notices').at(-1),/操作已保存/);
+});
+test('renderer failure after undo cannot be reported as an uncommitted operation',async t=>{
+  const a=await fixture(t);await a.run("UI.confirmAgentAction('m')");
+  a.run("UI.renderAgent=()=>{throw Error('synthetic render failure')}");
+  await a.run("UI.undoAgentOperation('m')");
+  assert.equal((await a.snapshot()).operations[0].status,'undone');assert.match(a.json('notices').at(-1),/撤销已保存/);
+});
+test('import renderer failure after commit reports imported data accurately',async t=>{
+  const a=await fixture(t);a.ctx.FileReader=class{readAsText(value){this.result=value;a.ctx.readDone=this.onload();}};
+  a.run("UI.confirm=(title,body,ok)=>{importOK=ok};UI.switchPage=()=>{throw Error('synthetic render failure')}");
+  const data=a.backup();data.tasks[0].note='import committed';
+  a.ctx.event={target:{files:[JSON.stringify(data)],value:'selected'}};
+  a.run('App.importData(event)');await a.ctx.readDone;await a.run('importOK()');
+  assert.equal((await a.snapshot()).tasks.find(task=>task.id==='a').note,'import committed');
+  assert.match(a.json('notices').at(-1),/资料已导入/);
+});
