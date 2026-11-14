@@ -6,11 +6,14 @@
 
 ## 从这里开始
 
+看不懂文件名、编号或 GitHub 页面时，先读[GitHub 阅读指南](docs/guide/README.md)。只想知道下一步做什么，可以直接看[卷卷开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)。
+
 | 你想了解什么 | 入口 |
 | --- | --- |
 | 产品怎么用，现有规则是什么 | [产品与使用说明](docs/product/README.md) |
 | 当前做到了哪里，哪些有问题 | [当前状态与版本关系](docs/STATUS.md) |
 | 第一次接手，应该按什么顺序阅读 | [文档导航](docs/README.md) |
+| 新聊天接手，本轮还有什么没做完 | [接手说明](docs/HANDOFF.md) |
 | 代码、AI 和数据如何工作 | [当前架构](docs/architecture/README.md) |
 | 本地怎么启动、检查与发布 | [开发说明](docs/development/README.md) |
 | 下一步做什么，有哪些前置条件 | [路线图入口](docs/ROADMAP.md) |

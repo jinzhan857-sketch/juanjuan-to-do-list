@@ -2,7 +2,7 @@
 
 ## 接手顺序
 
-1. 阅读 `README.md`、`docs/STATUS.md`，确认当前应用、文档和未提交成果分别处于什么状态。
+1. 先阅读 `docs/HANDOFF.md`，核对本轮范围和未完成事项，再阅读 `README.md`、`docs/STATUS.md`，确认当前应用、文档和未提交成果分别处于什么状态。
 2. 阅读 `docs/product/README.md`、`docs/architecture/README.md` 及数据、AI 说明。
 3. 阅读 `docs/development/README.md`、`TESTING.md`、`RELEASE.md`。
 4. 从 `docs/ROADMAP.md` 进入总 Issue，选择前置条件已满足的任务。
