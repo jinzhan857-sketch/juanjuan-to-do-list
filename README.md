@@ -30,7 +30,7 @@
 | `scripts/` | 文档等开发辅助检查，[打开说明](scripts/README.md) |
 | `dist/` | 准备发布的网页文件，[查看版本与发布依据](docs/development/RELEASE.md) |
 | `diagrams/` | 历史设计图稿，[查看归档说明](diagrams/README.md) |
-| `.github/` | 任务与改动说明模板，[打开说明](.github/README.md) |
+| `.github/` | 任务与改动说明模板，[打开说明](.github/TEMPLATES.md) |
 | `.openai/` | 既有 Sites 发布配置，[查看发布说明](docs/development/RELEASE.md) |
 | `index.html` | 当前网页源码，[查看系统如何工作](docs/architecture/README.md) |
 

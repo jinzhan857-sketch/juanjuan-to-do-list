@@ -53,7 +53,7 @@
 | `docs/` | 产品、开发、设计和验证文档 | [文档阅读导航](../README.md) |
 | `scripts/` | 开发辅助脚本 | [脚本目录说明](../../scripts/README.md) |
 | `diagrams/` | 历史图稿；目前只提交目录说明 | [图稿说明](../../diagrams/README.md) |
-| `.github/` | GitHub 的任务与改动说明模板 | [协作模板说明](../../.github/README.md) |
+| `.github/` | GitHub 的任务与改动说明模板 | [协作模板说明](../../.github/TEMPLATES.md) |
 | `.openai/` | 已有 Sites 发布配置 | [发布说明](../development/RELEASE.md) |
 | `AGENTS.md` | Agent 接手项目时要遵守的规则 | [接手规则](../../AGENTS.md) |
 | `STATUS.md` | 当前状态、已知问题和接手记录 | [当前状态与接手说明](../STATUS.md) |
