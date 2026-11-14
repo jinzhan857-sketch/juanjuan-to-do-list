@@ -9,6 +9,10 @@
 | `build.cjs` | 生成页面和来源记录 | `npm run build` |
 | `check-baseline.cjs` | 核对稳定断言与已知问题，保留历史脚本 | 由 `npm run check` 调用 |
 | `toolchain.test.cjs` | 验证工程错误路径与 HTTP 边界 | `node --test scripts/toolchain.test.cjs` |
+| `atomic-data.test.cjs` | 合成 IndexedDB 的写入、导入与故障恢复测试 | `node --test scripts/atomic-data.test.cjs` |
+| `storage-browser.cjs` | 原生浏览器的隔离数据库故障检查 | `node scripts/storage-browser.cjs`，打开 4174 测试页 |
+| `storage-samples.cjs` | 生成不含私人内容的备份样本 | `node scripts/storage-samples.cjs` |
+| `helpers/` | 共用合成状态与浏览器检查逻辑 | 由测试入口加载 |
 | `check-archive.cjs` | 验证当前提交的无 Git 归档副本 | `npm run check:archive`，先提交，检查的是 HEAD |
 
 这项检查不调用 AI，不读取浏览器业务数据，也不证明应用功能全部正常。业务检查的适用版本和已知限制见[测试说明](../docs/development/TESTING.md)。

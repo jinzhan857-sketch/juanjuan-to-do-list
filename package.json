@@ -2,7 +2,10 @@
   "name": "juanjuan",
   "version": "2.2.0",
   "private": true,
-  "engines": { "node": "24.16.0", "npm": "11.13.0" },
+  "engines": {
+    "node": "24.16.0",
+    "npm": "11.13.0"
+  },
   "packageManager": "npm@11.13.0",
   "scripts": {
     "start": "node scripts/serve.cjs",
@@ -10,6 +13,9 @@
     "preview": "node scripts/serve.cjs --dist",
     "build": "node scripts/build.cjs",
     "check:archive": "node scripts/check-archive.cjs",
-    "check": "npm run build && node scripts/check-docs.cjs && node scripts/check-baseline.cjs && node --test scripts/toolchain.test.cjs scripts/schedule-scope.test.cjs scripts/series-identity.test.cjs"
+    "check": "npm run build && node scripts/check-docs.cjs && node scripts/check-baseline.cjs && node --test scripts/toolchain.test.cjs scripts/schedule-scope.test.cjs scripts/series-identity.test.cjs scripts/atomic-data.test.cjs"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.8"
   }
 }

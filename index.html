@@ -1255,12 +1255,59 @@ const DB = {
       rq.onerror = ()=>rej(rq.error);
     });
   },
-  _tx(store,mode){ return DB._db.transaction(store,mode).objectStore(store); },
-  put(store,val,key){ return new Promise((res,rej)=>{ const r = key!==undefined?DB._tx(store,'readwrite').put(val,key):DB._tx(store,'readwrite').put(val); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
-  get(store,key){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readonly').get(key); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
-  del(store,key){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readwrite').delete(key); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
-  all(store){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readonly').getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); },
-  clear(store){ return new Promise((res,rej)=>{ const r=DB._tx(store,'readwrite').clear(); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+  request(store,mode,work){
+    return new Promise((resolve,reject)=>{
+      const tx=this._db.transaction([store],mode); let result, failure;
+      tx.oncomplete=()=>resolve(result);
+      tx.onerror=()=>{failure=failure||tx.error;};
+      tx.onabort=()=>reject(failure||tx.error||new Error('数据库事务已中止'));
+      try{const request=work(tx.objectStore(store));request.onsuccess=()=>{result=request.result;};request.onerror=()=>{failure=failure||request.error;};}
+      catch(error){failure=error;tx.abort();}
+    });
+  },
+  put(store,value,key){return this.request(store,'readwrite',object=>key===undefined?object.put(value):object.put(value,key));},
+  get(store,key){return this.request(store,'readonly',object=>object.get(key));},
+  del(store,key){return this.request(store,'readwrite',object=>object.delete(key));},
+  all(store){return this.request(store,'readonly',object=>object.getAll());},
+  clear(store){return this.request(store,'readwrite',object=>object.clear());},
+  snapshot(stores){
+    return new Promise((resolve,reject)=>{
+      const tx=this._db.transaction(stores,'readonly'), result={};
+      tx.oncomplete=()=>resolve(result);tx.onabort=()=>reject(tx.error||new Error('读取已中止'));
+      for(const store of stores){const request=tx.objectStore(store).getAll();request.onsuccess=()=>{result[store]=request.result;};}
+    });
+  },
+  batch(changes,expected={}){
+    const stores=[...new Set([...changes.map(change=>change.store),...Object.keys(expected)])];
+    return new Promise((resolve,reject)=>{
+      const tx=this._db.transaction(stores,'readwrite');let failure;
+      tx.oncomplete=()=>resolve();
+      tx.onerror=()=>{failure=failure||tx.error;};
+      tx.onabort=()=>reject(failure||tx.error||new Error('数据库事务已中止'));
+      const abort=error=>{failure=error;tx.abort();};
+      const write=()=>{
+        try{
+          for(const change of changes){
+            const store=tx.objectStore(change.store);
+            const request=change.type==='clear'?store.clear():change.type==='delete'?store.delete(change.key):change.key===undefined?store.put(change.value):store.put(change.value,change.key);
+            request.onerror=()=>{failure=failure||request.error;};
+          }
+        }catch(error){abort(error);}
+      };
+      const checks=Object.entries(expected).flatMap(([store,value])=>Array.isArray(value)?[{store,value,all:true}]:Object.entries(value).map(([key,value])=>({store,key,value})));
+      let remaining=checks.length;
+      if(!remaining){write();return;}
+      for(const check of checks){
+        const request=check.all?tx.objectStore(check.store).getAll():tx.objectStore(check.store).get(check.key);
+        request.onsuccess=()=>{
+          if(failure)return;
+          if((check.all?recordFingerprint(request.result):JSON.stringify(request.result))!==(check.all?recordFingerprint(check.value):JSON.stringify(check.value))){abort(new Error('资料已变化，请重新加载并确认后操作。'));return;}
+          if(--remaining===0)write();
+        };
+        request.onerror=()=>{failure=failure||request.error;};
+      }
+    });
+  },
 };
 
 /* ============================================================
@@ -1305,6 +1352,83 @@ function migratePet(p){
   if(p.personType !== 'J' && p.personType !== 'P') p.personType = 'P';
   return p;
 }
+function recordFingerprint(values){return JSON.stringify(values.slice().sort((a,b)=>String(a?.id||'').localeCompare(String(b?.id||''))));}
+function copyData(value){return structuredClone(value);}
+async function commitDataChanges(changes,expected={}){
+  const writes=copyData(changes);
+  await DB.batch(writes,expected);
+  for(const change of writes){
+    if(change.store==='kv'){if(change.type!=='clear')S[change.key]=change.value;continue;}
+    if(change.type==='clear'){S[change.store]=[];continue;}
+    const list=S[change.store], index=list.findIndex(item=>item.id===(change.key??change.value?.id));
+    if(change.type==='delete'){if(index>=0)list.splice(index,1);}
+    else if(index>=0)list[index]=change.value;
+    else list.push(change.value);
+  }
+}
+const DATA_STORES=['tasks','todos','chats','messages','memories','operations'];
+const DATA_KV=['pet','dayStats','customTags','memoryGroups'];
+function validateBackup(input){
+  const data=copyData(input), object=value=>value&&typeof value==='object'&&!Array.isArray(value);
+  const fail=message=>{throw new Error(message);};
+  const id=value=>typeof value==='string'&&value.trim()===value&&value.length>0;
+  if(!object(data)||data.app!=='卷卷AI Todo'||data.version!=='2.2')fail('不是当前 2.2 格式的卷卷备份');
+  for(const key of [...DATA_STORES,'memoryGroups']){
+    if(!Array.isArray(data[key]))fail(key+' 必须是数组');
+    const seen=new Set();for(const item of data[key]){if(!object(item)||!id(item.id)||seen.has(item.id))fail(key+' 存在缺少或重复的 id');seen.add(item.id);}
+  }
+  for(const item of [...data.tasks,...data.todos]){
+    if(typeof item.title!=='string'||!item.title.trim())fail('日程或待办缺少标题');
+    if(item.note!==undefined&&typeof item.note!=='string')fail('备注字段不合法');
+    if(item.done!==undefined&&typeof item.done!=='boolean')fail('待办完成状态不合法');
+    if(typeof item.baseScore!=='number'||!Number.isFinite(item.baseScore)||item.baseScore<0||item.baseScore>10)fail('基础分不合法');
+    for(const key of ['images','links'])if(item[key]!==undefined&&!Array.isArray(item[key]))fail('附件字段必须是数组');
+    if((item.images||[]).length>5||(item.images||[]).some(img=>!object(img)||typeof img.data!=='string'||!/^data:image\//.test(img.data)))fail('图片格式或数量不合法');
+    if((item.links||[]).length>5||(item.links||[]).some(link=>typeof link!=='string'||!/^https?:\/\//i.test(link)))fail('链接格式或数量不合法');
+  }
+  for(const task of data.tasks){
+    if(!validDateStr(task.execDate)||!['allday','slot','exact'].includes(task.timeType))fail('日程日期或时间类型不合法');
+    if(task.timeType==='exact'&&(!validTimeStr(task.startTime)||!validTimeStr(task.endTime)||minOf(task.endTime)<=minOf(task.startTime)))fail('日程具体时间不合法');
+    if(task.timeType==='slot'&&!slotByKey(task.slot))fail('日程时段不合法');
+    if(task.seriesId!=null&&!validSeriesId(task.seriesId))fail('日程组编号不合法');
+  }
+  const chats=new Set(data.chats.map(x=>x.id)), messages=new Set(data.messages.map(x=>x.id));
+  for(const chat of data.chats)if(typeof chat.title!=='string')fail('聊天标题不合法');
+  for(const message of data.messages)if(!chats.has(message.chatId)||!['user','assistant'].includes(message.role)||typeof message.content!=='string')fail('消息内容或聊天引用不合法');
+  const kinds=['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'];
+  for(const operation of data.operations){
+    if(!chats.has(operation.chatId)||!messages.has(operation.messageId)||data.messages.find(message=>message.id===operation.messageId)?.chatId!==operation.chatId||!['done','undone'].includes(operation.status)||!kinds.includes(operation.kind))fail('操作记录引用或状态不合法');
+    const batch=operation.kind.endsWith('_batch');
+    for(const key of ['before','after']){const value=operation[key];if(value!=null&&(batch?!Array.isArray(value):!object(value)))fail('操作记录快照结构不合法');for(const record of (batch?value||[]:value?[value]:[])){if(!object(record)||!id(record.id)||typeof record.title!=='string')fail('操作记录快照不合法');}}
+  }
+  for(const memory of data.memories)if(typeof memory.content!=='string')fail('记忆内容不合法');
+  for(const group of data.memoryGroups)if(typeof group.name!=='string'||!group.name.trim())fail('资料框名称不合法');
+  if(!object(data.pet))fail('缺少宠物资料');
+  for(const [key,value] of Object.entries(defaultPet())){
+    const actual=data.pet[key];
+    if(typeof value==='number'&&(typeof actual!=='number'||!Number.isFinite(actual)||actual<0))fail('宠物数值不合法：'+key);
+    if(typeof value==='boolean'&&typeof actual!=='boolean')fail('宠物状态不合法：'+key);
+    if(typeof value==='string'&&typeof actual!=='string')fail('宠物字段不合法：'+key);
+  }
+  if(!['J','P'].includes(data.pet.personType)||data.pet.affinity>10||!validDateStr(data.pet.lastSettle)||!Array.isArray(data.pet.fridge))fail('宠物资料不合法');
+  for(const key of ['lastSettle','lastStreakDate','intakeDate','lastClickDate','lastClickBonusDate','lastNoon','lastEve','lastDecayDay'])if(data.pet[key]!=null&&!validDateStr(data.pet[key]))fail('宠物日期不合法：'+key);
+  if(data.pet.memoryEnabled!==undefined&&typeof data.pet.memoryEnabled!=='boolean')fail('记忆开关不合法');
+  const foodIds=new Set();for(const food of data.pet.fridge){if(!object(food)||!id(food.id)||foodIds.has(food.id)||typeof food.value!=='number'||!Number.isFinite(food.value)||food.value<0)fail('冰箱食物不合法');foodIds.add(food.id);}
+  if(!object(data.dayStats))fail('统计字段不合法');
+  for(const [date,stats] of Object.entries(data.dayStats)){if(!validDateStr(date)||!object(stats)||['points','done'].some(key=>typeof stats[key]!=='number'||!Number.isFinite(stats[key]))||(stats.total!==undefined&&(!Number.isFinite(stats.total)||stats.total<0)))fail('逐日统计不合法');}
+  if(!Array.isArray(data.customTags)||data.customTags.some(tag=>typeof tag!=='string'||!tag.trim())||new Set(data.customTags).size!==data.customTags.length)fail('自定义标签不合法');
+  const appearance=data.appearance;
+  if(!object(appearance)||typeof appearance.followSystem!=='boolean'||!['warm','blue'].includes(appearance.lightTheme)||!['soft','black'].includes(appearance.darkTheme)||!['warm','blue','soft','black'].includes(appearance.fixedTheme))fail('外观配置不合法');
+  return data;
+}
+async function replaceBackup(input,expected){
+  const data=validateBackup(input), changes=[];
+  for(const store of DATA_STORES){changes.push({store,type:'clear'});for(const value of data[store])changes.push({store,value});}
+  for(const key of DATA_KV)changes.push({store:'kv',key,value:data[key]});
+  await commitDataChanges(changes,expected);
+  return data;
+}
+function agentWriteExpectation(){return copyData({tasks:S.tasks,todos:S.todos,operations:S.operations,messages:S.messages});}
 async function saveTask(t){ await DB.put('tasks', t); const i=S.tasks.findIndex(x=>x.id===t.id); if(i>=0) S.tasks[i]=t; else S.tasks.push(t); }
 async function removeTask(id){ await DB.del('tasks', id); S.tasks = S.tasks.filter(t=>t.id!==id); }
 async function saveTodo(t){ await DB.put('todos', t); const i=S.todos.findIndex(x=>x.id===t.id); if(i>=0) S.todos[i]=t; else S.todos.push(t); }
@@ -1317,14 +1441,9 @@ async function saveChat(chat){ await DB.put('chats',chat); const i=S.chats.findI
 async function saveMessage(message){ await DB.put('messages',message); const i=S.messages.findIndex(x=>x.id===message.id); if(i>=0) S.messages[i]=message; else S.messages.push(message); }
 async function saveOperation(operation){ await DB.put('operations',operation); const i=S.operations.findIndex(x=>x.id===operation.id); if(i>=0) S.operations[i]=operation; else S.operations.push(operation); }
 async function removeChatData(id){
-  await DB.del('chats',id);
-  const messages=S.messages.filter(x=>x.chatId===id);
-  const operations=S.operations.filter(x=>x.chatId===id);
-  for(const item of messages) await DB.del('messages',item.id);
-  for(const item of operations) await DB.del('operations',item.id);
-  S.chats=S.chats.filter(x=>x.id!==id);
-  S.messages=S.messages.filter(x=>x.chatId!==id);
-  S.operations=S.operations.filter(x=>x.chatId!==id);
+  const changes=[{store:'chats',type:'delete',key:id}];
+  for(const store of ['messages','operations'])for(const item of S[store].filter(x=>x.chatId===id))changes.push({store,type:'delete',key:item.id});
+  await commitDataChanges(changes,copyData({chats:S.chats,messages:S.messages,operations:S.operations}));
 }
 function petSatiety(){ return r1(S.pet.satietyTask + S.pet.satietyFridge); }
 function petLevel(){
@@ -2753,6 +2872,7 @@ const UI = {
   },
 
   agentMutationTargets(action){
+    if(['update_todo','delete_todo'].includes(action?.kind)) return S.todos.filter(todo=>todo.id===action.target_id);
     if(['update_schedule_batch','delete_schedule_batch'].includes(action?.kind)) return this.resolveBatchUpdateTargets(action);
     if(['update_schedule','delete_schedule','convert_schedule_to_todo'].includes(action?.kind)) return S.tasks.filter(task=>task.id===action.target_id);
     return null;
@@ -2764,7 +2884,7 @@ const UI = {
   },
   validateAgentRequest(action,content){
     const targets=this.agentMutationTargets(action);
-    if(!targets) return this.validateAgentAction(action);
+    if(!targets||['update_todo','delete_todo'].includes(action?.kind)) return this.validateAgentAction(action);
     const tasks=S.tasks.map(task=>({id:task.id,title:task.title,exec_date:task.execDate,series_id:task.seriesId,start_time:task.startTime,end_time:task.endTime}));
     const scope=AIService.scheduleRequestScope(content,tasks);
     if(scope.error) return {ok:false,error:scope.error};
@@ -2930,7 +3050,7 @@ const UI = {
   },
 
   async cancelAgentAction(messageId){
-    const message=S.messages.find(x=>x.id===messageId && x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending') return;
+    const message=S.messages.find(x=>x.id===messageId && x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(messageId)) return;
     message.meta.status='cancelled'; await saveMessage(message); this.renderAgent(); toast('已取消');
   },
 
@@ -3003,7 +3123,7 @@ const UI = {
   },
 
   async saveAgentActionDetail(){
-    const message=S.messages.find(x=>x.id===this.agentEditingMessageId&&x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending')return;
+    const message=S.messages.find(x=>x.id===this.agentEditingMessageId&&x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(message.id))return;
     const action=message.meta.action, title=$('#agentdetailtitle').value.trim(), note=$('#agentdetailnote')?.value.trim()||'', from=$('#agentdetailfrom').value, to=$('#agentdetailto')?.value||'', start=$('#agentdetailstart')?.value||'', end=$('#agentdetailend')?.value||'', category=$('#agentdetailcategory')?.value||'', score=Number($('#agentdetailscore')?.value);
     if(action.kind==='create_schedule_batch'){
       const weekdays=$$('#agentdetaildays button.on').map(button=>Number(button.dataset.day));
@@ -3023,21 +3143,18 @@ const UI = {
     await saveMessage(message); this.switchPage('agent'); this.renderAgent(); toast('已保存修改，请核对后执行');
   },
 
+  agentActionsRunning:new Set(),
   async confirmAgentAction(messageId){
-    const message=S.messages.find(x=>x.id===messageId && x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending') return;
-    const action=message.meta.action; const checked=this.validateAgentAction(action);
-    if(!checked.ok){ message.type='clarify'; message.content=checked.error; message.meta={}; await saveMessage(message); this.renderAgent(); return; }
-    message.meta.status='running'; await saveMessage(message); this.renderAgent();
-    try{
-      const operation=await this.executeAgentAction(action,message);
-      message.type='action_result'; message.content=operation.summary; message.meta={operationId:operation.id,status:'done'};
-      await saveMessage(message); this.renderAgent(); toast(operation.summary);
-    }catch(error){
-      message.type='error'; message.content=error.message||'操作没有成功，请稍后再试。'; message.meta={}; await saveMessage(message); this.renderAgent();
-    }
+    const message=S.messages.find(x=>x.id===messageId&&x.chatId===this.agentChatId);
+    if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(messageId))return;
+    this.agentActionsRunning.add(messageId);
+    try{const operation=await this.executeAgentAction(message.meta.action,message);this.renderAgent();toast(operation.summary);}
+    catch(error){toast('操作未保存：'+error.message);}
+    finally{this.agentActionsRunning.delete(messageId);}
   },
-
   async executeAgentAction(action,message){
+    if(S.operations.some(op=>op.messageId===message.id&&op.chatId===message.chatId)) throw new Error('这项操作已经处理，请勿重复确认。');
+    const expected=agentWriteExpectation(), changes=[];
     const checked=this.validateAgentAction(action);
     if(!checked.ok) throw new Error(checked.error);
     const targets=this.agentMutationTargets(action);
@@ -3050,11 +3167,11 @@ const UI = {
       const seriesId=uid();
       for(const entry of this.expandBatchSchedule(action).filter(value=>!this.isDuplicateSchedule(value))){
         const task={id:uid(),seriesId,seriesRule:{date_from:action.rule.date_from,date_to:action.rule.date_to,weekdays:action.rule.weekdays.slice()},title:entry.title,note:entry.note||'',createdAt:now,execDate:entry.exec_date,timeType:entry.time_type||'allday',slot:entry.time_type==='slot'?entry.slot:null,startTime:entry.time_type==='exact'?entry.start_time:null,endTime:entry.time_type==='exact'?entry.end_time:null,category:entry.category||'日常生活',baseScore:Number(entry.base_score??3),aiReason:'由卷卷助手批量创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(entry.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
-        await saveTask(task); created.push(clone(task));
+        changes.push({store:'tasks',value:task}); created.push(clone(task));
       }
       operation.after=created; operation.summary=`已为你创建 ${created.length} 条日程。`;
     }else if(action.kind==='update_schedule_batch'){
-      const targets=this.resolveBatchUpdateTargets(action);
+      const targets=this.resolveBatchUpdateTargets(action).map(copyData);
       operation.before=targets.map(clone);
       const adoptedSeriesId=String(action.rule?.series_id||'').trim()||targets.find(task=>task.seriesId)?.seriesId||uid();
       for(const task of targets){
@@ -3064,22 +3181,22 @@ const UI = {
         if(item.time_type){ task.timeType=item.time_type; task.slot=item.time_type==='slot'?(item.slot||task.slot):null; task.startTime=item.time_type==='exact'?(item.start_time||task.startTime):null; task.endTime=item.time_type==='exact'?(item.end_time||task.endTime):null; }
         if(item.category) task.category=item.category;
         if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
-        task.isBackfill=dayDiff(task.execDate,todayStr())<0; await saveTask(task);
+        task.isBackfill=dayDiff(task.execDate,todayStr())<0; changes.push({store:'tasks',value:task});
       }
       operation.after=targets.map(clone); operation.summary=`已修改 ${targets.length} 条整组日程。`;
     }else if(action.kind==='delete_schedule_batch'){
-      const targets=this.resolveBatchUpdateTargets(action);
+      const targets=this.resolveBatchUpdateTargets(action).map(copyData);
       operation.before=targets.map(clone);
-      for(const task of targets) await removeTask(task.id);
+      for(const task of targets) changes.push({store:'tasks',type:'delete',key:task.id});
       operation.after=[]; operation.summary=`已删除 ${targets.length} 条整组日程。`;
     }else if(action.kind==='create_schedule'){
       const task={id:uid(),title:item.title,note:item.note||'',createdAt:now,execDate:item.exec_date,timeType:item.time_type||'allday',slot:item.time_type==='slot'?item.slot:null,startTime:item.time_type==='exact'?item.start_time:null,endTime:item.time_type==='exact'?item.end_time:null,category:item.category||'日常生活',baseScore:Number(item.base_score??3),aiReason:'由卷卷助手创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(item.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
-      await saveTask(task); operation.after=clone(task); operation.summary=`已为你创建日程「${task.title}」。`;
+      changes.push({store:'tasks',value:task}); operation.after=clone(task); operation.summary=`已为你创建日程「${task.title}」。`;
     }else if(action.kind==='create_todo'){
       const todo={id:uid(),title:item.title,note:item.note||'',category:item.category||'日常生活',baseScore:Number(item.base_score??3),aiReason:'由卷卷助手创建',aiAdvice:'',aiSource:'agent',links:[],images:[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:null};
-      await saveTodo(todo); operation.after=clone(todo); operation.summary=`已为你创建待办「${todo.title}」。`;
+      changes.push({store:'todos',value:todo}); operation.after=clone(todo); operation.summary=`已为你创建待办「${todo.title}」。`;
     }else if(action.kind==='update_schedule'){
-      const task=S.tasks.find(x=>x.id===action.target_id); operation.before=clone(task);
+      const task=copyData(S.tasks.find(x=>x.id===action.target_id)); operation.before=clone(task);
       if(item.title!==undefined) task.title=item.title;
       if(item.note!==undefined) task.note=item.note;
       if(item.exec_date) task.execDate=item.exec_date;
@@ -3087,68 +3204,51 @@ const UI = {
       else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
       if(item.category) task.category=item.category;
       if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
-      task.isBackfill=dayDiff(task.execDate,todayStr())<0; await saveTask(task); operation.after=clone(task); operation.summary=`已修改日程「${task.title}」。`;
+      task.isBackfill=dayDiff(task.execDate,todayStr())<0; changes.push({store:'tasks',value:task}); operation.after=clone(task); operation.summary=`已修改日程「${task.title}」。`;
     }else if(action.kind==='update_todo'){
-      const todo=S.todos.find(x=>x.id===action.target_id); operation.before=clone(todo);
+      const todo=copyData(S.todos.find(x=>x.id===action.target_id)); operation.before=clone(todo);
       if(item.title!==undefined) todo.title=item.title;
       if(item.note!==undefined) todo.note=item.note;
       if(item.category) todo.category=item.category;
       if(item.base_score!==undefined) todo.baseScore=Number(item.base_score);
-      await saveTodo(todo); operation.after=clone(todo); operation.summary=`已修改待办「${todo.title}」。`;
+      changes.push({store:'todos',value:todo}); operation.after=clone(todo); operation.summary=`已修改待办「${todo.title}」。`;
     }else if(action.kind==='delete_schedule'){
-      const task=S.tasks.find(x=>x.id===action.target_id); operation.before=clone(task); await removeTask(task.id); operation.summary=`已删除日程「${task.title}」。`;
+      const task=copyData(S.tasks.find(x=>x.id===action.target_id)); operation.before=clone(task); changes.push({store:'tasks',type:'delete',key:task.id}); operation.summary=`已删除日程「${task.title}」。`;
     }else if(action.kind==='delete_todo'){
-      const todo=S.todos.find(x=>x.id===action.target_id); operation.before=clone(todo); await removeTodo(todo.id); operation.summary=`已删除待办「${todo.title}」。`;
+      const todo=copyData(S.todos.find(x=>x.id===action.target_id)); operation.before=clone(todo); changes.push({store:'todos',type:'delete',key:todo.id}); operation.summary=`已删除待办「${todo.title}」。`;
     }else if(action.kind==='convert_schedule_to_todo'){
-      const task=S.tasks.find(x=>x.id===action.target_id); operation.before=clone(task);
+      const task=copyData(S.tasks.find(x=>x.id===action.target_id)); operation.before=clone(task);
       const todo={id:uid(),title:task.title,note:task.note||'',category:task.category,baseScore:task.baseScore,aiReason:task.aiReason||'',aiAdvice:task.aiAdvice||'',aiSource:task.aiSource||'agent',links:[],images:[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:task.id};
-      await saveTodo(todo); await removeTask(task.id); operation.after=clone(todo); operation.summary=`已将「${task.title}」转为待办。`;
+      changes.push({store:'todos',value:todo}); changes.push({store:'tasks',type:'delete',key:task.id}); operation.after=clone(todo); operation.summary=`已将「${task.title}」转为待办。`;
     }
-    await saveOperation(operation); return operation;
+    changes.push({store:'operations',value:operation});
+    const savedMessage=S.messages.find(value=>value.id===message.id);
+    if(savedMessage) changes.push({store:'messages',value:{...copyData(savedMessage),type:'action_result',content:operation.summary,meta:{operationId:operation.id,status:'done'}}});
+    await commitDataChanges(changes,expected); return operation;
   },
 
   async undoAgentOperation(messageId){
-    const message=S.messages.find(x=>x.id===messageId && x.chatId===this.agentChatId); const operation=S.operations.find(x=>x.id===message?.meta?.operationId);
-    if(!message||!operation||operation.status!=='done') return;
+    const message=S.messages.find(x=>x.id===messageId&&x.chatId===this.agentChatId);
+    const operation=S.operations.find(x=>x.id===message?.meta?.operationId);
+    if(!message||!operation||operation.status!=='done')return;
+    const expected=agentWriteExpectation(), changes=[], kind=operation.kind;
+    const batch=kind.endsWith('_batch'), todo=kind.endsWith('_todo'), store=todo?'todos':'tasks';
+    const before=batch?(operation.before||[]):operation.before?[operation.before]:[];
+    const after=batch?(operation.after||[]):operation.after?[operation.after]:[];
     const same=(left,right)=>JSON.stringify(left)===JSON.stringify(right);
-    if(operation.kind==='create_schedule_batch'){
-      const changed=operation.after.some(saved=>!same(S.tasks.find(task=>task.id===saved.id),saved));
-      if(changed){toast('这批日程后来有变化，为避免覆盖新内容，不能整批撤销');return;}
-      for(const task of operation.after)await removeTask(task.id);
-      operation.status='undone'; operation.undoneAt=Date.now(); await saveOperation(operation);
-      message.meta.status='undone'; message.content=`已撤销本批 ${operation.after.length} 条日程。`; await saveMessage(message); this.renderAgent(); toast('已撤销这批日程'); return;
-    }
-    if(operation.kind==='update_schedule_batch'){
-      const changed=operation.after.some(saved=>!same(S.tasks.find(task=>task.id===saved.id),saved));
-      if(changed){toast('这组日程后来有变化，为避免覆盖新内容，不能整组撤销');return;}
-      for(const task of operation.before) await saveTask(task);
-      operation.status='undone'; operation.undoneAt=Date.now(); await saveOperation(operation);
-      message.meta.status='undone'; message.content=`已撤销 ${operation.before.length} 条整组日程的修改。`; await saveMessage(message); this.renderAgent(); toast('已撤销整组修改'); return;
-    }
-    if(operation.kind==='delete_schedule_batch'){
-      const changed=operation.before.some(saved=>S.tasks.some(task=>task.id===saved.id));
-      if(changed){toast('这组日程后来有变化，为避免覆盖新内容，不能整组撤销');return;}
-      for(const task of operation.before) await saveTask(task);
-      operation.status='undone'; operation.undoneAt=Date.now(); await saveOperation(operation);
-      message.meta.status='undone'; message.content=`已恢复 ${operation.before.length} 条整组日程。`; await saveMessage(message); this.renderAgent(); toast('已恢复整组日程'); return;
-    }
-    const currentTask=S.tasks.find(x=>x.id===(operation.after?.id||operation.before?.id));
-    const currentTodo=S.todos.find(x=>x.id===(operation.after?.id||operation.before?.id));
-    const changed=(operation.kind==='create_schedule'||operation.kind==='update_schedule')&&!same(currentTask,operation.after)
-      ||(operation.kind==='create_todo'||operation.kind==='update_todo')&&!same(currentTodo,operation.after)
-      ||operation.kind==='convert_schedule_to_todo'&&!same(currentTodo,operation.after)
-      ||operation.kind==='delete_schedule'&&!!currentTask
-      ||operation.kind==='delete_todo'&&!!currentTodo;
-    if(changed){ toast('这项内容后来有变化，为避免覆盖新内容，不能直接撤销'); return; }
-    if(operation.kind==='create_schedule') await removeTask(operation.after.id);
-    else if(operation.kind==='create_todo') await removeTodo(operation.after.id);
-    else if(operation.kind==='update_schedule'||operation.kind==='delete_schedule') await saveTask(operation.before);
-    else if(operation.kind==='update_todo'||operation.kind==='delete_todo') await saveTodo(operation.before);
-    else if(operation.kind==='convert_schedule_to_todo'){ await removeTodo(operation.after.id); await saveTask(operation.before); }
-    operation.status='undone'; operation.undoneAt=Date.now(); await saveOperation(operation);
-    message.meta.status='undone'; message.content=`已撤销：${operation.summary.replace(/^已/,'')}`; await saveMessage(message); this.renderAgent(); toast('已撤销这次操作');
+    const convert=kind==='convert_schedule_to_todo';
+    const current=convert?S.todos:S[store];
+    const changed=after.some(saved=>!same(current.find(item=>item.id===saved.id),saved))||
+      (kind.startsWith('delete')&&before.some(saved=>current.some(item=>item.id===saved.id)))||
+      (convert&&before.some(saved=>S.tasks.some(item=>item.id===saved.id)));
+    if(changed){toast('内容后来有变化，为避免覆盖新内容，不能直接撤销');return;}
+    if(kind.startsWith('create')||convert)for(const item of after)changes.push({store:convert?'todos':store,type:'delete',key:item.id});
+    for(const item of before)changes.push({store:convert?'tasks':store,value:item});
+    changes.push({store:'operations',value:{...copyData(operation),status:'undone',undoneAt:Date.now()}});
+    changes.push({store:'messages',value:{...copyData(message),content:'已撤销：'+operation.summary,meta:{...message.meta,status:'undone'}}});
+    try{await commitDataChanges(changes,expected);this.renderAgent();toast('已撤销这次操作');}
+    catch(error){toast('撤销未保存：'+error.message);}
   },
-
   renderChatList(){
     const chats=S.chats.slice().sort((a,b)=>b.updatedAt-a.updatedAt);
     $('#chat-storage-summary').textContent=`${chats.length} 个聊天，${S.messages.length} 条消息，全部保存在本机`;
@@ -3203,7 +3303,7 @@ const UI = {
   clearAgentChats(){
     this.mask('mask-chat-list',false);
     this.confirm('清空全部聊天','将删除所有聊天和消息，但不会影响日程、待办和个人记忆。确定吗？',async()=>{
-      for(const chat of [...S.chats]) await removeChatData(chat.id);
+      await commitDataChanges(['chats','messages','operations'].map(store=>({store,type:'clear'})),copyData({chats:S.chats,messages:S.messages,operations:S.operations}));
       await this.createAgentChat(false); this.renderAgent(); toast('聊天记录已清空');
     });
   },
@@ -3399,8 +3499,9 @@ const UI = {
     if(toTodo) toTodo.onclick = ()=>{
       this.mask('mask-task',false);
       this.confirm('转为待办', `将「${esc(t.title)}」移出日程并转为待办吗？`, async()=>{
-        await saveTodo({id:uid(),title:t.title,note:t.note||'',category:t.category,baseScore:t.baseScore,aiReason:t.aiReason||'',aiAdvice:t.aiAdvice||'',aiSource:t.aiSource||'local',links:t.links||[],images:t.images||[],done:false,finalScore:0,createdAt:Date.now(),sourceTaskId:t.id});
-        await removeTask(t.id); this.switchPage('todo'); toast('已转为待办');
+        const expected=copyData({tasks:S.tasks,todos:S.todos});
+        const converted={id:uid(),title:t.title,note:t.note||'',category:t.category,baseScore:t.baseScore,aiReason:t.aiReason||'',aiAdvice:t.aiAdvice||'',aiSource:t.aiSource||'local',links:t.links||[],images:t.images||[],done:false,finalScore:0,createdAt:Date.now(),sourceTaskId:t.id};
+        await commitDataChanges([{store:'todos',value:converted},{store:'tasks',type:'delete',key:t.id}],expected); this.switchPage('todo'); toast('已转为待办');
       });
     };
     body.querySelector('#td-edit').onclick = ()=>{ this.mask('mask-task',false); this.startEdit(t.id); };
@@ -3749,7 +3850,7 @@ const UI = {
   },
 
   async applyEdit(title){
-    const old = S.tasks.find(x=>x.id===this.editingId);
+    const old = copyData(S.tasks.find(x=>x.id===this.editingId));
     const draft = this.buildDraft();
     const now = Date.now();
     const oldDeadline = taskDeadline(old);
@@ -3795,11 +3896,11 @@ const UI = {
         // 取消按钮 = 完全更换
         old.status = 'skipped'; old.finalScore = 0; old.statusAt = now;
         old.parts = [{label:'内容大幅变更', why:'任务内容大幅度更变：旧任务自动设定为「没有去做」（0分），新内容作为复盘补录任务重新计分。', type:'mul'}];
-        await saveTask(old);
+        const expected=copyData({tasks:S.tasks});
         const nt = this.buildDraft();
         nt.id = uid(); nt.title = title; nt.createdAt = now; nt.isBackfill = true;
         nt.baseScore = this.cState.ai.base_score; nt.aiReason = this.cState.ai.reason;
-        await saveTask(nt);
+        await commitDataChanges([{store:'tasks',value:old},{store:'tasks',value:nt}],expected);
         localStorage.removeItem('juanjuan_create_draft');
         this.editingId = null; this.resetCreate();
         this.switchPage('home'); toast('旧任务已记为“没有去做”，新任务已按补录创建');
@@ -3868,10 +3969,12 @@ const UI = {
     const next = window.prompt('请输入新的标签名称', oldName)?.trim().slice(0,6);
     if(!next || next===oldName) return;
     if(CONFIG.TAGS.includes(next) || S.customTags.includes(next)){ toast('这个标签已经存在'); return; }
-    S.customTags = S.customTags.map(x=>x===oldName?next:x);
-    for(const task of S.tasks.filter(t=>t.category===oldName)){ task.category=next; await saveTask(task); }
+    const expected=copyData({tasks:S.tasks,kv:{customTags:S.customTags}});
+    const changes=S.tasks.filter(t=>t.category===oldName).map(task=>({store:'tasks',value:{...copyData(task),category:next}}));
+    changes.push({store:'kv',key:'customTags',value:S.customTags.map(x=>x===oldName?next:x)});
+    await commitDataChanges(changes,expected);
     if(this.cState.tag===oldName) this.cState.tag=next;
-    await saveTags(); this.openTagSelector(false); toast('标签已改名');
+    this.openTagSelector(false); toast('标签已改名');
   },
 
   deleteCustomTag(name){
@@ -4215,10 +4318,16 @@ const UI = {
   },
 
   async saveAllMemoryImportCards(){
-    const ids=(this.memoryImportCards||[]).map(card=>card.id);
-    for(const id of ids) await this.saveMemoryImportCard(id);
+    const cards=this.memoryImportCards||[], seen=new Set(S.memories.map(item=>this.memoryKey(item.content))), changes=[];
+    for(const card of cards){
+      const content=card.content.trim();if(content.length<3){toast('记忆内容至少需要三个字，请先修改');return;}
+      const key=this.memoryKey(content);if(seen.has(key))continue;seen.add(key);
+      const group=this.memoryGroups().find(value=>value.name===card.category);
+      changes.push({store:'memories',value:{id:uid(),content:content.slice(0,4000),category:group?group.name:this.memoryCategory(content),createdAt:Date.now(),source:'user_import'}});
+    }
+    if(changes.length)await commitDataChanges(changes,copyData({memories:S.memories}));
+    this.memoryImportCards=[];this.renderMemoryPage();toast('全部记忆卡已处理');
   },
-
   renderMemoryPage(){
     $('#memory-page-toggle').checked=!!S.pet.memoryEnabled;
     const groups=this.memoryGroups(), hidden=S.memoryGroups.filter(group=>group.deleted);
@@ -4259,10 +4368,9 @@ const UI = {
     if(!name){toast('资料框名称不能为空');return;}
     if(this.memoryGroups().some(value=>value.id!==id&&value.name===name)){toast('已经有同名资料框');return;}
     const oldName=group.name;
-    S.memoryGroups=this.memoryGroups().map(value=>value.id===id?{...value,name}:value);
+    const groups=this.memoryGroups().map(value=>value.id===id?{...value,name}:value);
     const changed=S.memories.filter(memory=>memory.category===oldName);
-    for(const memory of changed){memory.category=name;await DB.put('memories',memory);}
-    await saveMemoryGroups(); this.memoryRenamingGroupId=null; this.renderMemoryPage(); toast(changed.length?`已改名，并更新 ${changed.length} 条内容`:'已改名');
+    await commitDataChanges([...changed.map(memory=>({store:'memories',value:{...copyData(memory),category:name}})),{store:'kv',key:'memoryGroups',value:groups}],copyData({memories:S.memories,kv:{memoryGroups:S.memoryGroups}})); this.memoryRenamingGroupId=null; this.renderMemoryPage(); toast(changed.length?`已改名，并更新 ${changed.length} 条内容`:'已改名');
   },
 
   async addMemoryToGroup(id){
@@ -4295,14 +4403,10 @@ const UI = {
     const group=this.memoryGroups().find(value=>value.id===id); if(!group)return;
     const target=this.memoryGroups().find(value=>value.id===targetId);
     const items=S.memories.filter(memory=>memory.category===group.name);
-    if(target){
-      for(const item of items){item.category=target.name;await DB.put('memories',item);}
-    }else{
-      for(const item of items) await DB.del('memories',item.id);
-      S.memories=S.memories.filter(item=>item.category!==group.name);
-    }
-    S.memoryGroups=group.preset?this.memoryGroups().map(value=>value.id===id?{...value,deleted:true}:value):this.memoryGroups().filter(value=>value.id!==id);
-    await saveMemoryGroups(); this.memoryRenamingGroupId=null; this.memoryAddingGroupId=null; this.renderMemoryPage(); toast(target?'已转移内容并删除资料框':'已删除资料框');
+    const changes=items.map(item=>target?{store:'memories',value:{...copyData(item),category:target.name}}:{store:'memories',type:'delete',key:item.id});
+    const groups=group.preset?this.memoryGroups().map(value=>value.id===id?{...value,deleted:true}:value):this.memoryGroups().filter(value=>value.id!==id);
+    changes.push({store:'kv',key:'memoryGroups',value:groups});
+    await commitDataChanges(changes,copyData({memories:S.memories,kv:{memoryGroups:S.memoryGroups}})); this.memoryRenamingGroupId=null; this.memoryAddingGroupId=null; this.renderMemoryPage(); toast(target?'已转移内容并删除资料框':'已删除资料框');
   },
 
   async editMemory(id){
@@ -4335,8 +4439,9 @@ const UI = {
     okBtn.textContent = okText;
     const cancelBtn = $('#mask-confirm [data-close]');
     cancelBtn.textContent = cancelText;
-    okBtn.onclick = ()=>{ this.mask('mask-confirm',false); ok&&ok(); };
-    cancelBtn.onclick = ()=>{ this.mask('mask-confirm',false); onCancel&&onCancel(); };
+    let running=false;
+    okBtn.onclick = async()=>{if(running)return;running=true;this.mask('mask-confirm',false);try{if(ok)await ok();}catch(error){toast('操作未保存：'+error.message);}finally{running=false;}};
+    cancelBtn.onclick = async()=>{if(running)return;running=true;this.mask('mask-confirm',false);try{if(onCancel)await onCancel();}catch(error){toast('操作未保存：'+error.message);}finally{running=false;}};
     this.mask('mask-confirm', true);
   },
 };
@@ -4501,12 +4606,14 @@ const App = {
     $('#btn-owner-stats').onclick = ()=>UI.loadOwnerStats();
     $('#btn-export').onclick = ()=>this.exportData();
     $('#btn-import').onclick = ()=>$('#import-file').click();
-    $('#btn-clean-media').onclick=()=>UI.confirm('清理附件图片','将删除所有日程和待办中的图片，链接和文字不会受影响。确定吗？',async()=>{for(const item of [...S.tasks,...S.todos]){item.images=[];if('execDate'in item)await saveTask(item);else await saveTodo(item);}toast('已清理全部附件图片');});
+    $('#btn-clean-media').onclick=()=>UI.confirm('清理附件图片','将删除所有日程和待办中的图片，链接和文字不会受影响。确定吗？',async()=>{const changes=['tasks','todos'].flatMap(store=>S[store].map(item=>({store,value:{...copyData(item),images:[]}})));await commitDataChanges(changes,copyData({tasks:S.tasks,todos:S.todos}));toast('已清理全部附件图片');});
     $('#import-file').onchange = e=>this.importData(e);
     $('#btn-reset').onclick = ()=>UI.confirm('清空全部数据','⚠️ 将删除所有任务、积分与宠物数据，且不可恢复。确定吗？', async()=>{
-      await DB.clear('tasks'); await DB.clear('todos'); await DB.clear('chats'); await DB.clear('messages'); await DB.clear('memories'); await DB.clear('operations'); await DB.clear('kv');
+      const chat={id:uid(),title:'新聊天',createdAt:Date.now(),updatedAt:Date.now()};
+      const changes=[...DATA_STORES.map(store=>({store,type:'clear'})),{store:'kv',type:'clear'},{store:'chats',value:chat},...DATA_KV.map(key=>({store:'kv',key,value:key==='pet'?defaultPet():key==='dayStats'?{}:[]}))];
+      const expected=await DB.snapshot([...DATA_STORES,'kv']);
+      await commitDataChanges(changes,expected);UI.agentChatId=chat.id;
       ['juanjuan_llm_source','juanjuan_llm_endpoint','juanjuan_llm_model','juanjuan_llm_key'].forEach(key=>localStorage.removeItem(key));
-      S.tasks=[]; S.todos=[]; S.chats=[]; S.messages=[]; S.memories=[]; S.operations=[]; S.dayStats={}; S.customTags=[]; S.pet=defaultPet(); await savePet(); await UI.createAgentChat(false);
       toast('已重置，和新的卷卷重新开始吧！'); UI.switchPage('home');
     });
     // 我的页 → 设置入口
@@ -4564,60 +4671,36 @@ const App = {
   },
 
   importData(e){
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = async()=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onerror=()=>toast('导入失败：文件无法读取');
+    reader.onload=async()=>{
       try{
-        const data = JSON.parse(reader.result);
-        if(!Array.isArray(data.tasks)) throw new Error('格式不正确');
-        const importedTasks=data.tasks.filter(t=>t&&typeof t.title==='string'&&typeof t.execDate==='string').map(t=>({...t,images:(Array.isArray(t.images)?t.images:[]).filter(img=>String(img?.data||'').startsWith('data:image/')).slice(0,5),links:(Array.isArray(t.links)?t.links:[]).filter(link=>/^https?:\/\//i.test(String(link))).slice(0,5)}));
-        const importGrowth=Number(data.pet?.growth||0);
-        let importLevel=1; CONFIG.LEVELS.forEach((th,i)=>{if(importGrowth>=th)importLevel=i+1;});
-        const todoCount=Array.isArray(data.todos)?data.todos.length:0;
-        const importedChats=(Array.isArray(data.chats)?data.chats:[]).filter(x=>x&&typeof x.id==='string'&&typeof x.title==='string');
-        const chatIds=new Set(importedChats.map(x=>x.id));
-        const importedMessages=(Array.isArray(data.messages)?data.messages:[]).filter(x=>x&&typeof x.id==='string'&&chatIds.has(x.chatId)&&['user','assistant'].includes(x.role)&&typeof x.content==='string');
-        const importedMemories=(Array.isArray(data.memories)?data.memories:[]).filter(x=>x&&typeof x.id==='string');
-        const importedOperations=(Array.isArray(data.operations)?data.operations:[]).filter(x=>x&&typeof x.id==='string');
-        const attachmentCount=[...importedTasks,...(Array.isArray(data.todos)?data.todos:[])].flatMap(t=>t.images||[]).filter(img=>String(img?.data||'').startsWith('data:image/')).length;
-        UI.confirm('导入数据预览', `即将导入并覆盖当前数据：<br>· 日程 <b>${importedTasks.length}</b> 个<br>· 待办 <b>${todoCount}</b> 个<br>· 附件图片 <b>${attachmentCount}</b> 张，导入后会保留并核对<br>· 聊天 <b>${importedChats.length}</b> 个，消息 <b>${importedMessages.length}</b> 条<br>· 个人记忆 <b>${importedMemories.length}</b> 条<br>· 卷卷等级 Lv.${Math.min(importLevel,10)} · 成长积分 ${importGrowth} · 好感度 ${data.pet?.affinity||0}/10<br>· 累计积分 ${Object.values(data.dayStats||{}).reduce((s,v)=>r1(s+(v.points||0)),0)} 分<br><br>确定覆盖导入吗？`, async()=>{
-          await DB.clear('tasks'); await DB.clear('todos'); await DB.clear('chats'); await DB.clear('messages'); await DB.clear('memories'); await DB.clear('operations');
-          for(const t of importedTasks) await DB.put('tasks', t);
-          const importedTodos=(Array.isArray(data.todos)?data.todos:[]).filter(t=>t&&typeof t.title==='string').map(t=>({...t,images:(Array.isArray(t.images)?t.images:[]).filter(img=>String(img?.data||'').startsWith('data:image/')).slice(0,5),links:(Array.isArray(t.links)?t.links:[]).filter(link=>/^https?:\/\//i.test(String(link))).slice(0,5)}));
-          for(const t of importedTodos) await DB.put('todos', t);
-          for(const item of importedChats) await DB.put('chats',item);
-          for(const item of importedMessages) await DB.put('messages',item);
-          for(const item of importedMemories) await DB.put('memories',item);
-          for(const item of importedOperations) await DB.put('operations',item);
-          S.tasks = importedTasks;
-          S.todos = importedTodos;
-          S.chats = importedChats;
-          S.messages = importedMessages;
-          S.memories = importedMemories;
-          S.memoryGroups = UI.normalizeMemoryGroups(Array.isArray(data.memoryGroups)?data.memoryGroups:[]);
-          S.operations = importedOperations;
-          S.pet = data.pet || defaultPet();
-          S.dayStats = data.dayStats || {};
-          S.customTags = data.customTags || [];
-          if(data.appearance){
-            localStorage.setItem('juanjuan_follow_system',data.appearance.followSystem===false?'0':'1');
-            if(['warm','blue'].includes(data.appearance.lightTheme)) localStorage.setItem('juanjuan_light_theme',data.appearance.lightTheme);
-            if(['soft','black'].includes(data.appearance.darkTheme)) localStorage.setItem('juanjuan_dark_theme',data.appearance.darkTheme);
-            if(['warm','blue','soft','black'].includes(data.appearance.fixedTheme)) localStorage.setItem('juanjuan_fixed_theme',data.appearance.fixedTheme);
-            this.syncAppearance();
-          }
-          UI.agentChatId=S.chats.slice().sort((a,b)=>b.updatedAt-a.updatedAt)[0]?.id||null;
-          if(!UI.agentChatId) await UI.createAgentChat(false);
-          else localStorage.setItem('juanjuan_active_chat',UI.agentChatId);
-          await savePet(); await saveDayStats(); await saveTags(); await saveMemoryGroups();
-          toast(`导入成功，已核对 ${attachmentCount} 张附件图片`); UI.switchPage('home');
+        const data=validateBackup(JSON.parse(reader.result));
+        const expected=await DB.snapshot([...DATA_STORES,'kv']);
+        const attachments=[...data.tasks,...data.todos].reduce((sum,item)=>sum+(item.images||[]).length,0);
+        let running=false, completed=false;
+        UI.confirm('导入数据预览','即将覆盖当前资料：日程 '+data.tasks.length+' 条，待办 '+data.todos.length+' 条，图片 '+attachments+' 张，聊天 '+data.chats.length+' 个，消息 '+data.messages.length+' 条，记忆 '+data.memories.length+' 条，操作记录 '+data.operations.length+' 条。<br>宠物成长积分 '+data.pet.growth+'。<br>已完整校验，不过滤或合并记录。取消不会改动资料。确认覆盖导入吗？',async()=>{
+          if(running||completed)return;running=true;
+          try{
+            await replaceBackup(data,expected);completed=true;
+            UI.agentChatId=S.chats.slice().sort((a,b)=>b.updatedAt-a.updatedAt)[0]?.id||null;
+            let appearanceFailed=false;
+            try{
+              const appearance=data.appearance;
+              localStorage.setItem('juanjuan_follow_system',appearance.followSystem?'1':'0');
+              localStorage.setItem('juanjuan_light_theme',appearance.lightTheme);localStorage.setItem('juanjuan_dark_theme',appearance.darkTheme);localStorage.setItem('juanjuan_fixed_theme',appearance.fixedTheme);
+              if(UI.agentChatId)localStorage.setItem('juanjuan_active_chat',UI.agentChatId);else localStorage.removeItem('juanjuan_active_chat');
+              this.syncAppearance();
+            }catch(error){appearanceFailed=true;}
+            UI.switchPage('home');toast(appearanceFailed?'业务资料已导入，外观设置未完全恢复，请在设置中重选。':'导入成功，全部资料已保存');
+          }catch(error){toast('导入未保存，原资料保留：'+error.message);}
+          finally{running=false;}
         });
-      }catch(err){ toast('导入失败：'+err.message); }
-      e.target.value='';
-    };
-    reader.readAsText(file);
+      }catch(error){toast('导入失败：'+error.message);}
+      finally{e.target.value='';}
+    };reader.readAsText(file);
   },
-
   // 积分引擎自测（仅控制台输出）
   selfTest(){
     const A = (name, got, want) => console[Math.abs(got-want)<0.01?'log':'error'](`[自测] ${name}: ${got} (期望 ${want})`);

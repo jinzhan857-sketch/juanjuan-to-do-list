@@ -5,11 +5,12 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 function load(){
-  const app=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout});
+  const app=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout,structuredClone});
   const html=fs.readFileSync(path.join(process.env.ISSUE5_SOURCE_ROOT||path.join(__dirname,'..'),'index.html'),'utf8');
   vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),app);
   const run=code=>vm.runInContext(code,app,{timeout:2000});
   run("S.tasks=[{id:'a',title:'同名课程',seriesId:'group-A',execDate:'2026-11-09',timeType:'exact',startTime:'10:00',endTime:'11:00',note:'old',baseScore:7},{id:'b',title:'同名课程',seriesId:'group-A',execDate:'2026-11-16',timeType:'exact',startTime:'10:00',endTime:'11:00',note:'old',baseScore:7},{id:'c',title:'同名课程',seriesId:'group-B',execDate:'2026-11-10',timeType:'exact',startTime:'10:00',endTime:'11:00',note:'other',baseScore:7}];S.todos=[];S.messages=[];S.operations=[];S.pet={synthetic:true};DB.writes=[];DB.deleted=[];DB.put=async(store,value)=>DB.writes.push({store,value:JSON.parse(JSON.stringify(value))});DB.del=async(store,id)=>DB.deleted.push({store,id});UI.renderAgent=()=>{};UI.agentChatId='test';toast=()=>{};");
+  run("DB.batch=async(changes)=>{for(const c of changes){if(c.type==='delete')await DB.del(c.store,c.key);else await DB.put(c.store,c.value,c.key);}};");
   const api=vm.createContext({require,module:{exports:{}},process:{env:{}},console,URL});
   vm.runInContext(fs.readFileSync(path.join(process.env.ISSUE5_SOURCE_ROOT||path.join(__dirname,'..'),'api/ai.js'),'utf8'),api);
   const wire=JSON.parse(run("JSON.stringify(UI.agentContext('test','','task'))"));

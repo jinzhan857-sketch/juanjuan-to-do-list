@@ -49,7 +49,7 @@
 
 ## 本地预览
 
-准备 Node.js 24.16.0 与 npm 11.13.0。工具链没有第三方依赖，版本固定在 `.node-version` 和 `package.json`。
+准备 Node.js 24.16.0 与 npm 11.13.0。运行和构建没有第三方依赖，存储测试通过 npm ci 安装固定开发依赖。版本固定在 `.node-version` 和 `package.json`。
 
 ```powershell
 git clone git@github.com:jinzhan857-sketch/juanjuan-to-do-list.git

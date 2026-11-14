@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.resolve(__dirname,'..');
+const source=[...fs.readFileSync(path.join(root,'index.html'),'utf8').matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,'');
+const context=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout,structuredClone});
+vm.runInContext(source,context);vm.runInContext(require('./helpers/storage-fixture.cjs'),context);
+const data=JSON.parse(vm.runInContext("JSON.stringify({app:'卷卷AI Todo',version:'2.2',...Object.fromEntries([...DATA_STORES,...DATA_KV].map(key=>[key,S[key]])),appearance:{followSystem:true,lightTheme:'warm',darkTheme:'soft',fixedTheme:'warm'}})",context));
+const output=path.join(root,'.reports/storage-samples');fs.mkdirSync(output,{recursive:true});
+fs.writeFileSync(path.join(output,'valid.json'),JSON.stringify(data,null,2));
+const duplicate=structuredClone(data);duplicate.tasks.push(structuredClone(duplicate.tasks[0]));
+fs.writeFileSync(path.join(output,'duplicate-id.json'),JSON.stringify(duplicate,null,2));
+fs.writeFileSync(path.join(output,'damaged.json'),'{invalid JSON');
+console.log('Synthetic files only: '+output);
