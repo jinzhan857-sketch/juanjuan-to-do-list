@@ -12,8 +12,8 @@ const report = JSON.parse(fs.readFileSync(path.join(root, reportPath), 'utf8'));
 assert.equal(report.checks.length, 26, 'Baseline assertion count changed; review coverage explicitly');
 assert.equal(report.failed, 0);
 assert.deepEqual(report.observations, {
-  hostedContextDropsSeriesId: true,
+  hostedContextDropsSeriesId: false,
   explicitDateRoutedToBatch: 'update_schedule',
   rememberedLocationOverridesExplicitCity: '香港'
 }, 'Known issue observations changed; inspect results rather than silently skipping them');
-console.log('26 stable assertions passed. Single-day probe now returns update_schedule (#4); two known issues remain (#5, #7).');
+console.log('26 stable assertions passed. Single-day scope (#4) and hosted series identity (#5) probes pass; location issue (#7) remains.');
