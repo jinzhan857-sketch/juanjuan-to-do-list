@@ -1,0 +1,28 @@
+{
+  "auditDate": "2026-11-14",
+  "github": {
+    "repository": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list",
+    "mainCommit": "b35936b0c760b57263b068c3a1f204f28bfeb24d",
+    "method": "GitHub connector commits/main"
+  },
+  "site": {
+    "projectId": "appgprj_6a9927f600c08191ba2a6bb62cd3ae41",
+    "url": "https://juanjuan-ai-todo-2.jinzhan857.chatgpt.site",
+    "versionNumber": 8,
+    "sourceCommit": "b35936b0c760b57263b068c3a1f204f28bfeb24d",
+    "versionId": "appgprj_6a9927f600c08191ba2a6bb62cd3ae41~appgver_fea6d80ed5dc8191a819edfb613e76da",
+    "deploymentId": "appgdep_6a9e5b4cf5408191823e6ba50705b211",
+    "status": "succeeded",
+    "updatedAt": "2026-09-07T06:36:50.334899+00:00",
+    "method": "Sites get_site, list_site_versions, get_deployment_status"
+  },
+  "httpProbe": {
+    "method": "Unauthenticated command-line GET",
+    "paths": [
+      "/",
+      "/api/ai"
+    ],
+    "status": 403,
+    "conclusion": "Application HTML and API behavior not verified by this probe."
+  }
+}

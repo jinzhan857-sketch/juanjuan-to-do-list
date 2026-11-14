@@ -1,0 +1,591 @@
+{
+  "auditDate": "2026-11-14",
+  "runtime": "v24.16.0",
+  "headAtRun": "b35936b0c760b57263b068c3a1f204f28bfeb24d",
+  "method": "Node VM, App.init suppressed, isolated synthetic state, no DOM/browser storage/model/network calls. Existing browser selfTest not executed by this runner.",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 341438,
+      "lines": 4721,
+      "sha256": "173a4bb278f76d0e175e3254f4471803edfab2bc512e22e1b0ffeb9f8457ca68"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 312966,
+      "lines": 4428,
+      "sha256": "c8073542566ddc10bbe9af286297d9c7baa0e2be5339a270d3224a73307052f1"
+    },
+    {
+      "path": "api/ai.js",
+      "bytes": 26027,
+      "lines": 405,
+      "sha256": "986b4252bbb4ac6ec16dce13f0bb063ffe0decdfdc3dcb27cdb08ca2a6c8e95b"
+    }
+  ],
+  "checks": [
+    {
+      "name": "index.html JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "dist/index.html JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "Invalid calendar date rejected",
+      "passed": true
+    },
+    {
+      "name": "Relative date conversion",
+      "passed": true
+    },
+    {
+      "name": "Chinese exact time range",
+      "passed": true
+    },
+    {
+      "name": "Todo score",
+      "passed": true
+    },
+    {
+      "name": "Link protocol filter",
+      "passed": true
+    },
+    {
+      "name": "Incomplete exact schedule rejected",
+      "passed": true
+    },
+    {
+      "name": "Missing deletion target rejected",
+      "passed": true
+    },
+    {
+      "name": "Seven-day recurring expansion",
+      "passed": true
+    },
+    {
+      "name": "Batch exact-time guard",
+      "passed": true
+    },
+    {
+      "name": "Role routing",
+      "passed": true
+    },
+    {
+      "name": "Weather asks for unknown location",
+      "passed": true
+    },
+    {
+      "name": "Weather explicit location",
+      "passed": true
+    },
+    {
+      "name": "Plain HTTP endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "Planning conflict calculation",
+      "passed": true
+    },
+    {
+      "name": "Series ID target selection",
+      "passed": true
+    },
+    {
+      "name": "api/ai.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "API invalid date rejected",
+      "passed": true
+    },
+    {
+      "name": "API invalid time rejected",
+      "passed": true
+    },
+    {
+      "name": "API batch delete format",
+      "passed": true
+    }
+  ],
+  "observations": {
+    "hostedContextDropsSeriesId": true,
+    "explicitDateRoutedToBatch": "update_schedule_batch",
+    "rememberedLocationOverridesExplicitCity": "香港"
+  },
+  "backupMetadata": {
+    "keys": [
+      "app",
+      "version",
+      "exportedAt",
+      "tasks",
+      "todos",
+      "chats",
+      "messages",
+      "memories",
+      "operations",
+      "pet",
+      "dayStats",
+      "customTags",
+      "appearance"
+    ],
+    "counts": {
+      "tasks": 81,
+      "todos": 11,
+      "chats": 3,
+      "messages": 85,
+      "memories": 8,
+      "operations": 5,
+      "customTags": 0
+    }
+  },
+  "diagrams": [
+    {
+      "path": "diagrams/2026-09-09T150500/after-preview.jpg",
+      "bytes": 302271
+    },
+    {
+      "path": "diagrams/2026-09-09T150500/before-preview.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T150500/diagram.json",
+      "bytes": 56742
+    },
+    {
+      "path": "diagrams/2026-09-09T150500/diagram.png",
+      "bytes": 604809
+    },
+    {
+      "path": "diagrams/2026-09-09T150500/diagram.svg",
+      "bytes": 8502
+    },
+    {
+      "path": "diagrams/2026-09-09T151150/after-preview.jpg",
+      "bytes": 314051
+    },
+    {
+      "path": "diagrams/2026-09-09T151150/before-preview.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T151150/diagram.json",
+      "bytes": 49007
+    },
+    {
+      "path": "diagrams/2026-09-09T151150/diagram.png",
+      "bytes": 647525
+    },
+    {
+      "path": "diagrams/2026-09-09T151150/diagram.svg",
+      "bytes": 7889
+    },
+    {
+      "path": "diagrams/2026-09-09T152000/after-preview.jpg",
+      "bytes": 412112
+    },
+    {
+      "path": "diagrams/2026-09-09T152000/before-preview.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T152000/diagram.json",
+      "bytes": 116753
+    },
+    {
+      "path": "diagrams/2026-09-09T152000/diagram.png",
+      "bytes": 1020783
+    },
+    {
+      "path": "diagrams/2026-09-09T152000/diagram.svg",
+      "bytes": 17774
+    },
+    {
+      "path": "diagrams/2026-09-09T153000/after-preview.jpg",
+      "bytes": 345586
+    },
+    {
+      "path": "diagrams/2026-09-09T153000/before-preview.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T153000/diagram.json",
+      "bytes": 60605
+    },
+    {
+      "path": "diagrams/2026-09-09T153000/diagram.png",
+      "bytes": 770967
+    },
+    {
+      "path": "diagrams/2026-09-09T153000/diagram.svg",
+      "bytes": 9914
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/after-preview-retry.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/after-preview-svg-repair.jpg",
+      "bytes": 326982
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/after-preview.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/after-raw.json",
+      "bytes": 45214
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/before-preview.jpg",
+      "bytes": 90716
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/diagram.json",
+      "bytes": 48435
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/diagram.png",
+      "bytes": 612509
+    },
+    {
+      "path": "diagrams/2026-09-09T153800/diagram.svg",
+      "bytes": 7841
+    },
+    {
+      "path": "diagrams/2026-09-09T160500/after-preview.jpg",
+      "bytes": 328752
+    },
+    {
+      "path": "diagrams/2026-09-09T160500/diagram.png",
+      "bytes": 646104
+    },
+    {
+      "path": "diagrams/2026-09-09T160500/diagram.svg",
+      "bytes": 9158
+    },
+    {
+      "path": "diagrams/2026-09-09T161300/after-preview.jpg",
+      "bytes": 316669
+    },
+    {
+      "path": "diagrams/2026-09-09T161300/diagram.png",
+      "bytes": 584203
+    },
+    {
+      "path": "diagrams/2026-09-09T161300/diagram.svg",
+      "bytes": 11298
+    },
+    {
+      "path": "diagrams/2026-09-09T161500/before.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T162000/after-preview.jpg",
+      "bytes": 336102
+    },
+    {
+      "path": "diagrams/2026-09-09T162000/diagram.png",
+      "bytes": 606510
+    },
+    {
+      "path": "diagrams/2026-09-09T162000/diagram.svg",
+      "bytes": 11944
+    },
+    {
+      "path": "diagrams/2026-09-09T164500/before.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T164500/diagram.svg",
+      "bytes": 23423
+    },
+    {
+      "path": "diagrams/2026-09-09T170000-task-workflow/board-raw.json",
+      "bytes": 44829
+    },
+    {
+      "path": "diagrams/2026-09-09T170000-task-workflow/diagram.png",
+      "bytes": 435465
+    },
+    {
+      "path": "diagrams/2026-09-09T170000-task-workflow/diagram.svg",
+      "bytes": 5663
+    },
+    {
+      "path": "diagrams/2026-09-09T170000-task-workflow/server-taskflow-v2.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T170000-task-workflow/server-taskflow-v3.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T170000-task-workflow/server-taskflow-v4.jpg",
+      "bytes": 268112
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/after-preview.jpg",
+      "bytes": 277707
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/board-raw-v4.json",
+      "bytes": 47045
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/board-raw.json",
+      "bytes": 46197
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/diagram.png",
+      "bytes": 413322
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/diagram.svg",
+      "bytes": 5637
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/server-planflow-diagnostic.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/server-planflow-final.jpg",
+      "bytes": 277707
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/server-planflow-v2.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/server-planflow-v3.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/server-planflow-v4.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-09T172000-planning-workflow/server-planflow-v5.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-11T152000/diagram.json",
+      "bytes": 124203
+    },
+    {
+      "path": "diagrams/2026-09-11T152000/diagram.png",
+      "bytes": 470971
+    },
+    {
+      "path": "diagrams/2026-09-11T152000/diagram.svg",
+      "bytes": 10045
+    },
+    {
+      "path": "diagrams/2026-09-11T152000/feishuPreview.jpg",
+      "bytes": 261052
+    },
+    {
+      "path": "diagrams/2026-09-11T152412/diagram.json",
+      "bytes": 124519
+    },
+    {
+      "path": "diagrams/2026-09-11T152412/diagram.png",
+      "bytes": 483459
+    },
+    {
+      "path": "diagrams/2026-09-11T152412/diagram.svg",
+      "bytes": 9781
+    },
+    {
+      "path": "diagrams/2026-09-11T152412/feishu_preview.jpg",
+      "bytes": 268028
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/after.jpg",
+      "bytes": 43778
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/afterraw.json",
+      "bytes": 64793
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/before.jpg",
+      "bytes": 123632
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/board.png",
+      "bytes": 478560
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/board.svg",
+      "bytes": 18981
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/diagram.json",
+      "bytes": 73797
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/diagram.png",
+      "bytes": 478588
+    },
+    {
+      "path": "diagrams/2026-09-11T173000/diagram.svg",
+      "bytes": 7347
+    },
+    {
+      "path": "diagrams/20260911T154221/diagram.svg",
+      "bytes": 9018
+    },
+    {
+      "path": "diagrams/20260911T154221/diagram2.png",
+      "bytes": 428629
+    },
+    {
+      "path": "diagrams/20260911T154221/diagram2.svg",
+      "bytes": 10259
+    },
+    {
+      "path": "diagrams/20260911T154221/feishu_preview.jpg",
+      "bytes": 216721
+    },
+    {
+      "path": "diagrams/20260911T160000/diagram.json",
+      "bytes": 141246
+    },
+    {
+      "path": "diagrams/20260911T160000/diagram.png",
+      "bytes": 692997
+    },
+    {
+      "path": "diagrams/20260911T160000/diagram.svg",
+      "bytes": 13243
+    },
+    {
+      "path": "diagrams/20260911T160000/feishu_preview.jpg",
+      "bytes": 362136
+    },
+    {
+      "path": "diagrams/20260911T161500/diagram.png",
+      "bytes": 412109
+    },
+    {
+      "path": "diagrams/20260911T161500/diagram.svg",
+      "bytes": 8836
+    },
+    {
+      "path": "diagrams/20260911T161500/feishu_preview.jpg",
+      "bytes": 236149
+    },
+    {
+      "path": "diagrams/20260911T基础决策模式.png",
+      "bytes": 526816
+    },
+    {
+      "path": "diagrams/20260911T基础决策模式.svg",
+      "bytes": 14896
+    },
+    {
+      "path": "diagrams/20260911T基础决策模式飞书预览.jpg",
+      "bytes": 297536
+    },
+    {
+      "path": "diagrams/whiteboard-work/chat-role.png",
+      "bytes": 86171
+    },
+    {
+      "path": "diagrams/whiteboard-work/console-v2.png",
+      "bytes": 424278
+    },
+    {
+      "path": "diagrams/whiteboard-work/console.png",
+      "bytes": 106392
+    },
+    {
+      "path": "diagrams/whiteboard-work/current-chat-capability.jpg",
+      "bytes": 90716
+    },
+    {
+      "path": "diagrams/whiteboard-work/current-overall.jpg",
+      "bytes": 413984
+    },
+    {
+      "path": "diagrams/whiteboard-work/current-planning-capability.jpg",
+      "bytes": 314051
+    },
+    {
+      "path": "diagrams/whiteboard-work/current-routing.jpg",
+      "bytes": 344136
+    },
+    {
+      "path": "diagrams/whiteboard-work/current-task-capability.jpg",
+      "bytes": 302271
+    },
+    {
+      "path": "diagrams/whiteboard-work/data-boundary.png",
+      "bytes": 112058
+    },
+    {
+      "path": "diagrams/whiteboard-work/diagram.mmd",
+      "bytes": 355
+    },
+    {
+      "path": "diagrams/whiteboard-work/diagram.svg",
+      "bytes": 5562
+    },
+    {
+      "path": "diagrams/whiteboard-work/planning-flow.png",
+      "bytes": 115596
+    },
+    {
+      "path": "diagrams/whiteboard-work/roadmap.png",
+      "bytes": 64001
+    },
+    {
+      "path": "diagrams/whiteboard-work/run-trace.png",
+      "bytes": 95117
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-chat.jpg",
+      "bytes": 90716
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-console-v2.jpg",
+      "bytes": 204305
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-console-v3.jpg",
+      "bytes": 297948
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-console.jpg",
+      "bytes": 104492
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-data-boundary.jpg",
+      "bytes": 128273
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-planning-flow.jpg",
+      "bytes": 111626
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-roadmap.jpg",
+      "bytes": 73128
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-run-trace.jpg",
+      "bytes": 115159
+    },
+    {
+      "path": "diagrams/whiteboard-work/server-task-flow.jpg",
+      "bytes": 108881
+    },
+    {
+      "path": "diagrams/whiteboard-work/task-flow.png",
+      "bytes": 104936
+    }
+  ],
+  "passed": 21,
+  "failed": 0
+}
