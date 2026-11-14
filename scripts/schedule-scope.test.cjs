@@ -8,7 +8,11 @@ function load(){
   const file=process.env.ISSUE4_SOURCE||path.join(__dirname,'../index.html');
   const code=[...fs.readFileSync(file,'utf8').matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n');
   assert.equal((code.match(/^App\.init\(\);$/gm)||[]).length,1);
-  const context=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout});
+  class FixedDate extends Date {
+    constructor(...args){super(...(args.length?args:[2026,10,15,12,0,0]));}
+    static now(){return new FixedDate().getTime();}
+  }
+  const context=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout,Date:FixedDate});
   vm.runInContext(code.replace(/^App\.init\(\);$/m,''),context);
   const run=code=>vm.runInContext(code,context,{timeout:2000});
   run(`S.tasks=[{id:'a',title:'IDAT7215',execDate:'2026-11-09',seriesId:'s',timeType:'exact',startTime:'19:00',endTime:'21:30',note:'old',baseScore:7},{id:'b',title:'IDAT7215',execDate:'2026-11-16',seriesId:'s',timeType:'exact',startTime:'19:00',endTime:'21:30',note:'old',baseScore:7}]; S.todos=[]; S.pet={synthetic:true}; S.operations=[]; DB.saved=[]; DB.put=async(store,value)=>{DB.saved.push({store,value:JSON.parse(JSON.stringify(value))});}; DB.del=async()=>{}; UI.renderAgent=()=>{}; UI.agentChatId='test';`);
