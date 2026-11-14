@@ -22,14 +22,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run check
       - name: Verify archive without Git metadata
-        shell: bash
-        run: |
-          archive_dir="$RUNNER_TEMP/juanjuan-source"
-          mkdir -p "$archive_dir"
-          git archive HEAD | tar -x -C "$archive_dir"
-          cd "$archive_dir"
-          npm ci --ignore-scripts
-          npm run check
+        run: npm run check:archive
       - name: Upload explicit generated files and synthetic report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

@@ -9,6 +9,7 @@
     "dev": "node scripts/serve.cjs",
     "preview": "node scripts/serve.cjs --dist",
     "build": "node scripts/build.cjs",
+    "check:archive": "node scripts/check-archive.cjs",
     "check": "npm run build && node scripts/check-docs.cjs && node scripts/check-baseline.cjs && node --test scripts/toolchain.test.cjs"
   }
 }
