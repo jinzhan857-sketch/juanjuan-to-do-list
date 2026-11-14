@@ -14,6 +14,6 @@ assert.equal(report.failed, 0);
 assert.deepEqual(report.observations, {
   hostedContextDropsSeriesId: false,
   explicitDateRoutedToBatch: 'update_schedule',
-  rememberedLocationOverridesExplicitCity: '香港'
+  rememberedLocationOverridesExplicitCity: '新加坡'
 }, 'Known issue observations changed; inspect results rather than silently skipping them');
-console.log('26 stable assertions passed. Single-day scope (#4) and hosted series identity (#5) probes pass; location issue (#7) remains.');
+console.log('26 stable assertions passed. Single-day scope (#4), hosted series identity (#5), and current weather city (#7) probes pass.');

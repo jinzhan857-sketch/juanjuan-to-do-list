@@ -1704,47 +1704,86 @@ const AIService = {
   },
   isWeatherRequest(message){ return /天气|气温|温度|下雨|降雨|带伞|风大/.test(String(message||'')); },
   isWeatherFollowup(message,context={}){
-    const latestAssistant=(context.history||[]).slice().reverse().find(item=>item.role==='assistant')?.content||'';
-    return /想查哪个城市或地区的天气/.test(latestAssistant)&&!!this.weatherLocation(message,context);
+    const previous=this.weatherContext(context);
+    return !!previous&&(/^(?:那|那么|换成|改查|再查)?\s*(?:今天|明天|后天)(?:呢|怎么样|如何)?[？?。！!\s]*$/.test(String(message||''))||!!this.weatherPlace(message,true));
+  },
+  weatherContext(context={}){
+    const history=context.history||[], index=history.findLastIndex(item=>item.role==='assistant');
+    if(index<0)return null;
+    const assistant=history[index];
+    if(assistant.weather)return assistant.weather;
+    if(/想查哪个城市或地区的天气/.test(assistant.content||'')){
+      const request=history.slice(0,index).findLast(item=>item.role==='user')?.content||'';
+      return {location:null,day:/后天/.test(request)?2:/明天/.test(request)?1:0};
+    }
+    return null;
+  },
+  weatherPlace(message,bare=false){
+    const source=String(message||'').trim();
+    const place='([\\p{Script=Han}A-Za-z][\\p{Script=Han}A-Za-z .]{1,39}?)';
+    const explicit=source.match(new RegExp('(?:我(?:现在)?在|我住在|我住|所在地是)'+place+'(?=[，,。！？!?；;]|今天|明天|后天|现在|(?:的)?天气|$)','u'));
+    const querySource=source.replace(/^(?:请|帮我)?(?:查询|查一下|查看|看看|查)\s*/,'').replace(/^(?:今天|明天|后天|现在)\s*/,'');
+    const query=querySource.match(new RegExp('^'+place+'(?:今天|明天|后天|现在)?(?:的)?(?:天气|气温|温度|会下雨|下雨|降雨|要带伞|风大)','u'));
+    let name=(explicit?.[1]||query?.[1]||'').trim();
+    if(!name&&bare)name=source.replace(/^(?:那|那么|换成|改查|再查)\s*/,'').replace(/(?:呢|怎么样)?[？?。！!]*$/,'').trim();
+    name=name.replace(/(?:的)?(?:今天|明天|后天|现在)$/,'').trim();
+    if(!/^[\p{Script=Han}A-Za-z][\p{Script=Han}A-Za-z .]{1,39}$/u.test(name)||/今天|明天|后天|现在|天气|怎么样|哪里|这里|当地|什么|哪个|怎么|不用|取消|谢谢|你好|好的|算了|不查|我|不是|不要|还是|和|或者/.test(name))return null;
+    if(/^(香港|上环|中环|九龙|港大|香港大学)$/.test(name))return {name:'香港',latitude:22.3193,longitude:114.1694};
+    return {name};
   },
   weatherLocation(message,context={}){
-    const text=`${message||''} ${(context.memories||[]).map(item=>typeof item==='string'?item:item.content||'').join(' ')}`;
-    if(/香港|上环|中环|九龙|港大|香港大学/.test(text)) return {name:'香港',latitude:22.3193,longitude:114.1694};
-    const source=String(message||''), explicit=source.match(/我在([\u4e00-\u9fa5]{2,12})(?:[，,。！？]|$)/), match=source.match(/([\u4e00-\u9fa5]{2,12})(?:市|区|县)?(?:的)?天气/);
-    const name=(explicit?.[1]||match?.[1]||'').replace(/今天|明天|后天|现在|帮我|查一下|查看|看看|查/g,'').trim();
-    return name&&name.length>=2?{name}:null;
+    const previous=this.weatherContext(context), current=this.weatherPlace(message,!!previous);
+    if(current)return current;
+    if(previous?.location)return previous.location;
+    const places=(context.memories||[]).map(item=>this.weatherPlace(typeof item==='string'?item:item.content)).filter(Boolean);
+    const unique=[...new Map(places.map(place=>[place.name,place])).values()];
+    return unique.length===1?unique[0]:null;
   },
   weatherLabel(code){
     return ({0:'晴朗',1:'大致晴朗',2:'局部多云',3:'阴天',45:'有雾',48:'雾凇',51:'毛毛雨',53:'毛毛雨',55:'毛毛雨',61:'小雨',63:'中雨',65:'大雨',71:'小雪',73:'中雪',75:'大雪',80:'阵雨',81:'阵雨',82:'强阵雨',95:'雷雨',96:'雷雨伴冰雹',99:'强雷雨伴冰雹'})[Number(code)]||'天气多变';
   },
   async weatherReply(message,context={}){
     const location=this.weatherLocation(message,context);
-    if(!location) return {type:'clarify',reply:'你想查哪个城市或地区的天气？'};
+    const previous=this.weatherContext(context), day=/后天/.test(message)?2:/明天/.test(message)?1:/今天|现在/.test(message)?0:previous?.day||0;
+    const state={location,day}, result=(type,reply)=>({type,reply,weather:state});
+    if(!location) return result('clarify','你想查哪个城市或地区的天气？');
     const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),7000);
+    this.activeAgentController=controller;
+    const stopped=()=>{if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');};
     try{
       let place=location;
       if(place.latitude===undefined){
         const geocodingUrl=new URL(['https://geocoding','api.open','meteo.com/v1/search'].join(String.fromCharCode(45)));
         geocodingUrl.search=new URLSearchParams({name:place.name,count:'1',language:'zh',format:'json'}).toString();
         const geocoding=await fetch(geocodingUrl,{signal:controller.signal});
+        stopped();
+        if(!geocoding.ok)throw new Error('地点查询服务暂时不可用');
         const geocodingData=await geocoding.json();
+        stopped();
+        if(!geocodingData||typeof geocodingData!=='object'||(geocodingData.results!==undefined&&!Array.isArray(geocodingData.results)))throw new Error('地点响应无效');
         const found=geocodingData.results?.[0];
-        if(!found) return {type:'clarify',reply:`没有找到「${place.name}」。你能说得更具体一点吗？`};
+        if(!found) return result('clarify',`没有找到「${place.name}」。你能说得更具体一点吗？`);
+        if(typeof found.name!=='string'||!found.name.trim()||!Number.isFinite(found.latitude)||Math.abs(found.latitude)>90||!Number.isFinite(found.longitude)||Math.abs(found.longitude)>180)throw new Error('地点响应无效');
         place={name:found.name,latitude:found.latitude,longitude:found.longitude};
       }
       const weatherUrl=new URL(['https://api.open','meteo.com/v1/forecast'].join(String.fromCharCode(45)));
       weatherUrl.search=new URLSearchParams({latitude:String(place.latitude),longitude:String(place.longitude),current:'temperature_2m,apparent_temperature,weather_code,wind_speed_10m',daily:'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',forecast_days:'3',timezone:'auto'}).toString();
       const weather=await fetch(weatherUrl,{signal:controller.signal});
+      stopped();
       if(!weather.ok) throw new Error('天气服务暂时不可用');
-      const data=await weather.json(), offset=/后天/.test(message)?2:/明天/.test(message)?1:0;
+      const data=await weather.json(), offset=day;
+      stopped();
+      const required=[data?.daily?.weather_code?.[offset],data?.daily?.temperature_2m_max?.[offset],data?.daily?.temperature_2m_min?.[offset],data?.daily?.precipitation_probability_max?.[offset],...(offset?[]:[data?.current?.weather_code,data?.current?.temperature_2m,data?.current?.apparent_temperature,data?.current?.wind_speed_10m])];
+      if(!required.every(Number.isFinite))throw new Error('天气响应不完整');
       const daily=data.daily||{}, condition=this.weatherLabel(daily.weather_code?.[offset]??data.current?.weather_code), high=daily.temperature_2m_max?.[offset], low=daily.temperature_2m_min?.[offset], rain=daily.precipitation_probability_max?.[offset];
-      if(offset) return {type:'chat',reply:`${place.name}${offset===1?'明天':'后天'}${condition}，${low} 至 ${high}℃，降水概率约 ${rain}%。`};
+      if(offset) return result('chat',`${place.name}${offset===1?'明天':'后天'}${condition}，${low} 至 ${high}℃，降水概率约 ${rain}%。`);
       const current=data.current||{};
-      return {type:'chat',reply:`${place.name}现在${this.weatherLabel(current.weather_code)}，${current.temperature_2m}℃，体感 ${current.apparent_temperature}℃，风速 ${current.wind_speed_10m} 公里每小时。今天${condition}，${low} 至 ${high}℃，降水概率约 ${rain}%。`};
+      return result('chat',`${place.name}现在${this.weatherLabel(current.weather_code)}，${current.temperature_2m}℃，体感 ${current.apparent_temperature}℃，风速 ${current.wind_speed_10m} 公里每小时。今天${condition}，${low} 至 ${high}℃，降水概率约 ${rain}%。`);
     }catch(error){
-      if(error?.name==='AbortError') return {type:'chat',reply:'天气查询超时了，请稍后再试。'};
-      return {type:'chat',reply:'天气服务暂时不可用，请稍后再试。'};
-    }finally{clearTimeout(timer);}
+      if(controller.userCancelled)return {type:'cancelled',reply:''};
+      if(error?.name==='AbortError') return result('chat','天气查询超时了，请稍后再试。');
+      return result('chat','天气服务暂时不可用，请稍后再试。');
+    }finally{clearTimeout(timer);if(this.activeAgentController===controller)this.activeAgentController=null;}
   },
   cleanAgentItem(input={}){
     const categories=CONFIG.TAGS, timeTypes=['allday','slot','exact']; const score=Number(input.base_score); const item={};
@@ -2812,7 +2851,7 @@ const UI = {
   },
 
   agentContext(chatId,question='',role='chat'){
-    const history=S.messages.filter(x=>x.chatId===chatId && ['user','assistant'].includes(x.role)).sort((a,b)=>a.createdAt-b.createdAt).slice(-12).map(x=>({role:x.role,content:x.content}));
+    const history=S.messages.filter(x=>x.chatId===chatId && ['user','assistant'].includes(x.role)).sort((a,b)=>a.createdAt-b.createdAt).slice(-12).map(x=>({role:x.role,content:x.content,...(x.meta?.weather?{weather:x.meta.weather}:{})}));
     const useTasks=role==='task'||role==='planning';
     const useMemories=role==='planning'||role==='chat';
     const planning=role==='planning'?this.planningData(question):null;
@@ -3033,6 +3072,7 @@ const UI = {
       chat.updatedAt=Date.now(); await saveChat(chat); this.renderAgent(); return;
     }
     const message={id:uid(),chatId:chat.id,role:'assistant',content:result.reply||'我需要再确认一下。',type:result.type||'error',createdAt:Date.now(),meta:{agentRole:role}};
+    if(result.weather)message.meta.weather=result.weather;
     if(result.type==='proposal'||result.type==='batch_proposal'){
       message.type='proposal';
       const checked=this.validateAgentRequest(result.action,content);
