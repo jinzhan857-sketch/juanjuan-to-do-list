@@ -33,7 +33,7 @@ task 和 note 由你负责。没有地点、材料、链接、限制条件、提
 
 const AGENT_SYSTEM_PROMPT = `你是「卷卷」，一个温和、简洁、可靠的个人事务助手。你负责理解用户的自然语言，但不能直接执行任何操作。程序会依据你返回的结构先展示确认卡，用户确认后才执行。
 
-支持单条事务、批量新建日程和整组修改日程。用户明确说「全部」「每周」「每个周四」等整组范围时，返回 update_schedule_batch，并给出日期范围、重复星期、课程名称或课程编号等唯一匹配条件和要修改的 item。用户明确某个日期时只返回 update_schedule，绝不误改整组。范围或课程不唯一时必须先追问。
+支持单条事务、批量新建日程、整组修改和整组删除。用户明确说「全部」「每周」「每个周四」等整组范围时，返回 update_schedule_batch 或 delete_schedule_batch，并给出日期范围、重复星期、课程名称或课程编号等唯一匹配条件。上下文提供 series_id 时必须原样带回，优先按它定位整组。用户明确某个日期时只返回 update_schedule 或 delete_schedule，绝不误改整组。范围或课程不唯一时必须先追问。
 
 严格只返回 JSON，不输出 Markdown 或其他文字。返回格式只能是以下五种之一：
 
@@ -45,7 +45,7 @@ const AGENT_SYSTEM_PROMPT = `你是「卷卷」，一个温和、简洁、可靠
 
 weekdays 使用 1 到 7 表示周一到周日。用户说“每天”时返回 [1,2,3,4,5,6,7]。批量范围必须包含明确的 date_from 和 date_to。title 是日程定义，只写核心事务或课程名。课程编号和课程名称要保留在 title，例如「IDAT7222 先进CADCAM与AI驱动制造系统」。教室、教授、地点、材料和提醒写入 note，每项单独一行并使用清晰前缀，例如「教室：HK Plaza 31 楼」「教授：Dr.CK Chan Ali」。绝不把日期、重复、时间、地点或教授混进 title。
 
-action.kind 只能是 create_schedule、create_schedule_batch、update_schedule、update_schedule_batch、create_todo、update_todo、delete_schedule、delete_todo、convert_schedule_to_todo。
+action.kind 只能是 create_schedule、create_schedule_batch、update_schedule、update_schedule_batch、delete_schedule_batch、create_todo、update_todo、delete_schedule、delete_todo、convert_schedule_to_todo。
 
 创建日程时 item 使用 title、note、exec_date、time_type、slot、start_time、end_time、category、base_score。time_type 只能是 allday、slot、exact。exact 必须同时给出标准 24 小时制 start_time 和 end_time。slot 只能是 midnight、dawn、early、morning、noon、afternoon、dusk、evening。修改时间时也必须返回 time_type，并同时返回该时间类型需要的完整时间信息。
 
@@ -61,7 +61,7 @@ base_score 为 0 到 10 的数字。普通生活琐事通常 1 到 3 分，课�
 
 const PLANNING_SYSTEM_PROMPT = `你是「卷卷规划」，负责个性化辅助计划。你可以参考用户授权的记忆、近期日程和待办，帮助用户梳理目标、优先级、冲突、空档和可执行步骤。你不能直接创建、修改或删除任务。
 
-严格只返回 JSON。普通讨论返回 {"type":"chat","reply":"简洁的个性化方案"}。信息不足时返回 {"type":"clarify","reply":"明确缺少什么"}。当用户明确希望把建议转成日程或待办时，返回 {"type":"recommendation","reply":"先给出简短方案","recommendations":[{"evidence":"说明参考了哪些日程、待办或记忆","label":"交给卷卷事务创建","action":{"kind":"create_schedule","item":{"title":"日程定义","note":"备注","exec_date":"YYYY-MM-DD","time_type":"exact","start_time":"10:00","end_time":"11:00","category":"日常生活","base_score":3}}}]}。每次规划回复依次说明「卷卷看到的现实」「建议路线」「下一步」。上下文中的 planning 是本次可用资料的摘要，只能根据其中的日程、待办和记忆作判断。没有足够资料时，只追问一个最重要的问题。不能把没有具体时间的日期称为可用空档。批量日程使用 action.kind 为 create_schedule_batch，完整内容放在 rule。recommendation 只提出建议，程序会先让用户点击，再由卷卷事务展示确认卡。不得假装查询过实时信息或外部资料。`;
+严格只返回 JSON。普通讨论返回 {"type":"chat","reply":"简洁的个性化方案","used_evidence":[]}。信息不足时返回 {"type":"clarify","reply":"明确缺少什么","used_evidence":[]}。当用户明确希望把建议转成日程或待办时，返回 {"type":"recommendation","reply":"先给出简短方案","used_evidence":[{"kind":"schedule","id":"上下文日程 id"}],"recommendations":[{"evidence":"说明参考了哪些日程、待办或记忆","label":"交给卷卷事务创建","action":{"kind":"create_schedule","item":{"title":"日程定义","note":"备注","exec_date":"YYYY-MM-DD","time_type":"exact","start_time":"10:00","end_time":"11:00","category":"日常生活","base_score":3}}}]}。每次规划回复依次说明「卷卷看到的现实」「建议路线」「本周选择」「下一步」。上下文中的 planning 是本次可用资料的摘要，只能根据其中的日程、待办、记忆和 insights 作判断。insights 是程序已计算的事实，必须优先引用其中的冲突、负荷、日程间隔、未定时事项和高价值待办。日程间隔只是候选时间，不能称为确定空档。只有确实使用了上下文资料时才返回 used_evidence，元素只能是 {"kind":"schedule|todo|memory|insight","id":"上下文中实际存在的 id 或 insight 键"}。没有使用资料时必须返回空数组，不能编造资料或依据。没有足够资料时，只追问一个最重要的问题。不能把没有具体时间的日期称为可用空档。批量日程使用 action.kind 为 create_schedule_batch，完整内容放在 rule。recommendation 只提出建议，程序会先让用户点击，再由卷卷事务展示确认卡。不得假装查询过实时信息或外部资料。`;
 
 const CHAT_SYSTEM_PROMPT = `你是「卷卷聊天」，温和、自然、简洁。你可以使用用户授权的相关记忆和最近聊天来提供个性化陪伴与答疑。严格只返回 JSON，格式只能是 {"type":"chat","reply":"回复"} 或 {"type":"clarify","reply":"追问"}。不能编造实时信息、外部搜索结果或不存在的资料。不能创建、修改或删除任务；用户需要落地执行时，提醒可以交给卷卷事务。`;
 
@@ -219,6 +219,7 @@ function sanitizeBatchUpdateRule(input = {}) {
     match_title: shortText(input.match_title || input.title, 120),
     match_start_time: validTime(input.match_start_time),
     match_end_time: validTime(input.match_end_time),
+    series_id: shortText(input.series_id, 80) || null,
     category: categories.includes(input.category) ? input.category : null,
   };
 }
@@ -227,12 +228,17 @@ function parseAgentResult(content) {
   const data = parseJsonContent(content);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
   const reply = shortText(data.reply, 600) || '我需要再确认一下你的意思。';
-  if (type === 'chat' || type === 'clarify') return { type, reply };
+  const usedEvidence = (Array.isArray(data.used_evidence) ? data.used_evidence : []).slice(0, 5).map(item => ({
+    kind: ['schedule', 'todo', 'memory', 'insight'].includes(item?.kind) ? item.kind : '',
+    id: shortText(item?.id, 120),
+  })).filter(item => item.kind && item.id);
+  if (type === 'chat' || type === 'clarify') return { type, reply, used_evidence: usedEvidence };
   if (type === 'query') {
     const query = data.query || {};
     return {
       type,
       reply,
+      used_evidence: usedEvidence,
       query: {
         entity: query.entity === 'todo' ? 'todo' : 'schedule',
         date_from: validDate(query.date_from),
@@ -243,11 +249,12 @@ function parseAgentResult(content) {
     };
   }
   if (type === 'batch_proposal') {
-    const kind = data.action?.kind === 'update_schedule_batch' ? 'update_schedule_batch' : 'create_schedule_batch';
+    const kind = ['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action.kind : 'create_schedule_batch';
     return {
       type,
       reply,
-      action: { kind, target_id: null, rule: kind === 'update_schedule_batch' ? sanitizeBatchUpdateRule(data.action?.rule) : sanitizeBatchRule(data.action?.rule), item: kind === 'update_schedule_batch' ? sanitizeAgentItem(data.action?.item) : {} },
+      used_evidence: usedEvidence,
+      action: { kind, target_id: null, rule: kind === 'create_schedule_batch' ? sanitizeBatchRule(data.action?.rule) : sanitizeBatchUpdateRule(data.action?.rule), item: kind === 'update_schedule_batch' ? sanitizeAgentItem(data.action?.item) : {} },
     };
   }
   if (type === 'recommendation') {
@@ -255,6 +262,7 @@ function parseAgentResult(content) {
     return {
       type,
       reply,
+      used_evidence: usedEvidence,
       recommendations: recommendations.map((item) => ({
         evidence: shortText(item?.evidence, 240),
         label: shortText(item?.label, 30) || '交给卷卷事务创建',
@@ -263,11 +271,12 @@ function parseAgentResult(content) {
     };
   }
   const action = data.action || {};
-  const allowed = ['create_schedule', 'create_todo', 'update_schedule', 'update_schedule_batch', 'update_todo', 'delete_schedule', 'delete_todo', 'convert_schedule_to_todo'];
+  const allowed = ['create_schedule', 'create_todo', 'update_schedule', 'update_schedule_batch', 'delete_schedule_batch', 'update_todo', 'delete_schedule', 'delete_todo', 'convert_schedule_to_todo'];
   if (!allowed.includes(action.kind)) return { type: 'clarify', reply: '我还不能确定要执行哪一种操作，请换一种说法。' };
   return {
     type,
     reply,
+    used_evidence: usedEvidence,
     action: {
       kind: action.kind,
       target_id: shortText(action.target_id, 80) || null,
@@ -293,7 +302,7 @@ function compactAgentContext(context = {}) {
       id: shortText(item.id, 80), title: shortText(item.title, 120), note: shortText(item.note, 160),
       category: shortText(item.category, 20), done: Boolean(item.done),
     })),
-    memories: memories.map(item => shortText(item, 300)).filter(Boolean),
+    memories: memories.map(item => ({ id: shortText(item?.id, 80), category: shortText(item?.category, 40), content: shortText(item?.content || item, 300) })).filter(item => item.content),
     history: history.map(item => ({ role: item.role === 'assistant' ? 'assistant' : 'user', content: shortText(item.content, 500) })),
     planning: {
       date_from: validDate(planning.date_from), date_to: validDate(planning.date_to),
@@ -301,6 +310,13 @@ function compactAgentContext(context = {}) {
       todo_count: Math.max(0, Math.min(100, Number(planning.todo_count) || 0)),
       memory_count: Math.max(0, Math.min(30, Number(planning.memory_count) || 0)),
       schedule_examples: examples(planning.schedule_examples), todo_examples: examples(planning.todo_examples), memory_examples: examples(planning.memory_examples),
+      insights: planning.insights && typeof planning.insights === 'object' ? {
+        conflict_count: Math.max(0, Math.min(20, Number(planning.insights.conflict_count) || 0)),
+        busy_days: Array.isArray(planning.insights.busy_days) ? planning.insights.busy_days.slice(0, 5).map(item => ({ date: validDate(item?.date), occupied_hours: Math.max(0, Math.min(24, Number(item?.occupied_hours) || 0)) })) : [],
+        candidate_gaps: Array.isArray(planning.insights.candidate_gaps) ? planning.insights.candidate_gaps.slice(0, 5).map(item => ({ date: validDate(item?.date), start: validTime(item?.start), end: validTime(item?.end) })) : [],
+        unscheduled_count: Math.max(0, Math.min(100, Number(planning.insights.unscheduled_count) || 0)),
+        high_value_todos: examples(planning.insights.high_value_todos),
+      } : {},
     },
   };
 }
