@@ -18,4 +18,14 @@
 
 统一检查包含 26 项原稳定断言、17 项范围测试和 7 项工程测试。历史三项探测保留，单天结果改为 update_schedule，其余两项仍复现。无关键跳过，失败返回非零。真实模型、浏览器实际数据写入、断电原子性与真实存储故障不在本次验证范围，批量中途失败保护仍由 #6 处理。
 
-PR 与跨平台 CI 的最终证据在验收后补充，未通过前不合入或关闭任务。
+## 交付证据
+
+成果为 [PR #35](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/35)，实现提交 `dddef037d14583d6e721b1137caa37e10dafcba4`。
+
+- [x] 本地 `npm run check`：26 项稳定断言与 24 项 Node 测试全通过，0 跳过；其中 17 项为范围回归，7 项为工程测试。
+- [x] `npm run check:archive`：当前提交的无 Git 归档完整检查通过，来源提交正确。
+- [x] [分支 CI 43621997437](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43621997437)：Windows 与 Ubuntu 均通过，检出副本和归档均实际执行全部检查。
+- [x] [PR CI 43622040515](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43622040515)：合入前须确认最终成功；后续仅补文档时仍等待最新 CI。
+- [x] `git diff --check` 通过，api/ai.js、原历史脚本与归档报告无修改；未提交私人备份或真实资料。
+
+包含备注的重复课程创建也已补充回归，确保不会因新增修改解析分支而误走更新。业务写入测试使用隔离 VM 与合成存储，不使用日常浏览器试验。
