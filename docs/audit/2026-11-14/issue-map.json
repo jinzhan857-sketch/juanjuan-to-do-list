@@ -1,0 +1,195 @@
+{
+  "createdOn": "2026-11-14",
+  "type": "Task creation evidence, not live progress",
+  "parent": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1",
+  "tasks": [
+    {
+      "key": "C01",
+      "number": 2,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2",
+      "phase": "current",
+      "dependencies": []
+    },
+    {
+      "key": "C02",
+      "number": 3,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3",
+      "phase": "current",
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "key": "C03",
+      "number": 4,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4",
+      "phase": "current",
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "key": "C04",
+      "number": 5,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5",
+      "phase": "current",
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "key": "C05",
+      "number": 6,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6",
+      "phase": "current",
+      "dependencies": [
+        2,
+        3
+      ]
+    },
+    {
+      "key": "C06",
+      "number": 7,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7",
+      "phase": "current",
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "key": "C07",
+      "number": 8,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/8",
+      "phase": "current",
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "key": "C08",
+      "number": 9,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/9",
+      "phase": "current",
+      "dependencies": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "key": "C09",
+      "number": 10,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/10",
+      "phase": "current",
+      "dependencies": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "key": "V01",
+      "number": 11,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11",
+      "phase": "v3",
+      "dependencies": []
+    },
+    {
+      "key": "V02",
+      "number": 12,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/12",
+      "phase": "v3",
+      "dependencies": [
+        11
+      ]
+    },
+    {
+      "key": "V03",
+      "number": 13,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/13",
+      "phase": "v3",
+      "dependencies": [
+        11
+      ]
+    },
+    {
+      "key": "V04",
+      "number": 14,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/14",
+      "phase": "v3",
+      "dependencies": [
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "key": "V05",
+      "number": 15,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/15",
+      "phase": "v3",
+      "dependencies": [
+        13,
+        14
+      ]
+    },
+    {
+      "key": "V06",
+      "number": 16,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/16",
+      "phase": "v3",
+      "dependencies": [
+        14,
+        15
+      ]
+    },
+    {
+      "key": "V07",
+      "number": 17,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/17",
+      "phase": "v3",
+      "dependencies": [
+        16
+      ]
+    },
+    {
+      "key": "V08",
+      "number": 18,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/18",
+      "phase": "v3",
+      "dependencies": [
+        17
+      ]
+    },
+    {
+      "key": "V09",
+      "number": 19,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/19",
+      "phase": "v3",
+      "dependencies": [
+        12,
+        15
+      ]
+    },
+    {
+      "key": "V10",
+      "number": 20,
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/20",
+      "phase": "v3",
+      "dependencies": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ]
+    }
+  ]
+}

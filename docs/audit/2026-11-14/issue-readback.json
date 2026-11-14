@@ -1,0 +1,173 @@
+[
+  {
+    "key": "C01",
+    "number": 2,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C02",
+    "number": 3,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C03",
+    "number": 4,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C04",
+    "number": 5,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C05",
+    "number": 6,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C06",
+    "number": 7,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C07",
+    "number": 8,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C08",
+    "number": 9,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "C09",
+    "number": 10,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V01",
+    "number": 11,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V02",
+    "number": 12,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V03",
+    "number": 13,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V04",
+    "number": 14,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V05",
+    "number": 15,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V06",
+    "number": 16,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V07",
+    "number": 17,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V08",
+    "number": 18,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V09",
+    "number": 19,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  },
+  {
+    "key": "V10",
+    "number": 20,
+    "contentComplete": true,
+    "dependenciesCorrect": true,
+    "labelsPresent": true,
+    "nativeParentPresent": true,
+    "acceptanceCheckboxes": 3
+  }
+]
