@@ -49,25 +49,26 @@
 
 ## 本地预览
 
-准备 Git 与 Node.js。本轮文档验证使用 Node.js 24；其他版本未逐一验证。第一次执行 `npx` 会下载静态服务器，需要网络。
+准备 Node.js 24.16.0 与 npm 11.13.0。工具链没有第三方依赖，版本固定在 `.node-version` 和 `package.json`。
 
 ```powershell
 git clone git@github.com:jinzhan857-sketch/juanjuan-to-do-list.git
 cd juanjuan-to-do-list
-npx --yes http-server . -a 127.0.0.1 -p 4173 -c-1
+npm ci --ignore-scripts
+npm run dev
 ```
 
-打开 <http://127.0.0.1:4173/>，停止服务按 `Ctrl+C`。私有仓库需要访问权限和已配置的 GitHub SSH 登录，也可以在 GitHub 下载 ZIP 后从解压目录运行最后一条命令。
+打开 <http://127.0.0.1:4173/>，停止服务按 `Ctrl+C`。私有仓库需要权限，也可以在 GitHub 下载 ZIP 后从解压目录运行两条 npm 命令。
 
-这只启动静态页面，不会启动 `api/ai.js`。模型配置、浏览器数据隔离及完整步骤见[开发说明](docs/development/README.md)。当前还没有统一构建命令，不要假设 `dist` 会随源码自动更新。
+这只启动静态页面，不会启动 `api/ai.js`。生成产物执行 `npm run build`，预览产物执行 `npm run preview`，统一检查执行 `npm run check`。dist 是生成目录，不再入库。来源追踪与完整步骤见[开发说明](docs/development/README.md)。
 
 ## 检查与后续工作
 
 ```powershell
-node scripts/check-docs.cjs
+npm run check
 ```
 
-这是文档本地链接与标题锚点检查。业务基线检查使用合成数据，可运行 `node docs/audit/2026-11-14/check-baseline.cjs`，当前 26 项局部断言通过，同时保留三项已知问题探测。源码与报告见[基线交付报告](docs/audit/2026-11-14/issue2-baseline.md)。统一启动、打包与 CI 留给 #3。范围和现有本地执行方法见[测试与验收](docs/development/TESTING.md)。
+统一检查包含构建、文档链接、26 项稳定断言、三项已知问题探测和工程测试。通过不代表三项问题已修复。原始证据见[基线报告](docs/audit/2026-11-14/issue2-baseline.md)，范围和 CI 方法见[测试与验收](docs/development/TESTING.md)。
 
 先完成当前代的资料、任务和工程整理，再按前置条件进入 3.0。GitHub 保存完整实施资料，飞书保留[3.0 全文副本](https://my.feishu.cn/wiki/XZEowYCowiqCGykqn9wcTNn7nfe)。任务进度以 Issue 为准。
 

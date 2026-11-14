@@ -20,3 +20,7 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# Generated artifacts; rebuild from source, never hand edit
+/dist/
+/.reports/

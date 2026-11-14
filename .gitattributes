@@ -1,0 +1,7 @@
+.source-revision export-subst
+index.html text eol=lf
+api/ai.js text eol=lf
+scripts/*.cjs text eol=lf
+package*.json text eol=lf
+.node-version text eol=lf
+.source-revision text eol=lf
