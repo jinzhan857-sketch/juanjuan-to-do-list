@@ -6,6 +6,10 @@
 
 从已合入 #5 的 main 提交 6647c9c 开始，#2、#3 前置满足，工作区干净。本轮仅实现导入及批量写入保护，使用事务完成信号、整批提交、提交后更新内存和确认前置快照；不重做 #3 至 #5。实现与验证见[#6 报告](audit/2026-11-15/issue6-atomicity.md)，配套 #37 的关键故障证据与剩余人工体验见[检查矩阵](audit/2026-11-15/issue37-storage-matrix.md)。PR、CI 和是否合入以 [Issue #6](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6) 为准。未部署、迁移真实资料或调用模型。
 
+## 当前接手结论：任务 #40
+
+2026 年 11 月 15 日，已查明 GitHub Pages 的 404 原因：当前账号下私有仓库的 Pages 不可用，设置页要求升级或公开。展确认公开仓库并免费恢复原 Pages，替代本次早先保持私有的偏好。已启用 Actions 来源，新增手动发布工作流；部署和实机验收见 [#40](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)。本任务不改应用行为、不调用模型、不迁移资料。发布方式以[发布说明](development/RELEASE.md)为准，下方的私有仓库和旧站点描述保留作历史。
+
 ## 历史接手结论：任务 #5
 
 基于已合入 #3、#4 的 main 提交 5e009c4，仅修复重复组身份传递和校验。本轮开始工作区干净，没有覆盖此前成果。合法组编号原样传递，非法、编造或漏掉已有组编号的操作被拦截。同名多组、确认后组成员变化继续追问或停止。合成测试与交付范围见[#5 报告](audit/2026-11-15/issue5-series.md)，PR 与 CI 链接以 [Issue #5](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5) 为准。未部署、迁移真实数据或调用真实模型，#7 等其他任务保持原范围。下方保留历史结论。
