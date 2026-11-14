@@ -1,0 +1,31 @@
+{
+  "executedAt": "2026-11-14T19:26:27.805Z",
+  "timeZone": "Asia/Shanghai",
+  "runtime": "v24.16.0",
+  "base": "bd67918ecf283691579c8dd791444480634b3d5a",
+  "sourceSha256": "93b34b46594d319b328c297c4e2bbb16fb55ad2e9775a641593227cc027ceecf",
+  "before": {
+    "scope": {
+      "tests": 37,
+      "pass": 30,
+      "fail": 7
+    },
+    "storage": {
+      "tests": 111,
+      "pass": 74,
+      "fail": 37
+    }
+  },
+  "after": {
+    "tests": 227,
+    "pass": 227,
+    "fail": 0
+  },
+  "nativeBrowser": {
+    "origin": "http://127.0.0.1:4174/",
+    "database": "juanjuan-issue6-synthetic",
+    "pass": 11,
+    "fail": 0
+  },
+  "realModelCalls": 0
+}

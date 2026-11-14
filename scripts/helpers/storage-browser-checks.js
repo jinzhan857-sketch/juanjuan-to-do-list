@@ -18,6 +18,20 @@ document.querySelector('button').onclick=async()=>{
  const expected=await snapshot();let rejected=false;try{await replaceBackup({app:'卷卷AI Todo',version:'2.2',tasks:[{id:'duplicate'},{id:'duplicate'}]});}catch(error){rejected=true;}
  check('非法备份在清空前拒绝',rejected&&JSON.stringify(await snapshot())===JSON.stringify(expected));
  DB._db.close();await DB.open();check('重开数据库后结果仍一致',JSON.stringify(await snapshot())===JSON.stringify(expected));
- out.textContent+='\n全部 7 项通过。仅使用合成数据库，未调用模型。';
+ const backup={app:'卷卷AI Todo',version:'2.2',...Object.fromEntries([...DATA_STORES,...DATA_KV].map(key=>[key,copyData(S[key])])),appearance:{followSystem:true,lightTheme:'warm',darkTheme:'soft',fixedTheme:'warm'}};
+ const request='11月9日不要改，只改11月16日同名课程备注改成带电脑';
+ const proposal=AIService._localAgent(request,UI.agentContext('chat',request,'task'),'task');
+ check('多日期请求追问，模型猜测目标也被拒绝且原库不变',proposal.type==='clarify'&&!UI.validateAgentRequest({kind:'delete_schedule',target_id:'a',item:{}},request).ok&&JSON.stringify(await snapshot())===JSON.stringify(expected));
+ const invalid=copyData(backup);invalid.tasks[0].status='invalid-status';rejected=false;
+ try{await replaceBackup(invalid);}catch(error){rejected=true;}
+ check('非法状态整份拒绝，数据库和内存均保留',rejected&&JSON.stringify(await snapshot())===JSON.stringify(expected)&&S.tasks[0].status!=='invalid-status');
+ for(const status of [null,'done','doing','failed','paused','skipped']){const valid=copyData(backup);Object.assign(valid.tasks[0],{status,finalScore:0,statusEditCount:0});validateBackup(valid);}
+ check('全部现有合法状态均通过共用校验',true);
+ action=copyData(action);UI.captureAgentScope(action);S.operations=[];S.messages=[{id:'m2',chatId:'chat',role:'assistant',content:'待确认',meta:{status:'pending',action}}];
+ await DB.batch([{store:'operations',type:'clear'},{store:'messages',type:'clear'},{store:'messages',value:S.messages[0]}]);
+ await UI.confirmAgentAction('m2');S.operations[0].before[0].status='invalid-status';await DB.put('operations',S.operations[0]);
+ const damaged=JSON.stringify(await snapshot());await UI.undoAgentOperation('m2');
+ check('损坏状态的撤销快照拒绝执行，已保存数据不被覆盖',JSON.stringify(await snapshot())===damaged&&S.operations[0].status==='done');
+ out.textContent+='\n全部 11 项通过。仅使用合成数据库，未调用模型。';
  }catch(error){out.textContent+='\n失败：'+error.stack;}
 };

@@ -87,3 +87,49 @@ test('creating a recurring course with a note does not become an update',()=>{
   const a=load();a.run('S.tasks=[]');
   assert.equal(a.propose('创建11到12月每周一19点到21点IDAT7215，备注带电脑').action?.kind,'create_schedule_batch');
 });
+
+const conflictingDates=[
+ '11月9日不要改，只改11月16日IDAT7215备注改成带电脑',
+ '11月9日保持不变，只改11月16日IDAT7215备注改成带电脑',
+ '只改11月16日，11月9日不改，IDAT7215备注改成带电脑',
+ '2026-11-09不改，只改2026/11/16的IDAT7215备注',
+ '2026年11月9日保留，删除2026年11月16日的IDAT7215',
+ '删除11月9日和11月16日的IDAT7215',
+ '今天不改，明天IDAT7215备注改成带电脑',
+ '今晚保留，明晚IDAT7215备注改成带电脑',
+ '后天不改，大后天IDAT7215备注改成带电脑',
+ '周一不改，下周二IDAT7215备注改成带电脑',
+ '11月9日还是11月16日IDAT7215备注改成带电脑',
+ '11月9日IDAT7215备注不要改，只改11月16日备注改成带电脑',
+ '11月9日IDAT7215备注保持不变；删除11月16日IDAT7215',
+ '11月9日IDAT7215备注改成带电脑，11月16日不改',
+ '11月9日IDAT7215备注改成带电脑。删除11月16日IDAT7215',
+ '11月9日IDAT7215备注改成带电脑\n11月16日不改',
+ '11月9日IDAT7215备注为带电脑，11月16日备注不改'
+];
+for(const request of conflictingDates)test('multiple date constraints clarify locally and reject model targets: '+request,()=>{
+ const a=load(),before=a.json('S.tasks');
+ assert.equal(a.propose(request).type,'clarify');
+ for(const kind of ['update_schedule','delete_schedule'])for(const target_id of ['a','b']){
+  a.context.action={kind,target_id,item:kind==='update_schedule'?{note:'new'}:{}};
+  assert.equal(a.run('UI.validateAgentRequest(action,request).ok'),false);
+ }
+ assert.deepEqual(a.json('DB.saved'),[]);assert.deepEqual(a.json('DB.deleted'),[]);assert.deepEqual(a.json('S.tasks'),before);
+});
+for(const request of [
+ '11月16日IDAT7215备注改成带电脑',
+ '2026-11-16的IDAT7215备注改成带电脑',
+ '2026/11/16的IDAT7215备注改成带电脑',
+ '2026年11月16日的IDAT7215备注改成带电脑',
+ '明天IDAT7215备注改成带电脑',
+ '明晚IDAT7215备注改成带电脑',
+ '下周一IDAT7215备注改成带电脑',
+ '11月16日，也就是2026-11-16的IDAT7215备注改成带电脑',
+ '11月16日IDAT7215备注改成11月9日带电脑'
+])test('single resolved date still persists exactly one target: '+request,async()=>{
+ const a=load(),before=a.json('S.tasks');a.context.action=a.propose(request).action;
+ assert.equal(a.run('UI.validateAgentRequest(action,request).ok'),true);
+ a.run('UI.captureAgentScope(action)');await a.run("UI.executeAgentAction(action,{id:'m',chatId:'test'})");
+ assert.deepEqual(a.json('S.tasks[0]'),before[0]);
+ assert.deepEqual(a.json("DB.saved.filter(x=>x.store==='tasks').map(x=>x.value.id)"),['b']);
+});
