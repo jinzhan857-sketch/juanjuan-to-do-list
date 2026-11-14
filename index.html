@@ -1368,6 +1368,44 @@ async function commitDataChanges(changes,expected={}){
 }
 const DATA_STORES=['tasks','todos','chats','messages','memories','operations'];
 const DATA_KV=['pet','dayStats','customTags','memoryGroups'];
+function validateStoredRecord(item,schedule){
+  const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
+  const fail=message=>{throw new Error(message);};
+  if(!object(item)||typeof item.id!=='string'||!item.id.trim()||item.id!==item.id.trim())fail('记录编号不合法');
+
+    if(typeof item.title!=='string'||!item.title.trim())fail('日程或待办缺少标题');
+    if(item.note!==undefined&&typeof item.note!=='string')fail('备注字段不合法');
+    if(item.done!==undefined&&typeof item.done!=='boolean')fail('待办完成状态不合法');
+    if(typeof item.baseScore!=='number'||!Number.isFinite(item.baseScore)||item.baseScore<0||item.baseScore>10)fail('基础分不合法');
+    for(const key of ['images','links'])if(item[key]!==undefined&&!Array.isArray(item[key]))fail('附件字段必须是数组');
+    if((item.images||[]).length>5||(item.images||[]).some(img=>!object(img)||typeof img.data!=='string'||!/^data:image\//.test(img.data)))fail('图片格式或数量不合法');
+    if((item.links||[]).length>5||(item.links||[]).some(link=>typeof link!=='string'||!/^https?:\/\//i.test(link)))fail('链接格式或数量不合法');
+  if(schedule){const task=item;
+
+    if(!validDateStr(task.execDate)||!['allday','slot','exact'].includes(task.timeType))fail('日程日期或时间类型不合法');
+    if(task.timeType==='exact'&&(!validTimeStr(task.startTime)||!validTimeStr(task.endTime)||minOf(task.endTime)<=minOf(task.startTime)))fail('日程具体时间不合法');
+    if(task.timeType==='slot'&&!slotByKey(task.slot))fail('日程时段不合法');
+    if(task.seriesId!=null&&!validSeriesId(task.seriesId))fail('日程组编号不合法');
+  }
+}
+function validateOperationSnapshots(operation){
+  const fail=()=>{throw new Error('操作记录快照不完整或目标不一致，不能导入或撤销。');};
+  const kind=operation.kind, allowed=['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'];
+  if(!allowed.includes(kind)||typeof operation.summary!=='string')fail();
+  const batch=kind.endsWith('_batch'), create=kind.startsWith('create_'), remove=kind.startsWith('delete_'), convert=kind==='convert_schedule_to_todo';
+  const records=key=>{
+    const value=operation[key], absent=key==='before'?create:remove;
+    if(absent){if(key==='after'&&batch){if(!Array.isArray(value)||value.length)fail();}else if(value!==null)fail();return [];}
+    const values=batch?value:[value];
+    if(!Array.isArray(values)||!values.length)fail();
+    const ids=new Set();
+    for(const record of values){validateStoredRecord(record,convert?key==='before':kind.includes('schedule'));if(ids.has(record.id))fail();ids.add(record.id);}
+    return values;
+  };
+  const before=records('before'),after=records('after');
+  if(kind.startsWith('update_')&&recordFingerprint(before.map(value=>({id:value.id})))!==recordFingerprint(after.map(value=>({id:value.id}))))fail();
+  if(convert&&after[0].sourceTaskId!==before[0].id)fail();
+}
 function validateBackup(input){
   const data=copyData(input), object=value=>value&&typeof value==='object'&&!Array.isArray(value);
   const fail=message=>{throw new Error(message);};
@@ -1377,29 +1415,15 @@ function validateBackup(input){
     if(!Array.isArray(data[key]))fail(key+' 必须是数组');
     const seen=new Set();for(const item of data[key]){if(!object(item)||!id(item.id)||seen.has(item.id))fail(key+' 存在缺少或重复的 id');seen.add(item.id);}
   }
-  for(const item of [...data.tasks,...data.todos]){
-    if(typeof item.title!=='string'||!item.title.trim())fail('日程或待办缺少标题');
-    if(item.note!==undefined&&typeof item.note!=='string')fail('备注字段不合法');
-    if(item.done!==undefined&&typeof item.done!=='boolean')fail('待办完成状态不合法');
-    if(typeof item.baseScore!=='number'||!Number.isFinite(item.baseScore)||item.baseScore<0||item.baseScore>10)fail('基础分不合法');
-    for(const key of ['images','links'])if(item[key]!==undefined&&!Array.isArray(item[key]))fail('附件字段必须是数组');
-    if((item.images||[]).length>5||(item.images||[]).some(img=>!object(img)||typeof img.data!=='string'||!/^data:image\//.test(img.data)))fail('图片格式或数量不合法');
-    if((item.links||[]).length>5||(item.links||[]).some(link=>typeof link!=='string'||!/^https?:\/\//i.test(link)))fail('链接格式或数量不合法');
-  }
-  for(const task of data.tasks){
-    if(!validDateStr(task.execDate)||!['allday','slot','exact'].includes(task.timeType))fail('日程日期或时间类型不合法');
-    if(task.timeType==='exact'&&(!validTimeStr(task.startTime)||!validTimeStr(task.endTime)||minOf(task.endTime)<=minOf(task.startTime)))fail('日程具体时间不合法');
-    if(task.timeType==='slot'&&!slotByKey(task.slot))fail('日程时段不合法');
-    if(task.seriesId!=null&&!validSeriesId(task.seriesId))fail('日程组编号不合法');
-  }
+  for(const item of data.tasks)validateStoredRecord(item,true);
+  for(const item of data.todos)validateStoredRecord(item,false);
   const chats=new Set(data.chats.map(x=>x.id)), messages=new Set(data.messages.map(x=>x.id));
   for(const chat of data.chats)if(typeof chat.title!=='string')fail('聊天标题不合法');
   for(const message of data.messages)if(!chats.has(message.chatId)||!['user','assistant'].includes(message.role)||typeof message.content!=='string')fail('消息内容或聊天引用不合法');
   const kinds=['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'];
   for(const operation of data.operations){
     if(!chats.has(operation.chatId)||!messages.has(operation.messageId)||data.messages.find(message=>message.id===operation.messageId)?.chatId!==operation.chatId||!['done','undone'].includes(operation.status)||!kinds.includes(operation.kind))fail('操作记录引用或状态不合法');
-    const batch=operation.kind.endsWith('_batch');
-    for(const key of ['before','after']){const value=operation[key];if(value!=null&&(batch?!Array.isArray(value):!object(value)))fail('操作记录快照结构不合法');for(const record of (batch?value||[]:value?[value]:[])){if(!object(record)||!id(record.id)||typeof record.title!=='string')fail('操作记录快照不合法');}}
+    validateOperationSnapshots(operation);
   }
   for(const memory of data.memories)if(typeof memory.content!=='string')fail('记忆内容不合法');
   for(const group of data.memoryGroups)if(typeof group.name!=='string'||!group.name.trim())fail('资料框名称不合法');
@@ -3232,6 +3256,7 @@ const UI = {
     const message=S.messages.find(x=>x.id===messageId&&x.chatId===this.agentChatId);
     const operation=S.operations.find(x=>x.id===message?.meta?.operationId);
     if(!message||!operation||operation.status!=='done')return;
+    try{validateOperationSnapshots(operation);}catch(error){toast(error.message);return;}
     const expected=agentWriteExpectation(), changes=[], kind=operation.kind;
     const batch=kind.endsWith('_batch'), todo=kind.endsWith('_todo'), store=todo?'todos':'tasks';
     const before=batch?(operation.before||[]):operation.before?[operation.before]:[];

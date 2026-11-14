@@ -50,7 +50,7 @@ for(const kind of ['update_schedule_batch','delete_schedule_batch','create_sched
 for(const fault of ['tasks','operations','kv']){
   test('import rollback at '+fault+' preserves full backup',async t=>{
     const a=await fixture(t),before=await a.snapshot(),memory=a.memory();
-    const data=a.backup();data.tasks[0].note='imported';data.pet.growth=99;data.operations.push({id:'import-op',chatId:'chat',messageId:'m',kind:'update_schedule',status:'done'});a.ctx.data=data;a.ctx.expected=before;
+    const data=a.backup();data.tasks[0].note='imported';data.pet.growth=99;data.operations.push({id:'import-op',chatId:'chat',messageId:'m',kind:'create_todo',status:'done',summary:'合成创建',before:null,after:structuredClone(data.todos[0])});a.ctx.data=data;a.ctx.expected=before;
     a.fail(fault,1,'put',fault==='kv'?'quota':'abort');
     await assert.rejects(a.run('replaceBackup(data,expected)'));
     assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
@@ -182,4 +182,49 @@ test('import renderer failure after commit reports imported data accurately',asy
   a.run('App.importData(event)');await a.ctx.readDone;await a.run('importOK()');
   assert.equal((await a.snapshot()).tasks.find(task=>task.id==='a').note,'import committed');
   assert.match(a.json('notices').at(-1),/资料已导入/);
+});
+
+for(const [name,damage] of [
+ ['missing snapshot date',"delete data.operations[0].before[0].execDate"],
+ ['changed update identity',"data.operations[0].before[0].id='other'"],
+ ['duplicate snapshot id',"data.operations[0].before.push(copyData(data.operations[0].before[0]))"],
+ ['missing update after',"delete data.operations[0].after"]
+])test('import rejects unsafe undo history: '+name,async t=>{
+  const a=await fixture(t);await a.run("UI.confirmAgentAction('m')");
+  a.ctx.data=a.backup();a.run(damage);const before=await a.snapshot();
+  await assert.rejects(a.run('replaceBackup(data)'));assert.deepEqual(await a.snapshot(),before);
+});
+test('undo refuses malformed persisted snapshots without any writes',async t=>{
+  const a=await fixture(t);await a.run("UI.confirmAgentAction('m')");
+  a.run("delete S.operations[0].before[0].execDate");await a.run("DB.put('operations',S.operations[0])");
+  const before=await a.snapshot();await a.run("UI.undoAgentOperation('m')");
+  assert.deepEqual(await a.snapshot(),before);
+});
+
+const actionCases=[
+ ['create_schedule',"{kind:'create_schedule',item:{title:'新增',exec_date:'2026-11-18',time_type:'allday',base_score:3}}"],
+ ['create_todo',"{kind:'create_todo',item:{title:'新增待办',base_score:3}}"],
+ ['update_schedule',"{kind:'update_schedule',target_id:'a',item:{note:'new'}}"],
+ ['delete_schedule',"{kind:'delete_schedule',target_id:'a',item:{}}"],
+ ['update_todo',"{kind:'update_todo',target_id:'todo',item:{note:'new'}}"],
+ ['delete_todo',"{kind:'delete_todo',target_id:'todo',item:{}}"],
+ ['convert_schedule_to_todo',"{kind:'convert_schedule_to_todo',target_id:'a',item:{}}"],
+ ['create_schedule_batch',"{kind:'create_schedule_batch',rule:{date_from:'2026-11-09',date_to:'2026-11-16',weekdays:[1],title:'新增课程',time_type:'exact',start_time:'12:00',end_time:'13:00'}}"],
+ ['update_schedule_batch','action'],
+ ['delete_schedule_batch',"{...action,kind:'delete_schedule_batch'}"]
+];
+for(const [kind,expression] of actionCases)test('valid '+kind+' history exports and undoes without losing records',async t=>{
+  const a=await fixture(t),before=a.memory();a.run('action='+expression+';UI.captureAgentScope(action)');
+  await a.run('UI.executeAgentAction(action,S.messages[0])');a.ctx.data=a.backup();
+  assert.doesNotThrow(()=>a.run('validateBackup(data)'));
+  await a.run("UI.undoAgentOperation('m')");
+  const byId=(a,b)=>a.id.localeCompare(b.id);
+  assert.deepEqual(a.json('S.tasks').sort(byId),before.tasks.sort(byId));assert.deepEqual(a.json('S.todos').sort(byId),before.todos.sort(byId));
+  assert.equal(a.json('S.operations[0].status'),'undone');
+});
+test('concurrent undo restores one batch and leaves one undone operation',async t=>{
+  const a=await fixture(t);await a.run("UI.confirmAgentAction('m')");
+  await a.run("Promise.all([UI.undoAgentOperation('m'),UI.undoAgentOperation('m')])");
+  const saved=await a.snapshot();assert.equal(saved.operations.length,1);assert.equal(saved.operations[0].status,'undone');
+  assert.equal(saved.tasks.find(task=>task.id==='a').note,'old');
 });

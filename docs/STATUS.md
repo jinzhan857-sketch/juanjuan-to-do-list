@@ -6,6 +6,8 @@
 
 从已合入 #5 的 main 提交 6647c9c 开始，#2、#3 前置满足，工作区干净。本轮仅实现导入及批量写入保护，使用事务完成信号、整批提交、提交后更新内存和确认前置快照；不重做 #3 至 #5。实现与验证见[#6 报告](audit/2026-11-15/issue6-atomicity.md)，配套 #37 的关键故障证据与剩余人工体验见[检查矩阵](audit/2026-11-15/issue37-storage-matrix.md)。PR、CI 和是否合入以 [Issue #6](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6) 为准。未部署、迁移真实资料或调用模型。
 
+下一轮按展授权仅推进 [#7](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7)，先读[接手入口](development/HANDOFF_ISSUE7.md)。#6 的 PR #46 复审补齐损坏撤销快照保护，当前 64 项存储测试和 113 项 Node 测试通过；最终合入及关闭状态以任务页为准，#37 不随 #6 自动关闭。
+
 ## 当前接手结论：任务 #40
 
 2026 年 11 月 15 日，已查明 GitHub Pages 的 404 原因：当前账号下私有仓库的 Pages 不可用，设置页要求升级或公开。展确认公开仓库并免费恢复原 Pages，替代本次早先保持私有的偏好。已启用 Actions 来源，新增手动发布工作流；Pages 已成功发布，原网址桌面探测和 Chrome 加载通过，展已确认手机能正常打开；证据见[验收报告](audit/2026-11-15/issue40-pages.md)。任务记录见 [#40](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)。本任务不改应用行为、不调用模型、不迁移资料。发布方式以[发布说明](development/RELEASE.md)为准，下方的私有仓库和旧站点描述保留作历史。
