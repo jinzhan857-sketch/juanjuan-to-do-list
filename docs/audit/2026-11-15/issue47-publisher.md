@@ -41,7 +41,7 @@
 
 ## 复验入口
 
-npm run check 包含构建、文档链接、26 项稳定断言及 Node 测试。独立评分入口为 node --test scripts/quick-score.test.mjs；发布与数据库入口为 node --test scripts/publisher.test.cjs。本轮最终数量和 CI 以 PR 记录为准，最终本地完整回归为 208 项通过，包含识别成功但渲染失败不得自动发布的补测。新增业务测试只使用合成资料，固定版本 fake-indexeddb 验证事务，真实浏览器另行核对原生持久化。
+npm run check 包含构建、文档链接、26 项稳定断言及 Node 测试。独立评分入口为 node --test scripts/quick-score.test.mjs；发布与数据库入口为 node --test scripts/publisher.test.cjs。本轮最终数量和 CI 以 PR 记录为准，最终本地完整回归为 209 项通过，包含识别成功但渲染失败不得自动发布的补测。新增业务测试只使用合成资料，固定版本 fake-indexeddb 验证事务，真实浏览器另行核对原生持久化。
 
 node scripts/publisher-browser.cjs 提供 http://127.0.0.1:4176/ 隔离人工入口，模型模式可选成功、失败、追问及延迟；不会调用真实模型，正式 4173 资料不受影响。正式应用不能为验收改成模拟模型，此替身只存在于独立测试服务器。
 

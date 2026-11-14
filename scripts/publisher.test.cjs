@@ -102,3 +102,8 @@ test('successful recognition with rendering failure never becomes automatic publ
  const a=await fixture(t);a.run("AIService.evaluate=async()=>({task:'识别内容',base_score:8,source:'ai'});UI.renderCreate=()=>{if(UI.cState.recognized)throw Error('render')}");
  await a.run('UI.onAIClick()');assert.equal((await a.snapshot()).tasks.length,0);assert.equal(a.run('UI.cState.ai.base_score'),8);assert.match(a.notices.at(-1),/识别成功/);
 });
+
+test('replaying persisted draft cannot overwrite its already saved record',async t=>{
+ const a=await fixture(t);a.run('draft=copyData(UI.cState)');await a.run('UI.onSave()');const before=await a.snapshot();
+ a.run("UI.cState=draft;UI.cState.resultTitle='不应覆盖'");await a.run('UI.onSave()');assert.deepEqual(await a.snapshot(),before);assert.match(a.notices.at(-1),/已保存/);
+});

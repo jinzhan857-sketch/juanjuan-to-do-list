@@ -3881,6 +3881,9 @@ const UI = {
       const store=c.kind==='todo'?'todos':'tasks',id=this.todoEditingId||this.editingId;
       const old=id?S[store].find(t=>t.id===id):null;
       if(id&&!old)throw new Error('原事务已变化，请重新打开');
+      if(!id&&S[store].some(item=>item.id===c.draftId)){
+        c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
+      }
       const expected=copyData({[store]:S[store]});
       const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultNote)])];
       let value;
