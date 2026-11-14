@@ -80,3 +80,33 @@ test('older cancelled request cannot clear the active controller of a newer requ
   const first=a.run("AIService.agent('香港天气',{},'chat')");a.run('AIService.cancelAgentRequest()');const second=a.run("AIService.agent('香港天气',{},'chat')");
   releases[0]();assert.equal((await first).type,'cancelled');assert.notEqual(a.run('AIService.activeAgentController'),null);releases[1]();assert.equal((await second).type,'chat');assert.equal(a.run('AIService.activeAgentController'),null);
 });
+for(const message of ['请帮我查新加坡天气','请帮我查一下新加坡的天气','新加坡要不要带伞','新加坡需要带伞吗','新加坡风大吗']){
+  test('review: polite queries and weather predicates preserve current city: '+message,()=>{
+    const a=load();a.app.message=message;a.app.context=memory;assert.equal(a.json('AIService.weatherLocation(message,context)').name,'新加坡');
+  });
+}
+for(const message of ['讲个笑话','聊聊学习','推荐电影']){
+  test('review: ordinary chat after weather does not query a city: '+message,()=>{
+    const a=load();a.app.message=message;a.app.context={history:[{role:'assistant',weather:{location:{name:'北京'},day:0}}]};
+    assert.equal(a.run('AIService.isWeatherFollowup(message,context)'),false);assert.equal(a.calls.length,0);
+  });
+}
+test('review: service error object cannot be reported as an unknown city',async()=>{
+  const a=load({fetch:async()=>response({error:true,reason:'synthetic failure'})});const r=await a.run("AIService.agent('新加坡天气',{},'chat')");assert.match(r.reply,/服务暂时不可用/);
+});
+test('review: explicit location followup and correction after unknown place remain available',async()=>{
+  const a=load();a.app.context={history:[{role:'assistant',weather:{location:{name:'北京'},day:1}}]};
+  const r=await a.run("AIService.agent('我在新加坡',context,'chat')");assert.equal(r.weather.location.name,'新加坡');assert.equal(r.weather.day,1);
+  a.app.context={history:[{role:'assistant',weather:{location:{name:'未知城市'},day:2,pending:true}}]};
+  const correction=await a.run("AIService.agent('上海',context,'chat')");assert.equal(correction.weather.location.name,'上海');assert.equal(correction.weather.day,2);
+});
+test('review: normal chat reaches the model boundary without weather calls',async()=>{
+  const a=load();a.run("AIService.source=()=> 'custom';AIService.customRequest=async()=>({type:'chat',reply:'合成笑话'});AIService.setDegraded=()=>{};");
+  a.app.context={history:[{role:'assistant',weather:{location:{name:'北京'},day:0}}]};
+  const r=await a.run("AIService.agent('讲个笑话',context,'chat')");assert.equal(r.reply,'合成笑话');assert.equal(a.calls.length,0);
+});
+for(const city of ['呼和浩特','和田']){
+  test('review: city names containing conjunction characters are not rejected: '+city,()=>{
+    const a=load();a.app.context=memory;a.app.message=city+'天气';assert.equal(a.json('AIService.weatherLocation(message,context)').name,city);
+  });
+}

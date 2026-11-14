@@ -23,6 +23,10 @@ document.querySelector('#run').onclick=async()=>{
     message=await send('那上海呢？');assert(message.meta.weather.location.name==='上海'&&message.meta.weather.day===1,'City followup');
     message=await send('那后天呢？');assert(message.meta.weather.location.name==='上海'&&message.meta.weather.day===2,'Day followup');
     lines.push('PASS 不同城市与日期续答经实际消息上下文传递');
+    message=await send('请帮我查新加坡天气');assert(message.meta.weather.location.name==='新加坡','Polite query');
+    message=await send('新加坡要不要带伞');assert(message.meta.weather.location.name==='新加坡','Weather predicate');
+    assert(['讲个笑话','聊聊学习','推荐电影'].every(text=>!AIService.isWeatherFollowup(text,UI.agentContext('synthetic',text,'chat'))),'Normal chat misrouted');
+    lines.push('PASS 礼貌查询与带伞表达不污染城市，普通聊天不走天气续答');
     fixture();S.pet.memoryEnabled=false;mock();
     message=await send('明天天气怎么样？');assert(message.type==='clarify','No authorized location');
     message=await send('新加坡');assert(message.meta.weather.location.name==='新加坡'&&message.meta.weather.day===1,'Clarification day');
@@ -30,6 +34,9 @@ document.querySelector('#run').onclick=async()=>{
     fixture();window.fetch=async()=>{throw new TypeError('synthetic offline');};
     message=await send('新加坡天气');assert(message.content.includes('服务暂时不可用'),'Network feedback');
     lines.push('PASS 网络失败保存明确错误反馈');
+    window.fetch=async()=>response({error:true,reason:'synthetic service failure'});
+    message=await send('新加坡天气');assert(message.content.includes('服务暂时不可用'),'Service error misreported');
+    lines.push('PASS 服务错误对象显示服务不可用，不误报地点不存在');
     fixture();let release,entered;const ready=new Promise(resolve=>entered=resolve);
     window.fetch=async()=>new Promise(resolve=>{release=()=>resolve(response(data));entered();});
     const pending=send('香港天气');await ready;await UI.cancelAgentMessage();mock();
@@ -37,6 +44,6 @@ document.querySelector('#run').onclick=async()=>{
     assert(S.messages.length===count&&S.messages.at(-1).meta.weather.location.name==='新加坡','Stale response persisted');
     assert(!UI.agentThinking&&AIService.activeAgentController===null,'Request cleanup');
     lines.push('PASS 取消后立即重发，旧响应不写入消息也不覆盖新结果');
-    output.textContent=lines.join('\n')+'\n5 项通过，0 失败。真实模型调用 0，数据库访问 0。';
+    output.textContent=lines.join('\n')+'\n7 项通过，0 失败。真实模型调用 0，数据库访问 0。';
   }catch(error){output.textContent=lines.join('\n')+'\nFAIL '+error.stack;}
 };

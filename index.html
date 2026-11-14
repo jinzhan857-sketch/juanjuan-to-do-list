@@ -1705,7 +1705,14 @@ const AIService = {
   isWeatherRequest(message){ return /天气|气温|温度|下雨|降雨|带伞|风大/.test(String(message||'')); },
   isWeatherFollowup(message,context={}){
     const previous=this.weatherContext(context);
-    return !!previous&&(/^(?:那|那么|换成|改查|再查)?\s*(?:今天|明天|后天)(?:呢|怎么样|如何)?[？?。！!\s]*$/.test(String(message||''))||!!this.weatherPlace(message,true));
+    return !!previous&&(/^(?:那|那么|换成|改查|再查)?\s*(?:今天|明天|后天)(?:呢|怎么样|如何)?[？?。！!\s]*$/.test(String(message||''))||!!this.weatherPlace(message)||!!this.weatherFollowupPlace(message,context));
+  },
+  weatherFollowupPlace(message,context={}){
+    const previous=this.weatherContext(context), text=String(message||'').trim();
+    if(!previous)return null;
+    const cityQuestion=/^(?:那|那么).+(?:呢|怎么样)[？?。！!]*$|^(?:换成|改查|再查).+/.test(text);
+    if(previous.location&&!previous.pending&&!cityQuestion)return null;
+    return this.weatherPlace(text,true);
   },
   weatherContext(context={}){
     const history=context.history||[], index=history.findLastIndex(item=>item.role==='assistant');
@@ -1722,17 +1729,17 @@ const AIService = {
     const source=String(message||'').trim();
     const place='([\\p{Script=Han}A-Za-z][\\p{Script=Han}A-Za-z .]{1,39}?)';
     const explicit=source.match(new RegExp('(?:我(?:现在)?在|我住在|我住|所在地是)'+place+'(?=[，,。！？!?；;]|今天|明天|后天|现在|(?:的)?天气|$)','u'));
-    const querySource=source.replace(/^(?:请|帮我)?(?:查询|查一下|查看|看看|查)\s*/,'').replace(/^(?:今天|明天|后天|现在)\s*/,'');
-    const query=querySource.match(new RegExp('^'+place+'(?:今天|明天|后天|现在)?(?:的)?(?:天气|气温|温度|会下雨|下雨|降雨|要带伞|风大)','u'));
+    const querySource=source.replace(/^(?:(?:请|帮我)\s*)*(?:查询|查一下|查看|看看|查)\s*/,'').replace(/^(?:今天|明天|后天|现在)\s*/,'');
+    const query=querySource.match(new RegExp('^'+place+'(?:今天|明天|后天|现在)?(?:的)?(?:天气|气温|温度|(?:会不会|会)?下雨|降雨|(?:要不要|需不需要|需要|要)?带伞|风大)','u'));
     let name=(explicit?.[1]||query?.[1]||'').trim();
     if(!name&&bare)name=source.replace(/^(?:那|那么|换成|改查|再查)\s*/,'').replace(/(?:呢|怎么样)?[？?。！!]*$/,'').trim();
     name=name.replace(/(?:的)?(?:今天|明天|后天|现在)$/,'').trim();
-    if(!/^[\p{Script=Han}A-Za-z][\p{Script=Han}A-Za-z .]{1,39}$/u.test(name)||/今天|明天|后天|现在|天气|怎么样|哪里|这里|当地|什么|哪个|怎么|不用|取消|谢谢|你好|好的|算了|不查|我|不是|不要|还是|和|或者/.test(name))return null;
+    if(!/^[\p{Script=Han}A-Za-z][\p{Script=Han}A-Za-z .]{1,39}$/u.test(name)||/今天|明天|后天|现在|天气|怎么样|哪里|这里|当地|什么|哪个|怎么|不用|取消|谢谢|你好|好的|算了|不查|我|不是|不要|还是|或者/.test(name))return null;
     if(/^(香港|上环|中环|九龙|港大|香港大学)$/.test(name))return {name:'香港',latitude:22.3193,longitude:114.1694};
     return {name};
   },
   weatherLocation(message,context={}){
-    const previous=this.weatherContext(context), current=this.weatherPlace(message,!!previous);
+    const previous=this.weatherContext(context), current=this.weatherPlace(message)||this.weatherFollowupPlace(message,context);
     if(current)return current;
     if(previous?.location)return previous.location;
     const places=(context.memories||[]).map(item=>this.weatherPlace(typeof item==='string'?item:item.content)).filter(Boolean);
@@ -1745,7 +1752,7 @@ const AIService = {
   async weatherReply(message,context={}){
     const location=this.weatherLocation(message,context);
     const previous=this.weatherContext(context), day=/后天/.test(message)?2:/明天/.test(message)?1:/今天|现在/.test(message)?0:previous?.day||0;
-    const state={location,day}, result=(type,reply)=>({type,reply,weather:state});
+    const state={location,day}, result=(type,reply)=>({type,reply,weather:{...state,pending:type==='clarify'}});
     if(!location) return result('clarify','你想查哪个城市或地区的天气？');
     const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),7000);
     this.activeAgentController=controller;
@@ -1760,7 +1767,7 @@ const AIService = {
         if(!geocoding.ok)throw new Error('地点查询服务暂时不可用');
         const geocodingData=await geocoding.json();
         stopped();
-        if(!geocodingData||typeof geocodingData!=='object'||(geocodingData.results!==undefined&&!Array.isArray(geocodingData.results)))throw new Error('地点响应无效');
+        if(!geocodingData||typeof geocodingData!=='object'||Array.isArray(geocodingData)||geocodingData.error||(geocodingData.results!==undefined&&!Array.isArray(geocodingData.results)))throw new Error('地点响应无效');
         const found=geocodingData.results?.[0];
         if(!found) return result('clarify',`没有找到「${place.name}」。你能说得更具体一点吗？`);
         if(typeof found.name!=='string'||!found.name.trim()||!Number.isFinite(found.latitude)||Math.abs(found.latitude)>90||!Number.isFinite(found.longitude)||Math.abs(found.longitude)>180)throw new Error('地点响应无效');
