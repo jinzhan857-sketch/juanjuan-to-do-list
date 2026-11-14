@@ -99,7 +99,13 @@ const conflictingDates=[
  '今晚保留，明晚IDAT7215备注改成带电脑',
  '后天不改，大后天IDAT7215备注改成带电脑',
  '周一不改，下周二IDAT7215备注改成带电脑',
- '11月9日还是11月16日IDAT7215备注改成带电脑'
+ '11月9日还是11月16日IDAT7215备注改成带电脑',
+ '11月9日IDAT7215备注不要改，只改11月16日备注改成带电脑',
+ '11月9日IDAT7215备注保持不变；删除11月16日IDAT7215',
+ '11月9日IDAT7215备注改成带电脑，11月16日不改',
+ '11月9日IDAT7215备注改成带电脑。删除11月16日IDAT7215',
+ '11月9日IDAT7215备注改成带电脑\n11月16日不改',
+ '11月9日IDAT7215备注为带电脑，11月16日备注不改'
 ];
 for(const request of conflictingDates)test('multiple date constraints clarify locally and reject model targets: '+request,()=>{
  const a=load(),before=a.json('S.tasks');

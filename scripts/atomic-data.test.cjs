@@ -301,3 +301,15 @@ test('concurrent undo restores one batch and leaves one undone operation',async 
   const saved=await a.snapshot();assert.equal(saved.operations.length,1);assert.equal(saved.operations[0].status,'undone');
   assert.equal(saved.tasks.find(task=>task.id==='a').note,'old');
 });
+for(const field of ['finalScore','statusEditCount'])test('settled schedule cannot import without '+field,async t=>{
+ const a=await fixture(t),before=await a.snapshot(),memory=a.memory();a.ctx.data=a.backup();a.ctx.field=field;
+ a.run("Object.assign(data.tasks[0],{status:'done',finalScore:1,statusEditCount:0});delete data.tasks[0][field]");
+ await assert.rejects(a.run('replaceBackup(data)'));assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+for(const side of ['before','after'])for(const field of ['finalScore','statusEditCount'])test('settled '+side+' snapshot without '+field+' cannot import or undo',async t=>{
+ const a=await fixture(t);await a.run("UI.confirmAgentAction('m')");a.ctx.field=field;a.ctx.side=side;
+ a.run("Object.assign(S.operations[0][side][0],{status:'done',finalScore:1,statusEditCount:0});delete S.operations[0][side][0][field]");
+ await a.run("DB.put('operations',S.operations[0])");const before=await a.snapshot(),memory=a.memory();a.ctx.data=a.backup();
+ await assert.rejects(a.run('replaceBackup(data)'));await a.run("UI.undoAgentOperation('m')");
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);assert.match(a.json('notices').at(-1),/不合法/);
+});

@@ -25,7 +25,7 @@ document.querySelector('button').onclick=async()=>{
  const invalid=copyData(backup);invalid.tasks[0].status='invalid-status';rejected=false;
  try{await replaceBackup(invalid);}catch(error){rejected=true;}
  check('非法状态整份拒绝，数据库和内存均保留',rejected&&JSON.stringify(await snapshot())===JSON.stringify(expected)&&S.tasks[0].status!=='invalid-status');
- for(const status of [null,'done','doing','failed','paused','skipped']){const valid=copyData(backup);valid.tasks[0].status=status;validateBackup(valid);}
+ for(const status of [null,'done','doing','failed','paused','skipped']){const valid=copyData(backup);Object.assign(valid.tasks[0],{status,finalScore:0,statusEditCount:0});validateBackup(valid);}
  check('全部现有合法状态均通过共用校验',true);
  action=copyData(action);UI.captureAgentScope(action);S.operations=[];S.messages=[{id:'m2',chatId:'chat',role:'assistant',content:'待确认',meta:{status:'pending',action}}];
  await DB.batch([{store:'operations',type:'clear'},{store:'messages',type:'clear'},{store:'messages',value:S.messages[0]}]);
