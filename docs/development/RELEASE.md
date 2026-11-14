@@ -1,6 +1,16 @@
 # 发布、版本与恢复
 
-本文区分已经核对的发布事实与后续要建立的流程。本轮没有部署网站，也没有把文档版本叫作新应用版本。
+本文区分当前发布方式与历史记录。#40 按展的明确授权恢复 GitHub Pages，具体部署与访问证据以 Issue #40 为准。
+
+## 当前正式静态入口与发布
+
+正式入口：<https://jinzhan857-sketch.github.io/juanjuan-to-do-list/>。2026 年 11 月 15 日，展明确改为公开仓库并恢复免费 Pages，替代本轮早先保持私有的选择，不新增套餐或托管账号。个人备份、密钥仍不入库，项目尚未选择开源许可证。
+
+Pages 设置选择 GitHub Actions。执行者在 Actions 进入 Publish GitHub Pages，选择 main 后手动 Run workflow。工作流只允许 main，先安装锁定依赖并执行 npm run check，再上传 dist，部署成功后核对网站与 build-info.json 的提交及页面 SHA256。代码推送和 PR 不自动发布。只发布构建产物，不把仓库根目录、api 源文件或私人资料作为网站上传。
+
+发布工作流为 .github/workflows/pages.yml，构建仅有 contents: read，部署仅授予 Pages 与 OIDC 必需权限，没有业务 secrets。失败时不继续部署，保留原有站点。回退时从确认的 main 回退提交重新检查和手动部署，不修改用户数据库。
+
+GitHub Pages 仅提供静态文件，不执行 api/ai.js。托管 AI 接口和业务云端同步需后续任务单独接通；自定义模型仅按用户原设置使用，不发起本轮真实模型测试。恢复同一网址不需要迁移浏览器数据。历史 Sites 地址仍保留，版本 8 来自 b35936b，手机可访问性未通过，不作为本次正式入口。
 
 ## 当前构建流程
 
