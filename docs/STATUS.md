@@ -2,6 +2,10 @@
 
 更新日期：2026 年 11 月 15 日。本文供人和 Agent 共用。先看进度与接手结论，需要执行时再看下面的版本、检查与本地现场。详细历史证据见[首次现状清单](CURRENT_STATE.md)。
 
+## 当前接手结论：任务 #4
+
+#4 修复指定单天误走整组及同名首条误选，确认卡与执行入口绑定目标快照。新增合成数据范围测试，原始历史脚本和失败证据保留。#5、#7 仍未修复，未部署或调用真实模型；最终验收见[#4 报告](audit/2026-11-15/issue4-scope.md)与 [Issue #4](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4)。下方为 #3 及此前交付历史。
+
 ## 当前接手结论：任务 #3
 
 #2 和 PR #25 已合入 main。#3 基于 `9b9ac1375d6cdb79bf8f4802def17f7b8e55fbea` 建立 Node.js 最小工具链，统一开发、构建、产物预览与检查。应用源码和 AI 接口不改动，三项已知问题保留，dist 改为生成目录。命令与来源规则以[开发说明](development/README.md)为准，证据见[#3 报告](audit/2026-11-15/issue3-toolchain.md)。合入与任务状态以 [#3](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3) 为准。

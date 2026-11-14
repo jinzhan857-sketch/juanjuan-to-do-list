@@ -1708,6 +1708,25 @@ const AIService = {
     }
   },
 
+  scheduleRequestScope(message,tasks){
+    const text=String(message||'').split(/备注|改成|改为/)[0];
+    const code=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0];
+    let targets=tasks.filter(task=>code?String(task.title).toUpperCase().includes(code.toUpperCase()):task.title&&text.includes(task.title));
+    const group=/(全部|所有|整组|每(?:个)?(?:周|星期))/.test(text);
+    const concrete=/(20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}|\d{1,2}月\d{1,2}|今天|明天|后天|今晚|明晚|下周)/.test(text);
+    const date=group&&!concrete?null:parseNaturalDate(text);
+    if(group&&concrete) return {error:'请确认是只改指定日期，还是修改整组日程。'};
+    if(date) targets=targets.filter(task=>task.exec_date===date);
+    const months=text.match(/(\d{1,2})\s*月?\s*(?:到|至|-|—|～|~)\s*(\d{1,2})\s*月/);
+    if(group&&months){const from=`${todayStr().slice(0,4)}-${pad(months[1])}-01`, to=fmtDate(new Date(Number(todayStr().slice(0,4)),Number(months[2]),0));targets=targets.filter(task=>task.exec_date>=from&&task.exec_date<=to);}
+    const weekday=text.match(/每(?:个)?(?:周|星期)([一二三四五六日天])/);
+    if(group&&weekday){const day={一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7}[weekday[1]];targets=targets.filter(task=>(parseDate(task.exec_date).getDay()||7)===day);}
+    if(!targets.length) return {error:'没有找到唯一对应的日程，请补充课程名称和日期。'};
+    if(!group&&targets.length!==1) return {error:'找到了多条同名日程，请说明具体日期，或明确要修改整组。'};
+    const identities=new Set(targets.map(task=>task.series_id||JSON.stringify([task.title,task.start_time,task.end_time])));
+    if(group&&identities.size!==1) return {error:'找到了不同组的日程，请明确要操作哪一组。'};
+    return {group,targets};
+  },
   _localAgent(message,context={},role='task'){
     const text=String(message||'').trim();
     if(role==='chat') return {type:'chat',reply:'我在呀。想聊聊近况、问我一个问题，或者点「卷卷事务」「卷卷规划」让我换一种方式帮你。'};
@@ -1735,20 +1754,26 @@ const AIService = {
     const dateTo=months?fmtDate(new Date(Number(year),Number(months[2]),0)):existing[existing.length-1]?.exec_date||null;
     const batchWeekdays=weekday?[weekMap[weekday[1]]]:[...new Set(existing.map(task=>parseDate(task.exec_date).getDay()||7))];
     const isBatch=!!dateFrom&&!!dateTo&&batchWeekdays.length>0;
-    const isUpdate=/(修改|改成|改为|变更|更新|备注)/.test(text);
+    const isUpdate=/(修改|改成|改为|变更|更新)/.test(text)||(/备注/.test(text)&&!/(新建|创建|建立|安排)/.test(text));
     const isDelete=/(删除|取消|移除)/.test(text);
-    if(isBatch&&isDelete&&courseCode){
-      return {type:'batch_proposal',reply:`我找到了「${courseCode}」的整组日程，将删除 ${existing.length} 条，请完整核对范围。`,action:{kind:'delete_schedule_batch',rule:{date_from:dateFrom,date_to:dateTo,weekdays:batchWeekdays,match_title:courseCode,match_start_time:time?.start||existing[0]?.start_time||null,match_end_time:time?.end||existing[0]?.end_time||null,series_id:existing[0]?.series_id||null},item:{}}};
-    }
-    if(isBatch&&isUpdate&&courseCode){
-      return {type:'batch_proposal',reply:`我找到了「${courseCode}」的每周安排，先请你确认整组修改范围。`,action:{kind:'update_schedule_batch',rule:{date_from:dateFrom,date_to:dateTo,weekdays:batchWeekdays,match_title:courseCode,match_start_time:time?.start||existing[0]?.start_time||null,match_end_time:time?.end||existing[0]?.end_time||null,series_id:existing[0]?.series_id||null},item:{note:noteChange?.[1]||noteMatch?.[1]||''}}};
+    if(isUpdate||isDelete){
+      const scope=this.scheduleRequestScope(text,context.tasks||[]);
+      if(scope.error) return {type:'clarify',reply:scope.error};
+      const item={};
+      if(!isDelete){
+        if(noteChange?.[1]) item.note=noteChange[1];
+        if(time){item.time_type='exact';item.start_time=time.start;item.end_time=time.end;}
+        if(!Object.keys(item).length) return {type:'clarify',reply:'请明确需要修改的备注或时间。'};
+      }
+      if(!scope.group) return {type:'proposal',reply:`请核对 ${scope.targets[0].exec_date} 的「${scope.targets[0].title}」，仅影响这一条。`,action:{kind:isDelete?'delete_schedule':'update_schedule',target_id:scope.targets[0].id,item}};
+      const targets=scope.targets.slice().sort((a,b)=>a.exec_date.localeCompare(b.exec_date)), first=targets[0];
+      return {type:'batch_proposal',reply:`请核对整组范围，共 ${targets.length} 条日程。`,action:{kind:isDelete?'delete_schedule_batch':'update_schedule_batch',rule:{date_from:first.exec_date,date_to:targets.at(-1).exec_date,weekdays:[...new Set(targets.map(task=>parseDate(task.exec_date).getDay()||7))],match_title:first.title,match_start_time:first.start_time||null,match_end_time:first.end_time||null,series_id:first.series_id||null},item}};
     }
     if(isBatch&&time){
       const plainTitle=text.replace(/\d{1,2}\s*月?\s*(?:到|至|-|—|－|～|~)\s*\d{1,2}\s*月|每(?:个)?周[一二三四五六日天]|(?:凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里|半夜)?\s*\d{1,2}(?:[.:：]\d{1,2}|点(?:半|\d{1,2}分?)?)\s*(?:到|至|-|—|～|~)\s*\d{1,2}(?:[.:：]\d{1,2}|点(?:半|\d{1,2}分?)?)|(?:教室|教授|老师|地点|地址)[^，。；！？]*/g,' ').replace(/(?:建立|创建|安排|帮我|请|将|把|日程|日历|规划|排进|都上课|上课)/g,' ').replace(/[，。；！？]/g,' ').replace(/\s+/g,' ').trim();
       const title=courseMatch?.[1].trim()||courseCode||plainTitle||'课程';
       return {type:'batch_proposal',reply:'我已整理好重复课程，请确认后创建。',action:{kind:'create_schedule_batch',rule:{date_from:`${year}-${pad(months[1])}-01`,date_to:fmtDate(new Date(Number(year),Number(months[2]),0)),weekdays:[weekMap[weekday[1]]],title,note:structuredNote||noteMatch?.[1]||'',time_type:'exact',slot:null,start_time:time.start,end_time:time.end,category:'学业事务',base_score:7}}};
     }
-    const target=(context.tasks||[]).find(task=>text.includes(String(task.title||'')));
     const targetDate=parseNaturalDate(text);
     if(/明天安排|这周.*忙|旅行计划|哪些待办.*优先|为什么.*拖延/.test(text)){
       const tomorrow=addDays(todayStr(),1), tomorrowTasks=(context.tasks||[]).filter(t=>t.exec_date===tomorrow), open=(context.todos||[]).filter(t=>!t.done);
@@ -1773,13 +1798,6 @@ const AIService = {
     }
     if(/(?:查看|查询|看看).*(?:安排|日程)|(?:今天|明天|后天).*(?:安排|日程)/.test(text)){
       return {type:'query',reply:'我已按日期整理日程。',query:{entity:'schedule',date_from:targetDate||null,date_to:targetDate||null,status:'all',keyword:''}};
-    }
-    if(isUpdate&&target){
-      const item={};
-      if(noteChange?.[1]) item.note=noteChange[1];
-      if(time){item.time_type='exact';item.start_time=time.start;item.end_time=time.end;}
-      if(!Object.keys(item).length) return {type:'clarify',reply:'我找到了这条日程，请告诉我需要修改备注还是时间。'};
-      return {type:'proposal',reply:`我找到了「${target.title}」，请确认这次单天修改。`,action:{kind:'update_schedule',target_id:target.id,item}};
     }
     if(time&&targetDate){
       const title=text.replace(/(?:今天|明天|后天|下周[一二三四五六日天]?|\d{1,2}月\d{1,2}[日号]?)/g,'').replace(/(?:上午|下午|晚上|早上)?\s*\d{1,2}(?:[:：.]\d{1,2}|点(?:半|\d{1,2}分?)?)\s*(?:到|至|\-|—|～|~)\s*\d{1,2}(?:[:：.]\d{1,2}|点(?:半|\d{1,2}分?)?)/g,'').replace(/(?:帮我|为我|新建|创建|安排|日程)/g,'').trim()||'新日程';
@@ -2729,6 +2747,26 @@ const UI = {
     return conflicts.filter((value,index,list)=>list.findIndex(other=>other.date===value.date&&other.task.id===value.task.id)===index);
   },
 
+  agentMutationTargets(action){
+    if(['update_schedule_batch','delete_schedule_batch'].includes(action?.kind)) return this.resolveBatchUpdateTargets(action);
+    if(['update_schedule','delete_schedule','convert_schedule_to_todo'].includes(action?.kind)) return S.tasks.filter(task=>task.id===action.target_id);
+    return null;
+  },
+  captureAgentScope(action){
+    const targets=this.agentMutationTargets(action);
+    if(targets) action.confirmed_scope=JSON.stringify(targets.slice().sort((a,b)=>a.id.localeCompare(b.id)));
+    return action;
+  },
+  validateAgentRequest(action,content){
+    const targets=this.agentMutationTargets(action);
+    if(!targets) return this.validateAgentAction(action);
+    const tasks=S.tasks.map(task=>({id:task.id,title:task.title,exec_date:task.execDate,series_id:task.seriesId,start_time:task.startTime,end_time:task.endTime}));
+    const scope=AIService.scheduleRequestScope(content,tasks);
+    if(scope.error) return {ok:false,error:scope.error};
+    const ids=values=>JSON.stringify(values.map(task=>task.id).sort());
+    if(scope.group!==['update_schedule_batch','delete_schedule_batch'].includes(action.kind)||ids(scope.targets)!==ids(targets)) return {ok:false,error:'建议的操作范围与原话不一致，请明确日期和单条或整组范围。'};
+    return this.validateAgentAction(action);
+  },
   validateAgentAction(action){
     if(!action || !['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'].includes(action.kind)) return {ok:false,error:'这个操作暂时不支持'};
     const item=action.item||{};
@@ -2754,6 +2792,7 @@ const UI = {
       if(action.kind==='update_schedule_batch'&&!Object.keys(item).length) return {ok:false,error:'还没有明确要修改什么'};
       const targets=this.resolveBatchUpdateTargets(action);
       if(!targets.length) return {ok:false,error:'没有找到符合范围和课程名称的日程'};
+      if(new Set(targets.map(task=>task.seriesId||JSON.stringify([task.title,task.startTime,task.endTime]))).size!==1) return {ok:false,error:'范围包含不同组日程，请明确要操作哪一组。'};
       if(action.kind==='update_schedule_batch'&&item.time_type==='exact'&&(!validTimeStr(item.start_time)||!validTimeStr(item.end_time)||minOf(item.end_time)<=minOf(item.start_time))) return {ok:false,error:'新的具体开始和结束时间需要再确认'};
       return {ok:true};
     }
@@ -2835,7 +2874,8 @@ const UI = {
     if(result.type==='cancelled'){this.renderAgent();return;}
     if(result.type==='multi_proposal'&&Array.isArray(result.actions)){
       for(const action of result.actions){
-        const checked=this.validateAgentAction(action);
+        const checked=this.validateAgentRequest(action,content);
+        if(checked.ok) this.captureAgentScope(action);
         await saveMessage({id:uid(),chatId:chat.id,role:'assistant',content:checked.ok?'我已拆开这项事务，请逐条确认。':checked.error,type:checked.ok?'proposal':'clarify',createdAt:Date.now(),meta:checked.ok?{action,status:'pending',agentRole:'task'}:{agentRole:'task'}});
       }
       chat.updatedAt=Date.now(); await saveChat(chat); this.renderAgent(); return;
@@ -2843,7 +2883,8 @@ const UI = {
     const message={id:uid(),chatId:chat.id,role:'assistant',content:result.reply||'我需要再确认一下。',type:result.type||'error',createdAt:Date.now(),meta:{agentRole:role}};
     if(result.type==='proposal'||result.type==='batch_proposal'){
       message.type='proposal';
-      const checked=this.validateAgentAction(result.action);
+      const checked=this.validateAgentRequest(result.action,content);
+      if(checked.ok) this.captureAgentScope(result.action);
       if(checked.ok) message.meta={action:result.action,status:'pending',agentRole:role};
       else{ message.type='clarify'; message.content=checked.error; }
     }
@@ -2888,10 +2929,12 @@ const UI = {
   async prepareAgentRecommendation(messageId,index){
     const source=S.messages.find(x=>x.id===messageId&&x.chatId===this.agentChatId), recommendation=source?.meta?.recommendations?.[index];
     if(!recommendation?.action)return;
-    const checked=this.validateAgentAction(recommendation.action);
+    const request=S.messages.filter(value=>value.chatId===source.chatId&&value.role==='user'&&value.createdAt<=source.createdAt).sort((a,b)=>b.createdAt-a.createdAt)[0];
+    const checked=this.validateAgentRequest(recommendation.action,request?.content||'');
     if(!checked.ok){toast(checked.error);return;}
     const handoff=source?.meta?.agentRole==='planning';
     const proposal={id:uid(),chatId:this.agentChatId,role:'assistant',content:handoff?'卷卷规划已把方案交给卷卷事务，请核对后执行。':`${recommendation.evidence} 请先核对下面的具体改动。`,type:'proposal',createdAt:Date.now(),meta:{action:recommendation.action,status:'pending',agentRole:'task'}};
+    this.captureAgentScope(proposal.meta.action);
     await saveMessage(proposal); const chat=S.chats.find(x=>x.id===this.agentChatId); if(chat){chat.updatedAt=proposal.createdAt;await saveChat(chat);} this.renderAgent();
   },
 
@@ -2968,6 +3011,7 @@ const UI = {
       action.item={...action.item,title,note,exec_date:from,category,base_score:score,time_type:'exact',start_time:start,end_time:end};
     }else{toast('这个方案暂时不能在这里修改');return;}
     const checked=this.validateAgentAction(action); if(!checked.ok){toast(checked.error);return;}
+    this.captureAgentScope(action);
     await saveMessage(message); this.switchPage('agent'); this.renderAgent(); toast('已保存修改，请核对后执行');
   },
 
@@ -2986,6 +3030,10 @@ const UI = {
   },
 
   async executeAgentAction(action,message){
+    const checked=this.validateAgentAction(action);
+    if(!checked.ok) throw new Error(checked.error);
+    const targets=this.agentMutationTargets(action);
+    if(targets&&action.confirmed_scope!==JSON.stringify(targets.slice().sort((a,b)=>a.id.localeCompare(b.id)))) throw new Error('日程或范围已变化，请重新生成确认卡并核对后执行。');
     const clone=value=>JSON.parse(JSON.stringify(value));
     const now=Date.now(); const item=action.item||{};
     const operation={id:uid(),chatId:message.chatId,messageId:message.id,kind:action.kind,before:null,after:null,status:'done',createdAt:now,summary:''};
