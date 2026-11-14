@@ -10,6 +10,8 @@
 | `check-baseline.cjs` | 核对稳定断言与已知问题，保留历史脚本 | 由 `npm run check` 调用 |
 | `toolchain.test.cjs` | 验证工程错误路径与 HTTP 边界 | `node --test scripts/toolchain.test.cjs` |
 | `atomic-data.test.cjs` | 合成 IndexedDB 的写入、导入与故障恢复测试 | `node --test scripts/atomic-data.test.cjs` |
+| `weather.test.cjs` | 离线验证天气地点优先级、续答、错误与取消 | `node --test scripts/weather.test.cjs` |
+| `weather-browser.cjs` | 原生浏览器的隔离天气消息流程检查 | `node scripts/weather-browser.cjs`，打开 4175 测试页 |
 | `storage-browser.cjs` | 原生浏览器的隔离数据库故障检查 | `node scripts/storage-browser.cjs`，打开 4174 测试页 |
 | `storage-samples.cjs` | 生成不含私人内容的备份样本 | `node scripts/storage-samples.cjs` |
 | `helpers/` | 共用合成状态与浏览器检查逻辑 | 由测试入口加载 |
