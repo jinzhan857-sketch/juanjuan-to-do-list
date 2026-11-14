@@ -6,7 +6,10 @@ const crypto = require('node:crypto');
 const cp = require('node:child_process');
 const root = path.resolve(__dirname, '../../..');
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
-const git = (...args) => cp.execFileSync('git', args, {cwd:root, encoding:'utf8'}).trim();
+const git = (...args) => {
+  const result = cp.spawnSync('git', args, {cwd:root, encoding:'utf8'});
+  return result.status === 0 ? result.stdout.trim() : null;
+};
 const files = ['index.html','dist/index.html','api/ai.js'].map(p => {
   const b=fs.readFileSync(path.join(root,p));
   return {path:p, bytes:b.length, lines:b.toString().trimEnd().split(/\r?\n/).length,
@@ -51,6 +54,14 @@ const tests=[
  ['Series ID target selection', "(()=>{S.tasks=[{id:'a',seriesId:'synthetic-series',title:'A',execDate:'2026-11-09'},{id:'b',seriesId:'synthetic-series',title:'B',execDate:'2026-11-16'},{id:'c',seriesId:'other',title:'A',execDate:'2026-11-09'}];return UI.resolveBatchUpdateTargets({rule:{series_id:'synthetic-series',date_from:'2026-11-09',date_to:'2026-11-16',weekdays:[1]}}).length===2})()"],
 ];
 tests.forEach(([name,expr])=>check(name,expr,app));
+// Baseline coverage for the preserved local additions; no persistence or network.
+[
+ ['User cancellation aborts request', "(()=>{const c=new AbortController();AIService.activeAgentController=c;AIService.cancelAgentRequest();AIService.activeAgentController=null;return c.signal.aborted&&c.userCancelled===true})()"],
+ ['Weather city follow-up', "AIService.isWeatherFollowup('香港',{history:[{role:'assistant',content:'你想查哪个城市或地区的天气？'}]})===true"],
+ ['Planning evidence filters invalid kinds', "(()=>{const e=AIService.cleanPlanningEvidence([{kind:'schedule',id:'synthetic'},{kind:'unknown',id:'bad'}]);return e.length===1&&e[0].id==='synthetic'})()"],
+ ['Custom profile group retained', "UI.normalizeMemoryGroups([{id:'synthetic-group',name:'合成资料',preset:false}]).some(g=>g.id==='synthetic-group'&&g.name==='合成资料')"],
+ ['Frontend batch deletion preserves identity', "AIService.normalizeAgent({type:'batch_proposal',action:{kind:'delete_schedule_batch',rule:{series_id:'synthetic-series'}}}).action.rule.series_id==='synthetic-series'"],
+].forEach(([name,expr])=>check(name,expr,app));
 const api=vm.createContext({require,module:{exports:{}},process:{env:{}},console,URL});
 new vm.Script(read('api/ai.js'),{filename:'api/ai.js'}).runInContext(api);
 checks.push({name:'api/ai.js JavaScript syntax',passed:true});
@@ -62,16 +73,11 @@ const observations={
   explicitDateRoutedToBatch:vm.runInContext("AIService._localAgent('只把11月9日的IDAT7215备注改成带电脑',{tasks:[{id:'a',title:'IDAT7215',exec_date:'2026-11-09',start_time:'19:00',end_time:'21:30',series_id:'s'},{id:'b',title:'IDAT7215',exec_date:'2026-11-16',start_time:'19:00',end_time:'21:30',series_id:'s'}],todos:[]},'task').action?.kind",app),
   rememberedLocationOverridesExplicitCity:vm.runInContext("AIService.weatherLocation('我在新加坡，今天天气怎么样。',{memories:[{content:'我住在香港。'}]}).name",app),
 };
-const backupPath='卷卷AI_Todo_备份_2026-09-06.json';
-const backup=fs.existsSync(path.join(root,backupPath))?JSON.parse(read(backupPath)):{};
-const backupMetadata={keys:Object.keys(backup),counts:Object.fromEntries(Object.entries(backup).filter(([,v])=>Array.isArray(v)).map(([k,v])=>[k,v.length]))};
-const walk=dir=>fs.readdirSync(path.join(root,dir),{withFileTypes:true}).flatMap(d=>d.isDirectory()?walk(dir+'/'+d.name):[{path:dir+'/'+d.name,bytes:fs.statSync(path.join(root,dir,d.name)).size}]);
-const diagrams=fs.existsSync(path.join(root,'diagrams'))?walk('diagrams'):[];
-const report={auditDate:'2026-11-14',runtime:process.version,headAtRun:git('rev-parse','HEAD'),
+const report={auditDate:new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'}),executedAt:new Date().toISOString(),timeZone:'Asia/Shanghai',runtime:process.version,headAtRun:git('rev-parse','HEAD'),worktreeStatus:git('status','--short'),
   method:'Node VM, App.init suppressed, isolated synthetic state, no DOM/browser storage/model/network calls. Existing browser selfTest not executed by this runner.',
-  files,checks,observations,backupMetadata,diagrams,
+  files,checks,observations,
   passed:checks.filter(c=>c.passed).length,failed:checks.filter(c=>!c.passed).length};
 const output=process.argv[2];
 if(output)fs.writeFileSync(path.resolve(root,output),JSON.stringify(report,null,2)+'\n');
-console.log(JSON.stringify({passed:report.passed,failed:report.failed,checks,observations,files,backupMetadata,diagramFiles:diagrams.length},null,2));
+console.log(JSON.stringify({passed:report.passed,failed:report.failed,checks,observations,files},null,2));
 process.exitCode=report.failed?1:0;
