@@ -18,7 +18,7 @@
 | 开发顺序、勾选进度、下一步与前置条件 | [开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1) |
 | 3.0 的完整目标与范围 | [3.0 完整共识稿](docs/V3_CONSENSUS_DRAFT.md) |
 | 版本定位与开源借鉴 | [1.0到4.0及参考层级](docs/product/VERSION_POSITIONING.md) |
-| 学什么、不学什么、怎样验证 | [具体借鉴方案，待审核](docs/reference/agent-learning-plan.md)、[nanoMuse局部研究](docs/reference/nanomuse-research.md) |
+| 学什么、不学什么、怎样验证 | [具体借鉴方案与复审修正](docs/reference/agent-learning-plan.md)、[nanoMuse局部研究](docs/reference/nanomuse-research.md) |
 | JavaScript与Python怎样分工 | [语言与服务边界](docs/decisions/0003-javascript-python-boundary.md) |
 | Agent 接手时必须遵守什么 | [AGENTS.md](AGENTS.md) |
 

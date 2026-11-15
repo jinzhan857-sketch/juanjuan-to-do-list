@@ -2,7 +2,7 @@
 
 本文说明当前代的产品概念和使用路径。实现与验证范围见[当前状态](../STATUS.md)，未来要求见[3.0 共识稿](../V3_CONSENSUS_DRAFT.md)。
 
-各代产品、未来候选和参考层级统一见[版本定位与开源借鉴](VERSION_POSITIONING.md)，具体借鉴取舍见[待审核方案](../reference/agent-learning-plan.md)，不以版本命名代表功能已交付。
+各代产品、未来候选和参考层级统一见[版本定位与开源借鉴](VERSION_POSITIONING.md)，具体借鉴取舍见[复审修订方案](../reference/agent-learning-plan.md)，不以版本命名代表功能已交付或额外实现已获批。
 
 ## 卷卷解决什么问题
 
