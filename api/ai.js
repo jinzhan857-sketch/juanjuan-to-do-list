@@ -328,6 +328,11 @@ function compactAgentContext(context = {}) {
       id: shortText(item.id, 80), title: shortText(item.title, 120), note: shortText(item.note, 160),
       category: shortText(item.category, 20), done: Boolean(item.done),
     })),
+    selection: {
+      tasks_total: Math.max(tasks.length, Math.min(1000000, Number(context.selection?.tasks_total) || 0)),
+      todos_total: Math.max(todos.length, Math.min(1000000, Number(context.selection?.todos_total) || 0)),
+      tasks_selected: tasks.length, todos_selected: todos.length, partial: true,
+    },
     memories: memories.map(item => ({ id: shortText(item?.id, 80), category: shortText(item?.category, 40), content: shortText(item?.content || item, 300) })).filter(item => item.content),
     history: history.map(item => ({ role: item.role === 'assistant' ? 'assistant' : 'user', content: shortText(item.content, 500) })),
     planning: {
@@ -404,7 +409,7 @@ module.exports = async function handler(req, res) {
     const agentRole = body.agent_role === 'task' || body.agent_role === 'planning' ? body.agent_role : 'chat';
     const agentPrompt = agentRole === 'task' ? `${AGENT_SYSTEM_PROMPT}\n${TASK_EXECUTION_RULES}` : agentRole === 'planning' ? PLANNING_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
     const messages = agentMode ? [
-      { role: 'system', content: agentPrompt },
+      { role: 'system', content: agentPrompt + '\n上下文只含按问题选择的有限资料，selection.partial始终为true，不能声称查过完整数据库。查询返回query条件由程序核对；资料不足或目标不唯一时追问。' },
       { role: 'user', content: `今天是${modelDate}。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${input}` },
     ] : [
       { role: 'system', content: SYSTEM_PROMPT },
