@@ -249,6 +249,9 @@ function sanitizeBatchUpdateRule(input = {}) {
 function parseAgentResult(content, context) {
   const data = parseJsonContent(content);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
+  const fields = type === 'batch_proposal' && !['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action?.rule : data.action?.item;
+  if (['proposal', 'batch_proposal'].includes(type) && fields?.title !== undefined && String(fields.title ?? '').trim().length > 300) return {type: 'clarify', reply: '任务定义超过300字，请缩短后再确认，内容未截断保存。'};
+  if (['proposal', 'batch_proposal'].includes(type) && fields?.note !== undefined && String(fields.note ?? '').trim().length > 500) return {type: 'clarify', reply: '模型备注超过500字，请缩短后重试，或在发布表单中核对完整备注；内容未截断保存。'};
   const reply = shortText(data.reply, 600) || '我需要再确认一下你的意思。';
   const usedEvidence = (Array.isArray(data.used_evidence) ? data.used_evidence : []).slice(0, 5).map(item => ({
     kind: ['schedule', 'todo', 'memory', 'insight'].includes(item?.kind) ? item.kind : '',

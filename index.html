@@ -1265,20 +1265,34 @@ function localPublishContent(text){
   return {title,note:[inline,...lines].join('\n').trim()};
 }
 function localCourseNote(text){
-  const source=String(text).replace(/(^|[\s，。；！？])([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'$1教室：$2');
+  const source=String(text).replace(/\r\n?/g,'\n').replace(/(^|[\s，。；！？])([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'$1教室：$2');
   // Label boundaries identify non-overlapping source spans. Preserve all value
   // text, punctuation and deliberate repeats instead of rebuilding fragments.
-  const labels=[...source.matchAll(/(^|[\s，。；！？])(教室|教授|老师|地点|地址)/g)].map(match=>({index:match.index+match[1].length,label:match[2],start:match.index+match[0].length})).filter((item,index)=>index===0||/^(?:[ \t]*(?:为|是|[:：])|[ \t]+|[A-Za-z])/.test(source.slice(item.start)));
-  if(!labels.length)return '';
+  const kind=label=>({老师:'教授',地址:'地点'})[label]||label;
+  const labels=[];
+  for(const match of source.matchAll(/(^|[\s，。；！？])(教室|教授|老师|地点|地址)/g)){
+    const item={index:match.index+match[1].length,label:match[2],start:match.index+match[0].length};
+    const tail=source.slice(item.start),previous=labels.at(-1);
+    const explicit=/^[ \t]*(?:为|是|[:：])/.test(tail);
+    const sameLine=previous&&!source.slice(previous.start,item.index).includes('\n');
+    if(previous&&(!/^(?:[ \t]*(?:为|是|[:：])|[ \t]+|[A-Za-z])/.test(tail)||!explicit&&sameLine&&kind(previous.label)===kind(item.label)))continue;
+    labels.push(item);
+  }
   const newline=source.indexOf('\n');
+  if(!labels.length)return newline>=0?source.slice(newline+1).trim():'';
   const prefix=newline>=0&&newline<labels[0].index?source.slice(newline+1,labels[0].index):'';
   return prefix+labels.map((item,index)=>{
     const raw=source.slice(item.start,labels[index+1]?.index);
     const gap=raw.match(/\s*$/)[0];
     const value=raw.replace(/^[ \t]*(?:为|是|[:：])?[ \t]*/,'').trimEnd();
     const separator=index<labels.length-1?(gap.includes('\n')?gap.replace(/\r\n?/g,'\n'):'\n'):'';
-    return `${({老师:'教授',地址:'地点'})[item.label]||item.label}：${value}${separator}`;
+    return `${kind(item.label)}：${value}${separator}`;
   }).join('');
+}
+function agentContentLimitError(fields,noteLimit){
+  if(fields?.title!==undefined&&String(fields.title??'').trim().length>300)return '任务定义超过300字，请缩短后再确认，内容未截断保存。';
+  if(fields?.note!==undefined&&String(fields.note??'').trim().length>noteLimit)return `备注超过${noteLimit}字，请缩短后重试，或在发布表单中核对完整备注；内容未截断保存。`;
+  return '';
 }
 function publishEditText(t){
   const content=[t.title,t.note].filter(Boolean).join('\n');
@@ -2021,6 +2035,9 @@ const AIService = {
   },
   normalizeAgent(data){
     const type=['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data?.type)?data.type:'clarify'; const reply=String(data?.reply||'我需要再确认一下你的意思。').slice(0,600);
+    const fields=type==='batch_proposal'&&!['update_schedule_batch','delete_schedule_batch'].includes(data?.action?.kind)?data?.action?.rule:data?.action?.item;
+    const contentError=agentContentLimitError(fields,500);
+    if(['proposal','batch_proposal'].includes(type)&&contentError)return {type:'clarify',reply:contentError};
     const used_evidence=this.cleanPlanningEvidence(data?.used_evidence);
     if(type==='chat'||type==='clarify')return{type,reply,used_evidence};
     if(type==='query')return{type,reply,query:{entity:data.query?.entity==='todo'?'todo':'schedule',date_from:validDateStr(data.query?.date_from)?data.query.date_from:null,date_to:validDateStr(data.query?.date_to)?data.query.date_to:null,status:['open','done','all'].includes(data.query?.status)?data.query.status:'all',keyword:String(data.query?.keyword||'').slice(0,80)}};
@@ -3063,30 +3080,34 @@ const UI = {
 
   agentQuestionScope(question=''){
     const text=String(question).split(/[，,。；;\n]/).map(clause=>clause.split(/改成|改为|备注(?:为|[:：])/)[0]).join('，');
-    const mentions=[...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)];
+    const mentions=[...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)(?:[一二三四五六天]|日(?!程))/g)];
     const dates=[...new Set(mentions.map(m=>parseNaturalDate(m[0])).filter(Boolean))];
-    const dateRange=mentions.length===2&&dates.length===2&&dates[0]<dates[1]&&/^\s*(?:到|至|~|～|—|-)\s*$/.test(text.slice(mentions[0].index+mentions[0][0].length,mentions[1].index))?dates:null;
+    const weeks=[...text.matchAll(/本周|这周|上周|下周/g)].filter(week=>!mentions.some(mention=>week.index>=mention.index&&week.index<mention.index+mention[0].length));
+    const excluded=mention=>/(?:除了|除去|排除|不含|不包括|不是|不查(?:询)?|别查(?:询)?)\s*$/.test(text.slice(0,mention.index))||/^\s*(?:以外|之外|除外)/.test(text.slice(mention.index+mention[0].length));
+    const unsupportedDate=mentions.some(mention=>!validDateStr(parseNaturalDate(mention[0]))||excluded(mention))||weeks.some(excluded)||weeks.length>1||weeks.length>0&&mentions.length>0;
+    let dateRange=mentions.length===2&&dates.length===2&&dates[0]<dates[1]&&/^\s*(?:到|至|~|～|—|-)\s*$/.test(text.slice(mentions[0].index+mentions[0][0].length,mentions[1].index))?dates:null;
+    if(weeks.length===1&&!mentions.length){const monday=addDays(todayStr(),1-(parseDate(todayStr()).getDay()||7));const from=addDays(monday,({本周:0,这周:0,上周:-7,下周:7})[weeks[0][0]]);dateRange=[from,addDays(from,6)];}
     const code=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0];
     const titles=[...new Set([...S.tasks,...S.todos].map(t=>t.title).filter(title=>title&&text.includes(title)))].sort((a,b)=>b.length-a.length);
-    return {text,dates,dateRange,keyword:code||titles[0]||''};
+    return {text,dates,dateRange,unsupportedDate,keyword:code||titles[0]||''};
   },
   agentSelectedData(question=''){
     const scope=this.agentQuestionScope(question),today=todayStr();
     const relevance=item=>scope.keyword&&`${item.title} ${item.note||''}`.toLowerCase().includes(scope.keyword.toLowerCase());
-    const dateMatch=item=>scope.dateRange?item.execDate>=scope.dateRange[0]&&item.execDate<=scope.dateRange[1]:scope.dates.includes(item.execDate);
+    const dateMatch=item=>!scope.unsupportedDate&&(scope.dateRange?item.execDate>=scope.dateRange[0]&&item.execDate<=scope.dateRange[1]:scope.dates.includes(item.execDate));
     const score=item=>(dateMatch(item)?16:0)+(relevance(item)?8:0);
     const ordered=S.tasks.slice().sort((a,b)=>score(b)-score(a)||(!question?String(a.execDate).localeCompare(String(b.execDate)):(Math.abs(dayDiff(today,a.execDate))-Math.abs(dayDiff(today,b.execDate)))));
     return {tasks:ordered.slice(0,100),todos:S.todos.slice().sort((a,b)=>Number(relevance(b))-Number(relevance(a))||(b.createdAt||0)-(a.createdAt||0)).slice(0,100)};
   },
   resolveAgentQuery(query,question){
     const scope=this.agentQuestionScope(question);
-    if(scope.dates.length>1&&!scope.dateRange)return null;
+    if(scope.unsupportedDate||scope.dates.length>1&&!scope.dateRange)return null;
     const q={...query};
     if(/日程|安排/.test(scope.text)&&!/待办/.test(scope.text))q.entity='schedule';
     if(/待办/.test(scope.text)&&!/日程|安排/.test(scope.text))q.entity='todo';
     if(q.entity!=='todo'&&scope.dates.length===1)q.date_from=q.date_to=scope.dates[0];
     if(q.entity!=='todo'&&scope.dateRange)[q.date_from,q.date_to]=scope.dateRange;
-    if(scope.keyword&&(q.keyword||/^[A-Z]{2,}\d{3,}$/i.test(scope.keyword)))q.keyword=scope.keyword;
+    if(/^[A-Z]{2,}\d{3,}$/i.test(scope.keyword))q.keyword=scope.keyword;
     return q;
   },
   agentContext(chatId,question='',role='chat'){
@@ -3202,6 +3223,8 @@ const UI = {
     if(!action || !['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'].includes(action.kind)) return {ok:false,error:'这个操作暂时不支持'};
     const item=action.item||{};
     const fields=action.kind==='create_schedule_batch'?(action.rule||{}):item;
+    const contentError=agentContentLimitError(fields,1500);
+    if(contentError)return {ok:false,error:contentError};
     if(fields.title!==undefined && (typeof fields.title!=='string'||!fields.title.trim())) return {ok:false,error:'标题不能为空'};
     if(fields.base_score!==undefined && (!Number.isFinite(Number(fields.base_score))||Number(fields.base_score)<0||Number(fields.base_score)>10)) return {ok:false,error:'任务价值需要再确认'};
     if(fields.exec_date!==undefined && !validDateStr(fields.exec_date)) return {ok:false,error:'日期需要再确认'};
@@ -3341,7 +3364,7 @@ const UI = {
     }
     if(result.type==='query'){
       const query=this.resolveAgentQuery(result.query,content);
-      if(!query){message.type='clarify';message.content='请明确这次要查询的日期。';}
+      if(!query){message.type='clarify';message.content='请明确这次要查询的有效日期范围；排除日期请改为要查询的起止日期。';}
       else{
         const data=await DB.snapshot(['tasks','todos']);
         if(requestSerial!==this.agentRequestSerial)return;
