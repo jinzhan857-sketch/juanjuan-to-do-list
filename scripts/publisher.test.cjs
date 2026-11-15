@@ -19,7 +19,7 @@ for(const kind of ['schedule','todo']){
  });
  test(kind+' cancel and replaced draft ignore late success',async t=>{
   for(const cancel of ['UI.cancelRecognition()',"UI.resetCreate('todo')"]){
-   const a=await fixture(t,kind);a.run('AIService.evaluate=()=>new Promise(resolve=>late=resolve);pending=UI.onAIClick()');a.run(cancel);a.run("late({task:'旧内容',base_score:9,source:'ai'})");await a.run('pending');assert.equal((await a.snapshot()).tasks.length,0);assert.equal((await a.snapshot()).todos.length,0);
+   const a=await fixture(t,kind);a.run("AIService.evaluate=()=>new Promise(resolve=>late=resolve);pending=UI.onAIClick()");await a.waitFor("typeof late==='function'");a.run(cancel);a.run("late({task:'旧内容',base_score:9,source:'ai'})");await a.run('pending');assert.equal((await a.snapshot()).tasks.length,0);assert.equal((await a.snapshot()).todos.length,0);
   }
  });
  test(kind+' edit failure requires save and preserves ID',async t=>{
@@ -33,7 +33,7 @@ test('#43 selected date retained with time-only recognition and persisted withou
  await a.run('UI.onAIClick()');assert.equal(a.run('UI.cState.date'),'2026-12-03');assert.equal(a.run('UI.cState.missingDate'),false);await a.run('UI.onSave()');const row=(await a.snapshot()).tasks[0];assert.equal(row.execDate,'2026-12-03');assert.equal(row.startTime,'15:00');
 });
 test('#43 conflicting date and fields modified during request win',async t=>{
- const a=await fixture(t);a.run("AIService.evaluate=()=>new Promise(resolve=>late=resolve);pending=UI.onAIClick();UI.cState.userFields={date:true,time:true,tag:true};UI.cState.date='2027-01-01';UI.cState.resultTitle='手写';UI.cState.resultNote='手写备注';UI.cState.tag='金钱复盘';late({task:'旧标题',note:'旧备注',base_score:9,source:'ai',detected_date:'2026-12-03',detected_time:'15:00-16:00'})");await a.run('pending');
+ const a=await fixture(t);a.run("AIService.evaluate=()=>new Promise(resolve=>late=resolve);pending=UI.onAIClick()");await a.waitFor("typeof late==='function'");a.run("UI.cState.userFields={date:true,time:true,tag:true};UI.cState.date='2027-01-01';UI.cState.resultTitle='手写';UI.cState.resultNote='手写备注';UI.cState.tag='金钱复盘';late({task:'旧标题',note:'旧备注',base_score:9,source:'ai',detected_date:'2026-12-03',detected_time:'15:00-16:00'})");await a.run('pending');
  assert.equal(a.run('UI.cState.resultTitle'),'手写');assert.equal(a.run('UI.cState.date'),'2027-01-01');assert.match(a.run('UI.cState.dateConflict'),/已保留/);assert.equal(a.run('UI.cState.timeType'),'allday');
 });
 test('failed storage preserves draft and attachments; retry and render failure do not duplicate',async t=>{
@@ -55,8 +55,8 @@ test('#44 full months cover leap year and year boundary with selection',async t=
 });
 
 test('timeout and cancellation never publish, including late rejection',async t=>{
- const a=await fixture(t);a.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick();UI.recognition.controller.abort(new Error('timeout'))");await a.run('pending');a.run("lateReject(Error('late'))");assert.equal((await a.snapshot()).tasks.length,0);
- const b=await fixture(t);b.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick();UI.cancelRecognition();lateReject(Error('late'))");await b.run('pending');assert.equal((await b.snapshot()).tasks.length,0);
+ const a=await fixture(t);a.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick()");await a.waitFor("typeof lateReject==='function'");a.run("UI.recognition.controller.abort(new Error('timeout'))");await a.run('pending');a.run("lateReject(Error('late'))");assert.equal((await a.snapshot()).tasks.length,0);
+ const b=await fixture(t);b.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick()");await b.waitFor("typeof lateReject==='function'");b.run("UI.cancelRecognition();lateReject(Error('late'))");await b.run('pending');assert.equal((await b.snapshot()).tasks.length,0);
 });
 test('AI service boundary validates hosted score and keeps successful cache separate from rules',async t=>{
  const a=await fixture(t);a.run("AIService.getDeviceId=()=> 'a'.repeat(32);AIService.source=()=> 'hosted';AIService.setDegraded=()=>{}");

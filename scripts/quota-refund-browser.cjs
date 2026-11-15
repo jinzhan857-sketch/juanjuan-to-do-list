@@ -3,7 +3,7 @@
 // model transports are test doubles. CSP forbids every external connection.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {handlerFixture}=require('./helpers/refund-handler-fixture.cjs');
-const root=path.join(__dirname,'..'),port=4198;
+const root=path.join(__dirname,'..'),port=Number(process.env.PORT||4198);
 let api,mode='success',dropRefund=false,waiting=[],reloadArmed=false,reloadBaseline=null;
 const good=()=>({ok:true,json:async()=>({choices:[{message:{content:'{"task":"明天下午三点复习课程","note":"带笔记本和讲义","base_score":8.4,"category":"学业事务"}'}}]})});
 function reset(next){mode=next;dropRefund=false;api=handlerFixture();api.model=async()=>{
@@ -43,6 +43,22 @@ document.querySelector('#quota-run').onclick=async()=>{results.length=0;try{
   const before=await prepare('wait');const pending=UI.onAIClick();for(let i=0;i<100&&(await ledger()).models===0;i++)await sleep(10);
   if(action==='cancel')await UI.onAIClick();else if(action==='leave')UI.switchPage('home');else if(action==='replace')UI.resetCreate('todo');else window.dispatchEvent(new Event('pagehide'));
   await pending;await AIService.flushQuotaRefunds();await control({release:true});await sleep(30);const state=await ledger();const same=JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv']));ok(action+' late response releases exactly once',state.global===0&&state.models===1&&same,{...state,same,receipts:AIService.refundEntries()});
+ }
+
+ for(const phase of ['cancel','failure']){
+  const before=await prepare('success'),load=UI.loadScoring;
+  if(phase==='cancel'){
+   const waiting=[];UI.loadScoring=()=>new Promise(resolve=>waiting.push(resolve));const pending=UI.onAIClick();
+   for(let i=0;waiting.length<2&&i<100;i++)await sleep(1);if(!waiting.length)throw Error('preparation did not start');UI.loadScoring=load;await UI.onAIClick();const scoring=await load.call(UI);waiting.forEach(resolve=>resolve(scoring));await pending;
+  }else{UI.loadScoring=async()=>{throw TypeError('synthetic module offline')};await UI.onAIClick();UI.loadScoring=load;}
+  await AIService.flushQuotaRefunds();await unchanged('local preparation '+phase+' preserves draft and database',before);const state=await ledger();ok('local preparation '+phase+' dispatches and charges zero',state.models===0&&state.global===0&&AIService.refundEntries().length===0,state);
+ }
+
+ {
+  const before=await prepare('wait');const oldPending=UI.onAIClick();for(let i=0;i<100&&(await ledger()).models<1;i++)await sleep(10);
+  UI.cancelRecognition();const nextPending=UI.onAIClick();for(let i=0;i<100&&(await ledger()).models<2;i++)await sleep(10);await oldPending;
+  const state=await ledger();ok('old cancelled request keeps the next request controls locked',state.models===2&&state.global===1&&document.querySelector('#btn-save').disabled&&document.querySelector('#btn-ai').textContent==='取消识别',state);
+  UI.cancelRecognition();await nextPending;await AIService.flushQuotaRefunds();await control({release:true});await sleep(30);const after=await ledger();ok('both cancellations return quota once with no business writes',after.models===2&&after.global===0&&JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv'])),after);
  }
  await prepare('clarify');const before=await DB.snapshot(['tasks','todos','kv']);const reply=await AIService.agent('合成普通追问',{},'chat');ok('normal clarification counts once without business writes',reply.type==='clarify'&&(await ledger()).global===1&&JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv'])));
  await prepare('success');AIService.storeRefund({id:'f'.repeat(32),device:'a'.repeat(32),pendingUntil:syntheticClock+20000});await AIService.flushQuotaRefunds();ok('another page active receipt remains untouched',AIService.refundEntries().length===1&&(await ledger()).global===0);clearTimeout(AIService.refundTimer);AIService.readyRefund('f'.repeat(32));await AIService.flushQuotaRefunds();ok('interrupted page receipt releases after its deadline',AIService.refundEntries().length===0);
