@@ -1,5 +1,12 @@
 # 测试与验收
 
+#31 新增 scripts/agent-context.test.cjs 与 scripts/agent-context-browser.cjs。前者包含上下文、服务端替身与最终数据库回归，后者使用随机来源及专用合成库核对真实消息流程、失败、取消和重开。固定北京时间2026年11月15日10:00，模型为明确替身，实际结果见[#31报告](../audit/2026-11-15/issue31-context.md)。
+
+## PR #89、#91联合复查
+
+新增node --test scripts/review89-91.test.cjs的14项检查，沿用两项原专项形成63项联合回归。无效返回不得误报网络错误，三种限额后的编辑草稿、附件、跨日时间和主动保存需完整保留；服务端三种拒绝跨午夜仍归请求开始日。node scripts/review89-91-browser.cjs使用4212及专用合成库，实际入口5项通过，范围与原失败见[复查报告](../audit/2026-11-15/pr89-pr91-followup-review.md)。不修改#38的退款实现。
+
+
 ## #29可信额度日期
 
 运行node --test scripts/quota-date.test.cjs，固定服务端时钟，以合成req/res、内存Redis和模型替身检查每设备20、网络50、全站100次、用户改日、失败、重试、并发及北京时间零点。QUOTA_TRACE可指定本地忽略目录的JSON输出，记录全部Redis命令和模型上下文。前端与实际handler联动拒绝检查业务库、附件、完成统计、积分及宠物零变化。真实Redis和模型未验，完整矩阵及计数现状见[#29报告](../audit/2026-11-15/issue29-quota-date.md)。
