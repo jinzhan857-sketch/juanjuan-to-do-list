@@ -1,6 +1,6 @@
 {
   "sourceSha256": "b1259293b64825803965d696ee8397d77e0a4a9a7818b159efac474d4bd68f49",
-  "testBuild": "558e7567d9e4e9c15810c3d5db948ac4ed23f212123e72797e9fc81b216624cf",
+  "testBuild": "cb3a132f43698989bf29dd4db34371b2e1b578fde6e9ead1c9e9bfa020f83c6a",
   "scenarios": [
     {
       "name": "自测先运行，正常应用状态与存储不变",
@@ -421,7 +421,7 @@
     },
     "storage": {
       "juanjuan_active_chat": "normal-chat",
-      "juanjuan_create_draft": "{\"state\":{\"draftId\":\"mwim8u80dva5j\",\"userFields\":{},\"kind\":\"schedule\",\"recognized\":false,\"rawText\":\"合成草稿\",\"resultTitle\":\"合成草稿\",\"resultNote\":\"\",\"images\":[{\"id\":\"synthetic-image\",\"name\":\"合成像素\",\"data\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=\"}],\"missingDate\":false,\"date\":\"2026-11-16\",\"calMonth\":\"2026-11\",\"timeType\":\"allday\",\"slot\":\"afternoon\",\"start\":\"14:00\",\"end\":\"15:00\",\"endDayOffset\":0,\"tag\":\"\",\"period\":\"week\",\"ai\":null,\"aiTitle\":\"\",\"modelRaw\":null,\"reviewedResult\":null,\"saving\":false},\"editingId\":null,\"todoEditingId\":null,\"savedAt\":1794794400000}"
+      "juanjuan_create_draft": "{\"state\":{\"draftId\":\"mwim8u804njru\",\"userFields\":{},\"kind\":\"schedule\",\"recognized\":false,\"rawText\":\"合成草稿\",\"resultTitle\":\"合成草稿\",\"resultNote\":\"\",\"images\":[{\"id\":\"synthetic-image\",\"name\":\"合成像素\",\"data\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=\"}],\"missingDate\":false,\"date\":\"2026-11-16\",\"calMonth\":\"2026-11\",\"timeType\":\"allday\",\"slot\":\"afternoon\",\"start\":\"14:00\",\"end\":\"15:00\",\"endDayOffset\":0,\"tag\":\"\",\"period\":\"week\",\"ai\":null,\"aiTitle\":\"\",\"modelRaw\":null,\"reviewedResult\":null,\"saving\":false},\"editingId\":null,\"todoEditingId\":null,\"savedAt\":1794794400000}"
     }
   },
   "normalAfter": {
@@ -772,9 +772,9 @@
     },
     "storage": {
       "juanjuan_active_chat": "normal-chat",
-      "juanjuan_create_draft": "{\"state\":{\"draftId\":\"mwim8u80dva5j\",\"userFields\":{},\"kind\":\"schedule\",\"recognized\":false,\"rawText\":\"合成草稿\",\"resultTitle\":\"合成草稿\",\"resultNote\":\"\",\"images\":[{\"id\":\"synthetic-image\",\"name\":\"合成像素\",\"data\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=\"}],\"missingDate\":false,\"date\":\"2026-11-16\",\"calMonth\":\"2026-11\",\"timeType\":\"allday\",\"slot\":\"afternoon\",\"start\":\"14:00\",\"end\":\"15:00\",\"endDayOffset\":0,\"tag\":\"\",\"period\":\"week\",\"ai\":null,\"aiTitle\":\"\",\"modelRaw\":null,\"reviewedResult\":null,\"saving\":false},\"editingId\":null,\"todoEditingId\":null,\"savedAt\":1794794400000}"
+      "juanjuan_create_draft": "{\"state\":{\"draftId\":\"mwim8u804njru\",\"userFields\":{},\"kind\":\"schedule\",\"recognized\":false,\"rawText\":\"合成草稿\",\"resultTitle\":\"合成草稿\",\"resultNote\":\"\",\"images\":[{\"id\":\"synthetic-image\",\"name\":\"合成像素\",\"data\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=\"}],\"missingDate\":false,\"date\":\"2026-11-16\",\"calMonth\":\"2026-11\",\"timeType\":\"allday\",\"slot\":\"afternoon\",\"start\":\"14:00\",\"end\":\"15:00\",\"endDayOffset\":0,\"tag\":\"\",\"period\":\"week\",\"ai\":null,\"aiTitle\":\"\",\"modelRaw\":null,\"reviewedResult\":null,\"saving\":false},\"editingId\":null,\"todoEditingId\":null,\"savedAt\":1794794400000}"
     }
   },
   "ok": true,
-  "capturedAt": "2026-11-15T18:26:54.569Z"
+  "capturedAt": "2026-11-15T18:31:53.254Z"
 }

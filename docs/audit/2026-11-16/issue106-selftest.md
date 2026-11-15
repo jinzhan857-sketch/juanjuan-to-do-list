@@ -6,7 +6,7 @@
 
 #33通过[PR #118](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/118)合入main d28ee5af06f53776bedc43f97a1e7244c6929935，[最终交付](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/33#issuecomment-6898736158)明确完成后停止。#110、#117独立遗留，不在本轮修改。采用该main成果，准备分支仅有本任务资料，合并后固定实施起点942d1b7。原目录、其他聊天工作区、私人备份和Key均未操作。
 
-基准页面SHA256为b1259293b64825803965d696ee8397d77e0a4a9a7818b159efac474d4bd68f49；最终应用SHA256为29b77565c2bbe9c1e22ce2e70ab8bb37aa99dedb363b207489ac8599df8a0569。受检测试模块版本为4307b15356a2fb2a5ef2d0623b15303862a823e4103c1f20313a88bb14f8ffe4。代码提交与PR在Issue最终交接中给出，未产生合入提交。
+基准页面SHA256为b1259293b64825803965d696ee8397d77e0a4a9a7818b159efac474d4bd68f49；最终应用SHA256为29b77565c2bbe9c1e22ce2e70ab8bb37aa99dedb363b207489ac8599df8a0569。受检测试模块版本为2a88dbd4be97f5eedd1ffdc28e9cb59470aa5a07edd6fc0382d426b09dcf0751。代码提交与PR在Issue最终交接中给出，未产生合入提交。
 
 ## 准确改动与边界
 
@@ -90,3 +90,11 @@
 2026年11月16日，Asia/Shanghai，Node v24.16.0、npm 11.13.0。新基准npm run check为1453项及26条稳定断言通过。实施后npm run check为1457项Node测试及26条稳定断言通过，三项历史探测符合当前结果；node --test scripts/startup-selftest.test.cjs专项4项通过，但会明确打印两条旧自测失败，它们不计作功能通过。后续归档与干净副本结果见Issue最终交接与本报告补充，不将准备基线冒充最终代码。
 
 真实手机、其他设备、完整#9拆分、真实模型、生产Redis、用户真实资料与发布均未测或未操作；#110、#117保持原归属。出现越范围数据变化、附件丢失、重复奖励或关键回归停止交付，只处理本批代码。
+
+## 最终提交副本与归档补充
+
+实际代码受检提交8859123546f81fccdc9d5b49ef93db5ab59cfb73。该提交运行npm run check:archive通过，来源核对8859123，1457项Node及26条稳定断言通过。另从本地Git对象创建全新干净克隆、从git archive创建独立无Git目录，分别npm ci --ignore-scripts和npm run check通过，各1457项及26条。干净克隆最终git status为空，构建dirty=false；无Git产物sourceKind=archive、dirty=null，来源为8859123，未冒称可判断解压后修改。
+
+[干净克隆浏览器](issue106-evidence/clone.json)使用4259源码入口；[无Git归档浏览器](issue106-evidence/archive.json)使用4260的dist入口，均真实运行42条与11组场景。与本聊天4256源码、4258产物的应用SHA256一致。临时副本使用相同合成脚本，测试与运行模块只存在换行字节差异，[文件比对](issue106-evidence/copy-equivalence.json)逐一核对规范换行后完全一致；工作区测试版本2a88dbd4与副本e64cfd53因此分别记录，不混用哈希。原始基准4257也使用独立合成来源，直接调用原始selfTest复现同样两个error。所有浏览器结果完整保留，没有将两项旧失败记为功能通过。
+
+专项实际执行node --test scripts/startup-selftest.test.cjs、npm run check、npm run check:archive；新check:startup入口等价运行build后专项。文档与差异检查通过。报告最终补充和JSON属于资料变更，最终交接另给提交号，不伪造本报告包含自身最终哈希。#106保持打开，#9与#1正文未改；未合入、发布或调用真实模型。
