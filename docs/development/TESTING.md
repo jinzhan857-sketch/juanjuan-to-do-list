@@ -1,5 +1,10 @@
 # 测试与验收
 
+## #29可信额度日期
+
+运行node --test scripts/quota-date.test.cjs，固定服务端时钟，以合成req/res、内存Redis和模型替身检查每设备20、网络50、全站100次、用户改日、失败、重试、并发及北京时间零点。QUOTA_TRACE可指定本地忽略目录的JSON输出，记录全部Redis命令和模型上下文。前端与实际handler联动拒绝检查业务库、附件、完成统计、积分及宠物零变化。真实Redis和模型未验，完整矩阵及计数现状见[#29报告](../audit/2026-11-15/issue29-quota-date.md)。
+
+
 ## 识别失败保留草稿
 
 运行node --test scripts/recognition-failure.test.cjs检查失败零写入、短提示、手改与附件保留、主动重试、取消和手动发布。既有日期时间矩阵的failure路径现在显式点击保存，不能将手动保存归为识别失败自动保存。运行node scripts/recognition-failure-browser.cjs后打开4207独立合成来源并运行，数据库与外部连接边界见[验收报告](../audit/2026-11-15/recognition-failure-draft.md)。旧自动发布报告保留为历史，由新确认替代现行规则。

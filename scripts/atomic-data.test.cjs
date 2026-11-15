@@ -442,3 +442,39 @@ for(const kind of ['update_schedule','update_schedule_batch']){
 test('issue30 validates merged time against every member before any writes',async t=>{
  const a=await fixture(t);a.run("S.tasks[1].endTime='10:20';action.item={start_time:'10:30'};UI.captureAgentScope(action)");await a.run("DB.put('tasks',S.tasks[1]);DB.put('messages',S.messages[0])");const before=await a.snapshot();assert.equal(a.json('UI.validateAgentAction(action).ok'),false);await assert.rejects(a.run('UI.executeAgentAction(action,S.messages[0])'));assert.deepEqual(await a.snapshot(),before);
 });
+
+async function ordinaryConversionFixture(t){
+ const a=await fixture(t),nodes=new Map();
+ const el=k=>{if(!nodes.has(k))nodes.set(k,{innerHTML:'',querySelector:el,querySelectorAll:()=>[]});return nodes.get(k)};
+ a.ctx.document={querySelector:el};a.run("UI.confirm=(title,body,ok)=>confirmed=ok;UI.openTaskDetail('a')");
+ return {...a,select:()=>el('#td-to-todo').onclick()};
+}
+for(const stage of ['before click','after click'])for(const change of ['edit','delete'])test('review27 stale ordinary '+stage+' '+change,async t=>{
+ const a=await ordinaryConversionFixture(t);if(stage==='after click')a.select();
+ await a.run(change==='edit'?"commitDataChanges([{store:'tasks',value:{...S.tasks[0],note:'新备注',links:['https://example.com/new'],images:[]}}])":"commitDataChanges([{store:'tasks',type:'delete',key:'a'}])");
+ if(stage==='before click')a.select();const before=await a.snapshot(),memory=a.memory();await assert.rejects(a.run('confirmed()'),/资料已变化/);assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+ a.run('DB._db.close()');await a.run('DB.open()');assert.deepEqual(await a.snapshot(),before);
+});
+for(const mode of ['sequential','concurrent'])test('review27 ordinary confirmation runs once '+mode,async t=>{
+ const a=await ordinaryConversionFixture(t);a.select();const before=await a.snapshot();
+ if(mode==='sequential'){await a.run('confirmed()');await assert.rejects(a.run('confirmed()'),/资料已变化/);}
+ else {const results=await a.run('Promise.allSettled([confirmed(),confirmed()])');assert.equal(results.filter(r=>r.status==='fulfilled').length,1);}
+ const after=await a.snapshot();assert.equal(after.todos.length,2);assert.equal(after.tasks.length,2);assert.equal(after.todos.filter(x=>x.sourceTaskId==='a').length,1);for(const key of ['kv','messages','operations','memories','chats'])assert.deepEqual(after[key],before[key]);
+});
+for(const type of ['allday','slot'])for(const kind of ['update_schedule','update_schedule_batch'])for(const key of ['start_time','end_time'])test('review30 rejects hidden invalid '+type+' '+kind+' '+key,async t=>{
+ const a=await fixture(t);a.ctx.type=type;a.ctx.kind=kind;a.ctx.key=key;
+ a.run("for(const task of S.tasks.slice(0,2)){task.timeType=type;task.slot=CONFIG.SLOTS[0].key;task.startTime=null;task.endTime=null;}action=kind==='update_schedule'?{kind,target_id:'a',item:{[key]:'bad'}}:{...action,item:{[key]:'bad'}};UI.captureAgentScope(action);S.messages[0].meta.action=action");await a.run("DB.batch([...S.tasks.map(value=>({store:'tasks',value})),{store:'messages',value:S.messages[0]}])");
+ const before=await a.snapshot(),memory=a.memory();assert.equal(a.json('UI.validateAgentAction(action).ok'),false);await assert.rejects(a.run('UI.executeAgentAction(action,S.messages[0])'));assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+
+for(const fault of ['tasks','todos','operations','messages'])test('review27 conversion undo rolls back '+fault,async t=>{
+ const a=await fixture(t);a.run("action={kind:'convert_schedule_to_todo',target_id:'a',item:{}};UI.captureAgentScope(action);S.messages[0].meta.action=action");await a.run("DB.put('messages',S.messages[0]);UI.confirmAgentAction('m')");
+ const before=await a.snapshot(),memory=a.memory();a.fail(fault,1,fault==='todos'?'delete':'put');await a.run("UI.undoAgentOperation('m')");assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);a.run('DB._db.close()');await a.run('DB.open()');assert.deepEqual(await a.snapshot(),before);
+});
+for(const conflict of ['converted todo','source id'])test('review27 undo preserves changed '+conflict,async t=>{
+ const a=await fixture(t);a.run("action={kind:'convert_schedule_to_todo',target_id:'a',item:{}};UI.captureAgentScope(action);S.messages[0].meta.action=action");await a.run("DB.put('messages',S.messages[0]);UI.confirmAgentAction('m')");
+ await a.run(conflict==='converted todo'?"commitDataChanges([{store:'todos',value:{...S.todos.find(x=>x.sourceTaskId==='a'),note:'new content'}}])":"commitDataChanges([{store:'tasks',value:{...S.operations[0].before,note:'new source'}}])");const before=await a.snapshot();await a.run("UI.undoAgentOperation('m')");assert.deepEqual(await a.snapshot(),before);
+});
+for(const kind of ['update_schedule','update_schedule_batch'])test('review30 valid time type transition '+kind,async t=>{
+ const a=await fixture(t);a.ctx.kind=kind;a.run("action=kind==='update_schedule'?{kind,target_id:'a',item:{time_type:'allday',slot:null,start_time:null,end_time:null}}:{...action,item:{time_type:'allday',slot:null,start_time:null,end_time:null}};UI.captureAgentScope(action);S.messages[0].meta.action=action");await a.run("DB.put('messages',S.messages[0])");const before=await a.snapshot();await a.run('UI.executeAgentAction(action,S.messages[0])');const after=await a.snapshot();for(const old of before.tasks){const actual=after.tasks.find(x=>x.id===old.id);if(old.id==='a'||kind.endsWith('_batch')&&old.id==='b')assert.deepEqual(actual,{...old,timeType:'allday',slot:null,startTime:null,endTime:null,isBackfill:a.run('dayDiff('+JSON.stringify(old.execDate)+',todayStr())<0')});else assert.deepEqual(actual,old);}assert.deepEqual(after.kv,before.kv);
+});
