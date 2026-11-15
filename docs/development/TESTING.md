@@ -1,5 +1,7 @@
 # 测试与验收
 
+#39 新增 scripts/course-note.test.cjs 和 scripts/course-note-browser.cjs，分别复验解析边界与表单、助手、转换、实际导出导入、显示和存储一致性。固定北京时间2026年11月15日10:00，仅合成库与明确模型替身，保留历史及有意重复，详见[#39报告](../audit/2026-11-15/issue39-course-note.md)。
+
 #31 新增 scripts/agent-context.test.cjs 与 scripts/agent-context-browser.cjs。前者包含上下文、服务端替身与最终数据库回归，后者使用随机来源及专用合成库核对真实消息流程、失败、取消和重开。固定北京时间2026年11月15日10:00，模型为明确替身，实际结果见[#31报告](../audit/2026-11-15/issue31-context.md)。
 
 ## PR #89、#91联合复查
