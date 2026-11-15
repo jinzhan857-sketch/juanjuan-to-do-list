@@ -1978,8 +1978,8 @@ const AIService = {
         }),
       });
       if(!resp.ok) throw new Error(data.error || 'AI 服务暂不可用');
-      const vague = !!data.vague || data.base_score === null || data.base_score === undefined;
       if(!data||typeof data!=='object'||(!data.vague&&(!Number.isFinite(data.base_score)||data.base_score<0||data.base_score>10))) throw new Error('模型返回结果不合法');
+      const vague = !!data.vague || data.base_score === null || data.base_score === undefined;
       const out = {...data, category:mapTag(data.category || this._localCategory(title)), vague, model_raw:data.model_raw||JSON.stringify(data), source:'ai'};
       this.setDegraded(false);
       this.cache[cacheKey] = out;
