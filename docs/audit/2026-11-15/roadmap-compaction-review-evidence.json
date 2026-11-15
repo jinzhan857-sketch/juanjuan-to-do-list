@@ -1,0 +1,1353 @@
+{
+  "sourceCommit": "1c5f25a1c053838f1936ed30e40a3ed600ee8775",
+  "planUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1",
+  "planUpdatedAt": "2026-11-15T15:50:37Z",
+  "checkedAt": "2026-11-15T16:01:03.598Z",
+  "timezone": "Asia/Shanghai",
+  "archive": {
+    "bytes": 60790,
+    "sha256": "28e574451c920152f9102e5041222b8f3e3b62d9dee4c89972a276f10c143a4e",
+    "originalFetchMatches": true
+  },
+  "plan": {
+    "characters": 10554,
+    "sha256": "6de36b9041a8e03b501c7b95ba654c2ccdd1f3b9fe52b17feb351f9bf68936a2",
+    "order": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      37,
+      64,
+      40,
+      47,
+      43,
+      44,
+      7,
+      60,
+      58,
+      59,
+      38,
+      8,
+      28,
+      65,
+      62,
+      66,
+      57,
+      27,
+      30,
+      31,
+      29,
+      32,
+      33,
+      39,
+      63,
+      61,
+      9,
+      55,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      34,
+      41,
+      20,
+      81,
+      82,
+      83,
+      53,
+      51,
+      52,
+      78,
+      104
+    ],
+    "completed": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      37,
+      64,
+      40,
+      47,
+      43,
+      44,
+      7,
+      60,
+      58,
+      59,
+      38,
+      8,
+      28,
+      65,
+      62,
+      66,
+      57,
+      27,
+      30,
+      31,
+      29,
+      32,
+      39,
+      81
+    ],
+    "open": [
+      33,
+      63,
+      61,
+      9,
+      55,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      34,
+      41,
+      20,
+      82,
+      83,
+      53,
+      51,
+      52,
+      78,
+      104
+    ]
+  },
+  "comments": [
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1#issuecomment-6889237661",
+      "sha256": "f3260ad917b5fe89d3eadbebc19492c16fb4fb172c6260d0c3e4a883dbe99b4f"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1#issuecomment-6890912009",
+      "sha256": "bd21b27704d362f26878fa2145b329bc41dbe8d6788ec0dd1e4bc7d41e3c4c9c"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1#issuecomment-6893447772",
+      "sha256": "cd792c1a3afa2a5d7bde2396923e643aa1629b1e65858bc42b9ac5bf94864d18"
+    },
+    {
+      "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1#issuecomment-6895070674",
+      "sha256": "0fa8b630b4bc3b1878894335accb90e093f8302e7bb3b4e5a40a9dc586ad8bbc"
+    }
+  ],
+  "graphs": {
+    "count": 2,
+    "edgesPreserved": true,
+    "statesMatch": true,
+    "browserRendered": true
+  },
+  "http": {
+    "tested": 125,
+    "ok": 125,
+    "active": 67,
+    "results": [
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43712905755",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43712905755",
+        "title": "完成 #38 失败与取消退次及请求计数验收 · jinzhan857-sketch/juanjuan-to-do-list@840f771 · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43713848432",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43713848432",
+        "title": "Unify schedule edit scoring and undo rules · jinzhan857-sketch/juanjuan-to-do-list@1933710 · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43716936515",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43716936515",
+        "title": "Fix schedule edit attachment and stale draft protections · jinzhan857-sketch/juanjuan-to-do-list@9a16bc2 · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/00a569c0b9c76c70eb023351a130083f966f9747/docs/audit/2026-11-15/pr75-review.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/00a569c0b9c76c70eb023351a130083f966f9747/docs/audit/2026-11-15/pr75-review.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/pr75-review.md at 00a569c0b9c76c70eb023351a130083f966f9747 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/00a569c0b9c76c70eb023351a130083f966f9747/docs/product/VERSION_POSITIONING.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/00a569c0b9c76c70eb023351a130083f966f9747/docs/product/VERSION_POSITIONING.md",
+        "title": "juanjuan-to-do-list/docs/product/VERSION_POSITIONING.md at 00a569c0b9c76c70eb023351a130083f966f9747 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/00a569c0b9c76c70eb023351a130083f966f9747/docs/reference/agent-learning-plan.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/00a569c0b9c76c70eb023351a130083f966f9747/docs/reference/agent-learning-plan.md",
+        "title": "juanjuan-to-do-list/docs/reference/agent-learning-plan.md at 00a569c0b9c76c70eb023351a130083f966f9747 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/5c489ee7e1377e8961e1864933c0d22eaea011ef/docs/decisions/0003-javascript-python-boundary.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/5c489ee7e1377e8961e1864933c0d22eaea011ef/docs/decisions/0003-javascript-python-boundary.md",
+        "title": "juanjuan-to-do-list/docs/decisions/0003-javascript-python-boundary.md at 5c489ee7e1377e8961e1864933c0d22eaea011ef · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/5c489ee7e1377e8961e1864933c0d22eaea011ef/docs/product/VERSION_POSITIONING.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/5c489ee7e1377e8961e1864933c0d22eaea011ef/docs/product/VERSION_POSITIONING.md",
+        "title": "juanjuan-to-do-list/docs/product/VERSION_POSITIONING.md at 5c489ee7e1377e8961e1864933c0d22eaea011ef · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/5c489ee7e1377e8961e1864933c0d22eaea011ef/docs/reference/nanomuse-research.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/5c489ee7e1377e8961e1864933c0d22eaea011ef/docs/reference/nanomuse-research.md",
+        "title": "juanjuan-to-do-list/docs/reference/nanomuse-research.md at 5c489ee7e1377e8961e1864933c0d22eaea011ef · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/7cd53af54d7ba5639b7870a78bd921adeb856f48/docs/decisions/0004-product-and-architecture-references.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/7cd53af54d7ba5639b7870a78bd921adeb856f48/docs/decisions/0004-product-and-architecture-references.md",
+        "title": "juanjuan-to-do-list/docs/decisions/0004-product-and-architecture-references.md at 7cd53af54d7ba5639b7870a78bd921adeb856f48 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/7cd53af54d7ba5639b7870a78bd921adeb856f48/docs/product/VERSION_POSITIONING.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/7cd53af54d7ba5639b7870a78bd921adeb856f48/docs/product/VERSION_POSITIONING.md",
+        "title": "juanjuan-to-do-list/docs/product/VERSION_POSITIONING.md at 7cd53af54d7ba5639b7870a78bd921adeb856f48 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/7cd53af54d7ba5639b7870a78bd921adeb856f48/docs/reference/agent-learning-plan.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/7cd53af54d7ba5639b7870a78bd921adeb856f48/docs/reference/agent-learning-plan.md",
+        "title": "juanjuan-to-do-list/docs/reference/agent-learning-plan.md at 7cd53af54d7ba5639b7870a78bd921adeb856f48 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/e41e747fd1c7cbe7d56b5605f9e5d9beea3e4351/docs/audit/2026-11-15/pr89-pr91-followup-review.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/e41e747fd1c7cbe7d56b5605f9e5d9beea3e4351/docs/audit/2026-11-15/pr89-pr91-followup-review.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/pr89-pr91-followup-review.md at e41e747fd1c7cbe7d56b5605f9e5d9beea3e4351 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/AGENTS.md",
+        "groups": [
+          "active"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/AGENTS.md",
+        "title": "juanjuan-to-do-list/AGENTS.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/architecture/README.md",
+        "title": "juanjuan-to-do-list/docs/architecture/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/feedback-images/README.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/feedback-images/README.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/feedback-images/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue27-30-followup-review.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue27-30-followup-review.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/issue27-30-followup-review.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue28-edit-score.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue28-edit-score.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/issue28-edit-score.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue28-followup-review.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue28-followup-review.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/issue28-followup-review.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue38-quota-refund.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue38-quota-refund.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/issue38-quota-refund.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue81-acceptance.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/issue81-acceptance.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/issue81-acceptance.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/pr67-review.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/pr67-review.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/pr67-review.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/roadmap-compaction.md",
+        "groups": [
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/audit/2026-11-15/roadmap-compaction.md",
+        "title": "juanjuan-to-do-list/docs/audit/2026-11-15/roadmap-compaction.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/decisions/0002-backend-language.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/decisions/0002-backend-language.md",
+        "title": "juanjuan-to-do-list/docs/decisions/0002-backend-language.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/cases.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/cases.md",
+        "title": "juanjuan-to-do-list/docs/development/ai-testset/cases.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/fixtures.json",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/fixtures.json",
+        "title": "juanjuan-to-do-list/docs/development/ai-testset/fixtures.json at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/README.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/README.md",
+        "title": "juanjuan-to-do-list/docs/development/ai-testset/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/run-template.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/ai-testset/run-template.md",
+        "title": "juanjuan-to-do-list/docs/development/ai-testset/run-template.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/HANDOFF_CONFIRMED_RULES.md",
+        "groups": [
+          "active"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/HANDOFF_CONFIRMED_RULES.md",
+        "title": "juanjuan-to-do-list/docs/development/HANDOFF_CONFIRMED_RULES.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/README.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/README.md",
+        "title": "juanjuan-to-do-list/docs/development/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/RELEASE.md",
+        "groups": [
+          "active"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/RELEASE.md",
+        "title": "juanjuan-to-do-list/docs/development/RELEASE.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/TESTING.md",
+        "groups": [
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/development/TESTING.md",
+        "title": "juanjuan-to-do-list/docs/development/TESTING.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/2026-11-15-roadmap-before-compaction.json",
+        "groups": [
+          "index",
+          "report"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/2026-11-15-roadmap-before-compaction.json",
+        "title": "juanjuan-to-do-list/docs/history/2026-11-15-roadmap-before-compaction.json at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/2026-11-15-roadmap-before-compaction.md",
+        "groups": [
+          "active",
+          "index",
+          "report"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/2026-11-15-roadmap-before-compaction.md",
+        "title": "juanjuan-to-do-list/docs/history/2026-11-15-roadmap-before-compaction.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/2026-11-15-roadmap-before-playtest-review.md",
+        "groups": [
+          "archive",
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/2026-11-15-roadmap-before-playtest-review.md",
+        "title": "juanjuan-to-do-list/docs/history/2026-11-15-roadmap-before-playtest-review.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/agent-inputs-2026-09.md",
+        "groups": [
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/agent-inputs-2026-09.md",
+        "title": "juanjuan-to-do-list/docs/history/agent-inputs-2026-09.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/README.md",
+        "groups": [
+          "active",
+          "report"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/README.md",
+        "title": "juanjuan-to-do-list/docs/history/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/test-records-2026-09.md",
+        "groups": [
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/history/test-records-2026-09.md",
+        "title": "juanjuan-to-do-list/docs/history/test-records-2026-09.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/product/README.md",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/product/README.md",
+        "title": "juanjuan-to-do-list/docs/product/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/product/VERSION_POSITIONING.md",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/product/VERSION_POSITIONING.md",
+        "title": "juanjuan-to-do-list/docs/product/VERSION_POSITIONING.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/README.md",
+        "groups": [
+          "active"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/README.md",
+        "title": "juanjuan-to-do-list/docs/README.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/reference/2026-11-15-confirmed-feedback-rules.md",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/reference/2026-11-15-confirmed-feedback-rules.md",
+        "title": "juanjuan-to-do-list/docs/reference/2026-11-15-confirmed-feedback-rules.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/reference/2026-11-15-confirmed-feedback-tests.md",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/reference/2026-11-15-confirmed-feedback-tests.md",
+        "title": "juanjuan-to-do-list/docs/reference/2026-11-15-confirmed-feedback-tests.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/reference/agent-learning-plan.md",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/reference/agent-learning-plan.md",
+        "title": "juanjuan-to-do-list/docs/reference/agent-learning-plan.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/ROADMAP.md#%E5%A6%82%E4%BD%95%E7%BB%B4%E6%8A%A4",
+        "groups": [
+          "report"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/ROADMAP.md",
+        "title": "juanjuan-to-do-list/docs/ROADMAP.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/ROADMAP.md#如何维护",
+        "groups": [
+          "active"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/ROADMAP.md",
+        "title": "juanjuan-to-do-list/docs/ROADMAP.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md",
+        "groups": [
+          "active",
+          "archive",
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/blob/main/docs/STATUS.md",
+        "title": "juanjuan-to-do-list/docs/STATUS.md at main · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1",
+        "groups": [
+          "index",
+          "report"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1",
+        "title": "卷卷开发总计划：整理当前版本，完成 3.0 · Issue #1 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1#issuecomment-6889237661",
+        "groups": [
+          "index"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1",
+        "title": "卷卷开发总计划：整理当前版本，完成 3.0 · Issue #1 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/10",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/10",
+        "title": "验证下载、运行、发布和恢复的完整流程 · Issue #10 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/104",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/104",
+        "title": "执行AI日用160题广测，集中复现问题并建立修复后复测流程 · Issue #104 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11",
+        "title": "确定 3.0 的发布规则、数据格式和验收标准 · Issue #11 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/12",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/12",
+        "title": "验证免费服务能否支撑香港和大陆使用 · Issue #12 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/13",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/13",
+        "title": "确定登录、跨设备同步和旧数据保留规则 · Issue #13 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/14",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/14",
+        "title": "搭建后端，跑通一条完整事务流程 · Issue #14 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/15",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/15",
+        "title": "实现邮箱登录、跨设备同步和数据恢复 · Issue #15 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/16",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/16",
+        "title": "接通三种 AI 模式，管理工具权限和体验额度 · Issue #16 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/17",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/17",
+        "title": "让提示词和工作流可调整，错误可追查 · Issue #17 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/18",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/18",
+        "title": "试验自动整理记忆，验证能否纠错和追溯来源 · Issue #18 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/19",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/19",
+        "title": "实现少量网页通知和每周两次数据库检查 · Issue #19 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2",
+        "title": "保存电脑上的最新代码，让 GitHub 下载后也能检查 · Issue #2 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/20",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/20",
+        "title": "完成 3.0 实机验收、演示和发布 · Issue #20 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/27",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/27",
+        "title": "修复助手将日程转成待办时丢失图片和链接 · Issue #27 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/28",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/28",
+        "title": "统一助手与表单编辑日程的积分重算和改时规则 · Issue #28 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/29",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/29",
+        "title": "修复公共 AI 额度使用客户端日期导致计数可绕过 · Issue #29 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3",
+        "title": "统一启动、打包和自动检查的方法 · Issue #3 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/30",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/30",
+        "title": "补齐批量修改遗漏的标题分数和时间字段校验 · Issue #30 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/31",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/31",
+        "title": "修复事务上下文只取最早 100 条导致近期日程遗漏 · Issue #31 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/32",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/32",
+        "title": "修复底部导航切换时滚动条闪现引起页面横向跳动 · Issue #32 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/33",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/33",
+        "title": "修复助手输入聚焦误判键盘弹出导致底部导航消失 · Issue #33 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/34",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/34",
+        "title": "完善电脑与手机自适应布局，提供布局切换方案 · Issue #34 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/37",
+        "title": "专项验证导入格式、重复记录与事务失败后的数据恢复 · Issue #37 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/38",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/38",
+        "title": "统一验证并修复请求超时、取消后返回、重试与额度计数 · Issue #38 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/39",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/39",
+        "title": "定位并修复课程教授备注重复的问题 · Issue #39 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/4",
+        "title": "修复“只改一天，却改到整组”的问题 · Issue #4 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40",
+        "title": "排查并恢复卷卷 GitHub Pages 地址在电脑和手机均返回 404 · Issue #40 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/41",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/41",
+        "title": "在 3.0 完成卷卷小猫新美术与基础动作改版 · Issue #41 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/43",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/43",
+        "title": "修复 AI 识别后已选执行日期失效，必须再次选日期才能发布 · Issue #43 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/44",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/44",
+        "title": "发布日程的执行日期默认显示整月，移除展开和收起 · Issue #44 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47",
+        "title": "发布日程与待办改为左侧 AI 识别、右侧快速发布，优先实施 · Issue #47 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/5",
+        "title": "让 AI 正确识别同一组重复日程 · Issue #5 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/51",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/51",
+        "title": "后续评测：参考 AgentBench 验证卷卷能否正确完成个人事务 · Issue #51 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/52",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/52",
+        "title": "后续试验：参考 EdgeBench 评测卷卷的多轮任务与错误恢复 · Issue #52 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/53",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/53",
+        "title": "评估并选择卷卷可复用的开源工具与产品方案，先小试再接入 · Issue #53 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/55",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/55",
+        "title": "真实手机验收发布表单、日期保持与整月日历，承接 #47、#43、#44 待验项 · Issue #55 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/57",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/57",
+        "title": "精简任务详情的信息顺序、积分文案、操作按钮与编辑规则说明 · Issue #57 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/58",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/58",
+        "title": "独立发布表单日期识别，支持口语日期并保护手选日期 · Issue #58 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/59",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/59",
+        "title": "独立时间识别，完善全部时段、单端补足一小时与跨日执行 · Issue #59 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/6",
+        "title": "防止导入或批量修改中途失败造成数据丢失 · Issue #6 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/60",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/60",
+        "title": "发布表单保留用户原文，优先按换行整理任务定义与备注 · Issue #60 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/61",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/61",
+        "title": "首页增加未读信息入口，收纳状态提醒并精简空态文案 · Issue #61 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/62",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/62",
+        "title": "修复首页待确认任务提醒被数字和文字拆散的排版 · Issue #62 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/63",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/63",
+        "title": "统一全部主题的简约控件规范，新增灰白配色与默认关闭的界面阴影 · Issue #63 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/64",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/64",
+        "title": "导入校验失败时指出具体记录与错误字段，帮助定位无法恢复的备份 · Issue #64 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/65",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/65",
+        "title": "修复近期待办与长期待办的数量未随当前范围变化 · Issue #65 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/66",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/66",
+        "title": "修复季度待办的最后三分之一提醒过早触发 · Issue #66 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7",
+        "title": "查询天气时优先使用用户这次说的城市 · Issue #7 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/78",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/78",
+        "title": "3.x候选：试验用户主动发起的每周复盘 · Issue #78 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/8",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/8",
+        "title": "修复完成数量和统计报告对不上的问题 · Issue #8 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81",
+        "title": "本机启动 AI 服务，让 Codex 安全读取密钥并运行测试 · Issue #81 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82",
+        "title": "待讨论：提供公网共享 AI 接口，明确平台、密钥保护和费用额度 · Issue #82 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83",
+        "title": "待讨论：验证大陆不翻墙访问卷卷，确定域名和正式入口 · Issue #83 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/9",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/9",
+        "title": "拆清页面、数据、积分和 AI 代码 · Issue #9 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/102",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/102",
+        "title": "复查 PR #98：保留查询意图并防止课程内容截断 by jinzhan857-sketch · Pull Request #102 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/103",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/103",
+        "title": "Add 160 diverse daily AI cases and a repeatable issue triage process by jinzhan857-sketch · Pull Request #103 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/67",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/67",
+        "title": "记录本轮确认需求、完整字段测试预期与界面截图 by jinzhan857-sketch · Pull Request #67 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/68",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/68",
+        "title": "导入失败时显示具体记录与错误字段 by jinzhan857-sketch · Pull Request #68 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/71",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/71",
+        "title": "Fix quarterly reminder to start in final calendar month by jinzhan857-sketch · Pull Request #71 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/72",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/72",
+        "title": "Document approved rules and ordered implementation handoff by jinzhan857-sketch · Pull Request #72 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/73",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/73",
+        "title": "Simplify task details and preserve historical scoring evidence by jinzhan857-sketch · Pull Request #73 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/75",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/75",
+        "title": "版本与开源借鉴：明确记录主线并收紧架构范围 by jinzhan857-sketch · Pull Request #75 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/76",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/76",
+        "title": "Fix publisher date recognition across quick and AI paths by jinzhan857-sketch · Pull Request #76 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/77",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/77",
+        "title": "Fix publisher time recognition and support next-day schedules by jinzhan857-sketch · Pull Request #77 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/80",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/80",
+        "title": "修复请求等待、取消迟到与重复发送保护，额度留待后续 by jinzhan857-sketch · Pull Request #80 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/84",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/84",
+        "title": "统一完成数量归属，修复重复确认与结算保存不完整 by jinzhan857-sketch · Pull Request #84 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/88",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/88",
+        "title": "完成 #38 失败与取消退次及请求计数验收 by jinzhan857-sketch · Pull Request #88 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/89",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/89",
+        "title": "Keep failed AI recognition as a draft with concise errors by jinzhan857-sketch · Pull Request #89 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/90",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/90",
+        "title": "Fix stale conversion confirmations and hidden time validation by jinzhan857-sketch · Pull Request #90 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/91",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/91",
+        "title": "Use trusted Beijing dates for public AI quotas by jinzhan857-sketch · Pull Request #91 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/92",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/92",
+        "title": "Fix invalid recognition response classification after PRs 89 and 91 by jinzhan857-sketch · Pull Request #92 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/94",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/94",
+        "title": "Unify schedule edit scoring and undo rules by jinzhan857-sketch · Pull Request #94 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/96",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/96",
+        "title": "Fix navigation scrollbar flashes and layout shifts by jinzhan857-sketch · Pull Request #96 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/97",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/97",
+        "title": "Add local AI runtime, shared private configuration, and bounded acceptance checks by jinzhan857-sketch · Pull Request #97 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/99",
+        "groups": [
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/99",
+        "title": "Fix schedule edit attachment and stale draft protections by jinzhan857-sketch · Pull Request #99 · jinzhan857-sketch/juanjuan-to-do-list · GitHub"
+      },
+      {
+        "url": "https://jinzhan857-sketch.github.io/juanjuan-to-do-list/?v=2.5",
+        "groups": [
+          "active",
+          "archive"
+        ],
+        "status": 200,
+        "finalUrl": "https://jinzhan857-sketch.github.io/juanjuan-to-do-list/?v=2.5",
+        "title": "卷卷AI Todo · 宠物陪伴式个人事务助手"
+      }
+    ]
+  }
+}
