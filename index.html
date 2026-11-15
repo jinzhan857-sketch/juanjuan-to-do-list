@@ -2123,10 +2123,16 @@ const AIService = {
     const weekMap={一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7};
     const courseCode=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0]||'';
     const noteMatch=text.match(/(?:地址|地点)\s*([^，。；！？]+)/);
-    const classroomMatch=text.match(/教室\s*[:：]?\s*([^，。；！？]+)/)||text.match(/\b([A-Za-z]{1,4}\s*\d{2,4})\s*教室/i);
-    const teacherMatch=text.match(/(?:教授|老师)\s*(?:为|是|[:：])?\s*([^，。；！？]+)/);
     const courseMatch=text.match(/([A-Z]{2,}\d{3,}\s*[^，。；！？]*?)(?=\s*(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/i);
-    const structuredNote=[classroomMatch?.[1]&&`教室：${classroomMatch[1].trim()}`,teacherMatch?.[1]&&`教授：${teacherMatch[1].trim()}`,noteMatch?.[1]&&`地点：${noteMatch[1].trim()}`].filter(Boolean).join('\n');
+    // Consume each metadata span once, stopping before the next labelled span.
+    // Keep input order and intentional repetitions; never deduplicate stored notes.
+    const metadataText=text.replace(/\b([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'教室：$1');
+    const metadata=[...metadataText.matchAll(/(教室|教授|老师|地点|地址)[ \t]*(?:为|是|[:：])?[ \t]*([^，。；！？]+?)(?=\s+(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/g)].map(match=>({index:match.index,end:match.index+match[0].length,label:match[1],value:match[2].trim()}));
+    const structuredNote=metadata.map((x,index)=>{
+      const gap=index?metadataText.slice(metadata[index-1].end,x.index):'';
+      const separator=index?(/^\s*$/.test(gap)&&/\n/.test(gap)?gap.replace(/\r\n?/g,'\n'):'\n'):'';
+      return `${separator}${({老师:'教授',地址:'地点'})[x.label]||x.label}：${x.value}`;
+    }).join('');
     const noteChange=text.match(/备注(?:改成|改为|为)?\s*([^，。；！？]+)/);
     const existing=(context.tasks||[]).filter(task=>courseCode&&String(task.title||'').toUpperCase().includes(courseCode.toUpperCase())).sort((a,b)=>String(a.exec_date).localeCompare(String(b.exec_date)));
     const dateFrom=months?`${year}-${pad(months[1])}-01`:existing[0]?.exec_date||null;
