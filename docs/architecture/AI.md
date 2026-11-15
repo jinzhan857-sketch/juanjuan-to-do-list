@@ -19,6 +19,8 @@
 
 服务端导出 CommonJS `handler(req, res)`，依赖类似 `res.status().json()` 的宿主方法，没有独立监听端口的启动程序。
 
+#81为该处理函数新增scripts/ai-local.cjs本地运行入口，免费模拟和显式真实连接分开，模拟不读.env、不访问外网。短输出请求显式加入thinking.type为disabled，保留模型及输出上限；收尾又加强现有聊天提示词，要求创建事务时明确转交事务模式，不暗示聊天能执行。真实模型、原解析及合成数据库中的确认、持久化、重复确认保护和撤销通过，失败及修正回答见[收尾验收](../audit/2026-11-15/issue81-acceptance.md)，接手见[本机AI说明](../development/LOCAL_AI.md)。额度明确为本地合成存储，真实Redis、原生浏览器组合和公网未验收，不代表公共服务已接通。
+
 服务端只记录这些环境变量名称，不记录值：`DEEPSEEK_API_KEY`、`KV_REST_API_URL`、`KV_REST_API_TOKEN`、`RATE_LIMIT_SALT`、`OWNER_STATS_TOKEN`。在实际接入宿主前不要创建可公开下载的 `.env` 或把密钥放前端。
 
 ## 当前请求与结果

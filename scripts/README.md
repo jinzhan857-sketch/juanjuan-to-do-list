@@ -6,6 +6,16 @@
 | --- | --- | --- |
 | `check-docs.cjs` | 检查文档里的本地链接和标题跳转有没有失效 | 在仓库根目录执行 `node scripts/check-docs.cjs` |
 | `serve.cjs` | 只提供允许的页面文件 | `npm run dev` 或 `npm run preview` |
+| `ai-local.cjs` | 独立本机AI入口，默认模拟，真实连接须先确认 | `npm run ai:dev`，详见[人工交接](../docs/development/LOCAL_AI.md) |
+| `ai-config.cjs` | 显式真实入口读取工作区配置及用户目录共享模型Key | 由真实入口调用，只共享模型Key；免费模拟不读私有配置 |
+| `ai-config.test.cjs` | 用合成Key检查共享配置、优先级及两个新工作区进程 | 由ai:test和check调用，不读取个人Key，不访问模型 |
+| `ai-simulation.cjs` | 加载原AI处理函数，隔离模拟模型与额度，不访问外网 | 由本机模拟和专项测试加载 |
+| `ai-local.test.cjs` | 验证本机AI请求、配置、服务错误和密钥保护 | `npm run ai:test`，已并入统一检查 |
+| `ai-live-check.cjs` | 经授权的真实模型测试，初始3次1元，最新批准的续测累计10次2元，额度为合成模拟 | `npm run ai:live-check`仅检查，`npm run ai:live-test`可能产生费用；续测须显式参数并复用原账本，先看[人工清单](../docs/development/LOCAL_AI.md) |
+| `ai-acceptance.cjs` | 明确授权的固定合成题收尾，按要求保留DeepSeek最终回答，复用原账本 | `npm run ai:acceptance -- --approved-closure`，本轮10次已用满，不能再运行真实测试 |
+| `ai-action-check.cjs` | 在独立fake-indexeddb与原应用函数中验证日程确认、重复保护、持久化及撤销 | 收尾执行器及离线回归调用，不接触浏览器真实数据库 |
+| `ai-acceptance.test.cjs` | 离线核对收尾预算、人工复查后的单题选择与真实事务写入函数 | ai:test与check调用，全部为合成数据 |
+| `ai-live-check.test.cjs` | 离线核对真实测试的次数、预算预留和失败停止保护 | 由ai:test与统一检查调用，不发外部请求 |
 | `build.cjs` | 生成页面和来源记录 | `npm run build` |
 | `check-baseline.cjs` | 核对稳定断言与已知问题，保留历史脚本 | 由 `npm run check` 调用 |
 | `toolchain.test.cjs` | 验证工程错误路径与 HTTP 边界 | `node --test scripts/toolchain.test.cjs` |
