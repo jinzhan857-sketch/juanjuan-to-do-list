@@ -4,7 +4,7 @@ const {IDBFactory}=require('fake-indexeddb');
 async function fixture(t,kind='schedule'){
  const elements=new Map(),notices=[],storage=new Map();
  const element=key=>{if(!elements.has(key))elements.set(key,{value:'',disabled:false,textContent:'',style:{},listeners:{},addEventListener(type,fn){this.listeners[type]=fn},classList:{add(){},remove(){},toggle(){}},children:[],appendChild(x){this.children.push(x)},set innerHTML(v){this.children=[]},get innerHTML(){return ''}});return elements.get(key)};
- const ctx=vm.createContext({crypto:require('node:crypto').webcrypto,console,URL,AbortController,DOMException,structuredClone,setTimeout,clearTimeout,indexedDB:new IDBFactory(),document:{querySelector:element,querySelectorAll:()=>[],createElement:()=>element(Math.random())},localStorage:{setItem:(k,v)=>storage.set(k,v),getItem:k=>storage.get(k),removeItem:k=>storage.delete(k)}});
+ const ctx=vm.createContext({crypto:require('node:crypto').webcrypto,console,URL,AbortController,DOMException,structuredClone,setTimeout,clearTimeout,indexedDB:new IDBFactory(),document:{querySelector:element,querySelectorAll:()=>[],createElement:()=>element(Math.random())},localStorage:{get length(){return storage.size},key:i=>[...storage.keys()][i]??null,setItem:(k,v)=>storage.set(k,v),getItem:k=>storage.get(k),removeItem:k=>storage.delete(k)}});
  const html=fs.readFileSync(process.env.PUBLISH_SOURCE||path.join(__dirname,'../index.html'),'utf8');
  vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),ctx);
  const run=code=>vm.runInContext(code,ctx),json=expr=>JSON.parse(run('JSON.stringify('+expr+')'));

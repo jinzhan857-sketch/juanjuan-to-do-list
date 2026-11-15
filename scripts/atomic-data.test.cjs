@@ -16,7 +16,7 @@ async function fixture(t){
   run(require('./helpers/storage-fixture.cjs'));
   run("importFeedback={hidden:true,textContent:''};document={querySelector:()=>importFeedback};const showImportError=App.showImportError.bind(App);App.showImportError=error=>{showImportError(error);notices.push(importFeedback.textContent);};UI.mask=()=>{}"); // DOM boundary only; storage and import callbacks remain real.
   await run("DB.batch([...DATA_STORES.flatMap(store=>S[store].map(value=>({store,value}))),...DATA_KV.map(key=>({store:'kv',key,value:S[key]}))])");
-  const local=new Map();ctx.localStorage={getItem:key=>local.get(key),setItem:(key,value)=>local.set(key,value),removeItem:key=>local.delete(key)};
+  const local=new Map();ctx.localStorage={get length(){return local.size},key:i=>[...local.keys()][i]??null,getItem:key=>local.get(key),setItem:(key,value)=>local.set(key,value),removeItem:key=>local.delete(key)};
   const snapshot=async()=>JSON.parse(JSON.stringify(await run("DB.snapshot(['tasks','todos','chats','messages','memories','operations','kv'])")));
   const backup=()=>json("({app:'卷卷AI Todo',version:'2.2',...Object.fromEntries([...DATA_STORES,...DATA_KV].map(key=>[key,S[key]])),appearance:{followSystem:true,lightTheme:'warm',darkTheme:'soft',fixedTheme:'warm'}})");
   const memory=()=>json("Object.fromEntries([...DATA_STORES,...DATA_KV].map(key=>[key,S[key]]))");

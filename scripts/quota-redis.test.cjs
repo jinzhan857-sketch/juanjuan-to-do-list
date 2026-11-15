@@ -20,3 +20,26 @@ test('new accounting leaves historical integer limit keys unchanged',async()=>{a
 test('global budget admits exactly100 and release frees all three budgets',async()=>{const entries=Array.from({length:110},(_,i)=>request(i+1,{device:i.toString(16).padStart(32,'c'),ip:i.toString(16).padStart(64,'d')}));const results=await Promise.all(entries.map(r=>quota.reserve(r)));assert.equal(results.filter(v=>v==='reserved').length,100);assert.equal(results.filter(v=>v==='global').length,10);const r=entries[results.indexOf('reserved')];await quota.finish(r.device,r.id,'failed');assert.equal(await redis(['ZCARD',`quota:${day}:global`]),99);assert.equal(await redis(['ZCARD',`quota:${day}:device:${r.device}`]),0);assert.equal(await redis(['ZCARD',`quota:${day}:ip:${r.ip}`]),0);});
 test('cancel metadata read racing admission retries atomically rather than losing refund',async()=>{const r=request(1);let raced=false;const racing=createQuota(async command=>{const result=await redis(command);if(command[0]==='HMGET'&&!raced){raced=true;assert.equal(await quota.reserve(r),'reserved')}return result});assert.equal(await racing.finish(device,r.id,'cancelled',r.now+1),'released');assert.equal(await count('device'),0);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),0);assert.equal(await quota.finish(device,r.id,'success',r.now+2),'released');});
 test('repeated early cancellation and blocked receipts always confirm release',async()=>{const r=request(1);await quota.finish(device,r.id,'cancelled');assert.equal(await quota.finish(device,r.id,'cancelled'),'released');assert.equal(await quota.reserve(r),'cancelled');assert.equal(await quota.finish(device,r.id,'cancelled'),'released');for(let i=2;i<=21;i++)await quota.reserve(request(i));const blocked=request(22);assert.equal(await quota.reserve(blocked),'device');assert.equal(await quota.finish(device,blocked.id,'cancelled'),'released');assert.equal(await quota.finish(device,blocked.id,'cancelled'),'released');assert.equal(await count('device'),20);});
+
+const {handlerFixture}=require('./helpers/refund-handler-fixture.cjs');
+const handler=extra=>handlerFixture({quota,redis,...extra});
+for(const failure of ['http','json','network','score'])test('actual handler and Redis return all budgets on '+failure+' then admit one manual retry',async()=>{
+ const a=handler();a.model=async()=>{if(failure==='network')throw TypeError('offline');return {ok:failure!=='http',status:502,json:async()=>{if(failure==='json')throw SyntaxError('bad');return {choices:[{message:{content:'{"base_score":999}'}}]}}};};
+ assert.equal((await a.send()).code,503);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),0);assert.equal(await count('device'),0);assert.equal(a.models.length,1);
+ a.model=async()=>({ok:true,json:async()=>({choices:[{message:{content:'{"base_score":8.4}'}}]})});assert.equal((await a.send()).code,200);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),1);assert.equal(a.models.length,2);
+});
+test('actual handler late reply after repeated cancellation returns no action and zero charge',async()=>{
+ const a=handler();let resolve;const id='9'.repeat(32);a.model=()=>new Promise(r=>resolve=r);const pending=a.send({request_id:id});for(let i=0;!resolve&&i<1000;i++)await new Promise(setImmediate);assert.ok(resolve);
+ for(let i=0;i<3;i++)assert.equal((await a.send({mode:'cancel',request_id:id})).payload.released,true);
+ resolve({ok:true,json:async()=>({choices:[{message:{content:'{"base_score":8.4}'}}]})});assert.equal((await pending).code,409);assert.equal(await count('device'),0);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),0);assert.equal(a.models.length,1);
+});
+test('lost reserve response is refunded before dispatch; lost refund response can be confirmed again',async()=>{
+ let loseReserve=true;const unreliable=createQuota(async c=>{const result=await redis(c);if(c[0]==='EVAL'&&c[1]===require('../api/quota.cjs').RESERVE&&loseReserve){loseReserve=false;throw Error('synthetic lost admission response')}return result});
+ const a=handler({quota:unreliable});assert.equal((await a.send()).code,503);assert.equal(await count('device'),0);assert.equal(a.models.length,0);
+ const id='8'.repeat(32);assert.equal((await a.send({request_id:id})).code,200);let loseRefund=true;const finish=unreliable.finish;unreliable.finish=async(...args)=>{const result=await finish(...args);if(args[2]==='cancelled'&&loseRefund){loseRefund=false;throw Error('synthetic lost refund response')}return result};
+ assert.equal((await a.send({mode:'cancel',request_id:id})).code,503);assert.equal(await count('device'),0);assert.equal((await a.send({mode:'cancel',request_id:id})).payload.released,true);assert.equal(await count('device'),0);
+});
+test('actual handlers atomically share the100 cap across devices and networks',async()=>{
+ const a=handler();const rows=await Promise.all(Array.from({length:120},(_,i)=>a.send({device_id:i.toString(16).padStart(32,'c')},{headers:{'x-forwarded-for':`192.0.2.${i%4+1}`}})));
+ assert.equal(rows.filter(r=>r.code===200).length,100);assert.equal(rows.filter(r=>r.code===429&&r.payload.limit_scope==='global').length,20);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),100);assert.equal(a.models.length,100);
+});

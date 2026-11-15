@@ -8,3 +8,20 @@ test('cancelled successful late body never enters score cache and refunds same I
 test('offline refund survives reload and next online flush; retry uses a fresh ID',async t=>{const a=await client(t);let online=false;const calls=[];a.ctx.fetch=async(u,o)=>{const b=body(o);calls.push(b);if(!online)throw TypeError('offline');return reply(b.mode==='cancel'?{released:true}:{base_score:8.4})};await assert.rejects(a.run("AIService.evaluate('第一次')"));await a.run('AIService.flushQuotaRefunds()');assert.equal(a.run('AIService.refundEntries().length'),1);a.run('AIService.activeHosted=new Map()');online=true;await a.run('AIService.flushQuotaRefunds()');assert.equal(a.run('AIService.refundEntries().length'),0);await a.run("AIService.evaluate('第二次')");const attempts=calls.filter(b=>b.mode!=='cancel');assert.equal(attempts.length,2);assert.notEqual(attempts[0].request_id,attempts[1].request_id);});
 test('page exit aborts all active hosted requests and keeps durable receipts',async t=>{const a=await client(t);let started=false;a.ctx.fetch=async(u,o)=>{if(body(o).mode==='cancel')throw TypeError('offline');started=true;return new Promise(()=>{})};a.run("pending=AIService.evaluate('合成课程')");for(let i=0;!started&&i<1000;i++)await new Promise(setImmediate);assert.ok(started);a.run('AIService.cancelHostedRequests()');await assert.rejects(a.run('pending'));await a.run('AIService.flushQuotaRefunds()');assert.equal(a.run('AIService.activeHosted.size'),0);assert.equal(a.run('AIService.refundEntries().length'),1);});
 test('storage failure before dispatch makes no model call',async t=>{const a=await client(t);let calls=0;a.ctx.fetch=async()=>{calls++;return reply({})};a.run("localStorage.setItem=()=>{throw Error('quota')}");await assert.rejects(a.run("AIService.evaluate('合成课程')"));assert.equal(calls,0);});
+
+test('another page cannot cancel a still active receipt; an interrupted page releases after deadline',async t=>{
+ const a=await client(t);let calls=0;a.ctx.fetch=async()=>{calls++;return reply({released:true})};
+ a.run("AIService.storeRefund({id:'a'.repeat(32),device:'d'.repeat(32),pendingUntil:Date.now()+20000})");
+ await a.run('AIService.flushQuotaRefunds()');assert.equal(calls,0);assert.equal(a.run('AIService.refundEntries().length'),1);
+ a.run("clearTimeout(AIService.refundTimer);AIService.readyRefund('a'.repeat(32))");
+ await a.run('AIService.flushQuotaRefunds()');assert.equal(calls,1);assert.equal(a.run('AIService.refundEntries().length'),0);
+});
+
+test('a refund already in flight drains newly failed receipts once, without retrying failed notifications',async t=>{
+ const a=await client(t);const calls=[];let resume;
+ a.ctx.fetch=async(u,o)=>{const b=body(o);calls.push(b);if(b.request_id==='a'.repeat(32))return new Promise(r=>resume=()=>r(reply({released:true})));throw TypeError('offline')};
+ a.run("AIService.storeRefund({id:'a'.repeat(32),device:'d'.repeat(32),pendingUntil:0});flush=AIService.flushQuotaRefunds()");
+ for(let i=0;!resume&&i<1000;i++)await new Promise(setImmediate);assert.ok(resume);
+ a.run("AIService.storeRefund({id:'b'.repeat(32),device:'d'.repeat(32),pendingUntil:0})");resume();await a.run('flush');
+ assert.equal(calls.length,2);assert.equal(a.run('AIService.refundEntries().length'),1);assert.match(a.element('#quota-refund-status').textContent,/待确认/);
+});

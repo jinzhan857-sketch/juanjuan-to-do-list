@@ -1808,15 +1808,24 @@ const AIService = {
   cancelAgentRequest(){ if(this.activeAgentController){this.activeAgentController.userCancelled=true;this.activeAgentController.abort();} },
 
   activeHosted:new Map(),
-  refundEntries(){return JSON.parse(localStorage.getItem('juanjuan_quota_pending')||'[]');},
-  storeRefunds(entries){localStorage.setItem('juanjuan_quota_pending',JSON.stringify(entries));},
-  forgetRefund(id){this.storeRefunds(this.refundEntries().filter(item=>item.id!==id));},
+  refundEntries(){const entries=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith('juanjuan_quota_pending:'))entries.push(JSON.parse(localStorage.getItem(key)));}return entries;},
+  storeRefund(item){localStorage.setItem('juanjuan_quota_pending:'+item.id,JSON.stringify(item));},
+  forgetRefund(id){localStorage.removeItem('juanjuan_quota_pending:'+id);},
+  readyRefund(id){const item=this.refundEntries().find(item=>item.id===id);if(item)this.storeRefund({...item,pendingUntil:0});},
+  scheduleQuotaRefunds(){
+    clearTimeout(this.refundTimer);
+    const dates=this.refundEntries().filter(item=>item.pendingUntil>Date.now()).map(item=>item.pendingUntil);
+    if(dates.length)this.refundTimer=setTimeout(()=>{void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));},Math.max(1,Math.min(...dates)-Date.now()+1));
+  },
   refundStatus(message=''){const box=$('#quota-refund-status');if(box)box.textContent=message;},
   async flushQuotaRefunds(){
     if(this.refundFlush)return this.refundFlush;
-    const work=this.refundEntries().filter(item=>!this.activeHosted.has(item.id)).slice(0,20);
-    if(!work.length)return;
     this.refundFlush=(async()=>{
+      const seen=new Set();
+      while(true){
+      const work=this.refundEntries().filter(item=>!this.activeHosted.has(item.id)&&item.pendingUntil<=Date.now()&&!seen.has(item.id)).slice(0,20);
+      if(!work.length)break;
+      work.forEach(item=>seen.add(item.id));
       await Promise.all(work.map(async item=>{
         try{
           const {data}=await requestJSON('/api/ai',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'cancel',device_id:item.device,request_id:item.id})},3000);
@@ -1824,7 +1833,9 @@ const AIService = {
           this.forgetRefund(item.id);
         }catch(_){this.refundStatus('次数退回待确认，请联网后重试。');}
       }));
-      this.refundStatus(this.refundEntries().some(item=>!this.activeHosted.has(item.id))?'次数退回待确认，请联网后重试。':'');
+      }
+      this.refundStatus(this.refundEntries().some(item=>!this.activeHosted.has(item.id)&&item.pendingUntil<=Date.now())?'次数退回待确认，请联网后重试。':'');
+      this.scheduleQuotaRefunds();
     })();
     try{await this.refundFlush;}finally{this.refundFlush=null;}
   },
@@ -1839,7 +1850,7 @@ const AIService = {
     this.activeHosted.set(id,controller);
     try{
       // Persist before dispatch so a reload can finish an interrupted refund.
-      this.storeRefunds([...this.refundEntries(),{id,device}]);
+      this.storeRefund({id,device,pendingUntil:Date.now()+timeoutMs});
       const {data}=await requestJSON('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,device_id:device,request_id:id}),signal:controller.signal},timeoutMs);
       if(controller.signal.aborted)throw controller.signal.reason;
       const result=accept(data);
@@ -1847,6 +1858,7 @@ const AIService = {
       return result;
     }catch(error){
       this.activeHosted.delete(id);
+      this.readyRefund(id);
       void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));
       throw error;
     }finally{this.activeHosted.delete(id);signal?.removeEventListener('abort',stop);}
