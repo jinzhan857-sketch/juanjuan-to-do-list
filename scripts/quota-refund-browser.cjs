@@ -3,7 +3,8 @@
 // model transports are test doubles. CSP forbids every external connection.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {handlerFixture}=require('./helpers/refund-handler-fixture.cjs');
-const root=path.join(__dirname,'..'),port=4198;
+const root=path.join(__dirname,'..');
+module.exports=function start({port=4198,database='juanjuan-quota-refund-synthetic',extra='',controlsExtra=''}={}){
 let api,mode='success',dropRefund=false,waiting=[],reloadArmed=false,reloadBaseline=null;
 const good=()=>({ok:true,json:async()=>({choices:[{message:{content:'{"task":"明天下午三点复习课程","note":"带笔记本和讲义","base_score":8.4,"category":"学业事务"}'}}]})});
 function reset(next){mode=next;dropRefund=false;api=handlerFixture();api.model=async()=>{
@@ -17,6 +18,7 @@ function reset(next){mode=next;dropRefund=false;api=handlerFixture();api.model=a
 const setup=String.raw`
 const NativeDate=Date;const syntheticClock=new NativeDate('2026-11-15T10:00:00+08:00').getTime();
 Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[syntheticClock]))}static now(){return syntheticClock}};
+const syntheticSetDegraded=AIService.setDegraded.bind(AIService);
 AIService.source=()=> 'hosted';AIService.getDeviceId=()=> 'a'.repeat(32);AIService.setDegraded=()=>{};
 const nativeFetch=fetch;const control=async body=>(await nativeFetch('/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json();
 const ledger=async()=>(await nativeFetch('/ledger')).json();
@@ -76,7 +78,10 @@ http.createServer(async(req,res)=>{try{
  if(url.pathname==='/quick-score.mjs'){res.setHeader('Content-Type','text/javascript');return res.end(fs.readFileSync(path.join(root,'src/rules/quick-score.mjs')))}
  if(url.pathname!=='/'){res.writeHead(404);return res.end()}
  if(reloadArmed){dropRefund=false;reloadArmed=false;}
- const controls='<aside style="position:fixed;z-index:99999;right:0;top:0;background:white;color:black"><button id="quota-run">运行退次合成验收</button><button id="quota-reload-prepare">准备刷新补退</button><button id="quota-reload-check">核对刷新补退</button><pre id="quota-result" style="max-height:500px;max-width:600px;overflow:auto"></pre></aside>';
- const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace("indexedDB.open('juanjuan-pet'","indexedDB.open('juanjuan-quota-refund-synthetic'").replace('<body>','<body>'+controls).replace('App.init();',setup+'\nApp.init();');
+ const controls='<aside style="position:fixed;z-index:99999;right:0;top:0;background:white;color:black">'+controlsExtra+'<button id="quota-run">运行退次合成验收</button><button id="quota-reload-prepare">准备刷新补退</button><button id="quota-reload-check">核对刷新补退</button><pre id="quota-result" style="max-height:500px;max-width:600px;overflow:auto"></pre></aside>';
+ const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace("indexedDB.open('juanjuan-pet'","indexedDB.open('"+database+"'").replace('<body>','<body>'+controls).replace('App.init();',setup+extra+'\nApp.init();');
  res.setHeader('Content-Security-Policy',"connect-src 'self'; img-src data: blob:; font-src 'none'");res.setHeader('Content-Type','text/html;charset=utf-8');res.end(html);
  }catch(e){res.writeHead(500);res.end(JSON.stringify({error:e.message}))}}).listen(port,'127.0.0.1',()=>console.log('Synthetic refundable handler http://127.0.0.1:'+port+'/'));
+
+};
+if(require.main===module)module.exports();

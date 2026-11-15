@@ -10,6 +10,24 @@ for(const entry of ['form','single','batch'])test(entry+' settled base 2 to 10 r
  assert.equal(a.run('S.tasks.length'),2);assert.equal(a.run('S.tasks[0].images.length'),1);
 });
 const entries=['form','single','batch'];
+for(const empty of ['missing','null'])test('review: restored '+empty+' original snapshot refuses overwriting new record and retains draft',async t=>{
+ const a=await statsFixture(t);await seed(a);a.ctx.empty=empty;a.run("UI.startEdit('a');UI.cState.resultNote='过期草稿保留';if(empty==='missing')delete UI.cState.editSnapshot;else UI.cState.editSnapshot=null;UI.saveCreateDraft()");await a.run("commitDataChanges([{store:'tasks',value:{...copyData(S.tasks[0]),note:'后来保存的新备注',baseScore:8}}])");a.run('UI.resetCreate();UI.restoreCreateDraft()');const before=await a.snapshot();await a.run('UI.onSave()');assert.deepEqual(await a.snapshot(),before);assert.equal(a.run('UI.cState.resultNote'),'过期草稿保留');assert.equal(a.run('UI.cState.saved'),undefined);
+});
+test('review: replacing raw form text retains original embedded attachment',async t=>{
+ const a=await statsFixture(t);await seed(a);a.run("S.tasks[0].title='原课程 https://example.org/original';S.tasks[0].links=[]");await a.run("DB.put('tasks',S.tasks[0])");a.run("UI.startEdit('a');UI.cState.rawText='合成新内容';UI.cState.resultTitle='合成新内容';document.querySelector('#c-title').value='合成新内容'");await a.run('UI.onSave()');assert.deepEqual(a.json('S.tasks[0].links'),['https://example.org/original']);
+});
+for(const entry of entries)test('review: '+entry+' preserves original embedded URL when replacing content',async t=>{
+ const a=await statsFixture(t);await seed(a);a.run("S.tasks[0].title='合成课程 https://example.org/original';S.tasks[0].links=[]");await a.run("DB.put('tasks',S.tasks[0])");await edit(a,entry,{title:'合成新标题'});assert.deepEqual(a.json('S.tasks[0].links'),['https://example.org/original']);
+});
+for(const entry of entries)test('review: '+entry+' collects distinct title and note URLs without duplicates',async t=>{
+ const a=await statsFixture(t);await seed(a);await edit(a,entry,{title:'合成 https://example.org/title',note:'资料 https://example.org/note https://example.org/title'});assert.deepEqual(a.json('S.tasks[0].links'),['https://example.com','https://example.org/title','https://example.org/note']);
+});
+for(const entry of entries)for(const field of ['title','note'])test('review: '+entry+' '+field+' URL joins retained attachments and undo snapshot',async t=>{
+ const a=await statsFixture(t);await seed(a);const original=a.json('S.tasks[0]');await edit(a,entry,{[field]:'合成内容 https://example.org/new'});assert.deepEqual(a.json('S.tasks[0].links'),['https://example.com','https://example.org/new']);assert.deepEqual(a.json('S.tasks[0].images'),original.images);if(entry!=='form'){await a.run("UI.undoAgentOperation('m')");assert.deepEqual(a.json('S.tasks[0]'),original);}
+});
+for(const entry of entries)test('review: '+entry+' attachment limit refuses whole scored edit',async t=>{
+ const a=await statsFixture(t);await seed(a);a.run("S.tasks[0].links=Array.from({length:5},(_,n)=>'https://example.com/'+n)");await a.run("DB.put('tasks',S.tasks[0])");const before=await a.snapshot(),memory=a.json('({tasks:S.tasks,dayStats:S.dayStats,pet:S.pet,operations:S.operations,messages:S.messages})');try{await edit(a,entry,{note:'新链接 https://example.org/new',base_score:10})}catch(_){}assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.json('({tasks:S.tasks,dayStats:S.dayStats,pet:S.pet,operations:S.operations,messages:S.messages})'),memory);
+});
 for(const fault of ['kv','operations','messages'])test('settled batch abort at '+fault+' preserves complete transaction',async t=>{
  const a=await statsFixture(t);await seed(a);const before=await a.snapshot(),memory=a.json('({tasks:S.tasks,pet:S.pet,dayStats:S.dayStats,operations:S.operations,messages:S.messages})');a.ctx.fault=fault;a.run("txOriginal=DB._db.transaction.bind(DB._db);DB._db.transaction=(...args)=>{const tx=txOriginal(...args);if(args[1]==='readwrite'){const get=tx.objectStore.bind(tx);tx.objectStore=name=>{const store=get(name);if(name===fault){const put=store.put.bind(store);store.put=(...values)=>{const req=put(...values);req.addEventListener('success',()=>tx.abort());return req;}}return store;}}return tx;}");await assert.rejects(edit(a,'batch'));assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.json('({tasks:S.tasks,pet:S.pet,dayStats:S.dayStats,operations:S.operations,messages:S.messages})'),memory);a.run('DB._db.close()');await a.run('DB.open()');assert.deepEqual(await a.snapshot(),before);
 });

@@ -82,6 +82,7 @@
 [data-active-theme="black"] .scene-floor{background:var(--card2)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
+html{scrollbar-gutter:stable}
 body{
   font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
   background:var(--bg);
@@ -98,8 +99,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 ::placeholder{color:var(--text3)}
 
 /* ---------- 页面容器 ---------- */
-.page{display:none;padding:62px 16px calc(86px + env(safe-area-inset-bottom));min-height:100vh;animation:pageIn .25s ease}
+.page{display:none;padding:62px 16px calc(86px + env(safe-area-inset-bottom));min-height:100vh;animation:pageFadeIn .25s ease}
 .page.active{display:block}
+@keyframes pageFadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 #global-topbar{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;height:50px;z-index:48;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:linear-gradient(180deg,var(--bg) 72%,transparent)}
@@ -1174,9 +1176,9 @@ function normalizeTodoLinks(text){
     try{ const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : null; }catch(_){ return null; }
   }).filter(Boolean);
 }
-function extractPublishLinks(text){
+function extractPublishLinks(text,limit=5){
   const found=String(text||'').match(/https?:\/\/[^\s，。；！？、]+/gi)||[];
-  return [...new Set(found)].slice(0,5);
+  return [...new Set(found)].slice(0,limit);
 }
 // Pure publisher date result. Chat target parsing deliberately remains separate.
 function recognizePublishDate(text, base){
@@ -1261,6 +1263,22 @@ function localPublishContent(text){
   const cut=boundaries.length?Math.min(...boundaries):null;
   if(cut!==null){inline=title.slice(cut).trim();title=title.slice(0,cut).trim();}
   return {title,note:[inline,...lines].join('\n').trim()};
+}
+function localCourseNote(text){
+  const source=String(text).replace(/(^|[\s，。；！？])([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'$1教室：$2');
+  // Label boundaries identify non-overlapping source spans. Preserve all value
+  // text, punctuation and deliberate repeats instead of rebuilding fragments.
+  const labels=[...source.matchAll(/(^|[\s，。；！？])(教室|教授|老师|地点|地址)/g)].map(match=>({index:match.index+match[1].length,label:match[2],start:match.index+match[0].length})).filter((item,index)=>index===0||/^(?:[ \t]*(?:为|是|[:：])|[ \t]+|[A-Za-z])/.test(source.slice(item.start)));
+  if(!labels.length)return '';
+  const newline=source.indexOf('\n');
+  const prefix=newline>=0&&newline<labels[0].index?source.slice(newline+1,labels[0].index):'';
+  return prefix+labels.map((item,index)=>{
+    const raw=source.slice(item.start,labels[index+1]?.index);
+    const gap=raw.match(/\s*$/)[0];
+    const value=raw.replace(/^[ \t]*(?:为|是|[:：])?[ \t]*/,'').trimEnd();
+    const separator=index<labels.length-1?(gap.includes('\n')?gap.replace(/\r\n?/g,'\n'):'\n'):'';
+    return `${({老师:'教授',地址:'地点'})[item.label]||item.label}：${value}${separator}`;
+  }).join('');
 }
 function publishEditText(t){
   const content=[t.title,t.note].filter(Boolean).join('\n');
@@ -1808,6 +1826,7 @@ const AIService = {
   cancelAgentRequest(){ if(this.activeAgentController){this.activeAgentController.userCancelled=true;this.activeAgentController.abort();} },
 
   activeHosted:new Map(),
+  hostedGeneration:0,
   refundEntries(){const entries=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith('juanjuan_quota_pending:'))entries.push(JSON.parse(localStorage.getItem(key)));}return entries;},
   storeRefund(item){localStorage.setItem('juanjuan_quota_pending:'+item.id,JSON.stringify(item));},
   forgetRefund(id){localStorage.removeItem('juanjuan_quota_pending:'+id);},
@@ -1844,10 +1863,16 @@ const AIService = {
     try{this.readyRefund(id);}catch(_){this.refundStatus('次数退回待确认，请联网后重试。');}
     void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));
   },
-  cancelHostedRequests(){for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);},
+  cancelHostedRequests(){
+    this.hostedGeneration++;
+    this.cancelAgentRequest();
+    for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);
+  },
   async hostedRequest(payload,{signal,timeoutMs=20000,accept=data=>data}={}){
+    const generation=this.hostedGeneration;
     if(signal?.aborted)throw signal.reason;
     await this.flushQuotaRefunds();
+    if(generation!==this.hostedGeneration)throw new DOMException('请求已取消','AbortError');
     if(signal?.aborted)throw signal.reason;
     const id=crypto.randomUUID().replaceAll('-',''),device=this.getDeviceId(),controller=new AbortController();
     const stop=()=>this.cancelHosted(id,controller,signal.reason);
@@ -2041,6 +2066,7 @@ const AIService = {
       this.cache[cacheKey] = out;
       return out;
     }catch(e){
+      if(e?.name==='AbortError')throw e;
       console.warn('AI 调用失败：', e);
       this.setDegraded(true);
       throw e;
@@ -2123,16 +2149,8 @@ const AIService = {
     const weekMap={一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7};
     const courseCode=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0]||'';
     const noteMatch=text.match(/(?:地址|地点)\s*([^，。；！？]+)/);
-    const courseMatch=text.match(/([A-Z]{2,}\d{3,}\s*[^，。；！？]*?)(?=\s*(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/i);
-    // Consume each metadata span once, stopping before the next labelled span.
-    // Keep input order and intentional repetitions; never deduplicate stored notes.
-    const metadataText=text.replace(/\b([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'教室：$1');
-    const metadata=[...metadataText.matchAll(/(教室|教授|老师|地点|地址)[ \t]*(?:为|是|[:：])?[ \t]*([^，。；！？]+?)(?=\s+(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/g)].map(match=>({index:match.index,end:match.index+match[0].length,label:match[1],value:match[2].trim()}));
-    const structuredNote=metadata.map((x,index)=>{
-      const gap=index?metadataText.slice(metadata[index-1].end,x.index):'';
-      const separator=index?(/^\s*$/.test(gap)&&/\n/.test(gap)?gap.replace(/\r\n?/g,'\n'):'\n'):'';
-      return `${separator}${({老师:'教授',地址:'地点'})[x.label]||x.label}：${x.value}`;
-    }).join('');
+    const courseMatch=text.match(/([A-Z]{2,}\d{3,}[ \t]*[^\r\n，。；！？]*?)(?=[ \t]*(?:教室|教授|老师|地点|地址|[A-Za-z]{1,4}[ \t]*\d{2,4}[ \t]*教室)|[\r\n，。；！？]|$)/i);
+    const structuredNote=localCourseNote(text);
     const noteChange=text.match(/备注(?:改成|改为|为)?\s*([^，。；！？]+)/);
     const existing=(context.tasks||[]).filter(task=>courseCode&&String(task.title||'').toUpperCase().includes(courseCode.toUpperCase())).sort((a,b)=>String(a.exec_date).localeCompare(String(b.exec_date)));
     const dateFrom=months?`${year}-${pad(months[1])}-01`:existing[0]?.exec_date||null;
@@ -2249,6 +2267,8 @@ async function settlementExpectation(store){
 // All schedule editors use the same existing deadline and settlement rules.
 function prepareScheduleEdit(old,value,now=Date.now()){
   const next=copyData(value);
+  const links=[...new Set([...(old.links||[]),...(next.links||[]),...extractPublishLinks(old.title+'\n'+(old.note||'')+'\n'+next.title+'\n'+(next.note||''),Infinity)])];
+  if(links.length)next.links=links;
   for(const key of ['status','statusAt','statusEditCount','finalScore','parts','timeChangeMul','timeChangeLabel','timeChangeWhy'])if(key in old)next[key]=copyData(old[key]);
   next.isBackfill=dayDiff(next.execDate,todayStr())<0||!!old.isBackfill;
   const changed=['execDate','timeType','startTime','endTime','endDayOffset'].some(key=>(old[key]??null)!==(next[key]??null))||(old.timeType==='slot'&&next.timeType==='slot'&&old.slot!==next.slot);
@@ -3043,27 +3063,30 @@ const UI = {
 
   agentQuestionScope(question=''){
     const text=String(question).split(/[，,。；;\n]/).map(clause=>clause.split(/改成|改为|备注(?:为|[:：])/)[0]).join('，');
-    const dates=[...new Set([...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)].map(m=>parseNaturalDate(m[0])).filter(Boolean))];
+    const mentions=[...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)];
+    const dates=[...new Set(mentions.map(m=>parseNaturalDate(m[0])).filter(Boolean))];
+    const dateRange=mentions.length===2&&dates.length===2&&dates[0]<dates[1]&&/^\s*(?:到|至|~|～|—|-)\s*$/.test(text.slice(mentions[0].index+mentions[0][0].length,mentions[1].index))?dates:null;
     const code=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0];
     const titles=[...new Set([...S.tasks,...S.todos].map(t=>t.title).filter(title=>title&&text.includes(title)))].sort((a,b)=>b.length-a.length);
-    return {text,dates,keyword:code||titles[0]||''};
+    return {text,dates,dateRange,keyword:code||titles[0]||''};
   },
   agentSelectedData(question=''){
     const scope=this.agentQuestionScope(question),today=todayStr();
     const relevance=item=>scope.keyword&&`${item.title} ${item.note||''}`.toLowerCase().includes(scope.keyword.toLowerCase());
-    const dateMatch=item=>scope.dates.includes(item.execDate);
-    const score=item=>(dateMatch(item)?4:0)+(relevance(item)?8:0);
+    const dateMatch=item=>scope.dateRange?item.execDate>=scope.dateRange[0]&&item.execDate<=scope.dateRange[1]:scope.dates.includes(item.execDate);
+    const score=item=>(dateMatch(item)?16:0)+(relevance(item)?8:0);
     const ordered=S.tasks.slice().sort((a,b)=>score(b)-score(a)||(!question?String(a.execDate).localeCompare(String(b.execDate)):(Math.abs(dayDiff(today,a.execDate))-Math.abs(dayDiff(today,b.execDate)))));
     return {tasks:ordered.slice(0,100),todos:S.todos.slice().sort((a,b)=>Number(relevance(b))-Number(relevance(a))||(b.createdAt||0)-(a.createdAt||0)).slice(0,100)};
   },
   resolveAgentQuery(query,question){
     const scope=this.agentQuestionScope(question);
-    if(scope.dates.length>1)return null;
+    if(scope.dates.length>1&&!scope.dateRange)return null;
     const q={...query};
     if(/日程|安排/.test(scope.text)&&!/待办/.test(scope.text))q.entity='schedule';
     if(/待办/.test(scope.text)&&!/日程|安排/.test(scope.text))q.entity='todo';
     if(q.entity!=='todo'&&scope.dates.length===1)q.date_from=q.date_to=scope.dates[0];
-    if(scope.keyword)q.keyword=scope.keyword;
+    if(q.entity!=='todo'&&scope.dateRange)[q.date_from,q.date_to]=scope.dateRange;
+    if(scope.keyword&&(q.keyword||/^[A-Z]{2,}\d{3,}$/i.test(scope.keyword)))q.keyword=scope.keyword;
     return q;
   },
   agentContext(chatId,question='',role='chat'){
@@ -3260,14 +3283,13 @@ const UI = {
 
   setAgentKeyboard(open){ document.body.classList.toggle('agent-keyboard-open',!!open); },
 
-  async cancelAgentMessage(){
+  async cancelAgentMessage({render=true}={}){
     if(!this.agentThinking&&!this.agentSending) return;
     this.agentSending=null;
     this.agentRequestSerial++;
     AIService.cancelAgentRequest();
     this.agentThinking=false;
-    this.renderAgent();
-    $('#agent-input').focus();
+    if(render){this.renderAgent();$('#agent-input').focus();}
   },
 
   retryAgentMessage(id){
@@ -4300,12 +4322,13 @@ const UI = {
       const store=c.kind==='todo'?'todos':'tasks',id=todoEditingId||editingId;
       const old=id?S[store].find(t=>t.id===id):null;
       if(id&&!old)throw new Error('原事务已变化，请重新打开');
-      if(editingId&&c.editSnapshot&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
+      if(editingId&&!c.editSnapshot)throw new Error('编辑草稿缺少原件快照，请重新打开原事务核对，草稿已保留');
+      if(editingId&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
       if(!id&&S[store].some(item=>item.id===c.draftId)){
         c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
       }
       const expected=copyData({[store]:S[store]});
-      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote)])];
+      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote,editingId?Infinity:5)])];
       let value;
       if(store==='todos'){
         value={...copyData(old||{}),id:old?.id||c.draftId,title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source,aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,links:extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote),images:copyData(c.images||[]),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null};
@@ -4314,7 +4337,7 @@ const UI = {
         if(c.timeType!=='exact'||c.endDayOffset!==1)delete value.endDayOffset;
         if(old)value=prepareScheduleEdit(old,value);
       }
-      value.links=preservedLinks;
+      value.links=old&&store==='tasks'?[...new Set([...(value.links||[]),...preservedLinks])]:preservedLinks;
       value.scoreRule=c.ai.source==='rule'?(old?copyData(old.scoreRule||null):{id:c.ai.ruleId,version:c.ai.version,fallback:c.ai.fallback}):null;
       validateStoredRecord(value,store==='tasks');
       const changes=[{store,value}];
@@ -4963,7 +4986,7 @@ const App = {
     AIService.setDegraded(false);
     this.bind();
     window.addEventListener('online',()=>{void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));});
-    window.addEventListener('pagehide',()=>AIService.cancelHostedRequests());
+    window.addEventListener('pagehide',()=>{UI.cancelRecognition();void UI.cancelAgentMessage({render:false});AIService.cancelHostedRequests();});
     void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));
     if(!UI.restoreCreateDraft()) UI.resetCreate(localStorage.getItem('juanjuan_publish_kind')||'schedule');
     UI.switchPage('home');

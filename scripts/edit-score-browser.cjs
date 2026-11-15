@@ -45,6 +45,20 @@ document.querySelector('#edit-run').onclick=async()=>{
   ok(entry+'原截止后两小时改时系数0.9且未结算零奖励',S.tasks[0].timeChangeMul===.9&&S.tasks[0].status===null&&S.tasks[0].finalScore===0&&S.pet.fridge.length===0);
  }
  await reset();UI.startEdit('a');UI.cState.ai.base_score=10;const nativeBefore=await snapshot(),txOriginal=DB._db.transaction.bind(DB._db);DB._db.transaction=(...args)=>{const tx=txOriginal(...args);if(args[1]==='readwrite'){const get=tx.objectStore.bind(tx);tx.objectStore=name=>{const store=get(name);if(name==='tasks'){const put=store.put.bind(store);store.put=value=>{const req=put(value);req.addEventListener('success',()=>tx.abort());return req;}}return store;}}return tx;};await document.querySelector('#btn-save').onclick();DB._db.transaction=txOriginal;ok('原生请求成功后中止整体回滚',same(nativeBefore,await snapshot())&&S.tasks[0].baseScore===2&&S.tasks[0].finalScore===1.2);DB._db.close();await DB.open();ok('原生中止重开保持原资料',same(nativeBefore,await snapshot()));
+ for(const entry of ['form','single','batch']){
+  await reset();const original=copyData(S.tasks[0]);
+  if(entry==='form'){UI.startEdit('a');UI.cState.resultNote='资料 https://example.org/new';await document.querySelector('#btn-save').onclick();}else await agent(entry,{note:'资料 https://example.org/new'});
+  ok(entry+'新链接与旧附件共同保存',same(S.tasks[0].links,['https://example.com','https://example.org/new'])&&same(S.tasks[0].images,original.images));
+  if(entry!=='form'){await UI.undoAgentOperation('m');ok(entry+'撤销恢复原附件',same(S.tasks[0],original));}
+  await reset();S.tasks[0].links=Array.from({length:5},(_,n)=>'https://example.com/'+n);await DB.put('tasks',S.tasks[0]);const before=await snapshot(),stats=copyData(S.dayStats),pet=copyData(S.pet);
+  if(entry==='form'){UI.startEdit('a');UI.cState.resultNote='超量 https://example.org/new';UI.cState.ai.base_score=10;await document.querySelector('#btn-save').onclick();}else await agent(entry,{note:'超量 https://example.org/new',base_score:10});
+  ok(entry+'第六链接整笔拒绝且零奖励',same(before.tasks,(await snapshot()).tasks)&&same(before.operations,(await snapshot()).operations)&&same(stats,S.dayStats)&&same(pet,S.pet));
+  const failed=await snapshot();DB._db.close();await DB.open();ok(entry+'链接超量失败重开一致',same(failed,await snapshot()));
+ }
+ await reset();S.tasks[0].title='原课程 https://example.org/original';S.tasks[0].links=[];await DB.put('tasks',S.tasks[0]);UI.startEdit('a');UI.cState.rawText='合成新内容';UI.cState.resultTitle='合成新内容';document.querySelector('#c-title').value='合成新内容';await document.querySelector('#btn-save').onclick();ok('替换表单原文仍保留原链接附件',same(S.tasks[0].links,['https://example.org/original']));
+ for(const missing of [true,false]){
+  await reset();UI.startEdit('a');UI.cState.resultNote='过期草稿';if(missing)delete UI.cState.editSnapshot;else UI.cState.editSnapshot=null;UI.saveCreateDraft();await commitDataChanges([{store:'tasks',value:{...copyData(S.tasks[0]),note:'新的合成备注',baseScore:8}}]);UI.resetCreate();UI.restoreCreateDraft();const before=await snapshot();await document.querySelector('#btn-save').onclick();ok((missing?'缺省':'空')+'快照草稿拒绝覆盖且保留草稿',same(before,await snapshot())&&UI.cState.resultNote==='过期草稿'&&!UI.cState.saved);DB._db.close();await DB.open();ok((missing?'缺省':'空')+'快照拒绝后重开资料一致',same(before,await snapshot()));
+ }
  out.textContent=JSON.stringify({pass:results.length,results,clock:'2026-11-15T10:00:00+08:00',timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,details},null,2);
  }catch(error){out.textContent=JSON.stringify({error:error.stack,results},null,2);}
 };
