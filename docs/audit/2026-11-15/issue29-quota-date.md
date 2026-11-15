@@ -43,4 +43,4 @@ scripts/quota-date.test.cjs的29项专项覆盖四种角色、相同设备与IP�
 
 先行PR #89已合入main 5c21b6a，#29独立交付PR #91。合并时只解决api计数日与limit_scope交叉处及package测试入口冲突，两侧全部日期、范围、附件、请求保护和统计成果保留。复查增加前端与实际handler的三种拒绝联动，并明确失败及主动重试仍消耗全站尝试，未暗中实现退款。
 
-最终29项额度专项、1114项Node及26项稳定断言通过；无Git归档通过。固定服务端时钟并更换宿主TZ为Pacific/Honolulu后，29项同样通过。基于本分支源码在4208独立来源、juanjuan-quota-synthetic专用库重跑新失败规则浏览器80组通过，外部连接全部禁用。云端最终提交、Windows和Ubuntu结果见PR #91。合入与Issue关闭以GitHub状态为准，未发布、未真实服务验收。
+合入前再次整合main 5997747的#27、#30后续复查成果。最终29项额度专项、1136项Node及26项稳定断言通过；无Git归档通过。固定服务端时钟并更换宿主TZ为Pacific/Honolulu后，29项同样通过。基于本分支源码在4208独立来源、juanjuan-quota-synthetic专用库重跑新失败规则浏览器80组通过，外部连接全部禁用。云端最终提交、Windows和Ubuntu结果见PR #91。合入与Issue关闭以GitHub状态为准，未发布、未真实服务验收。
