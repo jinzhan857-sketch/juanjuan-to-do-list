@@ -172,6 +172,9 @@ node docs/audit/2026-11-14/check-baseline.cjs
 
 统一检查包含123项日期专项和209项时间专项。固定时钟，使用合成数据库和离线模型替身。独立浏览器入口分别为node scripts/publisher-date-browser.cjs的4193，以及node scripts/publisher-time-browser.cjs的4194；禁止外部连接，只操作专用合成库。最新全量894项Node测试和26项稳定断言通过，完整字段、旧基线失败、跨日导入导出和结算联验见[#58](../audit/2026-11-15/issue58-publisher-date.md)、[#59](../audit/2026-11-15/issue59-publisher-time.md)。真实手机、真实模型和网站发布未执行，不用电脑替身代替实机结论。
 
+## #28 编辑计分一致性
+
+node --test scripts/edit-score.test.cjs使用#8固定时钟夹具和独立fake-indexeddb，覆盖三个实际业务入口、所有结算状态、改时边界、内容和日期、混合正负差额、跨日附件、撤销、并发、保存失败与重开。node scripts/edit-score-browser.cjs启动随机独立端口，仅开放合成页面与评分模块，使用juanjuan-issue28-synthetic数据库，禁止外部连接。点击“运行编辑合成验收”执行真实控件与原生数据库检查，页面输出完整字段和快照。实际结果和版本见[#28报告](../audit/2026-11-15/issue28-edit-score.md)。
 
 ## #38 失败取消退次
 
