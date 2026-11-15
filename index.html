@@ -3157,6 +3157,7 @@ const UI = {
     if(this.agentSending!==sending)return;
     const now=Date.now();
     await saveMessage({id:uid(),chatId:chat.id,role:'user',content,type:'text',createdAt:now,meta:{agentRole:role}});
+    if(this.agentSending!==sending)return;
     const ownMessages=S.messages.filter(x=>x.chatId===chat.id && x.role==='user');
     if(chat.title==='新聊天' && ownMessages.length===1){
       const plain=content.replace(/\s+/g,' '); chat.title=plain.slice(0,18)+(plain.length>18?'…':'');
