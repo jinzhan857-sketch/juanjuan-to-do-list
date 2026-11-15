@@ -10,7 +10,7 @@ const endpoint = 'https://api.deepseek.com/chat/completions';
 // Conservative peak prices, RMB per million tokens, verified 2026-11-15.
 const prices = {input: 2, output: 8};
 const limit = {calls: 3, budget_cny: 1};
-const followupLimit = {calls: 10, budget_cny: 4};
+const followupLimit = {calls: 10, budget_cny: 2};
 const device_id = 'syntheticdevice0123456789abcd';
 const cases = [
   {id: 'score', body: {title: '整理书桌并把纸质笔记归档', device_id, client_date: '2026-11-15'}, accepts: r => r.source === 'ai' && Number.isFinite(r.base_score) && r.base_score >= 0 && r.base_score <= 10},
@@ -97,7 +97,7 @@ async function run(args = process.argv.slice(2)) {
     const {limits, pending} = planRun(state, {followup, handlerHash});
     const save = () => { fs.writeFileSync(ledger, JSON.stringify(state, null, 2) + '\n'); };
     if (followup) {
-      state.followup_approval = {recorded_at: new Date().toISOString(), limits, scope: 'cumulative including the first failed attempt', reference: '展确认继续补测试，最多10次，上限4元'};
+      state.followup_approval = {recorded_at: new Date().toISOString(), limits, scope: 'cumulative including the first failed attempt', reference: '展最新收尾授权，累计最多10次，总消耗上限2元'};
       save();
     }
     const setup = createModelCheck({key, request: createBudgetTransport({key, state, save, limits})});

@@ -134,10 +134,10 @@ function firstFailure() {
 test('normal invocation cannot restart a previously failed real test', () => {
   assert.throws(() => planRun(firstFailure(), {handlerHash: 'new'}), /approved followup/);
 });
-test('approved followup preserves the first attempt and uses cumulative ten-call four-yuan limits', () => {
+test('approved followup preserves the first attempt and uses cumulative ten-call two-yuan limits', () => {
   const state = firstFailure(), original = structuredClone(state);
   const plan = planRun(state, {followup: true, handlerHash: 'new'});
-  assert.deepEqual(state, original); assert.deepEqual(plan.limits, {calls: 10, budget_cny: 4});
+  assert.deepEqual(state, original); assert.deepEqual(plan.limits, {calls: 10, budget_cny: 2});
   assert.deepEqual(plan.pending.map(s => s.id), ['score', 'task', 'chat', 'planning']);
 });
 test('followup skips successful cases for the same handler and retains failed cases for review', () => {
@@ -149,7 +149,7 @@ test('followup skips successful cases for the same handler and retains failed ca
 test('ten cumulative attempts or exhausted reservations prevent followup', () => {
   const state = firstFailure(); state.attempts = Array.from({length: 10}, (_, i) => ({number: i + 1}));
   assert.throws(() => planRun(state, {followup: true, handlerHash: 'new'}), /budget/);
-  state.attempts.length = 1; state.reserved_cny = 4;
+  state.attempts.length = 1; state.reserved_cny = 2;
   assert.throws(() => planRun(state, {followup: true, handlerHash: 'new'}), /budget/);
 });
 test('followup transport counts the nine existing attempts before permitting only the tenth', async () => {
