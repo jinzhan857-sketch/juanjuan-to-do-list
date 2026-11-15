@@ -1,0 +1,138 @@
+[
+  {
+    "id": "N01",
+    "raw": "明天维修旧电脑\n联想y9000 2023年\n换主板1800元",
+    "title": "明天维修旧电脑",
+    "note": "联想y9000 2023年\n换主板1800元",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N02",
+    "raw": "明天维修旧电脑 联想y9000 2023年 换主板1800元",
+    "title": "明天维修旧电脑",
+    "note": "联想y9000 2023年 换主板1800元",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N03",
+    "raw": "14:30到16:00上课6098 老师是ckchen 教室是kk202",
+    "title": "14:30到16:00上课6098",
+    "note": "老师是ckchen 教室是kk202",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N04",
+    "raw": "14:30到16:00上课6098 老师是ckchen\n教室是kk202",
+    "title": "14:30到16:00上课6098",
+    "note": "老师是ckchen\n教室是kk202",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N05",
+    "raw": "不买电脑，明天维修旧电脑",
+    "title": "不买电脑，明天维修旧电脑",
+    "note": "",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N06",
+    "raw": "买牛奶，然后取快递",
+    "title": "买牛奶，然后取快递",
+    "note": "",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N07",
+    "raw": "维修旧电脑\n资料 https://example.com",
+    "title": "维修旧电脑",
+    "note": "资料 https://example.com",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N08",
+    "raw": "明天下午整理书桌。",
+    "title": "明天下午整理书桌。",
+    "note": "",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N09",
+    "raw": "换主板1800元",
+    "title": "换主板1800元",
+    "note": "",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N10",
+    "raw": "整理书桌\n先收书\n再擦桌",
+    "title": "整理书桌",
+    "note": "先收书\n再擦桌",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N11",
+    "raw": "整理书桌，先收书再擦桌",
+    "title": "整理书桌，先收书再擦桌",
+    "note": "",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N12",
+    "raw": "修好电脑\n带身份证\n带身份证",
+    "title": "修好电脑",
+    "note": "带身份证\n带身份证",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N13",
+    "raw": "明天维修旧电脑\n带充电器",
+    "title": "明天维修旧电脑",
+    "note": "带充电器",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N14",
+    "raw": "整理书桌\n补充说明",
+    "title": "用户手改的定义",
+    "note": "用户手改的备注",
+    "invalid": false,
+    "manual": true
+  },
+  {
+    "id": "N15",
+    "raw": "",
+    "title": "",
+    "note": "",
+    "invalid": true,
+    "manual": false
+  },
+  {
+    "id": "N16",
+    "raw": "   \n整理书桌",
+    "title": "整理书桌",
+    "note": "",
+    "invalid": false,
+    "manual": false
+  },
+  {
+    "id": "N17",
+    "raw": "明天维修旧电脑\r\n带充电器",
+    "title": "明天维修旧电脑",
+    "note": "带充电器",
+    "invalid": false,
+    "manual": false
+  }
+]
