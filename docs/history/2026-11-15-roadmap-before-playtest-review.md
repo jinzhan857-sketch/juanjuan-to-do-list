@@ -1,6 +1,10 @@
 # 总计划本次重排前的正文快照
 
-保存日期：2026年11月15日。本页只用于历史追溯，原文按读取时状态保留；最新唯一执行队列在[总计划#1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)，不要按下方旧顺序实施。
+保存日期：2026年11月15日。本页只用于历史追溯，原文按最终写入前读取时状态保留，包含其他聊天刚交付的PR #71、#73；最新唯一执行队列在[总计划#1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)，不要按下方旧顺序实施。
+
+本聊天交付完成：先#66 [PR #71](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/71)，再#57 [PR #73](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/73)，分别待审查合入，未发布。#57旧数据保留原理由与分数，真实手机转交#55待验；本聊天停止，不自动做后续任务。下方历史阶段范围与记录保留。
+
+当前聊天进度：#66已实现并交付[PR #71](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/71)，38项专项与411项Node检查通过，待审查合入。随后只实施#57，不发布，不进入#60、#58或#8。下方此前“不做#66”保留作历史。
 
 # 卷卷开发总计划
 
@@ -20,11 +24,11 @@
 - [x] 08．[#40：排查并恢复卷卷 GitHub Pages 地址在电脑和手机均返回 404](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/40)
 - [x] 09．[#65：修复近期待办与长期待办的数量未随当前范围变化](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/65)。已交付[PR #69](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/69)，解决冲突并联合复审通过，373项测试、26项稳定断言及最终CI通过，已合入main，未发布。
 - [x] 10．[#62：修复首页待确认任务提醒被数字和文字拆散的排版](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/62)。已交付[PR #70](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/70)，复审与最终CI通过，已合入main；当前修复已完成并关闭；真实手机待验转交#55，未来信息栏正文检查转交#61，原成果与验收记录保留。
-- [ ] 11．[#66：修复季度待办的最后三分之一提醒过早触发](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/66)
+- [ ] 11．[#66：修复季度待办的最后三分之一提醒过早触发](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/66)。已交付[PR #71](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/71)，待审查合入。
 - [x] 12．[#47：发布日程与待办改为左侧 AI 识别、右侧快速发布，优先实施](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/47)
 - [x] 13．[#43：修复 AI 识别后已选执行日期失效，必须再次选日期才能发布](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/43)
 - [x] 14．[#44：发布日程的执行日期默认显示整月，移除展开和收起](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/44)
-- [ ] 15．[#57：精简任务详情的信息顺序、积分文案、操作按钮与编辑规则说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/57)
+- [ ] 15．[#57：精简任务详情的信息顺序、积分文案、操作按钮与编辑规则说明](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/57)。已交付[PR #73](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/73)，待审查合入，真实手机交#55。
 - [ ] 16．[#60：发布表单保留用户原文，优先按换行整理任务定义与备注](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/60)
 - [ ] 17．[#58：独立发布表单日期识别，支持口语日期并保护手选日期](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/58)
 - [x] 18．[#7：查询天气时优先使用用户这次说的城市](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/7)
