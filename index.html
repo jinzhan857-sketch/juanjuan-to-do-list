@@ -4083,7 +4083,8 @@ const UI = {
 
   /* ---------- 待办 ---------- */
   renderTodos(){
-    const all=S.todos.length, done=S.todos.filter(t=>t.done).length;
+    const scoped=S.todos.filter(t=>this.todoScope==='near'?['week','month'].includes(t.period||'week'):['quarter','year'].includes(t.period));
+    const all=scoped.length, done=scoped.filter(t=>t.done).length;
     $('#todo-all').textContent=all; $('#todo-open').textContent=all-done; $('#todo-done').textContent=done;
     $$('#todo-scope button').forEach(b=>b.classList.toggle('on',b.dataset.v===this.todoScope));
     const alert=$('#todo-long-alert');
@@ -4093,10 +4094,9 @@ const UI = {
     if(this.todoScope==='long'&&month>=10&&S.todos.some(t=>(t.period==='year')&&!t.done)) notices.push(`⚠️ ${now.getFullYear()} 年只剩 ${12-month} 个月，请检查年度待办。`);
     alert.style.display=notices.length?'block':'none'; alert.textContent=notices.join(' ');
     $$('#todo-filter button').forEach(b=>b.classList.toggle('on',b.dataset.v===this.todoFilter));
-    let list=S.todos.slice().sort((a,b)=>(a.done?1:0)-(b.done?1:0) || b.createdAt-a.createdAt);
+    let list=scoped.slice().sort((a,b)=>(a.done?1:0)-(b.done?1:0) || b.createdAt-a.createdAt);
     if(this.todoFilter==='open') list=list.filter(t=>!t.done);
     if(this.todoFilter==='done') list=list.filter(t=>t.done);
-    list=list.filter(t=>this.todoScope==='near'?['week','month'].includes(t.period||'week'):['quarter','year'].includes(t.period));
     const box=$('#todo-list'); box.innerHTML='';
     if(!list.length){ box.innerHTML=`<div class="empty"><div class="big">${this.todoFilter==='done'?'🌱':'🧺'}</div>${this.todoFilter==='done'?'还没有完成的待办':'这里很清爽，暂时没有待办'}</div>`; return; }
     list.forEach(t=>box.appendChild(this.todoCard(t)));
