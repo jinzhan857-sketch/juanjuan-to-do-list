@@ -17,7 +17,9 @@
 | 托管 | 前端请求同源 `/api/ai`，文件为 `api/ai.js` | 需要宿主路由、模型 Key 和 Redis REST 等配置；静态服务器不会自动执行 |
 | 自定义 | `AIService` 读取用户填写的接口、模型和 Key | 浏览器直连，服务需允许浏览器请求；Key 当前保存在本设备 localStorage |
 
-服务端导出 CommonJS `handler(req, res)`，依赖类似 `res.status().json()` 的宿主方法，没有独立监听端口的启动程序。
+服务端导出 CommonJS `handler(req, res)`，依赖类似 `res.status().json()` 的运行入口；api/ai.js本身不监听端口。
+
+#81为该处理函数新增scripts/ai-local.cjs本地运行入口，不修改其业务逻辑。免费模拟和显式真实连接分开，模拟不读.env、不访问外网；配置与人工交接见[本机AI说明](../development/LOCAL_AI.md)。真实模型及Redis仍待授权验收，不代表公共服务已接通。
 
 服务端只记录这些环境变量名称，不记录值：`DEEPSEEK_API_KEY`、`KV_REST_API_URL`、`KV_REST_API_TOKEN`、`RATE_LIMIT_SALT`、`OWNER_STATS_TOKEN`。在实际接入宿主前不要创建可公开下载的 `.env` 或把密钥放前端。
 

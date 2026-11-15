@@ -40,6 +40,8 @@ npm run dev
 
 ## AI 与后端
 
+#81已新增独立本机AI入口：npm run ai:dev运行免费模拟，npm run ai:test执行模拟专项；真实连接需要另行配置和确认，按[本机AI与人工交接](LOCAL_AI.md)分段推进。原npm run dev仍只运行静态预览，本项不改公网服务。
+
 静态预览不执行 `api/ai.js`，`/api/ai` 返回 404。接口仍需宿主路由、模型 Key 与 Redis 配置；`node api/ai.js` 不会启动服务。自定义模型由浏览器直连，也不因预览命令获得真实调用授权。详见[AI 说明](../architecture/AI.md)。
 
 #3 不部署网站、不迁移资料、不调用真实模型。修改后验证并自动保存到独立 codex 分支，通过 PR 交付，见[测试说明](TESTING.md)与[发布说明](RELEASE.md)。

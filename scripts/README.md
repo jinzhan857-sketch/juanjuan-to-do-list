@@ -6,6 +6,9 @@
 | --- | --- | --- |
 | `check-docs.cjs` | 检查文档里的本地链接和标题跳转有没有失效 | 在仓库根目录执行 `node scripts/check-docs.cjs` |
 | `serve.cjs` | 只提供允许的页面文件 | `npm run dev` 或 `npm run preview` |
+| `ai-local.cjs` | 独立本机AI入口，默认模拟，真实连接须先确认 | `npm run ai:dev`，详见[人工交接](../docs/development/LOCAL_AI.md) |
+| `ai-simulation.cjs` | 加载原AI处理函数，隔离模拟模型与额度，不访问外网 | 由本机模拟和专项测试加载 |
+| `ai-local.test.cjs` | 验证本机AI请求、配置、服务错误和密钥保护 | `npm run ai:test`，已并入统一检查 |
 | `build.cjs` | 生成页面和来源记录 | `npm run build` |
 | `check-baseline.cjs` | 核对稳定断言与已知问题，保留历史脚本 | 由 `npm run check` 调用 |
 | `toolchain.test.cjs` | 验证工程错误路径与 HTTP 边界 | `node --test scripts/toolchain.test.cjs` |
