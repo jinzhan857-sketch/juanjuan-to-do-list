@@ -1,0 +1,37 @@
+'use strict';
+const {test,after}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const {fixture}=require('./publisher-fixture.cjs');
+const evidence=[];
+after(()=>{fs.mkdirSync('.reports',{recursive:true});fs.writeFileSync('.reports/issue58-fields.json',JSON.stringify(evidence,null,2))});
+async function setup(t,clock='2026-11-15',kind='schedule'){
+ const a=await fixture(t,'schedule');a.ctx.clock=clock;a.ctx.setInterval=()=>0;
+ a.run(`NativeDate=Date;Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[clock+'T10:00:00']))}static now(){return new NativeDate(clock+'T10:00:00').getTime()}};PetView.startBehaviorLoop=PetView.moveCat=PetView.startWander=PetSystem.tickDecay=()=>{};App.bind()`);
+ await a.run('UI.onSave()');const unrelated=(await a.snapshot()).tasks;
+ a.ctx.kind=kind;a.run('UI.resetCreate(kind)');
+ a.input=raw=>{a.element('#c-title').value=raw;a.element('#c-title').listeners.input()};
+ a.unrelated=unrelated;return a;
+}
+const rows=fs.readFileSync('docs/reference/2026-11-15-confirmed-feedback-tests.md','utf8').split('\n').filter(x=>/^\| D\d+ /.test(x)).map(x=>x.split('|').slice(1,-1).map(x=>x.trim()));
+for(const r of rows)for(const mode of ['quick','success','failure'])test(r[0]+' '+mode,async t=>{
+ const id=r[0],clock=({D14:'2027-01-15',D24:'2026-12-31',D25:'2028-02-28',D26:'2027-02-28',D27:'2026-12-15'})[id]||'2026-11-15';
+ const a=await setup(t,clock,id==='D23'?'todo':'schedule');a.input(r[1].replace(/\\n/g,'\n'));
+ a.run("UI.cState.images=[{id:'date-image',name:'合成',data:'data:image/png;base64,AA=='}]");
+ if(id==='D20')a.run("UI.cState.userFields.date=true;UI.cState.date='2026-11-22'");
+ const pet=a.json('S.pet'),stats=a.json('S.dayStats');
+ if(mode!=='quick'){a.run(mode==='success'?"AIService.evaluate=async()=>({base_score:8.4,source:'ai',detected_date:'2099-01-01'})":"AIService.evaluate=async()=>{throw Error('offline')}");await a.run('UI.onAIClick()')}
+ if(mode!=='failure')await a.run('UI.onSave()');
+ const snap=await a.snapshot(),store=id==='D23'?'todos':'tasks',blocked=['D14','D16','D21','D22'].includes(id),saved=snap[store].filter(x=>!a.unrelated.some(u=>u.id===x.id));
+ assert.equal(saved.length,blocked?0:1);assert.deepEqual(snap.tasks.filter(x=>a.unrelated.some(u=>u.id===x.id)),a.unrelated);assert.deepEqual(a.json('S.pet'),pet);assert.deepEqual(a.json('S.dayStats'),stats);
+ if(blocked){assert.equal(a.run('UI.cState.rawText'),r[1].replace(/\\n/g,'\n'));return}
+ const row=saved[0];assert.equal(row.title,r[2]);assert.equal(row.note,r[3]==='空'?'':r[3]);if(store==='tasks'){assert.equal(row.execDate,r[4]);assert.equal(row.status,null);assert.equal(row.timeType,'allday')}else{assert.equal(row.execDate,undefined);assert.equal(row.done,false);assert.equal(row.period,'week')}
+ assert.equal(row.baseScore,mode==='success'?8.4:3);assert.equal(row.category,['D17','D18'].includes(id)?'日常生活':r[6]);assert.equal(row.images.length,1);assert.equal(row.finalScore,0);
+ evidence.push({id,mode,clock,input:r[1],actual:row,unrelated:a.unrelated,pet,stats});
+});
+for(const [raw,clock,date] of [['11月1日交作业','2026-11-15','2026-11-01'],['1月10日复习课程','2026-12-15','2027-01-10'],['2026年1月10日复习课程','2026-12-15','2026-01-10'],['本周五复习课程','2026-11-15','2026-11-13'],['1月10日复习课程','2026-11-15','2026-01-10'],['明天下午三点复习课程\n带笔记本和讲义','2026-11-15','2026-11-16']])for(const mode of ['quick','success','failure'])test('R date '+raw+' '+clock+' '+mode,async t=>{const a=await setup(t,clock);a.input(raw);if(mode!=='quick'){a.run(mode==='success'?"AIService.evaluate=async()=>({base_score:8.4,source:'ai',detected_date:'2099-01-01'})":"AIService.evaluate=async()=>{throw Error('offline')}");await a.run('UI.onAIClick()')}if(mode!=='failure')await a.run('UI.onSave()');assert.equal((await a.snapshot()).tasks.find(x=>!a.unrelated.some(u=>u.id===x.id)).execDate,date);if(date<clock)assert.match(a.notices.at(-1),new RegExp(date+'.*补录'));});
+for(const raw of ['12月复习英语','2027年2月29日复习课程'])for(const mode of ['quick','success','failure'])test('R block '+raw+' '+mode,async t=>{const a=await setup(t);a.input(raw);if(mode!=='quick'){a.run(mode==='success'?"AIService.evaluate=async()=>({base_score:8.4,source:'ai',detected_date:'2026-12-01'})":"AIService.evaluate=async()=>{throw Error('offline')}");await a.run('UI.onAIClick()')}if(mode!=='failure')await a.run('UI.onSave()');assert.deepEqual((await a.snapshot()).tasks,a.unrelated);assert.equal(a.run('UI.cState.rawText'),raw);assert.match(a.notices.at(-1),/日期无效|切换到待办/)});
+test('manual actual date controls backfill and survives late success and repeat recognition',async t=>{const a=await setup(t);a.input('11月1日复习课程');a.run('AIService.evaluate=()=>new Promise(resolve=>late=resolve);pending=UI.onAIClick();UI.cState.userFields.date=true;UI.cState.date="2026-11-22";late({base_score:8.4,source:"ai",detected_date:"2026-11-01"})');await a.run('pending');a.run('AIService.evaluate=async()=>({base_score:8.4,source:"ai"})');await a.run('UI.onAIClick()');await a.run('UI.onSave()');assert.equal((await a.snapshot()).tasks.find(x=>!a.unrelated.some(u=>u.id===x.id)).execDate,'2026-11-22');assert.doesNotMatch(a.notices.at(-1),/补录/)});
+for(const change of ['cancel','raw','draft'])test('late response protected '+change,async t=>{const a=await setup(t);a.input('12月1号整理书桌');a.run('AIService.evaluate=()=>new Promise(resolve=>late=resolve);pending=UI.onAIClick()');if(change==='cancel')a.run('UI.cancelRecognition()');if(change==='raw')a.input('明天整理书桌');if(change==='draft')a.run("UI.resetCreate('schedule')");a.run('late({base_score:8.4,source:"ai",detected_date:"2099-01-01"})');await a.run('pending');assert.deepEqual((await a.snapshot()).tasks,a.unrelated);assert.equal(a.run('UI.cState.date'),change==='cancel'?'2026-12-01':change==='raw'?'2026-11-16':'2026-11-15')});
+test('draft, edit identity, attachment and database reopening',async t=>{const a=await setup(t);a.input('明天复习课程\nhttps://example.com');a.run("UI.cState.images=[{id:'p',name:'合成',data:'data:image/png;base64,AA=='}];UI.saveCreateDraft();UI.resetCreate('schedule');UI.restoreCreateDraft()");await a.run('UI.onSave()');const before=(await a.snapshot()).tasks.find(x=>!a.unrelated.some(u=>u.id===x.id));a.ctx.id=before.id;a.run('UI.startEdit(id)');a.input('12月1号复习课程\nhttps://example.com');await a.run('UI.onSave()');a.run('DB._db.close()');await a.run('DB.open()');const rows=(await a.snapshot()).tasks;assert.equal(rows.length,2);const after=rows.find(x=>x.id===before.id);assert.equal(after.execDate,before.execDate);assert.deepEqual(after.images,before.images);assert.deepEqual(after.links,before.links)});
+
+for(const [raw,clock,date] of [['周五复习课程','2026-11-15','2026-11-20'],['周五复习课程','2026-11-12','2026-11-13'],['本周五复习课程','2026-11-12','2026-11-13'],['下周五复习课程','2026-11-12','2026-11-20'],['星期一复习课程','2026-11-15','2026-11-16']])test('confirmed weekday '+raw+' '+clock,async t=>{const a=await setup(t,clock);a.input(raw);await a.run('UI.onSave()');assert.equal((await a.snapshot()).tasks.find(x=>!a.unrelated.some(u=>u.id===x.id)).execDate,date)});
+test('monthly block survives active switch to todo without period or date injection',async t=>{const a=await setup(t);a.input('12月复习英语');await a.run('UI.onSave()');assert.deepEqual((await a.snapshot()).tasks,a.unrelated);a.run("UI.setCreateKind('todo')");await a.run('UI.onSave()');const row=(await a.snapshot()).todos[0];assert.equal(row.title,'12月复习英语');assert.equal(row.period,'week');assert.equal(row.execDate,undefined)});
