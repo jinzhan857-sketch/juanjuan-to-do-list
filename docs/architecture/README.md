@@ -35,7 +35,7 @@ flowchart TD
 | `ScoreEngine`、`todoScore`、`PetSystem` | 结算、食物、成长与互动 | 保护已有规则，补行为测试 |
 | `AIService` 与 `CUSTOM_*_PROMPT` | 自定义模型、托管模型、解析与本地处理 | 与服务端有重复提示词和清洗逻辑 |
 | `UI` 的事务与规划方法 | 上下文、确认卡、执行、撤销、建议依据 | 单条和整组范围、确认后再次校验 |
-| `App` | 初始化、事件绑定、页面自测 | 启动可能规范化资料和进行跨日结算 |
+| `App` | 初始化与事件绑定 | 保留资料规范化和跨日结算；开发自测独立位于 scripts/helpers/startup-selftest-checks.mjs，不进入运行页面 |
 | `api/ai.js` | 模型请求、上下文压缩、清洗、限额与统计 | 依赖宿主 `req/res` 和服务端环境变量 |
 | `dist/index.html` | 构建生成的静态页面 | `npm run build` 从根源码逐字节生成，不入库，来源记录为 `dist/build-info.json` |
 | `.openai/hosting.json` | Sites 项目和静态目录配置 | 配置存在不证明服务端已部署 |
