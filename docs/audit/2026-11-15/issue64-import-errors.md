@@ -18,6 +18,8 @@ Node.js 24.16.0、npm 11.13.0。执行npm ci --ignore-scripts、npm run check、
 
 先确认4173内置浏览器正常加载。再用node scripts/storage-samples.cjs生成合成样本，node scripts/storage-ui-browser.cjs启动随机58103来源，专用juanjuan-issue37-synthetic库，CSP禁用外部连接。通过实际文件选择走逆序时间拒绝、修正副本预览、取消、重新选择确认导入。失败和取消前后diskHash与memoryHash分别不变；确认后3条日程、1条待办、1张图、1个会话、1条消息、1条记忆和成长12均恢复。界面截图只含合成资料。
 
+![合成备份的错误定位界面](issue64-import-error.jpg)
+
 浏览器受检页面SHA256为e0e2eccc6f3705b3fcff0d20ba753e3dc1efbdb55944fa4dc14bdf78c3e5bbc5，之后仅将错误边框改为现有主题变量--red；最终源码SHA256为84dbfc5bbc986bc032187704b6e800931bbbd3bcff1b3c6a98a39a3ed9d3a1a7。最终提交与CI见PR。
 
 未进行真实手机验收，未使用私人备份、发布网站、调用真实模型或迁移真实数据。#37已有成果和其他任务范围不变。下一项按原队列为#65，不按编号重排。
