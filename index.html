@@ -1176,6 +1176,40 @@ function extractPublishLinks(text){
   const found=String(text||'').match(/https?:\/\/[^\s，。；！？、]+/gi)||[];
   return [...new Set(found)].slice(0,5);
 }
+// Pure publisher date result. Chat target parsing deliberately remains separate.
+function recognizePublishDate(text, base){
+  const line=(String(text||'').replace(/\r\n?/g,'\n').split('\n').find(x=>x.trim())||'').replace(/https?:\/\/\S+/gi,match=>' '.repeat(match.length));
+  const [year,month]=base.split('-').map(Number), hits=[];
+  const make=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
+  const add=(date)=>hits.push(validDateStr(date)?{kind:'date',date}:{kind:'invalid'});
+  const explicit=/(?:(\d{4})[年/\-])?(\d{1,2})(?:月|[./\-])(\d{1,2})(?:日|号)?/g;
+  let remaining=line.replace(explicit,(whole,y,m,d,offset)=>{
+    const before=line.slice(0,offset),after=line.slice(offset+whole.length);
+    if(/[\d.]$/.test(before)||/(?:第|编号|版本|章节|[￥¥$])\s*$/.test(before)||/^(?:元|节|章|版本|%)/.test(after)||/^[\d.]/.test(after)&&!/[日号]$/.test(whole))return whole;
+    add(make(y?+y:year+(month===12&&+m===1?1:0),+m,+d));return ' '.repeat(whole.length);
+  });
+  remaining=remaining.replace(/(下下个?月|下个?月|这个月|本月|上个?月)(\d{1,2})(?:日|号)/g,(whole,p,d)=>{
+    const offset=p.startsWith('下下')?2:p.startsWith('下')?1:p.startsWith('上')?-1:0;
+    const anchor=new Date(year,month-1+offset,1);add(make(anchor.getFullYear(),anchor.getMonth()+1,+d));return '';
+  });
+  remaining=remaining.replace(/大后天|后天|明天|今天|明晚|今晚|昨天|前天/g,p=>{add(addDays(base,({大后天:3,后天:2,明天:1,今天:0,明晚:1,今晚:0,昨天:-1,前天:-2})[p]));return '';});
+  remaining=remaining.replace(/(下下周|下周|本周|这周|上周)([一二三四五六日天])/g,(whole,p,d)=>{
+    const weekday=({一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7})[d];
+    const current=(new Date(base+'T12:00:00').getDay()+6)%7+1;
+    add(addDays(base,weekday-current+(p==='下下周'?14:p==='下周'?7:p==='上周'?-7:0)));return '';
+  });
+  remaining=remaining.replace(/(?<!每)(?:周|星期)([一二三四五六日天])/g,(whole,d)=>{
+    const weekday=({一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7})[d];
+    const current=(new Date(base+'T12:00:00').getDay()+6)%7+1;
+    add(addDays(base,(weekday-current+7)%7));return '';
+  });
+  if(hits.some(x=>x.kind==='invalid'))return {kind:'invalid',message:'日期无效，请修改日期或手动选择有效日期。'};
+  if(hits.length>1||/(?:每|周|星期)[一二三四五六日天]|(?:或|至|到|、|和)\s*\d{1,2}[日号]/.test(remaining))return {kind:'uncertain',message:'日期含义尚不明确，请手动选择一个具体日期，仅保存一条日程。'};
+  if(hits.length)return hits[0];
+  if(/(?:\d{1,2}月|下下个?月|下个?月|这个月|本月|上个?月)/.test(remaining))return {kind:'month',message:'只有月份，尚无具体日期，请切换到待办，或手动选择具体日期。'};
+  return {kind:'none'};
+}
+
 function localPublishContent(text){
   const raw=String(text||'').replace(/\r\n?/g,'\n').trim();
   const [first='',...lines]=raw.split('\n');
@@ -2062,9 +2096,10 @@ const AIService = {
 
   _localCategory(title){
     const t = title;
-    if(/(记账|理财|对账|报销|收支|花了多少钱|基金|股票|银行卡|银行页面|银行业务)/.test(t)) return '金钱复盘';
+    if(/(记账|理财|对账|报销|收支|花了多少钱|基金|股票|银行卡|银行页面|银行业务)|核对.{0,30}支出/.test(t)) return '金钱复盘';
     if(/(旅行|旅游|出行|看展|展览|博物馆|景点|行程|短途|度假)/.test(t)) return '旅行出行';
     if(/教程|技术学习/.test(t)) return '技能学习';
+    if(/阅读第\d+(?:\.\d+)*[章节]/.test(t)) return '学业事务';
     if(/(学校|课程|校招|学生证|校内|教室|作业|学习|复习|背单词|刷题|读书|看书|上课|网课|考研|考试|实验课|研讨课|论文|老师|原理|导论|概论|高等数学|数据库|计算机|人工智能|系统开发|软件工程|程序设计|大学英语|专业课|选修课|必修课|[A-Z]{2,}\d{3,})/i.test(t)) return '学业事务';
     if(/(开会|周会|工作|文档|周报|方案|汇报|面试|答辩|客户)/.test(t)) return '职场工作';
     if(/(开发项目|开发应用|开发网站|写代码|编程|技术学习|卷卷\s*AI\s*Todo.{0,10}开发)/i.test(t)) return '技能学习';
@@ -3711,7 +3746,7 @@ const UI = {
       const cell = document.createElement('div');
       cell.className = 'cal-cell' + (ds===todayStr()?' today':'') + (ds===c.date?' sel':'');
       cell.textContent = d;
-      cell.onclick = ()=>{ if(c.saving)return;(c.userFields||={}).date=true;c.dateConflict='';c.date=ds;c.missingDate=false; this.renderCreate(); };
+      cell.onclick = ()=>{ if(c.saving)return;(c.userFields||={}).date=true;c.date=ds;this.syncPublishDate();this.renderCreate(); };
       grid.appendChild(cell);
     }
     $('#c-date-info').onclick=()=>{c.dateInfo=!c.dateInfo;this.renderCreate();};
@@ -3726,6 +3761,7 @@ const UI = {
     } else if(c.missingDate){
       hintEl.textContent='请补充具体日期后再发布日程。';
     } else hintEl.textContent='';
+    if(c.dateError)hintEl.textContent=c.dateError;
     if(c.dateConflict)hintEl.textContent=[hintEl.textContent,c.dateConflict].filter(Boolean).join('；');
     // 时间精度
     $$('#c-timetype button').forEach(b=>b.classList.toggle('on', b.dataset.v===c.timeType));
@@ -3892,12 +3928,28 @@ const UI = {
     if(!user.title)c.resultTitle=content.title;
     if(!user.note)c.resultNote=content.note;
     c.rawText=rawText;
+    this.syncPublishDate();
+  },
+
+  syncPublishDate(){
+    const c=this.cState;
+    if(c.kind!=='schedule')return;
+    const result=recognizePublishDate(c.rawText,todayStr());
+    const previous=c.dateResult;
+    c.dateResult=result;c.dateError='';c.dateConflict='';
+    if(c.userFields?.date){
+      if(result.kind==='date'&&result.date!==c.date)c.dateConflict='识别日期 '+result.date+'，已保留你选择的 '+c.date;
+    }else if(result.kind==='date'){c.date=result.date;c.calMonth=c.date.slice(0,7);}
+    else if(result.kind!=='none')c.dateError=result.message;
+    else if(previous?.kind==='date'){c.date=todayStr();c.calMonth=c.date.slice(0,7);}
+    c.missingDate=!!c.dateError||!validDateStr(c.date);
+    return result;
   },
 
   reviewRecognition(modelResult, rawText){
     const fallback=localPublishContent(rawText);
-    const exact=parseExactTime(rawText);
-    const detectedDate=parseNaturalDate(rawText);
+    const exact=parseExactTime(rawText.replace(/\d+\.\d+/g,''));
+    const dateResult=recognizePublishDate(rawText,todayStr());
     const localTag=mapTag(AIService._localCategory(rawText));
     const category=localTag!=='日常生活'?localTag:mapTag(modelResult.category||localTag);
     return {
@@ -3908,7 +3960,7 @@ const UI = {
       reason:String(modelResult.reason||'').slice(0,60),
       advice:String(modelResult.advice||AIService._localAdvice(rawText)).slice(0,120),
       category,
-      detected_date:validDateStr(modelResult.detected_date)?modelResult.detected_date:detectedDate,
+      detected_date:dateResult.kind==='date'?dateResult.date:null,
       detected_time:exact?`${exact.start}-${exact.end}`:(modelResult.detected_time||null),
       source:modelResult.source||'local',
     };
@@ -3948,12 +4000,8 @@ const UI = {
       if(!user.title&&c.resultTitle===before.title&&$('#c-title').value.trim()===before.raw)c.resultTitle=reviewed.task;
       if(!user.note&&c.resultNote===before.note)c.resultNote=reviewed.note;
       if(!user.tag&&c.tag===before.tag)c.tag=reviewed.category;
-      const date=reviewed.detected_date;
-      if(date&&c.kind==='schedule'){
-        if(user.date||c.date!==before.date){if(c.date!==date)c.dateConflict='AI建议 '+date+'，已保留你选择的 '+c.date;}
-        else {c.date=date;c.calMonth=date.slice(0,7);}
-      }
-      c.missingDate=c.kind==='schedule'&&!validDateStr(c.date);
+      this.syncPublishDate();
+      if(c.kind==='schedule'&&user.date&&validDateStr(res.detected_date)&&res.detected_date!==c.date&&!c.dateConflict)c.dateConflict='AI建议 '+res.detected_date+'，已保留你选择的 '+c.date;
       if(!user.time&&JSON.stringify([c.timeType,c.slot,c.start,c.end])===before.time)this._applyDetectedTime(reviewed.detected_time,title);
       this.renderCreate();this.recognition=null;
     }catch(error){
@@ -3972,7 +4020,7 @@ const UI = {
   // 解析 AI 识别到的时间，自动填充时间精度
   _applyDetectedTime(dt, rawTitle=''){
     const c = this.cState;
-    const exact = parseExactTime(rawTitle) || parseExactTime(dt);
+    const exact = parseExactTime(rawTitle.replace(/\d+\.\d+/g,'')) || parseExactTime(dt);
     if(exact){ c.timeType='exact'; c.start=exact.start; c.end=exact.end; return; }
     if(!dt) return;
     const slotKw = [['半夜','midnight'],['凌晨','dawn'],['清晨','early'],['上午','morning'],['中午','noon'],['下午','afternoon'],['黄昏','dusk'],['傍晚','dusk'],['晚上','evening'],['夜里','evening']];
@@ -3992,6 +4040,8 @@ const UI = {
       if(c.rawText!==$('#c-title').value||!c.resultTitle)this.syncPublishContent($('#c-title').value);
       // Editing reconstructs the composer from separate valid fields; enforce their own limits.
       validatePublishContent(c.rawText,c.resultTitle,c.resultNote,{checkRaw:!isEdit});
+      this.syncPublishDate();
+      if(c.kind==='schedule'&&c.dateError)throw new Error(c.dateError);
       c.draftId||=uid();
       if(!c.resultTitle.trim())throw new Error('事务内容不能为空');
       if(c.kind==='schedule'&&!validDateStr(c.date))throw new Error('请选择有效日期');
@@ -4044,7 +4094,7 @@ const UI = {
       try{localStorage.setItem('juanjuan_create_draft',JSON.stringify({state:{saved:true}}));localStorage.removeItem('juanjuan_create_draft');}catch(_){}
       this.cancelRecognition();this.resetCreate(c.kind);
       this.switchPage(store==='todos'?'todo':'home');
-      toast(aiFailed?'AI识别失败，已快速发布':old?'修改已保存':'发布成功');
+      toast((aiFailed?'AI识别失败，已快速发布':old?'修改已保存':'发布成功')+(store==='tasks'&&dayDiff(value.execDate,todayStr())<0?'；'+value.execDate+' 补录':''));
       return value;
     }catch(error){
       if(committed){toast('已保存，页面刷新失败，请重新打开查看');return;}
@@ -4710,7 +4760,7 @@ const App = {
       UI.cancelRecognition();UI.syncPublishContent($('#c-title').value);$('#c-result-title').value=UI.cState.resultTitle;$('#c-note').value=UI.cState.resultNote;
       $('#btn-ai').textContent='AI 识别';$('#btn-save').disabled=false;
       $('#c-type-suggest').classList.toggle('show',UI.cState.kind==='todo'&&!!parseExactTime(UI.cState.rawText));
-      UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();
+      UI.renderCreate();
     });
     $('#c-result-title').addEventListener('input',e=>{(UI.cState.userFields||={}).title=true;UI.cState.resultTitle=e.target.value;UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();});
     $('#c-note').addEventListener('input',e=>{(UI.cState.userFields||={}).note=true;UI.cState.resultNote=e.target.value;UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();});
