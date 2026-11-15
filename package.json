@@ -13,7 +13,7 @@
     "preview": "node scripts/serve.cjs --dist",
     "build": "node scripts/build.cjs",
     "check:archive": "node scripts/check-archive.cjs",
-    "check": "npm run build && node scripts/check-docs.cjs && node scripts/check-baseline.cjs && node --test scripts/toolchain.test.cjs scripts/schedule-scope.test.cjs scripts/series-identity.test.cjs scripts/atomic-data.test.cjs scripts/weather.test.cjs scripts/quick-score.test.mjs scripts/publisher.test.cjs scripts/storage-ui-browser.test.cjs scripts/notice.test.cjs scripts/todo-scope.test.cjs"
+    "check": "npm run build && node scripts/check-docs.cjs && node scripts/check-baseline.cjs && node --test scripts/toolchain.test.cjs scripts/schedule-scope.test.cjs scripts/series-identity.test.cjs scripts/atomic-data.test.cjs scripts/weather.test.cjs scripts/quick-score.test.mjs scripts/publisher.test.cjs scripts/storage-ui-browser.test.cjs scripts/notice.test.cjs scripts/todo-scope.test.cjs scripts/task-detail.test.cjs"
   },
   "devDependencies": {
     "fake-indexeddb": "6.2.8"

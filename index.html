@@ -550,6 +550,16 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
 .image-preview{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:8px}
 .image-preview .pic{position:relative}.image-preview img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px;border:1px solid var(--line)}
 .image-preview button{position:absolute;right:-4px;top:-5px;width:19px;height:19px;border-radius:50%;background:var(--red);color:white;font-size:11px}
+.task-status-action{margin-top:4px;margin-bottom:10px}
+.task-status-action .btn{width:100%}
+.task-detail-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.task-detail-actions.settled{grid-template-columns:repeat(2,minmax(0,1fr))}
+.task-detail-actions .btn{min-width:0;padding-inline:2px;font-size:12px;white-space:nowrap}
+.task-edit-rules{margin-top:10px}
+.task-edit-rules summary{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:1.5px solid var(--text2);border-radius:50%;color:var(--text2);cursor:pointer;list-style:none;font-weight:700}
+.task-edit-rules summary::-webkit-details-marker{display:none}
+.task-edit-rules summary:focus-visible{outline:2px solid var(--peach);outline-offset:3px}
+.task-edit-rules .hint{margin:8px 0}
 </style>
 </head>
 <body>
@@ -3524,7 +3534,9 @@ const UI = {
   /* ---------- 任务详情 ---------- */
   openTaskDetail(id){
     const t = S.tasks.find(x=>x.id===id); if(!t) return;
-    const est = ScoreEngine.estimate(t);
+    const est = t.status ? null : ScoreEngine.estimate(t);
+    const created = new Date(t.createdAt);
+    const createdLabel = `${fmtDate(created)}（${weekCN[created.getDay()]}）${pad(created.getHours())}.${pad(created.getMinutes())}`;
     const stInfo = t.status ? CONFIG.STATUS.find(s=>s.key===t.status) : null;
     const body = $('#task-detail-body');
     body.innerHTML = `
@@ -3534,27 +3546,37 @@ const UI = {
         <div class="divider"></div>
         <div class="hint" style="font-size:13px;line-height:2">
           📅 执行日期：${t.execDate}（${weekCN[parseDate(t.execDate).getDay()]}）<br>
+          ✍️ 创建时间：${createdLabel}<br>
           🕐 时间：${timeLabel(t)}　🏷️ ${esc(t.category)} ${t.isBackfill?'（补录任务）':''}<br>
-          ⭐ 基础价值分：<b>${t.baseScore}</b> 分<br>
-          📝 判定理由：${esc(t.aiReason||'')}<br>
-          ${t.note?`📌 备注：${esc(t.note)}<br>`:''}
-          评分建议：${esc(t.aiAdvice||'')}<br>
-          ✍️ 创建于：${new Date(t.createdAt).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}<br>
+          ⭐ 基础价值：<b>${t.baseScore}</b> 分<br>
           ${t.status
             ? `${stInfo.emo} 状态：${stInfo.name} · 已获得 <b style="color:var(--peach)">${t.finalScore}</b> 分`
-            : `💰 预估积分：<b style="color:var(--peach)">${est.full}</b> 分（按完成目标） · 可兑换 ${foodForScore(est.full).map(f=>f.emo+f.name).join('、')||'—'}`}
+            : `💰 预估积分：<b style="color:var(--peach)">${est.full}</b> 分（${foodForScore(est.full).map(f=>f.emo).join('、')||'无食物'}）`}
+          <div class="divider"></div>
+          📝 判定理由：${esc(t.aiReason||'')}<br>
+          💡 AI建议：${esc(t.aiAdvice||'')}<br>
+          ${t.note?`📌 备注：${esc(t.note)}<br>`:''}
         </div>
         ${t.images?.length?`<div class="todo-images">${t.images.map(img=>`<a href="${img.data}" target="_blank" rel="noopener"><img src="${img.data}" alt="${esc(img.name||'日程图片')}"></a>`).join('')}</div>`:''}
         ${t.links?.length?`<div class="todo-links">${t.links.map(link=>`<a href="${esc(link)}" target="_blank" rel="noopener">🔗 ${esc(link)}</a>`).join('')}</div>`:''}
         ${t.parts ? `<div class="coef-row">${t.parts.map((p,i)=>`<span class="coef" data-pi="${i}">${esc(p.label)}<i class="qm">⋯</i></span>`).join('')}</div>`:''}
       </div>
-      <div class="row" style="gap:10px;margin-top:4px">
-        ${!t.status ? `<button class="btn sm grow" id="td-status">✅ 标记状态</button>`:''}
-        ${!t.status ? `<button class="btn ghost sm grow" id="td-to-todo">📥 转为待办</button>`:''}
-        <button class="btn ghost sm grow" id="td-edit">✏️ 编辑</button>
-        <button class="btn ghost sm grow" id="td-del" style="color:var(--red)">🗑️ 删除</button>
+      ${!t.status ? `<div class="task-status-action"><button class="btn sm" id="td-status">✅ 标记状态</button></div>`:''}
+      <div class="task-detail-actions${t.status?' settled':''}">
+        ${!t.status ? `<button class="btn ghost sm" id="td-to-todo">📥 转为待办</button>`:''}
+        <button class="btn ghost sm" id="td-edit">✏️ 编辑</button>
+        <button class="btn ghost sm" id="td-del" style="color:var(--red)">🗑️ 删除</button>
       </div>
-      <div class="hint" style="margin-top:10px">编辑规则：创建 1 小时内且未过原定时间修改无损；时间点过后改时间将按超时时长扣减（×90%/×80%/×70%）。删除任务不扣分。</div>`;
+      <details class="task-edit-rules">
+        <summary aria-label="编辑规则" title="编辑规则"><span aria-hidden="true">!</span></summary>
+        <div class="hint">编辑规则：创建 1 小时内且未过原定时间修改无损；时间点过后改时间将按超时时长扣减（×90%/×80%/×70%）。删除任务不扣分。</div>
+        <button class="btn ghost sm" id="td-rules-close">关闭说明</button>
+      </details>`;
+    body.querySelector('[data-close="mask-task"]').onclick=()=>this.mask('mask-task',false);
+    const rules = body.querySelector('.task-edit-rules');
+    const closeRules = ()=>{rules.open=false;rules.querySelector('summary').focus();};
+    body.querySelector('#td-rules-close').onclick=closeRules;
+    rules.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeRules();}};
     body.querySelectorAll('.coef').forEach(c=>c.onclick=()=>this.showCoef(t, +c.dataset.pi));
     const sbtn = body.querySelector('#td-status');
     if(sbtn) sbtn.onclick = ()=>{ this.mask('mask-task',false); this.openStatusSheet(t.id); };
