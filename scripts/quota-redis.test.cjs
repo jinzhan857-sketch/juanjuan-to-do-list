@@ -47,3 +47,21 @@ test('response serialization failure releases an already successful server recei
  const a=handler();a.onResponse=code=>{if(code===200)throw Error('synthetic response write failure')};
  assert.equal((await a.send()).code,503);assert.equal(await count('device'),0);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),0);assert.equal(a.models.length,1);
 });
+for(const boundary of ['2026-11-15T23:59:59.999+08:00','2026-12-31T23:59:59.999+08:00'])test('review29-38: failure before a delayed admission blocks the original day after midnight: '+boundary,async()=>{
+ const now=Date.parse(boundary),originalDay=boundary.slice(0,10),nextDay=new Date(now+1+8*3600000).toISOString().slice(0,10);
+ const r=request(41,{day:originalDay,now});
+ assert.equal(await quota.finish(r.device,r.id,'failed',now+1),'released');
+ assert.equal(await quota.reserve({...r,now:now+2}),'failed');
+ for(const key of [`quota:${originalDay}:device:${r.device}`,`quota:${originalDay}:ip:${r.ip}`,`quota:${originalDay}:global`])assert.equal(await redis(['ZCARD',key]),0);
+ assert.equal(await redis(['GET',`metric:${originalDay}:calls`]),null);
+ const retry=request(42,{day:nextDay,now:now+3});assert.equal(await quota.reserve(retry),'reserved');assert.equal(await redis(['ZCARD',`quota:${nextDay}:global`]),1);
+});
+test('review29-38: actual handler failure compensation precedes a lost admission command without later charge',async()=>{
+ let lateAdmission;const delayed=createQuota(async command=>{if(command[0]==='EVAL'&&command[1]===require('../api/quota.cjs').RESERVE&&!lateAdmission){lateAdmission=()=>redis(command);throw Error('synthetic admission timeout before execution')}return redis(command)});
+ const a=handler({quota:delayed,now:Date.parse('2026-12-31T23:59:59.999+08:00')}),id='7'.repeat(32);
+ assert.equal((await a.send({request_id:id,client_date:'2030-01-01'})).code,503);assert.equal(a.models.length,0);assert.ok(lateAdmission);
+ a.clock.now++;assert.equal(await lateAdmission(),'failed');
+ assert.equal(await redis(['ZCARD','quota:2026-12-31:global']),0);assert.equal(await redis(['GET','metric:2026-12-31:calls']),null);
+ assert.equal((await a.send({mode:'cancel',request_id:id})).payload.released,true);
+ assert.equal((await a.send({request_id:'6'.repeat(32),client_date:'2030-01-01'})).code,200);assert.equal(a.models.length,1);assert.equal(await redis(['ZCARD','quota:2027-01-01:global']),1);assert.ok(a.models[0].messages[1].content.startsWith('今天是2030-01-01。'));
+});
