@@ -15,6 +15,7 @@
 | 改动前npm run check | 1020项Node检查、26项稳定断言通过 |
 | npm run ai:test | 30项本地HTTP与启动专项通过 |
 | npm run check | 1050项Node检查、26项稳定断言通过，构建与文档检查通过 |
+| npm run check:archive | 已提交的第一部分源码c4beeb3在无Git归档副本中安装并运行全部检查通过，1050项Node及26项稳定断言通过 |
 | 独立进程启动与HTTP探测 | npm run ai:dev启动4177，健康检查mode为simulation、ready为true，识别返回固定合成事务及6分 |
 | .env加载 | 临时目录内以合成Key验证显式真实入口读取配置，使用合成handler，无外部请求 |
 | 密钥及文件边界 | .env、源码、私人路径均404；异源、非法Host、非JSON、非法JSON与超长请求拒绝；异常信息不回显合成秘密 |
