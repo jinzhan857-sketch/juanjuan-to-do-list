@@ -82,6 +82,7 @@
 [data-active-theme="black"] .scene-floor{background:var(--card2)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
+html{scrollbar-gutter:stable}
 body{
   font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
   background:var(--bg);
@@ -98,8 +99,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 ::placeholder{color:var(--text3)}
 
 /* ---------- 页面容器 ---------- */
-.page{display:none;padding:62px 16px calc(86px + env(safe-area-inset-bottom));min-height:100vh;animation:pageIn .25s ease}
+.page{display:none;padding:62px 16px calc(86px + env(safe-area-inset-bottom));min-height:100vh;animation:pageFadeIn .25s ease}
 .page.active{display:block}
+@keyframes pageFadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 #global-topbar{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;height:50px;z-index:48;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:linear-gradient(180deg,var(--bg) 72%,transparent)}

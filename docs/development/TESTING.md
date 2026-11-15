@@ -1,5 +1,9 @@
 # 测试与验收
 
+## #32 导航动态验收
+
+运行 node scripts/navigation-browser.cjs，在独立 4232 来源点击“测量导航”，仅使用 juanjuan-issue32-synthetic 合成库。四页全部往返、空内容、长内容及连续切换的逐帧记录保存到 .reports，使用 node scripts/check-navigation-evidence.cjs 报告路径 检查布局、滚动与数据不变。真实手机仍须单独实测，进度及根因对照见[#32报告](../audit/2026-11-15/issue32-navigation.md)。HTTP 隔离边界测试已纳入统一检查。
+
 #31、#39后续复查新增 scripts/review31-39.test.cjs 及 scripts/review31-39-browser.cjs，覆盖大量同名旧记录、区间查询和课程原文边界，运行记录见[复查报告](../audit/2026-11-15/issue31-39-followup-review.md)。只用独立合成库、固定北京时间及明确模型替身；上下文原生样例补齐#28已要求的slot初值，完整字段断言保留。
 
 ## #81本机AI第一部分
