@@ -169,3 +169,10 @@ node docs/audit/2026-11-14/check-baseline.cjs
 ## #58与#59 日期时间组合
 
 统一检查包含123项日期专项和209项时间专项。固定时钟，使用合成数据库和离线模型替身。独立浏览器入口分别为node scripts/publisher-date-browser.cjs的4193，以及node scripts/publisher-time-browser.cjs的4194；禁止外部连接，只操作专用合成库。最新全量894项Node测试和26项稳定断言通过，完整字段、旧基线失败、跨日导入导出和结算联验见[#58](../audit/2026-11-15/issue58-publisher-date.md)、[#59](../audit/2026-11-15/issue59-publisher-time.md)。真实手机、真实模型和网站发布未执行，不用电脑替身代替实机结论。
+
+
+## #38 失败取消退次
+
+客户端、handler和#29可信日期联验纳入npm run check。Lua原子逻辑由独立CI作业quota-redis在一次性Redis容器验证，固定官方镜像摘要，只使用127.0.0.1:16379。脚本会清空该专用库，禁止对生产或个人Redis运行；不需要新增npm依赖。本机无Redis时不把替身当成Lua实测。
+
+浏览器入口node scripts/quota-refund-browser.cjs使用4198与juanjuan-quota-refund-synthetic，真实页面和handler配离线模型及独立额度替身，CSP只允许同源连接。准备刷新补退后实际刷新，再核对补退；首次按钮只清空专用合成库。已有端口占用时不结束其他进程。数量、附件、无关资料、积分和宠物均核对最终数据库，详见[#38报告](../audit/2026-11-15/issue38-quota-refund.md)。
