@@ -1174,9 +1174,9 @@ function normalizeTodoLinks(text){
     try{ const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : null; }catch(_){ return null; }
   }).filter(Boolean);
 }
-function extractPublishLinks(text){
+function extractPublishLinks(text,limit=5){
   const found=String(text||'').match(/https?:\/\/[^\s，。；！？、]+/gi)||[];
-  return [...new Set(found)].slice(0,5);
+  return [...new Set(found)].slice(0,limit);
 }
 // Pure publisher date result. Chat target parsing deliberately remains separate.
 function recognizePublishDate(text, base){
@@ -1824,6 +1824,7 @@ const AIService = {
   cancelAgentRequest(){ if(this.activeAgentController){this.activeAgentController.userCancelled=true;this.activeAgentController.abort();} },
 
   activeHosted:new Map(),
+  hostedGeneration:0,
   refundEntries(){const entries=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith('juanjuan_quota_pending:'))entries.push(JSON.parse(localStorage.getItem(key)));}return entries;},
   storeRefund(item){localStorage.setItem('juanjuan_quota_pending:'+item.id,JSON.stringify(item));},
   forgetRefund(id){localStorage.removeItem('juanjuan_quota_pending:'+id);},
@@ -1860,10 +1861,16 @@ const AIService = {
     try{this.readyRefund(id);}catch(_){this.refundStatus('次数退回待确认，请联网后重试。');}
     void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));
   },
-  cancelHostedRequests(){for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);},
+  cancelHostedRequests(){
+    this.hostedGeneration++;
+    this.cancelAgentRequest();
+    for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);
+  },
   async hostedRequest(payload,{signal,timeoutMs=20000,accept=data=>data}={}){
+    const generation=this.hostedGeneration;
     if(signal?.aborted)throw signal.reason;
     await this.flushQuotaRefunds();
+    if(generation!==this.hostedGeneration)throw new DOMException('请求已取消','AbortError');
     if(signal?.aborted)throw signal.reason;
     const id=crypto.randomUUID().replaceAll('-',''),device=this.getDeviceId(),controller=new AbortController();
     const stop=()=>this.cancelHosted(id,controller,signal.reason);
@@ -2057,6 +2064,7 @@ const AIService = {
       this.cache[cacheKey] = out;
       return out;
     }catch(e){
+      if(e?.name==='AbortError')throw e;
       console.warn('AI 调用失败：', e);
       this.setDegraded(true);
       throw e;
@@ -2257,6 +2265,8 @@ async function settlementExpectation(store){
 // All schedule editors use the same existing deadline and settlement rules.
 function prepareScheduleEdit(old,value,now=Date.now()){
   const next=copyData(value);
+  const links=[...new Set([...(old.links||[]),...(next.links||[]),...extractPublishLinks(old.title+'\n'+(old.note||'')+'\n'+next.title+'\n'+(next.note||''),Infinity)])];
+  if(links.length)next.links=links;
   for(const key of ['status','statusAt','statusEditCount','finalScore','parts','timeChangeMul','timeChangeLabel','timeChangeWhy'])if(key in old)next[key]=copyData(old[key]);
   next.isBackfill=dayDiff(next.execDate,todayStr())<0||!!old.isBackfill;
   const changed=['execDate','timeType','startTime','endTime','endDayOffset'].some(key=>(old[key]??null)!==(next[key]??null))||(old.timeType==='slot'&&next.timeType==='slot'&&old.slot!==next.slot);
@@ -3271,14 +3281,13 @@ const UI = {
 
   setAgentKeyboard(open){ document.body.classList.toggle('agent-keyboard-open',!!open); },
 
-  async cancelAgentMessage(){
+  async cancelAgentMessage({render=true}={}){
     if(!this.agentThinking&&!this.agentSending) return;
     this.agentSending=null;
     this.agentRequestSerial++;
     AIService.cancelAgentRequest();
     this.agentThinking=false;
-    this.renderAgent();
-    $('#agent-input').focus();
+    if(render){this.renderAgent();$('#agent-input').focus();}
   },
 
   retryAgentMessage(id){
@@ -4311,12 +4320,13 @@ const UI = {
       const store=c.kind==='todo'?'todos':'tasks',id=todoEditingId||editingId;
       const old=id?S[store].find(t=>t.id===id):null;
       if(id&&!old)throw new Error('原事务已变化，请重新打开');
-      if(editingId&&c.editSnapshot&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
+      if(editingId&&!c.editSnapshot)throw new Error('编辑草稿缺少原件快照，请重新打开原事务核对，草稿已保留');
+      if(editingId&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
       if(!id&&S[store].some(item=>item.id===c.draftId)){
         c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
       }
       const expected=copyData({[store]:S[store]});
-      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote)])];
+      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote,editingId?Infinity:5)])];
       let value;
       if(store==='todos'){
         value={...copyData(old||{}),id:old?.id||c.draftId,title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source,aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,links:extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote),images:copyData(c.images||[]),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null};
@@ -4325,7 +4335,7 @@ const UI = {
         if(c.timeType!=='exact'||c.endDayOffset!==1)delete value.endDayOffset;
         if(old)value=prepareScheduleEdit(old,value);
       }
-      value.links=preservedLinks;
+      value.links=old&&store==='tasks'?[...new Set([...(value.links||[]),...preservedLinks])]:preservedLinks;
       value.scoreRule=c.ai.source==='rule'?(old?copyData(old.scoreRule||null):{id:c.ai.ruleId,version:c.ai.version,fallback:c.ai.fallback}):null;
       validateStoredRecord(value,store==='tasks');
       const changes=[{store,value}];
@@ -4974,7 +4984,7 @@ const App = {
     AIService.setDegraded(false);
     this.bind();
     window.addEventListener('online',()=>{void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));});
-    window.addEventListener('pagehide',()=>AIService.cancelHostedRequests());
+    window.addEventListener('pagehide',()=>{UI.cancelRecognition();void UI.cancelAgentMessage({render:false});AIService.cancelHostedRequests();});
     void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));
     if(!UI.restoreCreateDraft()) UI.resetCreate(localStorage.getItem('juanjuan_publish_kind')||'schedule');
     UI.switchPage('home');
