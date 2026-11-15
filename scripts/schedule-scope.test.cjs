@@ -16,7 +16,7 @@ function load(){
   vm.runInContext(code.replace(/^App\.init\(\);$/m,''),context);
   const run=code=>vm.runInContext(code,context,{timeout:2000});
   run(`S.tasks=[{id:'a',title:'IDAT7215',execDate:'2026-11-09',seriesId:'s',timeType:'exact',startTime:'19:00',endTime:'21:30',note:'old',baseScore:7},{id:'b',title:'IDAT7215',execDate:'2026-11-16',seriesId:'s',timeType:'exact',startTime:'19:00',endTime:'21:30',note:'old',baseScore:7}]; S.todos=[]; S.pet={synthetic:true}; S.operations=[]; DB.saved=[]; DB.put=async(store,value)=>{DB.saved.push({store,value:JSON.parse(JSON.stringify(value))});}; DB.del=async()=>{}; UI.renderAgent=()=>{}; UI.agentChatId='test';`);
-  run("DB.batch=async(changes)=>{for(const c of changes){if(c.type==='delete')await DB.del(c.store,c.key);else await DB.put(c.store,c.value,c.key);}};");
+  run("DB.get=async(store,key)=>structuredClone(S[key]);DB.batch=async(changes)=>{for(const c of changes){if(c.type==='delete')await DB.del(c.store,c.key);else await DB.put(c.store,c.value,c.key);}};");
   run('DB.deleted=[]; DB.del=async(store,id)=>{DB.deleted.push({store,id});};');
   const json=expr=>JSON.parse(run(`JSON.stringify(${expr})`));
   const propose=text=>{context.request=text;return run(`AIService._localAgent(request,{tasks:S.tasks.map(t=>({id:t.id,title:t.title,exec_date:t.execDate,series_id:t.seriesId,start_time:t.startTime,end_time:t.endTime})),todos:[]},'task')`);};
