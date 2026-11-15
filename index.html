@@ -496,9 +496,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .agent-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin-bottom:10px}
 .agent-head-btn{height:36px;padding:0 11px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font-size:12px;font-weight:700}
 .agent-head-title{text-align:center;min-width:0}.agent-head-title b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}.agent-head-title span{display:block;font-size:10px;color:var(--text3);margin-top:1px}
-#page-agent.active{display:flex;flex-direction:column;height:100dvh;min-height:0;padding-bottom:calc(96px + env(safe-area-inset-bottom));overflow:hidden}
-body.agent-keyboard-open #nav{visibility:hidden;pointer-events:none}
-body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+body.agent-page-active{min-height:0}
+#page-agent.active{position:fixed;top:0;width:100%;max-width:520px;display:flex;flex-direction:column;height:100dvh;min-height:0;padding-bottom:calc(96px + env(safe-area-inset-bottom));overflow:hidden}
+body.agent-keyboard-open{background-image:none}
+body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-area-inset-bottom));overflow-y:auto}
+body.agent-keyboard-open .agent-composer{box-shadow:none;flex-shrink:0}
 #agent-messages{flex:1;overflow-y:auto;padding:5px 2px 12px;scrollbar-width:none}
 #agent-messages::-webkit-scrollbar{display:none}
 .agent-empty{text-align:center;padding:55px 22px 20px;color:var(--text2)}
@@ -2780,6 +2782,8 @@ const Sound = {
    UI — 页面渲染与交互
 ============================================================ */
 const UI = {
+  agentTouchInput:false,
+  agentViewportGap:null,
   planView:'week',
   planCursor: todayStr(),
   lastMainPage:'home',
@@ -2807,6 +2811,7 @@ const UI = {
     if(leavingCreate){this.cancelRecognition();if(!this.cState?.saved)this.saveCreateDraft();}
     $$('.page').forEach(p=>p.classList.remove('active'));
     const page = $('#page-'+name); if(!page) return;
+    document.body.classList.toggle('agent-page-active',name==='agent');
     if(name!=='agent'){if(this.agentThinking||this.agentSending)this.cancelAgentMessage();this.setAgentKeyboard(false);}
     page.classList.add('active');
     if(!['me','create','pet','agentdetail'].includes(name)) this.lastMainPage=name;
@@ -2819,7 +2824,7 @@ const UI = {
     if(name==='create') this.renderCreate();
     if(name==='plan') this.renderPlan();
     if(name==='todo') this.renderTodos();
-    if(name==='agent') this.renderAgent();
+    if(name==='agent'){this.renderAgent();this.syncAgentViewport();}
     if(name==='agentdetail') this.renderAgentActionDetail();
     if(name==='memory') this.renderMemoryPage();
     if(name==='pet') this.renderPetDetail();
@@ -3304,7 +3309,36 @@ const UI = {
     const input=$('#agent-input'); input.style.height='auto'; input.style.height=Math.min(100,input.scrollHeight)+'px';
   },
 
-  setAgentKeyboard(open){ document.body.classList.toggle('agent-keyboard-open',!!open); },
+  setAgentKeyboard(open){
+    document.body.classList.toggle('agent-keyboard-open',!!open);
+    if(!open){$('#page-agent').style.height='';$('#page-agent').style.top='';$('#page-agent').scrollTop=0;$('#nav').style.bottom='';}
+  },
+
+  syncAgentViewport(){
+    const viewport=window.visualViewport;
+    const focused=['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+    const wasOpen=document.body.classList.contains('agent-keyboard-open');
+    const gap=window.screen.height-viewport.height;
+    if(this.agentViewportGap===null||!wasOpen&&(!focused||!this.agentTouchInput))this.agentViewportGap=gap;
+    const restingHeight=window.screen.height-this.agentViewportGap;
+    const inset=restingHeight-viewport.height;
+    const open=$('#page-agent').classList.contains('active')&&(this.agentTouchInput||wasOpen)&&(focused||wasOpen)
+      &&Math.abs(viewport.scale-1)<.01&&inset>Math.max(100,restingHeight*.15);
+    this.setAgentKeyboard(open);
+    if(open){
+      const windowShrink=Math.max(0,restingHeight-window.innerHeight);
+      // Measured non-content band correction, approved in #33. Rotation limitation: #110.
+      const nonContentInset=Math.min(Math.max(0,this.agentViewportGap),windowShrink);
+      const page=$('#page-agent');
+      page.style.height=(viewport.height-nonContentInset)+'px';
+      page.style.top=viewport.offsetTop+'px';
+      page.scrollTop=page.scrollHeight-page.clientHeight;
+      $('#nav').style.bottom=(Math.min(0,window.innerHeight-restingHeight)-viewport.offsetTop)+'px';
+    }else{
+      if(!wasOpen)this.agentViewportGap=gap;
+      if(wasOpen&&$('#page-agent').classList.contains('active'))window.scrollTo(0,0);
+    }
+  },
 
   async cancelAgentMessage({render=true}={}){
     if(!this.agentThinking&&!this.agentSending) return;
@@ -5085,8 +5119,13 @@ const App = {
     $('#btn-new-chat').onclick=()=>UI.createAgentChat();
     $('#btn-agent-send').onclick=()=>UI.agentThinking?UI.cancelAgentMessage():UI.sendAgentMessage();
     $('#agent-input').addEventListener('input',()=>UI.resizeAgentInput());
-    $('#agent-input').addEventListener('focus',()=>UI.setAgentKeyboard(true));
-    $('#agent-input').addEventListener('blur',()=>setTimeout(()=>UI.setAgentKeyboard(document.activeElement===$('#agent-input')),80));
+    $('#agent-input').addEventListener('focus',()=>UI.syncAgentViewport());
+    $('#agent-input').addEventListener('blur',()=>UI.syncAgentViewport());
+    document.addEventListener('pointerdown',event=>{UI.agentTouchInput=event.pointerType==='touch'||event.pointerType==='pen';},true);
+    window.visualViewport.addEventListener('resize',()=>UI.syncAgentViewport());
+    window.visualViewport.addEventListener('scroll',()=>UI.syncAgentViewport());
+    window.addEventListener('resize',()=>UI.syncAgentViewport());
+    UI.syncAgentViewport();
     $('#agent-input').addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); UI.sendAgentMessage(); } });
     $('#btn-chat-rename-save').onclick=()=>UI.saveChatRename();
     $('#chat-rename-input').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); UI.saveChatRename(); } });
