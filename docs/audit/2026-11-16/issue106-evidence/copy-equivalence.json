@@ -1,0 +1,29 @@
+{
+  "commit": "0a68abfb55da6e1281cb8f85525f885c910ded16",
+  "files": [
+    {
+      "file": "index.html",
+      "workingSha256": "29b77565c2bbe9c1e22ce2e70ab8bb37aa99dedb363b207489ac8599df8a0569",
+      "cloneSha256": "29b77565c2bbe9c1e22ce2e70ab8bb37aa99dedb363b207489ac8599df8a0569",
+      "equalAfterNewlineNormalization": true
+    },
+    {
+      "file": "scripts/helpers/startup-selftest-checks.mjs",
+      "workingSha256": "960722028f818793c1c4cdb96786ffcc9cdd9dfc53a27b15b97362e042d971ef",
+      "cloneSha256": "2ebd992d610d2bb1e8670d730edc87623e8f5073b289fd86f78d5f63302f77c0",
+      "equalAfterNewlineNormalization": true
+    },
+    {
+      "file": "scripts/helpers/startup-selftest-browser.mjs",
+      "workingSha256": "2d90ad293317f893b729c9f654323898ddf9406746f54c349d76bac984798ee0",
+      "cloneSha256": "6385d1b4ae026b1f1be156e59e73209d8f5029f212e75bde1d3867a67c79e6a3",
+      "equalAfterNewlineNormalization": true
+    },
+    {
+      "file": "src/rules/quick-score.mjs",
+      "workingSha256": "7a3fe550b6a06092e630d2d3e78ab58ead591652e2d42e0fd2a3d834f67bf3ca",
+      "cloneSha256": "7a3fe550b6a06092e630d2d3e78ab58ead591652e2d42e0fd2a3d834f67bf3ca",
+      "equalAfterNewlineNormalization": true
+    }
+  ]
+}
