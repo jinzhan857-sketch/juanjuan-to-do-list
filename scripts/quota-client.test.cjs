@@ -11,9 +11,9 @@ test('storage failure before dispatch makes no model call',async t=>{const a=awa
 
 test('another page cannot cancel a still active receipt; an interrupted page releases after deadline',async t=>{
  const a=await client(t);let calls=0;a.ctx.fetch=async()=>{calls++;return reply({released:true})};
- a.run("AIService.storeRefund({id:'a'.repeat(32),device:'d'.repeat(32),pendingUntil:Date.now()+20000})");
+ a.run("clock=Date.now();Date=class extends Date{static now(){return clock}};timers=[];setTimeout=(fn,ms)=>{timers.push({fn,ms});return timers.length};clearTimeout=()=>{};AIService.storeRefund({id:'a'.repeat(32),device:'d'.repeat(32),pendingUntil:Date.now()+20000})");
  await a.run('AIService.flushQuotaRefunds()');assert.equal(calls,0);assert.equal(a.run('AIService.refundEntries().length'),1);
- a.run("clearTimeout(AIService.refundTimer);AIService.readyRefund('a'.repeat(32))");
+ assert.equal(a.run('timers[0].ms'),20001);a.run('clock+=20001;timers[0].fn()');
  await a.run('AIService.flushQuotaRefunds()');assert.equal(calls,1);assert.equal(a.run('AIService.refundEntries().length'),0);
 });
 
