@@ -389,7 +389,7 @@ module.exports = async function handler(req, res) {
     await redis(['EXPIRE', `active:${quotaDate}`, '2678400']);
     if (deviceCount > DEVICE_LIMIT || ipCount > IP_LIMIT) {
       await increaseMetric('blocked', quotaDate);
-      return json(res, 429, { error: '今天的 AI 识别次数已用完，明天再来吧' });
+      return json(res, 429, { error: '今天的 AI 识别次数已用完，明天再来吧', limit_scope: deviceCount > DEVICE_LIMIT ? 'device' : 'ip' });
     }
 
     await increaseMetric('calls', quotaDate);

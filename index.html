@@ -1783,7 +1783,7 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url==='/api/ai'&&response.status===429){try{const body=await response.json();if(['device','ip','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
@@ -3058,6 +3058,12 @@ const UI = {
   validateAgentAction(action){
     if(!action || !['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'].includes(action.kind)) return {ok:false,error:'这个操作暂时不支持'};
     const item=action.item||{};
+    const fields=action.kind==='create_schedule_batch'?(action.rule||{}):item;
+    if(fields.title!==undefined && (typeof fields.title!=='string'||!fields.title.trim())) return {ok:false,error:'标题不能为空'};
+    if(fields.base_score!==undefined && (!Number.isFinite(Number(fields.base_score))||Number(fields.base_score)<0||Number(fields.base_score)>10)) return {ok:false,error:'任务价值需要再确认'};
+    if(fields.exec_date!==undefined && !validDateStr(fields.exec_date)) return {ok:false,error:'日期需要再确认'};
+    if(fields.time_type!==undefined && !['allday','slot','exact'].includes(fields.time_type)) return {ok:false,error:'日程时间类型需要再确认'};
+    if(fields.slot!=null && !slotByKey(fields.slot)) return {ok:false,error:'日程时段需要再确认'};
     const task=S.tasks.find(x=>x.id===action.target_id);
     const todo=S.todos.find(x=>x.id===action.target_id);
     if(action.kind==='create_schedule_batch'){
@@ -3085,7 +3091,12 @@ const UI = {
       if(targets.some(task=>task.seriesId!=null&&!validSeriesId(task.seriesId))) return {ok:false,error:'原日程组编号无效，请先核对原日程。'};
       if(!rule.series_id&&targets.some(task=>validSeriesId(task.seriesId))) return {ok:false,error:'请保留原日程组编号后重新生成确认卡。'};
       if(new Set(targets.map(task=>task.seriesId||JSON.stringify([task.title,task.startTime,task.endTime]))).size!==1) return {ok:false,error:'范围包含不同组日程，请明确要操作哪一组。'};
-      if(action.kind==='update_schedule_batch'&&item.time_type==='exact'&&(!validTimeStr(item.start_time)||!validTimeStr(item.end_time)||minOf(item.end_time)<=minOf(item.start_time))) return {ok:false,error:'新的具体开始和结束时间需要再确认'};
+      if(action.kind==='update_schedule_batch'){
+        for(const target of targets){
+          const checked=this.validateAgentAction({kind:'update_schedule',target_id:target.id,item});
+          if(!checked.ok)return checked;
+        }
+      }
       return {ok:true};
     }
     if(action.kind==='create_schedule'){
@@ -3098,8 +3109,6 @@ const UI = {
     if(action.kind==='update_schedule'&&task?.endDayOffset===1&&['exec_date','time_type','slot','start_time','end_time'].some(key=>item[key]!==undefined))return {ok:false,error:'请在发布表单编辑跨日日程的日期时间，并核对结束日期。'};
     if(['update_todo','delete_todo'].includes(action.kind) && !todo) return {ok:false,error:'没有找到要操作的待办'};
     if(['update_schedule','update_todo'].includes(action.kind) && !Object.keys(item).length) return {ok:false,error:'还没有明确要修改什么'};
-    if(item.title!==undefined && !item.title) return {ok:false,error:'标题不能为空'};
-    if(item.exec_date!==undefined && !validDateStr(item.exec_date)) return {ok:false,error:'日期需要再确认'};
     if(action.kind==='update_schedule'){
       const nextType=item.time_type||task.timeType;
       const nextStart=item.start_time!==undefined?item.start_time:task.startTime;
@@ -3108,7 +3117,6 @@ const UI = {
       if(nextType==='exact' && (!validTimeStr(nextStart) || !validTimeStr(nextEnd) || minOf(nextEnd)<=minOf(nextStart)&&task.endDayOffset!==1)) return {ok:false,error:'具体开始和结束时间需要再确认'};
       if(nextType==='slot' && !slotByKey(nextSlot)) return {ok:false,error:'日程时段需要再确认'};
     }
-    if(item.base_score!==undefined && (!Number.isFinite(Number(item.base_score))||Number(item.base_score)<0||Number(item.base_score)>10)) return {ok:false,error:'任务价值需要再确认'};
     return {ok:true};
   },
 
@@ -3354,6 +3362,7 @@ const UI = {
         if(item.title!==undefined) task.title=item.title;
         if(item.note!==undefined) task.note=item.note;
         if(item.time_type){ task.timeType=item.time_type; task.slot=item.time_type==='slot'?(item.slot||task.slot):null; task.startTime=item.time_type==='exact'?(item.start_time||task.startTime):null; task.endTime=item.time_type==='exact'?(item.end_time||task.endTime):null; }
+        else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
         if(item.category) task.category=item.category;
         if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
         task.isBackfill=dayDiff(task.execDate,todayStr())<0; changes.push({store:'tasks',value:task});
@@ -3393,7 +3402,7 @@ const UI = {
       const todo=copyData(S.todos.find(x=>x.id===action.target_id)); operation.before=clone(todo); changes.push({store:'todos',type:'delete',key:todo.id}); operation.summary=`已删除待办「${todo.title}」。`;
     }else if(action.kind==='convert_schedule_to_todo'){
       const task=copyData(S.tasks.find(x=>x.id===action.target_id)); operation.before=clone(task);
-      const todo={id:uid(),title:task.title,note:task.note||'',category:task.category,baseScore:task.baseScore,aiReason:task.aiReason||'',aiAdvice:task.aiAdvice||'',aiSource:task.aiSource||'agent',links:[],images:[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:task.id};
+      const todo={id:uid(),title:task.title,note:task.note||'',category:task.category,baseScore:task.baseScore,aiReason:task.aiReason||'',aiAdvice:task.aiAdvice||'',aiSource:task.aiSource||'agent',links:task.links||[],images:task.images||[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:task.id};
       changes.push({store:'todos',value:todo}); changes.push({store:'tasks',type:'delete',key:task.id}); operation.after=clone(todo); operation.summary=`已将「${task.title}」转为待办。`;
     }
     changes.push({store:'operations',value:operation});
@@ -3856,7 +3865,7 @@ const UI = {
     this.renderCreateTags();
     // AI 结果 & 预估
     this.renderAIResult();
-    $('#c-ai-status').textContent=c.aiFailureReason?'AI识别未完成：'+c.aiFailureReason:'';
+    $('#c-ai-status').textContent=c.aiFailureReason||'';
     $('#btn-save').textContent=c.saving?'保存中':(this.editingId||this.todoEditingId)?'保存修改':c.recognized?'确认发布':'快速发布';
     $$('#page-create input, #page-create textarea, #page-create button, #page-create select').forEach(el=>{el.disabled=!!c.saving;});
     $('#btn-save').disabled=!!(c.saving||this.recognition);$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';
@@ -4099,10 +4108,9 @@ const UI = {
     }catch(error){
       if(this.recognition!==request||this.cState!==c||c.saved)return;
       this.recognition=null;
-      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'请求超时':error?.status===429?'公共次数已用完':error?.status?'服务返回错误（'+error.status+'）':error?.name==='SyntaxError'||error?.code==='retryable_model_reply'?'服务返回无效JSON':error?.name==='TypeError'?'网络连接失败':'服务结果无效或不可用';
+      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'识别超时，请重试。':error?.status===429&&error?.limit_scope==='device'?'今日个人免费AI次数已达上限。':error?.status===429&&error?.limit_scope==='ip'?'今日当前网络免费AI次数已达上限。':error?.status===429&&error?.limit_scope==='global'?'今日公共免费AI次数已达上限。':error?.name==='TypeError'?'网络错误，请重试。':'识别失败，请重试。';
       if(aiSucceeded){toast('识别成功，页面更新失败，草稿已保留');this.saveCreateDraft();return;}
-      if(this.editingId||this.todoEditingId){toast('AI识别失败，修改已保留，请保存修改');this.renderCreate();}
-      else await this.onSave({aiFailed:true});
+      this.saveCreateDraft();this.renderCreate();toast(c.aiFailureReason);
     }finally{
       clearTimeout(timer);
       if(this.recognition===request)this.recognition=null;
@@ -4110,7 +4118,7 @@ const UI = {
     }
   },
 
-  async onSave({aiFailed=false}={}){
+  async onSave(){
     const c=this.cState;
     if(!c||c.saving||c.saved||this.recognition||this.publisherSave)return;
     const editingId=this.editingId,todoEditingId=this.todoEditingId,isEdit=!!(editingId||todoEditingId);
@@ -4133,7 +4141,7 @@ const UI = {
       if(c.kind==='schedule'&&c.timeType==='exact'&&(!validTimeStr(c.start)||!validTimeStr(c.end)||minOf(c.end)<=minOf(c.start)&&c.endDayOffset!==1))throw new Error('结束时间需要晚于开始时间，请核对结束日期');
       this.renderCreate();
       const {quickScore}=await this.loadScoring();
-      if(!isEdit&&(aiFailed||!c.ai||c.ai.source==='rule')){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;this.updateRuleCategory();}
+      if(!isEdit&&(!c.ai||c.ai.source==='rule')){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;this.updateRuleCategory();}
       this.renderCreate();
       if(!c.ai)throw new Error('评分缺失，请重新识别');
       const store=c.kind==='todo'?'todos':'tasks',id=todoEditingId||editingId;
@@ -4180,11 +4188,11 @@ const UI = {
       try{localStorage.setItem('juanjuan_create_draft',JSON.stringify({state:{saved:true}}));localStorage.removeItem('juanjuan_create_draft');}catch(_){}
       this.cancelRecognition();this.resetCreate(c.kind);
       this.switchPage(store==='todos'?'todo':'home');
-      toast((aiFailed?'AI识别失败，已快速发布':old?'修改已保存':'发布成功')+(store==='tasks'&&dayDiff(value.execDate,todayStr())<0?'；'+value.execDate+' 补录':''));
+      toast((old?'修改已保存':'发布成功')+(store==='tasks'&&dayDiff(value.execDate,todayStr())<0?'；'+value.execDate+' 补录':''));
       return value;
     }catch(error){
       if(committed){toast('已保存，页面刷新失败，请重新打开查看');return;}
-      toast((aiFailed?'AI识别失败，快速发布未成功：':'保存未成功：')+error.message);
+      toast('保存未成功：'+error.message);
       this.saveCreateDraft();
     }finally{
       c.saving=false;if(this.publisherSave===c)this.publisherSave=null;
