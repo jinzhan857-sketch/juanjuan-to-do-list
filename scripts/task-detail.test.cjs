@@ -23,6 +23,17 @@ for(const status of ['done','doing','failed','paused','skipped'])test('settled '
 test('status and edit buttons retain original target',()=>{const a=fixture(null);a.run('UI.openStatusSheet=id=>target=id');a.el('#td-status').onclick();assert.equal(a.run('target'),'sample');a.run('UI.startEdit=id=>target=id');a.el('#td-edit').onclick();assert.equal(a.run('target'),'sample')});
 test('rules close and Escape return focus to disclosure',()=>{const a=fixture(null),rules=a.el('.task-edit-rules');rules.open=true;a.el('#td-rules-close').onclick();assert.equal(rules.open,false);assert.equal(a.el('summary').focused,true);rules.open=true;let handled=0;rules.onkeydown({key:'Escape',preventDefault(){handled++},stopPropagation(){handled++}});assert.equal(rules.open,false);assert.equal(handled,2)});
 test('new routine reason is shared by normal and ambiguous rule paths without score changes',async()=>{const {quickScore}=await import('../src/rules/quick-score.mjs');for(const title of ['复习课程','买牛奶，然后撰写正式报告']){const r=quickScore({title});assert.equal(r.reason,'常规任务');assert.equal(r.base_score,3);assert.equal(r.ruleId,'routine')}});
+test('freshly rendered close control works on every reopen without startup rebinding',()=>{
+ const a=fixture(null),body=a.el('#task-detail-body');let children,visible=false;
+ Object.defineProperty(body,'innerHTML',{set(){children=new Map()}});
+ body.querySelector=key=>{if(!children.has(key))children.set(key,{querySelector:()=>({focus(){}})});return children.get(key)};
+ a.ctx.mask=(id,show)=>{if(id==='mask-task')visible=show};a.run('UI.mask=mask');
+ for(const status of [null,'done','skipped',null])for(let n=0;n<3;n++){
+  a.ctx.nextStatus=status;a.run('t.status=nextStatus;UI.openTaskDetail(t.id)');assert.equal(visible,true);
+  const close=body.querySelector('[data-close="mask-task"]');assert.equal(typeof close.onclick,'function');close.onclick();assert.equal(visible,false);
+ }
+ assert.equal(a.run('S.tasks.length'),1);assert.equal(a.run('t.finalScore'),1.7);
+});
 test('convert confirmation keeps attachments and cancellation never writes',async()=>{
  const a=fixture(null);
  a.run("UI.confirm=(title,body,ok)=>confirmed=ok;UI.switchPage=()=>{};toast=()=>{}");
