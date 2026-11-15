@@ -3058,6 +3058,12 @@ const UI = {
   validateAgentAction(action){
     if(!action || !['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'].includes(action.kind)) return {ok:false,error:'这个操作暂时不支持'};
     const item=action.item||{};
+    const fields=action.kind==='create_schedule_batch'?(action.rule||{}):item;
+    if(fields.title!==undefined && (typeof fields.title!=='string'||!fields.title.trim())) return {ok:false,error:'标题不能为空'};
+    if(fields.base_score!==undefined && (!Number.isFinite(Number(fields.base_score))||Number(fields.base_score)<0||Number(fields.base_score)>10)) return {ok:false,error:'任务价值需要再确认'};
+    if(fields.exec_date!==undefined && !validDateStr(fields.exec_date)) return {ok:false,error:'日期需要再确认'};
+    if(fields.time_type!==undefined && !['allday','slot','exact'].includes(fields.time_type)) return {ok:false,error:'日程时间类型需要再确认'};
+    if(fields.slot!=null && !slotByKey(fields.slot)) return {ok:false,error:'日程时段需要再确认'};
     const task=S.tasks.find(x=>x.id===action.target_id);
     const todo=S.todos.find(x=>x.id===action.target_id);
     if(action.kind==='create_schedule_batch'){
@@ -3085,7 +3091,12 @@ const UI = {
       if(targets.some(task=>task.seriesId!=null&&!validSeriesId(task.seriesId))) return {ok:false,error:'原日程组编号无效，请先核对原日程。'};
       if(!rule.series_id&&targets.some(task=>validSeriesId(task.seriesId))) return {ok:false,error:'请保留原日程组编号后重新生成确认卡。'};
       if(new Set(targets.map(task=>task.seriesId||JSON.stringify([task.title,task.startTime,task.endTime]))).size!==1) return {ok:false,error:'范围包含不同组日程，请明确要操作哪一组。'};
-      if(action.kind==='update_schedule_batch'&&item.time_type==='exact'&&(!validTimeStr(item.start_time)||!validTimeStr(item.end_time)||minOf(item.end_time)<=minOf(item.start_time))) return {ok:false,error:'新的具体开始和结束时间需要再确认'};
+      if(action.kind==='update_schedule_batch'){
+        for(const target of targets){
+          const checked=this.validateAgentAction({kind:'update_schedule',target_id:target.id,item});
+          if(!checked.ok)return checked;
+        }
+      }
       return {ok:true};
     }
     if(action.kind==='create_schedule'){
@@ -3098,8 +3109,6 @@ const UI = {
     if(action.kind==='update_schedule'&&task?.endDayOffset===1&&['exec_date','time_type','slot','start_time','end_time'].some(key=>item[key]!==undefined))return {ok:false,error:'请在发布表单编辑跨日日程的日期时间，并核对结束日期。'};
     if(['update_todo','delete_todo'].includes(action.kind) && !todo) return {ok:false,error:'没有找到要操作的待办'};
     if(['update_schedule','update_todo'].includes(action.kind) && !Object.keys(item).length) return {ok:false,error:'还没有明确要修改什么'};
-    if(item.title!==undefined && !item.title) return {ok:false,error:'标题不能为空'};
-    if(item.exec_date!==undefined && !validDateStr(item.exec_date)) return {ok:false,error:'日期需要再确认'};
     if(action.kind==='update_schedule'){
       const nextType=item.time_type||task.timeType;
       const nextStart=item.start_time!==undefined?item.start_time:task.startTime;
@@ -3108,7 +3117,6 @@ const UI = {
       if(nextType==='exact' && (!validTimeStr(nextStart) || !validTimeStr(nextEnd) || minOf(nextEnd)<=minOf(nextStart)&&task.endDayOffset!==1)) return {ok:false,error:'具体开始和结束时间需要再确认'};
       if(nextType==='slot' && !slotByKey(nextSlot)) return {ok:false,error:'日程时段需要再确认'};
     }
-    if(item.base_score!==undefined && (!Number.isFinite(Number(item.base_score))||Number(item.base_score)<0||Number(item.base_score)>10)) return {ok:false,error:'任务价值需要再确认'};
     return {ok:true};
   },
 
@@ -3354,6 +3362,7 @@ const UI = {
         if(item.title!==undefined) task.title=item.title;
         if(item.note!==undefined) task.note=item.note;
         if(item.time_type){ task.timeType=item.time_type; task.slot=item.time_type==='slot'?(item.slot||task.slot):null; task.startTime=item.time_type==='exact'?(item.start_time||task.startTime):null; task.endTime=item.time_type==='exact'?(item.end_time||task.endTime):null; }
+        else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
         if(item.category) task.category=item.category;
         if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
         task.isBackfill=dayDiff(task.execDate,todayStr())<0; changes.push({store:'tasks',value:task});
