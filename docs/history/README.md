@@ -4,6 +4,7 @@
 
 | 文件 | 来源与阅读方式 |
 | --- | --- |
+| [Next.js规划衔接前总计划原文](2026-11-16-roadmap-before-nextjs-planning.md) | 原任务与两图调整前逐字保存；[来源与SHA256](2026-11-16-roadmap-before-nextjs-planning.json)，[本轮核对](../audit/2026-11-16/migration-roadmap-review.md)；不作为当前队列 |
 | [总计划精简前完整正文](2026-11-15-roadmap-before-compaction.md) | 2026年11月15日精简前逐字保存，含交付、复查、阶段规则与旧图；[来源与SHA256](2026-11-15-roadmap-before-compaction.json)，[整理核对记录](../audit/2026-11-15/roadmap-compaction.md)，[追加复查](../audit/2026-11-15/roadmap-compaction-review.md) |
 | [试玩复查重排前完整正文](2026-11-15-roadmap-before-playtest-review.md) | 更早一轮任务重排前快照，原文继续保留 |
 | [总计划更早评论归档](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1#issuecomment-6889237661) | 原评论与其后阶段性记录均保留，历史状态不覆盖当前任务状态 |

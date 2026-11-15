@@ -1,12 +1,12 @@
 # 开发总计划入口
 
-[版本定位与开源借鉴](product/VERSION_POSITIONING.md)解释1.0到4.0及过渡阶段；[具体借鉴方案](reference/agent-learning-plan.md)已随PR #75合入，Anthropic作为运行机制主要参考，nanoMuse保留局部参考。选中原则已细化到12个原任务的操作与验收，用户主动周复盘单列3.x候选#78，见[整合报告](audit/2026-11-15/pr75-plan-integration.md)。当前顺序、必要依赖和原位置勾选保持，不拆完成与未完成，3.5、4.0仅为概念。
+[版本定位与开源借鉴](product/VERSION_POSITIONING.md)解释1.0到4.0及过渡阶段；[具体借鉴方案](reference/agent-learning-plan.md)已随PR #75合入，Anthropic作为运行机制主要参考，nanoMuse保留局部参考。选中原则已细化到12个原任务的操作与验收，用户主动周复盘单列3.x候选#78，见[整合报告](audit/2026-11-15/pr75-plan-integration.md)。原任务位置与已完成成果保留，当前排期与必要依赖以#1为准，不拆完成与未完成，3.5、4.0仅为概念。
 
 [打开总计划 Issue #1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)：唯一执行队列、已完成成果、3.0和可选研究都在这里。查看进度直接进入总计划，本文只解释使用方法，不复制进度；页面原生子任务计数不代表后来登记的全部任务。
 
 ## 从哪里开始
 
-涉及当前代码结构时，先读[结构整理与跨聊天接手](development/STRUCTURE_HANDOFF.md)，再进入#9及其自测隔离子任务#106。优先级、批次和依赖以Issue为准；本轮只细化计划，尚未拆分代码。现有产品功能和3.0任务不重复建项。
+涉及当前代码结构或前端迁移时，先读[结构整理与迁移接手](development/STRUCTURE_HANDOFF.md)，再进入#9、#123及其对应切片。#106已通过PR #125完成启动自测隔离，不再作为下一项；整个#9尚未完成。唯一排期与阶段依赖进入#1，具体读取边界在#124，输入框交互在#122；现有产品功能和3.0任务不重复建项。
 
 先阅读[当前状态与接手说明](STATUS.md)和[已确认规则实施接手](development/HANDOFF_CONFIRMED_RULES.md)，再从总计划选择展授权的具体任务。#2、#3等已完成基础工作不再写成下一项；已关闭任务保留成果，新观察先核对是否已被较新提交修复。[3.0规则设计#11](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11)可按授权提前讨论，账户同步方向不变。施工顺序不新增逐项关闭的硬前置，仍须核对原有必要依赖。
 
@@ -40,3 +40,5 @@
 任务里写具体范围和验收；[任务模板](../.github/ISSUE_TEMPLATE/task.md)用于新建任务，[PR 模板](../.github/pull_request_template.md)记录改动和验证。工作分支使用 `codex/` 前缀。
 
 背景：[文档导航](README.md)、[完整 3.0 方案](V3_CONSENSUS_DRAFT.md)、[设计决策](decisions/README.md)。
+
+2026年11月16日的迁移规划以[决策0005](decisions/0005-incremental-nextjs-migration.md)和各任务已确认范围为依据。调整前总计划已[逐字归档](history/2026-11-16-roadmap-before-nextjs-planning.md)，[元数据与校验值](history/2026-11-16-roadmap-before-nextjs-planning.json)及[本轮核对](audit/2026-11-16/migration-roadmap-review.md)保留历史；这里不复制活动排期。
