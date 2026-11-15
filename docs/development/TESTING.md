@@ -1,5 +1,9 @@
 # 测试与验收
 
+## #33 输入与真实键盘
+
+运行 `node scripts/keyboard-browser.cjs`，默认仅 4234 loopback 来源，使用专用合成库 juanjuan-issue33-synthetic。页面版本由实际源码与采集脚本共同计算，旧页面上传被拒绝；桌面按钮覆盖聚焦、新建、角色、离页返回及小高度滚动。手机入口仅在明确授权后临时绑定局域网，不能用窄屏或合成事件替代真机。`node scripts/check-keyboard-evidence.cjs desktop 报告路径` 与 `phone 报告路径` 只检查记录中的几何和数据不变，手机视觉结论还须单独记录。`/native` 是无卷卷代码和数据库的原生输入对照。复现、失败、修复及展批准暂缓的 #110 边界见[#33报告](../audit/2026-11-15/issue33-keyboard.md)，19 项专项已加入统一检查。没有真实模型请求或日常数据写入。
+
 
 
 
