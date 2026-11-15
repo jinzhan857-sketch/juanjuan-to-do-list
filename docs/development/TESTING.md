@@ -4,6 +4,22 @@
 
 运行 node scripts/navigation-browser.cjs，在独立 4232 来源点击“测量导航”，仅使用 juanjuan-issue32-synthetic 合成库。四页全部往返、空内容、长内容及连续切换的逐帧记录保存到 .reports，使用 node scripts/check-navigation-evidence.cjs 报告路径 检查布局、滚动与数据不变。真实手机仍须单独实测，进度及根因对照见[#32报告](../audit/2026-11-15/issue32-navigation.md)。HTTP 隔离边界测试已纳入统一检查。
 
+## #81本机AI第一部分
+
+最新收尾按累计10次、2元完成，原失败与修正后的DeepSeek回答、事务确认、持久化及撤销结果见[收尾报告](../audit/2026-11-15/issue81-acceptance.md)。ai-acceptance.test.cjs含9项离线检查，使用固定时钟、独立fake-indexeddb及已保存回答回放；ai-local.test.cjs另检查最新request_id和取消合同。专项79项、整合最新main后统一1347项Node检查通过。原应用确认及撤销函数不改，显示边界替换。收尾原始回答只在展明确授权的固定合成题中保存，默认服务日志仍不存输入或回复。当前累计10次已满，禁止把反复运行检查当作新增真实调用授权。下方较早数量和预算保留为历史。
+
+本机共享模型Key后，新增ai-config.test.cjs的10项合成配置检查，覆盖新工作区、优先级、空占位、权限读取失败及独立进程。专项68项、统一1088项Node与26项稳定断言通过，全部离线检查仍不读取个人共享Key；本机实际配置另以只读状态检查验证，证据见[共享配置验收](../audit/2026-11-15/issue81-shared-machine-config.md)。
+
+npm run ai:test验证本地HTTP入口、配置加载、密钥与文件边界、现有识别及三种助手请求、额度和服务异常。依赖为合成模型及内存额度替身，不读取真实.env或访问外部服务，结果不计为真实模型或Redis验收。已并入npm run check；人工配置与后续真实验收见[本机AI说明](LOCAL_AI.md)。
+
+真实测试执行器另有ai-live-check.test.cjs离线验证次数和金额预留保护，已并入ai:test及check。ai:live-check仅检查本机配置；ai:live-test会访问DeepSeek，必须按[人工交接](LOCAL_AI.md)完成Key和预算确认后才执行。准备记录见[报告](../audit/2026-11-15/issue81-live-preparation.md)。
+
+首次真实请求连通但评分失败后已停止，详见[首轮记录](../audit/2026-11-15/issue81-live-first-attempt.md)。新增4项合成供应商默认思考导致短输出无最终答案的复现，覆盖评分及三种助手角色；另有2项诊断只保存结束原因和内容长度的检查。修正后专项52项、统一1072项Node与26项稳定断言通过，不把离线复现当作真实补测通过。
+
+最新补测已在展确认累计10次、4元后完成：评分、日程建议、聊天、规划四项真实模型链路通过，累计含首条失败共5次，证据见[真实补测报告](../audit/2026-11-15/issue81-live-verification.md)。新增6项离线检查验证显式续测及累计预算保护，专项58项、统一1078项Node与26项稳定断言通过；额度仍为合成模拟，真实Redis与浏览器写入未验收。
+
+#39 新增 scripts/course-note.test.cjs 和 scripts/course-note-browser.cjs，分别复验解析边界与表单、助手、转换、实际导出导入、显示和存储一致性。固定北京时间2026年11月15日10:00，仅合成库与明确模型替身，保留历史及有意重复，详见[#39报告](../audit/2026-11-15/issue39-course-note.md)。
+
 #31 新增 scripts/agent-context.test.cjs 与 scripts/agent-context-browser.cjs。前者包含上下文、服务端替身与最终数据库回归，后者使用随机来源及专用合成库核对真实消息流程、失败、取消和重开。固定北京时间2026年11月15日10:00，模型为明确替身，实际结果见[#31报告](../audit/2026-11-15/issue31-context.md)。
 
 ## PR #89、#91联合复查
@@ -174,6 +190,9 @@ node docs/audit/2026-11-14/check-baseline.cjs
 
 统一检查包含123项日期专项和209项时间专项。固定时钟，使用合成数据库和离线模型替身。独立浏览器入口分别为node scripts/publisher-date-browser.cjs的4193，以及node scripts/publisher-time-browser.cjs的4194；禁止外部连接，只操作专用合成库。最新全量894项Node测试和26项稳定断言通过，完整字段、旧基线失败、跨日导入导出和结算联验见[#58](../audit/2026-11-15/issue58-publisher-date.md)、[#59](../audit/2026-11-15/issue59-publisher-time.md)。真实手机、真实模型和网站发布未执行，不用电脑替身代替实机结论。
 
+## #28 编辑计分一致性
+
+node --test scripts/edit-score.test.cjs使用#8固定时钟夹具和独立fake-indexeddb，覆盖三个实际业务入口、所有结算状态、改时边界、内容和日期、混合正负差额、跨日附件、撤销、并发、保存失败与重开。node scripts/edit-score-browser.cjs启动随机独立端口，仅开放合成页面与评分模块，使用juanjuan-issue28-synthetic数据库，禁止外部连接。点击“运行编辑合成验收”执行真实控件与原生数据库检查，页面输出完整字段和快照。实际结果和版本见[#28报告](../audit/2026-11-15/issue28-edit-score.md)。
 
 ## #38 失败取消退次
 

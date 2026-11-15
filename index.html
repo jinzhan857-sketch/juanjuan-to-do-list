@@ -2125,10 +2125,16 @@ const AIService = {
     const weekMap={一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7};
     const courseCode=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0]||'';
     const noteMatch=text.match(/(?:地址|地点)\s*([^，。；！？]+)/);
-    const classroomMatch=text.match(/教室\s*[:：]?\s*([^，。；！？]+)/)||text.match(/\b([A-Za-z]{1,4}\s*\d{2,4})\s*教室/i);
-    const teacherMatch=text.match(/(?:教授|老师)\s*(?:为|是|[:：])?\s*([^，。；！？]+)/);
     const courseMatch=text.match(/([A-Z]{2,}\d{3,}\s*[^，。；！？]*?)(?=\s*(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/i);
-    const structuredNote=[classroomMatch?.[1]&&`教室：${classroomMatch[1].trim()}`,teacherMatch?.[1]&&`教授：${teacherMatch[1].trim()}`,noteMatch?.[1]&&`地点：${noteMatch[1].trim()}`].filter(Boolean).join('\n');
+    // Consume each metadata span once, stopping before the next labelled span.
+    // Keep input order and intentional repetitions; never deduplicate stored notes.
+    const metadataText=text.replace(/\b([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'教室：$1');
+    const metadata=[...metadataText.matchAll(/(教室|教授|老师|地点|地址)[ \t]*(?:为|是|[:：])?[ \t]*([^，。；！？]+?)(?=\s+(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/g)].map(match=>({index:match.index,end:match.index+match[0].length,label:match[1],value:match[2].trim()}));
+    const structuredNote=metadata.map((x,index)=>{
+      const gap=index?metadataText.slice(metadata[index-1].end,x.index):'';
+      const separator=index?(/^\s*$/.test(gap)&&/\n/.test(gap)?gap.replace(/\r\n?/g,'\n'):'\n'):'';
+      return `${separator}${({老师:'教授',地址:'地点'})[x.label]||x.label}：${x.value}`;
+    }).join('');
     const noteChange=text.match(/备注(?:改成|改为|为)?\s*([^，。；！？]+)/);
     const existing=(context.tasks||[]).filter(task=>courseCode&&String(task.title||'').toUpperCase().includes(courseCode.toUpperCase())).sort((a,b)=>String(a.exec_date).localeCompare(String(b.exec_date)));
     const dateFrom=months?`${year}-${pad(months[1])}-01`:existing[0]?.exec_date||null;
@@ -2242,6 +2248,40 @@ async function settlementExpectation(store){
   return expected;
 }
 
+// All schedule editors use the same existing deadline and settlement rules.
+function prepareScheduleEdit(old,value,now=Date.now()){
+  const next=copyData(value);
+  for(const key of ['status','statusAt','statusEditCount','finalScore','parts','timeChangeMul','timeChangeLabel','timeChangeWhy'])if(key in old)next[key]=copyData(old[key]);
+  next.isBackfill=dayDiff(next.execDate,todayStr())<0||!!old.isBackfill;
+  const changed=['execDate','timeType','startTime','endTime','endDayOffset'].some(key=>(old[key]??null)!==(next[key]??null))||(old.timeType==='slot'&&next.timeType==='slot'&&old.slot!==next.slot);
+  if(changed&&now>taskDeadline(old)){
+    const penalty=ScoreEngine.timeChangePenalty(old,now,taskDeadline(old));
+    if(penalty&&penalty.mul<(old.timeChangeMul||1)){
+      next.timeChangeMul=penalty.mul;next.timeChangeLabel=penalty.label;next.timeChangeWhy=penalty.why;
+    }
+  }
+  if(old.status){const result=ScoreEngine.compute(next,old.status,old.statusAt||now);next.finalScore=result.score;next.parts=result.parts;}
+  validateStoredRecord(next,true);
+  return next;
+}
+function scheduleEditDelta(before,after){return r1(after.reduce((sum,task,index)=>sum+(before[index].status?task.finalScore-before[index].finalScore:0),0));}
+function prepareScheduleEditSettlement(before,after){
+  const changes=prepareEditPoints(scheduleEditDelta(before,after));
+  let pet=copyData(S.pet),awarded=false;
+  for(let i=0;i<before.length;i++){
+    const delta=scheduleEditDelta([before[i]],[after[i]]);
+    if(delta>0){pet=PetSystem.prepareAward(delta,pet);awarded=true;}
+  }
+  if(awarded)changes.push({store:'kv',key:'pet',value:pet});
+  return changes;
+}
+function prepareEditPoints(delta){
+  if(!delta)return [];
+  const stats=copyData(S.dayStats),day=todayStr();
+  stats[day]||={points:0,done:0};stats[day].points=r1(stats[day].points+delta);
+  return [{store:'kv',key:'dayStats',value:stats}];
+}
+
 const PetSystem = {
 
   // 任务积分 → 食物 → 自动喂养（多余进冰箱）
@@ -2292,8 +2332,8 @@ const PetSystem = {
     return {fed, overflow:r1(v)};
   },
 
-  prepareAward(score){
-    const pet=copyData(S.pet);
+  prepareAward(score,source=S.pet){
+    const pet=copyData(source);
     for(const f of foodForScore(score)){
       const {fed,overflow}=this._feedValue(f.value,false,pet);
       if(pet.intakeDate!==todayStr()){pet.intakeDate=todayStr();pet.todayIntake=0;}
@@ -3450,11 +3490,14 @@ const UI = {
         if(!task.seriesId){task.seriesId=adoptedSeriesId;task.seriesRule={date_from:action.rule.date_from,date_to:action.rule.date_to,weekdays:action.rule.weekdays.slice()};}
         if(item.title!==undefined) task.title=item.title;
         if(item.note!==undefined) task.note=item.note;
+        if(item.exec_date) task.execDate=item.exec_date;
         if(item.time_type){ task.timeType=item.time_type; task.slot=item.time_type==='slot'?(item.slot||task.slot):null; task.startTime=item.time_type==='exact'?(item.start_time||task.startTime):null; task.endTime=item.time_type==='exact'?(item.end_time||task.endTime):null; }
         else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
         if(item.category) task.category=item.category;
         if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
-        task.isBackfill=dayDiff(task.execDate,todayStr())<0; changes.push({store:'tasks',value:task});
+        task.slot=task.timeType==='exact'?slotForTime(task.startTime).key:task.timeType==='slot'?task.slot:null;
+        if(task.timeType!=='exact'){task.startTime=null;task.endTime=null;delete task.endDayOffset;}
+        changes.push({store:'tasks',value:task});
       }
       operation.after=targets.map(clone); operation.summary=`已修改 ${targets.length} 条整组日程。`;
     }else if(action.kind==='delete_schedule_batch'){
@@ -3477,7 +3520,9 @@ const UI = {
       else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
       if(item.category) task.category=item.category;
       if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
-      task.isBackfill=dayDiff(task.execDate,todayStr())<0; changes.push({store:'tasks',value:task}); operation.after=clone(task); operation.summary=`已修改日程「${task.title}」。`;
+      task.slot=task.timeType==='exact'?slotForTime(task.startTime).key:task.timeType==='slot'?task.slot:null;
+      if(task.timeType!=='exact'){task.startTime=null;task.endTime=null;delete task.endDayOffset;}
+      changes.push({store:'tasks',value:task}); operation.after=clone(task); operation.summary=`已修改日程「${task.title}」。`;
     }else if(action.kind==='update_todo'){
       const todo=copyData(S.todos.find(x=>x.id===action.target_id)); operation.before=clone(todo);
       if(item.title!==undefined) todo.title=item.title;
@@ -3493,6 +3538,17 @@ const UI = {
       const task=copyData(S.tasks.find(x=>x.id===action.target_id)); operation.before=clone(task);
       const todo={id:uid(),title:task.title,note:task.note||'',category:task.category,baseScore:task.baseScore,aiReason:task.aiReason||'',aiAdvice:task.aiAdvice||'',aiSource:task.aiSource||'agent',links:task.links||[],images:task.images||[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:task.id};
       changes.push({store:'todos',value:todo}); changes.push({store:'tasks',type:'delete',key:task.id}); operation.after=clone(todo); operation.summary=`已将「${task.title}」转为待办。`;
+    }
+    if(['update_schedule','update_schedule_batch'].includes(action.kind)){
+      const settlement=await settlementExpectation('tasks');
+      if(recordFingerprint(expected.tasks)!==recordFingerprint(settlement.tasks))throw new Error('资料已变化，请重新加载并确认后操作。');
+      expected.kv=settlement.kv;
+      const before=Array.isArray(operation.before)?operation.before:[operation.before];
+      const edits=changes.filter(change=>change.store==='tasks');
+      for(let i=0;i<edits.length;i++)edits[i].value=prepareScheduleEdit(before[i],edits[i].value,now);
+      const after=edits.map(change=>copyData(change.value));
+      operation.after=action.kind==='update_schedule_batch'?after:after[0];
+      changes.push(...prepareScheduleEditSettlement(before,after));
     }
     changes.push({store:'operations',value:operation});
     const savedMessage=S.messages.find(value=>value.id===message.id);
@@ -3516,6 +3572,14 @@ const UI = {
       (kind.startsWith('delete')&&before.some(saved=>current.some(item=>item.id===saved.id)))||
       (convert&&before.some(saved=>S.tasks.some(item=>item.id===saved.id)));
     if(changed){toast('内容后来有变化，为避免覆盖新内容，不能直接撤销');return;}
+    if(['update_schedule','update_schedule_batch'].includes(kind)){
+      try{
+        const settlement=await settlementExpectation('tasks');
+        if(recordFingerprint(expected.tasks)!==recordFingerprint(settlement.tasks))throw new Error('资料已变化，请重新加载并确认后操作。');
+        expected.kv=settlement.kv;
+        changes.push(...prepareEditPoints(-scheduleEditDelta(before,after)));
+      }catch(error){toast('撤销未保存：'+error.message);return;}
+    }
     if(kind.startsWith('create')||convert)for(const item of after)changes.push({store:convert?'todos':store,type:'delete',key:item.id});
     for(const item of before)changes.push({store:convert?'tasks':store,value:item});
     changes.push({store:'operations',value:{...copyData(operation),status:'undone',undoneAt:Date.now()}});
@@ -3871,7 +3935,7 @@ const UI = {
     this.cancelRecognition();this.todoEditingId=null;
     this.editingId = id;
     this.cState = {
-      draftId:uid(), userFields:{date:true,time:true,tag:true,title:true,note:true},
+      draftId:uid(), editSnapshot:copyData(t), userFields:{date:true,time:true,tag:true,title:true,note:true},
       kind:'schedule', recognized:true, rawText:publishEditText(t), resultTitle:t.title, resultNote:t.note||'', images:(t.images||[]).map(x=>({...x})), missingDate:false,
       date: t.execDate, calMonth: t.execDate.slice(0,7),
       timeType: t.timeType, slot: t.slot||'afternoon',
@@ -4238,6 +4302,7 @@ const UI = {
       const store=c.kind==='todo'?'todos':'tasks',id=todoEditingId||editingId;
       const old=id?S[store].find(t=>t.id===id):null;
       if(id&&!old)throw new Error('原事务已变化，请重新打开');
+      if(editingId&&c.editSnapshot&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
       if(!id&&S[store].some(item=>item.id===c.draftId)){
         c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
       }
@@ -4249,20 +4314,19 @@ const UI = {
       }else{
         value={...copyData(old||{}),...this.buildDraft(c,editingId),id:old?.id||c.draftId};
         if(c.timeType!=='exact'||c.endDayOffset!==1)delete value.endDayOffset;
-        if(old){
-          value.status=old.status;value.statusAt=old.statusAt;value.statusEditCount=old.statusEditCount;value.finalScore=old.finalScore;value.parts=old.parts;
-          const changed=['execDate','timeType','slot','startTime','endTime','endDayOffset'].some(k=>old[k]!==value[k]);
-          if(changed&&Date.now()>taskDeadline(old)){
-            const penalty=ScoreEngine.timeChangePenalty(old,Date.now(),taskDeadline(old));
-            if(penalty){value.timeChangeMul=Math.min(penalty.mul,old.timeChangeMul||1);value.timeChangeLabel=penalty.label;value.timeChangeWhy=penalty.why;}
-          }
-        }
+        if(old)value=prepareScheduleEdit(old,value);
       }
       value.links=preservedLinks;
       value.scoreRule=c.ai.source==='rule'?(old?copyData(old.scoreRule||null):{id:c.ai.ruleId,version:c.ai.version,fallback:c.ai.fallback}):null;
       validateStoredRecord(value,store==='tasks');
       const changes=[{store,value}];
-      if(old&&(old.status||old.done)){
+      if(old&&store==='tasks'){
+        const settlement=await settlementExpectation('tasks');
+        if(recordFingerprint(expected.tasks)!==recordFingerprint(settlement.tasks))throw new Error('资料已变化，请重新加载并确认后操作。');
+        expected.kv=settlement.kv;
+        changes.push(...prepareScheduleEditSettlement([old],[value]));
+      }
+      if(old&&store==='todos'&&old.done){
         const result=store==='todos'?{score:todoScore(value.baseScore),parts:[]}:ScoreEngine.compute(value,value.status,value.statusAt||Date.now());
         value.finalScore=result.score;value.parts=result.parts;
         const delta=r1(result.score-(old.finalScore||0));
