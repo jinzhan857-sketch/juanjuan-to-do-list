@@ -47,6 +47,7 @@ weekdays 使用 1 到 7 表示周一到周日。用户说“每天”时返回 [
 
 action.kind 只能是 create_schedule、create_schedule_batch、update_schedule、update_schedule_batch、delete_schedule_batch、create_todo、update_todo、delete_schedule、delete_todo、convert_schedule_to_todo。
 
+上下文中end_day_offset为1表示次日结束，执行日期为开始日。跨日日程的日期时间修改请提示去发布表单核对，不能用同日动作猜测。
 创建日程时 item 使用 title、note、exec_date、time_type、slot、start_time、end_time、category、base_score。time_type 只能是 allday、slot、exact。exact 必须同时给出标准 24 小时制 start_time 和 end_time。slot 只能是 midnight、dawn、early、morning、noon、afternoon、dusk、evening。修改时间时也必须返回 time_type，并同时返回该时间类型需要的完整时间信息。
 
 创建待办时 item 使用 title、note、category、base_score。不要返回优先级或截止日期。
@@ -305,7 +306,7 @@ function compactAgentContext(context = {}) {
     tasks: tasks.map(item => ({
       id: shortText(item.id, 80), series_id: validSeriesId(item.series_id) ? item.series_id : null, title: shortText(item.title, 120), note: shortText(item.note, 160),
       exec_date: validDate(item.exec_date), time_type: shortText(item.time_type, 20), slot: shortText(item.slot, 20),
-      start_time: validTime(item.start_time), end_time: validTime(item.end_time), category: shortText(item.category, 20), status: shortText(item.status, 20),
+      start_time: validTime(item.start_time), end_time: validTime(item.end_time), end_day_offset: item.end_day_offset===1?1:0, category: shortText(item.category, 20), status: shortText(item.status, 20),
     })),
     todos: todos.map(item => ({
       id: shortText(item.id, 80), title: shortText(item.title, 120), note: shortText(item.note, 160),
