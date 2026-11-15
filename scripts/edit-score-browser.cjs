@@ -39,6 +39,12 @@ document.querySelector('#edit-run').onclick=async()=>{
  await reset();Object.assign(S.tasks[0],{timeType:'exact',slot:'evening',startTime:'23:30',endTime:'00:30',endDayOffset:1});await DB.put('tasks',S.tasks[0]);await agent('single',{note:'跨日保留'});ok('跨日内容编辑保留结束日与附件',taskDeadline(S.tasks[0])===new NativeDate('2026-11-16T00:30:00+08:00').getTime()&&S.tasks[0].endDayOffset===1&&S.tasks[0].images.length===1);
  const stable=await snapshot();let refused=false;try{await agent('single',{start_time:'22:00'});}catch(e){refused=true;}ok('跨日改时仍要求表单核对',same(stable.tasks,(await snapshot()).tasks)&&same(stable.kv,(await snapshot()).kv)&&same(stable.operations,(await snapshot()).operations));
  await reset();await agent('single',{base_score:10});const failedUndo=await snapshot(),originalBatch=DB.batch;DB.batch=async()=>{throw Error('synthetic undo failure')};await UI.undoAgentOperation('m');DB.batch=originalBatch;ok('撤销失败保留记录流水和宠物',same(failedUndo,await snapshot()));
+ for(const entry of ['form','single','batch']){
+  await reset(null);clock=taskDeadline(S.tasks[0])+2*3600000;
+  if(entry==='form'){UI.startEdit('a');Object.assign(UI.cState,{timeType:'exact',start:'14:00',end:'15:00'});await document.querySelector('#btn-save').onclick();}else await agent(entry,{time_type:'exact',start_time:'14:00',end_time:'15:00'});
+  ok(entry+'原截止后两小时改时系数0.9且未结算零奖励',S.tasks[0].timeChangeMul===.9&&S.tasks[0].status===null&&S.tasks[0].finalScore===0&&S.pet.fridge.length===0);
+ }
+ await reset();UI.startEdit('a');UI.cState.ai.base_score=10;const nativeBefore=await snapshot(),txOriginal=DB._db.transaction.bind(DB._db);DB._db.transaction=(...args)=>{const tx=txOriginal(...args);if(args[1]==='readwrite'){const get=tx.objectStore.bind(tx);tx.objectStore=name=>{const store=get(name);if(name==='tasks'){const put=store.put.bind(store);store.put=value=>{const req=put(value);req.addEventListener('success',()=>tx.abort());return req;}}return store;}}return tx;};await document.querySelector('#btn-save').onclick();DB._db.transaction=txOriginal;ok('原生请求成功后中止整体回滚',same(nativeBefore,await snapshot())&&S.tasks[0].baseScore===2&&S.tasks[0].finalScore===1.2);DB._db.close();await DB.open();ok('原生中止重开保持原资料',same(nativeBefore,await snapshot()));
  out.textContent=JSON.stringify({pass:results.length,results,clock:'2026-11-15T10:00:00+08:00',timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,details},null,2);
  }catch(error){out.textContent=JSON.stringify({error:error.stack,results},null,2);}
 };
