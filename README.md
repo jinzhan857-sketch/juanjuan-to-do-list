@@ -17,6 +17,8 @@
 | 本地怎么启动、检查与发布 | [开发说明](docs/development/README.md) |
 | 开发顺序、勾选进度、下一步与前置条件 | [开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1) |
 | 3.0 的完整目标与范围 | [3.0 完整共识稿](docs/V3_CONSENSUS_DRAFT.md) |
+| 1.0 到 4.0 的版本定位与候选方向 | [版本定位](docs/product/VERSION_POSITIONING.md) |
+| nanoMuse 借鉴与语言分工 | [研究建议](docs/reference/nanomuse-research.md)、[JavaScript 与 Python 分工](docs/decisions/0003-javascript-python-boundary.md) |
 | Agent 接手时必须遵守什么 | [AGENTS.md](AGENTS.md) |
 
 ## 文件夹分别放什么

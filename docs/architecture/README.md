@@ -4,6 +4,8 @@
 
 后端实现方向以[决策 0002](../decisions/0002-backend-language.md)为准：优先采用 JavaScript，替代旧共识的 Python 优先偏好；独立后端职责与数据保护要求不变。
 
+Python独立评测、分析与未来在线计算的边界见[决策0003](../decisions/0003-javascript-python-boundary.md)；nanoMuse仅作[研究候选](../reference/nanomuse-research.md)，没有接入当前系统。
+
 ```mermaid
 flowchart TD
     User[用户界面与确认] --> UI[根目录页面中的 UI 与业务规则]

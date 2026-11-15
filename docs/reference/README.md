@@ -2,6 +2,8 @@
 
 ## 正式说明与来源
 
+[nanoMuse研究与采用建议](nanomuse-research.md)保存源码依据、推荐顺序、接入方式和许可边界；[版本定位](../product/VERSION_POSITIONING.md)归纳展提供的三份早期资料与未来候选，不上传原文或私人资料。语言分工统一见[决策0003](../decisions/0003-javascript-python-boundary.md)。
+
 2026年11月15日本轮补充：[用户最终确认规则与问题入口](2026-11-15-confirmed-feedback-rules.md)、[114条完整字段专项测试预期](2026-11-15-confirmed-feedback-tests.md)。均为登记资料，规则尚待对应Issue实施，测试预期不等于已运行通过。
 
 | 材料 | 用途 |
