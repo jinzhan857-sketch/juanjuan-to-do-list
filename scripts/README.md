@@ -28,6 +28,9 @@
 | `storage-ui-browser.test.cjs` | 核对真实界面测试入口的数据库、网络和文件访问隔离 | 由 `npm run check` 调用 |
 | `notice.test.cjs` | 提醒正文结构、截止及扣分边界回归 | 由 `npm run check` 调用 |
 | `notice-browser.cjs` | 首页提醒的内存合成排版验收，不启动数据库与网络 | `node scripts/notice-browser.cjs`，打开4184测试页 |
+| `quota-client.test.cjs`、`quota-refund.test.cjs`、`quota-date.test.cjs` | 客户端、实际handler与可信日期联验，全部合成 | 由 `npm run check` 调用 |
+| `quota-redis.test.cjs` | 实际Redis执行Lua、并发及handler集成 | CI专用隔离Redis，详见测试说明 |
+| `quota-refund-browser.cjs` | 隔离浏览器联合退次与刷新检查 | 4198，专用合成数据库，禁止外部连接 |
 | `helpers/` | 共用合成状态与浏览器检查逻辑 | 由测试入口加载 |
 | `check-archive.cjs` | 验证当前提交的无 Git 归档副本 | `npm run check:archive`，先提交，检查的是 HEAD |
 

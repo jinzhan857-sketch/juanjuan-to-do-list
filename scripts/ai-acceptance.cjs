@@ -39,6 +39,11 @@ function validateSession(state, {reviewedRetest = false} = {}) {
 }
 
 async function run(args = process.argv.slice(2)) {
+  if (args.length === 1 && args[0] === '--replay') {
+    const result = await replayResults(JSON.parse(fs.readFileSync(path.join(root, '.reports/issue81-acceptance-answers.json'), 'utf8')));
+    fs.writeFileSync(path.join(root, '.reports/issue81-final-replay.json'), JSON.stringify(result, null, 2) + '\n');
+    console.log(JSON.stringify(result)); return;
+  }
   if (args.length !== 1 || !['--approved-closure', '--reviewed-retest'].includes(args[0])) throw Error('Closure testing requires the explicit approved invocation');
   const reviewedRetest = args[0] === '--reviewed-retest';
   loadAIEnvironment(); const key = String(process.env.DEEPSEEK_API_KEY || '').trim();
@@ -78,7 +83,7 @@ async function run(args = process.argv.slice(2)) {
         answer = null; const started = performance.now();
         const record = {id: scenario.id, handler_sha256: handlerHash, question: scenario.body.title || scenario.body.message, context: scenario.body.context || null, expected: scenario.expected};
         try {
-          const response = await fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(scenario.body), signal: AbortSignal.timeout(30000)});
+          const response = await fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({...scenario.body, request_id: crypto.randomBytes(16).toString('hex')}), signal: AbortSignal.timeout(30000)});
           const result = await response.json();
           if (JSON.stringify(result).includes(key)) throw Error('Sensitive result blocked');
           Object.assign(record, {status: response.status, passed: response.ok && scenario.accepts(result), model_answer: answer, result});
@@ -100,5 +105,30 @@ async function run(args = process.argv.slice(2)) {
     if (summary.completed !== selected.length || summary.passed !== selected.length) process.exitCode = 1;
   } finally {fs.closeSync(fd); fs.unlinkSync(lock);}
 }
+
+async function replayResults(transcript) {
+  const selected = cases.filter(scenario => transcript.cases.some(record => record.id === scenario.id));
+  let active;
+  const setup = createModelCheck({key: 'synthetic-replay-key', request: async () => {
+    if (!active?.model_answer || !active.passed) throw Error('Recorded case has no passing final answer');
+    return new Response(JSON.stringify({choices: [{message: {content: active.model_answer}}]}));
+  }});
+  const server = createLocalServer({...setup, mode: 'simulation'}), results = [];
+  await new Promise((resolve, reject) => {server.once('error', reject); server.listen(0, '127.0.0.1', resolve);});
+  try {
+    for (const scenario of selected) {
+      active = transcript.cases.findLast(record => record.id === scenario.id);
+      const response = await fetch(`http://127.0.0.1:${server.address().port}/api/ai`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({...scenario.body, request_id: crypto.randomBytes(16).toString('hex')})});
+      const result = await response.json();
+      if (!response.ok || !scenario.accepts(result)) throw Error('Recorded answer failed the current handler contract');
+      const business = scenario.id === 'closure-schedule' ? await checkScheduleLifecycle(result, scenario.body.message) : null;
+      results.push({id: scenario.id, passed: true, status: response.status, business});
+    }
+  } finally {server.closeAllConnections(); await new Promise(resolve => server.close(resolve));}
+  return {handler_sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(root, 'api/ai.js'))).digest('hex'),
+    app_sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(root, 'index.html'))).digest('hex'),
+    replay: true, real_model_calls_added: 0, quota: 'synthetic oracle', results,
+    unrecorded_cases: cases.filter(scenario => !selected.includes(scenario)).map(scenario => scenario.id)};
+}
 if (require.main === module) run().catch(() => {console.error('Closure test did not complete; review the preserved ledger. No automatic retry or secret output.'); process.exitCode = 1;});
-module.exports = {cases, limits, validateSession};
+module.exports = {cases, limits, validateSession, replayResults};

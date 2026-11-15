@@ -19,6 +19,7 @@ function createHarness({modelFailure = false, quotaFailure = false, liveModel = 
     static now() { return now; }
   }
   const values = new Map(), expiry = new Map();
+  const quota = require('./helpers/quota-oracle.cjs').quotaOracle({values, expiry});
   let modelCalls = 0, quotaCalls = 0;
   function expire(key) {
     if (expiry.has(key) && expiry.get(key) <= Date.now()) {
@@ -59,7 +60,14 @@ function createHarness({modelFailure = false, quotaFailure = false, liveModel = 
     throw Error('Network access is disabled in simulation');
   };
   const context = vm.createContext({
-    require(name) { if (name === 'node:crypto') return crypto; throw Error('Unexpected simulation dependency'); },
+    require(name) {
+      if (name === 'node:crypto') return crypto;
+      if (name === './quota.cjs') return {createQuota: () => ({
+        reserve(...args) {quotaCalls++; if (quotaFailure) throw Error('Synthetic quota failure'); return quota.reserve(...args);},
+        finish(...args) {quotaCalls++; if (quotaFailure) throw Error('Synthetic quota failure'); return quota.finish(...args);},
+      })};
+      throw Error('Unexpected simulation dependency');
+    },
     module: {exports: {}}, process: {env: {...syntheticEnv, ...(liveModel ? {DEEPSEEK_API_KEY: liveModel.key} : {})}},
     fetch: simulatedFetch, Date: SyntheticDate, Buffer, AbortController, DOMException, setTimeout, clearTimeout,
   });

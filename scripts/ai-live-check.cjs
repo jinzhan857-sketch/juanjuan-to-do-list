@@ -109,7 +109,7 @@ async function run(args = process.argv.slice(2)) {
       for (const scenario of pending) {
         if (state.attempts.length >= limits.calls) break;
         const started = performance.now();
-        const response = await fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(scenario.body)});
+        const response = await fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({...scenario.body, request_id: crypto.randomBytes(16).toString('hex')})});
         const result = await response.json();
         const passed = response.ok && scenario.accepts(result);
         const record = {id: scenario.id, handler_sha256: handlerHash, attempt_number: state.attempts.length, status: response.status, passed, elapsed_ms: Math.round(performance.now() - started),

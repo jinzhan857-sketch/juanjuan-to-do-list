@@ -36,11 +36,11 @@ npm run ai:test
 手工发送一条合成请求也可交给Codex执行：
 
 ```powershell
-$sample = @{ title = '合成测试：整理书桌'; device_id = 'syntheticdevice0123456789abcd'; client_date = '2026-11-15' } | ConvertTo-Json
+$sample = @{ title = '合成测试：整理书桌'; device_id = 'syntheticdevice0123456789abcd'; request_id = [guid]::NewGuid().ToString('N'); client_date = '2026-11-15' } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri http://127.0.0.1:4177/api/ai -ContentType 'application/json' -Body ([System.Text.Encoding]::UTF8.GetBytes($sample))
 ```
 
-返回头X-Juanjuan-AI-Mode为simulation表示模拟，不以结果中的source字段单独判断是否真实调用。每条完成请求只记录请求编号、运行模式、状态码、耗时与处理函数SHA256，不记录输入、回复、Key、口令或存储地址。现有设备20次和IP50次规则继续由原处理函数运行，本任务不修改额度或计费规则。
+返回头X-Juanjuan-AI-Mode为simulation表示模拟，不以结果中的source字段单独判断是否真实调用。每条完成请求只记录请求编号、运行模式、状态码、耗时与处理函数SHA256，不记录输入、回复、Key、口令或存储地址。最新#38接口要求每次新请求显式提供32位小写十六进制request_id，重试需新编号，取消用原编号；本机服务不为缺失编号补值。客户端真实测试入口自动为自己的请求生成编号，模拟额度通过#38共用的quotaOracle替身实现，不执行真实Redis Lua，不验证Redis租约与原子性。设备20次、IP50次及全站100次规则沿用原处理函数，本任务不修改额度或计费规则。
 
 ## 第二部分：人工配置已完成
 
@@ -55,6 +55,8 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:4177/api/ai -ContentType 'a
 本轮采用真实DeepSeek加本地合成额度存储，因此不需要展申请或配置Redis。测试完整经过本机HTTP入口、原handler、真实模型和原解析器，额度仍标明合成模拟。它不验证真实Redis、云端全站额度或浏览器写入；这与后续完整真实服务配置分开。
 
 初始入口npm run ai:live-check只检查配置、不调用模型，npm run ai:live-test保留3次、1元的初始限制，发现已有记录会拒绝盲目重跑。显式npm run ai:live-test -- --approved-followup复用原账本，最新累计限制为10次、2元，同一处理函数已通过的场景跳过。收尾入口npm run ai:acceptance -- --approved-closure使用固定合成题，展示并保存最终回答；失败后不会自动重试，仅经人工复查且预算尚余时允许--reviewed-retest复测最后失败一题。当前次数已满，不能再调用。命令本身不提供新授权。
+
+本机已有收尾答案记录时，npm run ai:acceptance -- --replay可将已保存答案通过当前HTTP处理与原应用确认函数回放，模型传输为明确替身，不加载真实Key或访问DeepSeek。它只验证新源码与已有答案的组合，不证明改过的提示词已重新调用真实模型。CI使用合成答案单独验证回放器，不读取个人报告。
 
 执行器在发送前记录本轮尝试次数和保守金额预留；网络失败也保留预留，不因重启或重跑自动恢复次数。账本保存在被忽略的.reports/issue81-live-budget.json，互斥文件阻止并发启动同一会话；初始限制和展批准的后续限制分别保存，旧尝试和失败记录不删。普通入口拒绝重跑；显式续测只允许在已确认范围内进行，不删除记录来绕过上限。每次执行遇到失败立即停止，没有自动重试，不执行模型提出的事务。
 

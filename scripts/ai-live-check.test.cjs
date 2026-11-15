@@ -97,13 +97,13 @@ test('explicit model check crosses local HTTP and handler while quota stays synt
   t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }));
   const base = `http://127.0.0.1:${server.address().port}`;
   const health = await (await fetch(base + '/api/health')).json(); assert.equal(health.mode, 'live-model-test'); assert.match(health.note, /合成模拟/);
-  const response = await fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: '合成输入', device_id: 'syntheticdevice0123456789abcd'})});
+  const response = await fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: '合成输入', device_id: 'syntheticdevice0123456789abcd', request_id: '0'.repeat(32)})});
   assert.equal(response.status, 200); assert.equal((await response.json()).base_score, 6); assert.equal(calls, 1); assert.ok(setup.inspect().quotaCalls > 0);
 });
 test('default simulation ignores attempts to enable a live transport', async () => {
   let calls = 0;
   const setup = createSimulation({liveModel: {key, request: () => { calls++; }}});
-  const req = {method: 'POST', headers: {}, body: {title: '合成输入', device_id: 'syntheticdevice0123456789abcd'}};
+  const req = {method: 'POST', headers: {}, body: {title: '合成输入', device_id: 'syntheticdevice0123456789abcd', request_id: '0'.repeat(32)}};
   let status; await setup.handler(req, {status(v) { status = v; return this; }, json() {}});
   assert.equal(status, 200); assert.equal(calls, 0);
 });
@@ -119,7 +119,7 @@ for (const role of ['score', 'task', 'planning', 'chat']) test('short JSON reque
       : {content: '', reasoning_content: 'synthetic reasoning filling the output allowance'};
     return new Response(JSON.stringify({choices: [{message}]}));
   }});
-  const body = {device_id: 'syntheticdevice0123456789abcd', client_date: '2026-11-15',
+  const body = {device_id: 'syntheticdevice0123456789abcd', request_id: '0'.repeat(32), client_date: '2026-11-15',
     ...(role === 'score' ? {title: '整理书桌'} : {mode: 'agent', agent_role: role, message: '合成测试', context: {}})};
   let status, result;
   await setup.handler({method: 'POST', headers: {}, body}, {status(v) { status = v; return this; }, json(v) { result = v; }});

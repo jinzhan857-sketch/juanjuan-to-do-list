@@ -6,6 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const {spawn} = require('node:child_process');
+const crypto = require('node:crypto');
 const {createLocalServer, configuration, maxBodyBytes} = require('./ai-local.cjs');
 const {createSimulation} = require('./ai-simulation.cjs');
 const root = path.join(__dirname, '..');
@@ -18,7 +19,7 @@ async function fixture(t, options = {}) {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }));
   const base = `http://127.0.0.1:${server.address().port}`;
-  const post = (body, extra = {}) => fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json', ...extra}, body: JSON.stringify(body)});
+  const post = (body, extra = {}) => fetch(base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json', ...extra}, body: JSON.stringify({request_id: crypto.randomBytes(16).toString('hex'), ...body})});
   return {server, simulation, events, base, post};
 }
 
@@ -56,6 +57,23 @@ test('existing daily device quota blocks request 21 and keeps owner stats protec
   const response = await fetch(a.base + '/api/ai?stats=1&date=2026-11-15', {headers: {'x-owner-token': a.simulation.env.OWNER_STATS_TOKEN}});
   const body = await response.json(); assert.equal(response.status, 200);
   assert.equal(body.calls, 20); assert.equal(body.blocked, 1); assert.equal(body.active_devices, 1);
+});
+
+test('current request IDs and cancellation contract stay explicit in local simulation', async t => {
+  const a = await fixture(t), request_id = '1'.repeat(32);
+  assert.equal((await a.post({...scoreBody, request_id})).status, 200);
+  assert.equal((await a.post({...scoreBody, request_id})).status, 409);
+  for (let i = 0; i < 2; i++) {
+    const response = await a.post({mode: 'cancel', request_id, device_id: device});
+    assert.equal(response.status, 200); assert.equal((await response.json()).released, true);
+  }
+  assert.equal(a.simulation.inspect().modelCalls, 1);
+});
+
+test('missing request ID is rejected instead of silently generating one at the server', async t => {
+  const a = await fixture(t);
+  const response = await fetch(a.base + '/api/ai', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(scoreBody)});
+  assert.equal(response.status, 400); assert.equal(a.simulation.inspect().modelCalls, 0);
 });
 for (const failure of ['modelFailure', 'quotaFailure']) test('dependency failure returns service error: ' + failure, async t => {
   const a = await fixture(t, {[failure]: true}), response = await a.post(scoreBody);
@@ -128,6 +146,8 @@ async function cli(t, live) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'juanjuan-ai81-'));
   fs.mkdirSync(path.join(dir, 'scripts')); fs.mkdirSync(path.join(dir, 'api'));
   for (const name of ['ai-local.cjs', 'ai-simulation.cjs', 'ai-config.cjs']) fs.copyFileSync(path.join(__dirname, name), path.join(dir, 'scripts', name));
+  fs.mkdirSync(path.join(dir, 'scripts/helpers'));
+  fs.copyFileSync(path.join(__dirname, 'helpers/quota-oracle.cjs'), path.join(dir, 'scripts/helpers/quota-oracle.cjs'));
   if (!live) fs.writeFileSync(path.join(dir, 'scripts/ai-config.cjs'), "module.exports={loadAIEnvironment(){throw Error('Simulation attempted private configuration')}};");
   const secret = 'synthetic-env-value-never-print';
   if (live) fs.writeFileSync(path.join(dir, 'api/ai.js'), `module.exports=(req,res)=>res.status(200).json({loaded:process.env.DEEPSEEK_API_KEY===${JSON.stringify(secret)}});`);

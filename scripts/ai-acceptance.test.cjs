@@ -2,7 +2,7 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const {checkScheduleLifecycle} = require('./ai-action-check.cjs');
-const {validateSession, limits} = require('./ai-acceptance.cjs');
+const {validateSession, limits, replayResults} = require('./ai-acceptance.cjs');
 const proposal = {type: 'proposal', reply: '请确认复习安排。', action: {kind: 'create_schedule', target_id: null,
   item: {title: '复习课程', note: '', exec_date: '2026-11-16', time_type: 'exact', start_time: '15:00', end_time: '16:00', category: '学业事务', base_score: 7}}};
 const previous = () => ({session: 'issue81-initial-three-calls', attempts: Array.from({length: 5}, (_, i) => ({number: i + 1})), cases: [{id: 'score', passed: false}], reserved_cny: 0.077724});
@@ -42,4 +42,14 @@ test('reviewed retest cannot repeat a passed case or start without recorded appr
   assert.throws(() => validateSession(state, {reviewedRetest: true}));
   state.acceptance_approval = {limits}; state.cases.at(-1).passed = true;
   assert.throws(() => validateSession(state, {reviewedRetest: true}));
+});
+
+test('recorded replies replay through the current request contract and original persistence without a model call', async () => {
+  const report = await replayResults({cases: [
+    {id: 'closure-schedule', passed: true, model_answer: JSON.stringify(proposal)},
+    {id: 'closure-chat-boundary', passed: true, model_answer: JSON.stringify({type: 'chat', reply: '请切换到卷卷事务。'})},
+  ]});
+  assert.equal(report.real_model_calls_added, 0); assert.equal(report.results.length, 2);
+  assert.equal(report.results[0].business.after_undo_tasks, 3); assert.ok(report.results.every(record => record.passed));
+  assert.ok(report.unrecorded_cases.includes('closure-planning'));
 });
