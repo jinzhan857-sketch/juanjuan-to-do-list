@@ -12,7 +12,7 @@ function fixture(){
  const a={clock,commands,models,values,expiry,model:async()=>({ok:true,json:async()=>({choices:[{message:{content:JSON.stringify({type:'chat',reply:'合成回复',task:'合成课程',base_score:3})}}]})})};
  const context=vm.createContext({require,module:{exports:{}},Buffer,Date:Clock,AbortController,DOMException,setTimeout,clearTimeout,process:{env:{KV_REST_API_URL:'https://redis.invalid',KV_REST_API_TOKEN:'synthetic',RATE_LIMIT_SALT:'synthetic',DEEPSEEK_API_KEY:'synthetic',OWNER_STATS_TOKEN:'synthetic'}},fetch:async(url,options)=>{
   if(url!=='https://redis.invalid'){models.push(JSON.parse(options.body));return a.model()}
-  const c=JSON.parse(options.body);commands.push(c);const [op,key,...args]=c;
+  const c=JSON.parse(options.body);commands.push(c);if(a.beforeRedis)await a.beforeRedis(c);const [op,key,...args]=c;
   if(expiry.has(key)&&expiry.get(key)<=clock.now){values.delete(key);expiry.delete(key)}
   let result;
   if(op==='INCR'){result=(values.get(key)||0)+1;values.set(key,result)}
@@ -67,3 +67,6 @@ for(const outcome of ['quota','cancel'])test('client agent '+outcome+' preserves
  if(outcome==='cancel'){await a.run('UI.cancelAgentMessage()');resolve({ok:true,json:async()=>({type:'proposal',reply:'迟到',action:{kind:'delete_schedule',target_id:'a'}})})}
  await pending;assert.equal(calls,1);assert.deepEqual(await a.snapshot(),before);assert.equal(a.run("S.messages.some(m=>m.meta?.action)"),false);
 });
+test('crossing midnight during first Redis wait pins every later key',async()=>{const a=fixture();a.clock.now=Date.parse('2026-11-15T23:59:59.999+08:00');a.beforeRedis=async()=>{a.clock.now=Date.parse('2026-11-16T00:00:01+08:00')};assert.equal((await a.send()).code,200);a.assertDates('2026-11-15');assert.ok(a.models[0].messages[1].content.startsWith('今天是2026-11-15。'))});
+test('concurrent devices share the IP cap despite client dates',async()=>{const a=fixture();const results=await Promise.all(Array.from({length:60},(_,i)=>a.send({device_id:device+i,client_date:i%2?'2026-01-01':'2027-01-01'})));assert.equal(results.filter(r=>r.code===200).length,50);assert.equal(a.models.length,50);assert.equal(a.count('blocked'),10);a.assertDates('2026-11-15')});
+test('counter failure after midnight records failure in request start day',async()=>{const a=fixture();a.clock.now=Date.parse('2026-11-15T23:59:59.999+08:00');a.beforeRedis=async c=>{a.clock.now++;if(c[1].startsWith('limit:'))throw Error('synthetic Redis failure')};assert.equal((await a.send()).code,503);assert.equal(a.models.length,0);a.assertDates('2026-11-15');assert.equal(a.count('failures'),1)});
