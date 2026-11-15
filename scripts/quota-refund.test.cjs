@@ -21,3 +21,11 @@ test('cancellation after midnight releases original Beijing day',async()=>{const
 test('failed response write releases successful receipt before reporting failure',async()=>{
  const a=handlerFixture();a.onResponse=code=>{if(code===200)throw Error('synthetic response failure')};assert.equal((await a.send()).code,503);assert.equal(a.values.get('quota:2026-11-15:global'),0);assert.equal(a.models.length,1);
 });
+
+test('review29-38: failed admission timeout blocks delayed reserve and preserves next-day retry',async()=>{
+ const a=handlerFixture({now:Date.parse('2026-12-31T23:59:59.999+08:00')}),reserve=a.quota.reserve;let delayed;
+ a.quota.reserve=async r=>{if(!delayed){delayed=()=>reserve(r);throw Error('synthetic transport timeout before Redis execution')}return reserve(r)};
+ const id='e'.repeat(32);assert.equal((await a.send({request_id:id,client_date:'2030-01-01'})).code,503);assert.equal(a.models.length,0);a.clock.now++;
+ assert.equal(await delayed(),'failed');assert.equal(a.values.has('quota:2026-12-31:global'),false);assert.equal(a.values.has('metric:2026-12-31:calls'),false);
+ assert.equal((await a.send({mode:'cancel',request_id:id})).payload.released,true);assert.equal((await a.send({request_id:'d'.repeat(32),client_date:'2030-01-01'})).code,200);assert.equal(a.models.length,1);assert.equal(a.values.get('quota:2027-01-01:global'),1);assert.ok(a.models[0].messages[1].content.startsWith('今天是2030-01-01。'));
+});
