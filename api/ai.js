@@ -109,10 +109,10 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       stop=()=>{controller.abort();reject(external?.reason||new DOMException('请求已取消','AbortError'));};
       if(external?.aborted){stop();return;}
       external?.addEventListener('abort',stop,{once:true});
-      timer=setTimeout(()=>{controller.abort();reject(new Error('请求超时，请稍后重试'));},timeoutMs);
+      timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 

@@ -662,7 +662,7 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
     </div>
     <div id="ai-result" style="margin-top:12px"></div>
     <div id="estimate-box"></div>
-    <div class="hint" id="c-summary" role="status"></div><div style="display:flex;gap:12px;margin-top:14px"><button class="btn mint" id="btn-ai" style="flex:1">AI 识别</button><button class="btn" id="btn-save" style="flex:1">快速发布</button></div>
+    <div class="hint" id="c-summary" role="status"></div><div class="hint" id="c-ai-status" role="status"></div><div style="display:flex;gap:12px;margin-top:14px"><button class="btn mint" id="btn-ai" style="flex:1">AI 识别</button><button class="btn" id="btn-save" style="flex:1">快速发布</button></div>
     </div>
   </div>
 </div>
@@ -1780,10 +1780,10 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       stop=()=>{controller.abort();reject(external?.reason||new DOMException('请求已取消','AbortError'));};
       if(external?.aborted){stop();return;}
       external?.addEventListener('abort',stop,{once:true});
-      timer=setTimeout(()=>{controller.abort();reject(new Error('请求超时，请稍后重试'));},timeoutMs);
+      timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
@@ -3189,7 +3189,7 @@ const UI = {
     }
     await saveMessage(message);
     chat.updatedAt=message.createdAt; await saveChat(chat); this.renderAgent();
-    }catch(error){this.agentThinking=false;toast('消息未完成，请检查后重试');this.renderAgent();}
+    }catch(error){if(this.agentSending===sending){this.agentThinking=false;toast('消息未完成，请检查后重试');this.renderAgent();}}
     finally{if(this.agentSending===sending)this.agentSending=null;}
   },
 
@@ -3846,6 +3846,7 @@ const UI = {
     this.renderCreateTags();
     // AI 结果 & 预估
     this.renderAIResult();
+    $('#c-ai-status').textContent=c.aiFailureReason?'AI识别未完成：'+c.aiFailureReason:'';
     $('#btn-save').textContent=c.saving?'保存中':(this.editingId||this.todoEditingId)?'保存修改':c.recognized?'确认发布':'快速发布';
     $$('#page-create input, #page-create textarea, #page-create button, #page-create select').forEach(el=>{el.disabled=!!c.saving;});
     $('#btn-save').disabled=!!(c.saving||this.recognition);$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';
@@ -4062,7 +4063,7 @@ const UI = {
     try{validatePublishContent(c.rawText,c.resultTitle,c.resultNote);}catch(error){toast(error.message);return;}
     const before={raw:title,title:c.resultTitle,note:c.resultNote,tag:c.tag};
     const request={controller:new AbortController(),draft:c};
-    this.recognition=request;
+    this.recognition=request;c.aiFailureReason=null;
     let aiSucceeded=false;
     const timer=setTimeout(()=>request.controller.abort(new Error('识别超时')),20000);
     this.renderCreate();
@@ -4088,6 +4089,7 @@ const UI = {
     }catch(error){
       if(this.recognition!==request||this.cState!==c||c.saved)return;
       this.recognition=null;
+      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'请求超时':error?.status===429?'公共次数已用完':error?.status?'服务返回错误（'+error.status+'）':error?.name==='SyntaxError'||error?.code==='retryable_model_reply'?'服务返回无效JSON':error?.name==='TypeError'?'网络连接失败':'服务结果无效或不可用';
       if(aiSucceeded){toast('识别成功，页面更新失败，草稿已保留');this.saveCreateDraft();return;}
       if(this.editingId||this.todoEditingId){toast('AI识别失败，修改已保留，请保存修改');this.renderCreate();}
       else await this.onSave({aiFailed:true});
