@@ -3865,7 +3865,7 @@ const UI = {
     this.renderCreateTags();
     // AI 结果 & 预估
     this.renderAIResult();
-    $('#c-ai-status').textContent=c.aiFailureReason?'AI识别未完成：'+c.aiFailureReason:'';
+    $('#c-ai-status').textContent=c.aiFailureReason||'';
     $('#btn-save').textContent=c.saving?'保存中':(this.editingId||this.todoEditingId)?'保存修改':c.recognized?'确认发布':'快速发布';
     $$('#page-create input, #page-create textarea, #page-create button, #page-create select').forEach(el=>{el.disabled=!!c.saving;});
     $('#btn-save').disabled=!!(c.saving||this.recognition);$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';
@@ -4108,10 +4108,9 @@ const UI = {
     }catch(error){
       if(this.recognition!==request||this.cState!==c||c.saved)return;
       this.recognition=null;
-      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'请求超时':error?.status===429?'公共次数已用完':error?.status?'服务返回错误（'+error.status+'）':error?.name==='SyntaxError'||error?.code==='retryable_model_reply'?'服务返回无效JSON':error?.name==='TypeError'?'网络连接失败':'服务结果无效或不可用';
+      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'识别超时，请重试。':error?.name==='TypeError'?'网络错误，请重试。':'识别失败，请重试。';
       if(aiSucceeded){toast('识别成功，页面更新失败，草稿已保留');this.saveCreateDraft();return;}
-      if(this.editingId||this.todoEditingId){toast('AI识别失败，修改已保留，请保存修改');this.renderCreate();}
-      else await this.onSave({aiFailed:true});
+      this.saveCreateDraft();this.renderCreate();toast(c.aiFailureReason);
     }finally{
       clearTimeout(timer);
       if(this.recognition===request)this.recognition=null;
@@ -4119,7 +4118,7 @@ const UI = {
     }
   },
 
-  async onSave({aiFailed=false}={}){
+  async onSave(){
     const c=this.cState;
     if(!c||c.saving||c.saved||this.recognition||this.publisherSave)return;
     const editingId=this.editingId,todoEditingId=this.todoEditingId,isEdit=!!(editingId||todoEditingId);
@@ -4142,7 +4141,7 @@ const UI = {
       if(c.kind==='schedule'&&c.timeType==='exact'&&(!validTimeStr(c.start)||!validTimeStr(c.end)||minOf(c.end)<=minOf(c.start)&&c.endDayOffset!==1))throw new Error('结束时间需要晚于开始时间，请核对结束日期');
       this.renderCreate();
       const {quickScore}=await this.loadScoring();
-      if(!isEdit&&(aiFailed||!c.ai||c.ai.source==='rule')){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;this.updateRuleCategory();}
+      if(!isEdit&&(!c.ai||c.ai.source==='rule')){c.ai=quickScore({title:c.resultTitle,description:c.resultNote});c.modelRaw=null;c.reviewedResult=null;this.updateRuleCategory();}
       this.renderCreate();
       if(!c.ai)throw new Error('评分缺失，请重新识别');
       const store=c.kind==='todo'?'todos':'tasks',id=todoEditingId||editingId;
@@ -4189,11 +4188,11 @@ const UI = {
       try{localStorage.setItem('juanjuan_create_draft',JSON.stringify({state:{saved:true}}));localStorage.removeItem('juanjuan_create_draft');}catch(_){}
       this.cancelRecognition();this.resetCreate(c.kind);
       this.switchPage(store==='todos'?'todo':'home');
-      toast((aiFailed?'AI识别失败，已快速发布':old?'修改已保存':'发布成功')+(store==='tasks'&&dayDiff(value.execDate,todayStr())<0?'；'+value.execDate+' 补录':''));
+      toast((old?'修改已保存':'发布成功')+(store==='tasks'&&dayDiff(value.execDate,todayStr())<0?'；'+value.execDate+' 补录':''));
       return value;
     }catch(error){
       if(committed){toast('已保存，页面刷新失败，请重新打开查看');return;}
-      toast((aiFailed?'AI识别失败，快速发布未成功：':'保存未成功：')+error.message);
+      toast('保存未成功：'+error.message);
       this.saveCreateDraft();
     }finally{
       c.saving=false;if(this.publisherSave===c)this.publisherSave=null;
