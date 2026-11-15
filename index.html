@@ -563,6 +563,7 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
 </style>
 </head>
 <body>
+<div id="quota-refund-status" class="hint" role="status"></div>
 <div id="degrade-tip">🔌 AI 暂时不可用，当前为本地评分模式</div>
 <div id="global-topbar"><span id="global-brand">卷卷</span><button id="my-global-btn">我的</button></div>
 <!-- ==================== 首页 ==================== -->
@@ -1806,6 +1807,51 @@ const AIService = {
   },
   cancelAgentRequest(){ if(this.activeAgentController){this.activeAgentController.userCancelled=true;this.activeAgentController.abort();} },
 
+  activeHosted:new Map(),
+  refundEntries(){return JSON.parse(localStorage.getItem('juanjuan_quota_pending')||'[]');},
+  storeRefunds(entries){localStorage.setItem('juanjuan_quota_pending',JSON.stringify(entries));},
+  forgetRefund(id){this.storeRefunds(this.refundEntries().filter(item=>item.id!==id));},
+  refundStatus(message=''){const box=$('#quota-refund-status');if(box)box.textContent=message;},
+  async flushQuotaRefunds(){
+    if(this.refundFlush)return this.refundFlush;
+    const work=this.refundEntries().filter(item=>!this.activeHosted.has(item.id)).slice(0,20);
+    if(!work.length)return;
+    this.refundFlush=(async()=>{
+      await Promise.all(work.map(async item=>{
+        try{
+          const {data}=await requestJSON('/api/ai',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'cancel',device_id:item.device,request_id:item.id})},3000);
+          if(data?.released!==true)throw new Error('次数退回未确认');
+          this.forgetRefund(item.id);
+        }catch(_){this.refundStatus('次数退回待确认，请联网后重试。');}
+      }));
+      this.refundStatus(this.refundEntries().some(item=>!this.activeHosted.has(item.id))?'次数退回待确认，请联网后重试。':'');
+    })();
+    try{await this.refundFlush;}finally{this.refundFlush=null;}
+  },
+  cancelHostedRequests(){for(const controller of this.activeHosted.values())controller.abort();void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));},
+  async hostedRequest(payload,{signal,timeoutMs=20000,accept=data=>data}={}){
+    if(signal?.aborted)throw signal.reason;
+    await this.flushQuotaRefunds();
+    if(signal?.aborted)throw signal.reason;
+    const id=crypto.randomUUID().replaceAll('-',''),device=this.getDeviceId(),controller=new AbortController();
+    const stop=()=>controller.abort(signal.reason);
+    signal?.addEventListener('abort',stop,{once:true});
+    this.activeHosted.set(id,controller);
+    try{
+      // Persist before dispatch so a reload can finish an interrupted refund.
+      this.storeRefunds([...this.refundEntries(),{id,device}]);
+      const {data}=await requestJSON('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,device_id:device,request_id:id}),signal:controller.signal},timeoutMs);
+      if(controller.signal.aborted)throw controller.signal.reason;
+      const result=accept(data);
+      this.forgetRefund(id);
+      return result;
+    }catch(error){
+      this.activeHosted.delete(id);
+      void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));
+      throw error;
+    }finally{this.activeHosted.delete(id);signal?.removeEventListener('abort',stop);}
+  },
+
   source(){ return localStorage.getItem('juanjuan_llm_source')==='custom'?'custom':'hosted'; },
   customConfig(){ return {endpoint:localStorage.getItem('juanjuan_llm_endpoint')||'https://api.deepseek.com/chat/completions',model:localStorage.getItem('juanjuan_llm_model')||'deepseek-v4-flash',key:localStorage.getItem('juanjuan_llm_key')||''}; },
   validEndpoint(value){
@@ -1968,18 +2014,11 @@ const AIService = {
         const out={task:String(data.task||'').slice(0,300),note:String(data.note||'').slice(0,1500),base_score:vague?null:r1(score),vague,reason:String(data.reason||'').slice(0,60),advice:String(data.advice||'').slice(0,120),category:mapTag(data.category||this._localCategory(title)),detected_date:data.detected_date||null,detected_time:data.detected_time||null,model_raw:JSON.stringify(data),source:'custom'};
         this.setDegraded(false); this.cache[cacheKey]=out; return out;
       }
-      const {response:resp,data} = await requestJSON('/api/ai', {
-        method:'POST', signal,
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          title,
-          client_date:todayStr(),
-          device_id: this.getDeviceId(),
-        }),
-      });
-      if(!resp.ok) throw new Error(data.error || 'AI 服务暂不可用');
-      const vague = !!data.vague || data.base_score === null || data.base_score === undefined;
-      if(!data||typeof data!=='object'||(!data.vague&&(!Number.isFinite(data.base_score)||data.base_score<0||data.base_score>10))) throw new Error('模型返回结果不合法');
+      const data=await this.hostedRequest({title,client_date:todayStr()},{signal,accept:data=>{
+        if(!data||typeof data!=='object'||Array.isArray(data)||(!data.vague&&(!Number.isFinite(data.base_score)||data.base_score<0||data.base_score>10)))throw new Error('模型返回结果不合法');
+        return data;
+      }});
+      const vague=!!data.vague||data.base_score===null||data.base_score===undefined;
       const out = {...data, category:mapTag(data.category || this._localCategory(title)), vague, model_raw:data.model_raw||JSON.stringify(data), source:'ai'};
       this.setDegraded(false);
       this.cache[cacheKey] = out;
@@ -2009,14 +2048,11 @@ const AIService = {
       }
       const timer=setTimeout(()=>controller.abort(),9000);
       try{
-        const {response:resp,data}=await requestJSON('/api/ai',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({mode:'agent',message,context,agent_role:role,client_date:todayStr(),device_id:this.getDeviceId()}),signal:controller.signal,
-        },9000);
+        const data=await this.hostedRequest({mode:'agent',message,context,agent_role:role,client_date:todayStr()},{signal:controller.signal,timeoutMs:9000,accept:data=>{
+          if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data.type))throw new Error('模型返回结果不合法');
+          return data;
+        }});
         if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');
-        if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data.type))throw new Error('模型返回结果不合法');
-        if(!resp.ok) throw new Error(data.error||'卷卷暂时无法回复');
         this.setDegraded(false);
         return data;
       }finally{ clearTimeout(timer); }
@@ -4801,6 +4837,9 @@ const App = {
     await PetSystem.settleDays();
     AIService.setDegraded(false);
     this.bind();
+    window.addEventListener('online',()=>{void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));});
+    window.addEventListener('pagehide',()=>AIService.cancelHostedRequests());
+    void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));
     if(!UI.restoreCreateDraft()) UI.resetCreate(localStorage.getItem('juanjuan_publish_kind')||'schedule');
     UI.switchPage('home');
     setTimeout(()=>PetView.bubble('喵～欢迎回来！和卷卷一起，每一天都有意义！', 3200), 600);
