@@ -11,6 +11,7 @@
 | 独立后端，JavaScript 优先 | 已更正实现偏好，Node.js 框架与托管组合待验证 | [0002 后端语言决策](0002-backend-language.md)，替代 D0.1 的 Python 优先偏好 |
 | JavaScript 在线业务，Python 优先作独立评测、分析和模型实验 | 分工原则已确认；新增在线Python服务须有具体收益与方案，不在本轮实施 | [0003 语言与服务边界](0003-javascript-python-boundary.md) |
 | 生活事务记录为基础，Anthropic主要架构参考，nanoMuse局部参考 | PR #75已合入，选中原则已细化到原任务；库和未定功能按任务确认，原队列与原位置勾选保留 | [0004 产品与架构参考](0004-product-and-architecture-references.md) |
+| 先设计与行为存档，再以Next.js只读待办试点渐进迁移 | 方向及首个试点已确认；具体依赖、宿主、实现批次和正式切换仍按任务审查授权 | [0005 前端渐进迁移](0005-incremental-nextjs-migration.md) |
 | 固定节点与表单式配置 | 首版推荐，节点和边界待设计 | 共识稿第 7、8 章 |
 | LLM Wiki 式持续整理 | 小范围试验 | 共识稿第 11 章 |
 | RAG 与额外客户端 | 按实际需求评估，后续再定 | 共识稿第 2、11、16 章 |
