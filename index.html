@@ -1192,8 +1192,8 @@ function publishEditText(t){
   const content=[t.title,t.note].filter(Boolean).join('\n');
   return [content,...(t.links||[]).filter(link=>!content.includes(link))].join('\n');
 }
-function validatePublishContent(raw,title,note){
-  if(String(raw).length>1500)throw new Error('原文超过1500字，请缩短后再发布，内容未截断');
+function validatePublishContent(raw,title,note,{checkRaw=true}={}){
+  if(checkRaw&&String(raw).length>1500)throw new Error('原文超过1500字，请缩短后再发布，内容未截断');
   if(!title.trim())throw new Error('事务内容不能为空');
   if(title.length>300)throw new Error('任务定义超过300字，请手动调整，内容未截断');
   if(note.length>1500)throw new Error('备注超过1500字，请手动调整，内容未截断');
@@ -3990,7 +3990,8 @@ const UI = {
       if(this.publishImageJob?.draft===c)await this.publishImageJob.promise;
       if(c.imageError)throw new Error('图片处理失败，请重新添加图片');
       if(c.rawText!==$('#c-title').value||!c.resultTitle)this.syncPublishContent($('#c-title').value);
-      validatePublishContent(c.rawText,c.resultTitle,c.resultNote);
+      // Editing reconstructs the composer from separate valid fields; enforce their own limits.
+      validatePublishContent(c.rawText,c.resultTitle,c.resultNote,{checkRaw:!isEdit});
       c.draftId||=uid();
       if(!c.resultTitle.trim())throw new Error('事务内容不能为空');
       if(c.kind==='schedule'&&!validDateStr(c.date))throw new Error('请选择有效日期');
