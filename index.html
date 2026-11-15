@@ -1839,13 +1839,18 @@ const AIService = {
     })();
     try{await this.refundFlush;}finally{this.refundFlush=null;}
   },
-  cancelHostedRequests(){for(const controller of this.activeHosted.values())controller.abort();void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));},
+  cancelHosted(id,controller,reason){
+    this.activeHosted.delete(id);controller.abort(reason);
+    try{this.readyRefund(id);}catch(_){this.refundStatus('次数退回待确认，请联网后重试。');}
+    void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));
+  },
+  cancelHostedRequests(){for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);},
   async hostedRequest(payload,{signal,timeoutMs=20000,accept=data=>data}={}){
     if(signal?.aborted)throw signal.reason;
     await this.flushQuotaRefunds();
     if(signal?.aborted)throw signal.reason;
     const id=crypto.randomUUID().replaceAll('-',''),device=this.getDeviceId(),controller=new AbortController();
-    const stop=()=>controller.abort(signal.reason);
+    const stop=()=>this.cancelHosted(id,controller,signal.reason);
     signal?.addEventListener('abort',stop,{once:true});
     this.activeHosted.set(id,controller);
     try{

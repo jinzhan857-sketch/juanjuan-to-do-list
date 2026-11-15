@@ -17,6 +17,16 @@ test('another page cannot cancel a still active receipt; an interrupted page rel
  await a.run('AIService.flushQuotaRefunds()');assert.equal(calls,1);assert.equal(a.run('AIService.refundEntries().length'),0);
 });
 
+test('cancel publishes the refund immediately before the UI abort race can settle',async t=>{
+ const a=await client(t);const calls=[];let start,refund;
+ a.ctx.fetch=async(u,o)=>{const b=body(o);calls.push(b);if(b.mode==='cancel')return new Promise(r=>refund=()=>r(reply({released:true})));start=true;return new Promise(()=>{})};
+ a.run("controller=new AbortController();pending=AIService.hostedRequest({title:'合成课程'},{signal:controller.signal});pending.catch(()=>{})");
+ for(let i=0;!start&&i<1000;i++)await new Promise(setImmediate);assert.ok(start);
+ a.run('controller.abort()');assert.equal(a.run('AIService.activeHosted.size'),0);assert.equal(calls.filter(b=>b.mode==='cancel').length,1);
+ let done=false;const flush=a.run('AIService.flushQuotaRefunds()').then(()=>done=true);await new Promise(setImmediate);assert.equal(done,false);refund();await flush;
+ await assert.rejects(a.run('pending'));assert.equal(a.run('AIService.refundEntries().length'),0);
+});
+
 test('a refund already in flight drains newly failed receipts once, without retrying failed notifications',async t=>{
  const a=await client(t);const calls=[];let resume;
  a.ctx.fetch=async(u,o)=>{const b=body(o);calls.push(b);if(b.request_id==='a'.repeat(32))return new Promise(r=>resume=()=>r(reply({released:true})));throw TypeError('offline')};

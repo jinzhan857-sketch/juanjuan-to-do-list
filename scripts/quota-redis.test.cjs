@@ -43,3 +43,7 @@ test('actual handlers atomically share the100 cap across devices and networks',a
  const a=handler();const rows=await Promise.all(Array.from({length:120},(_,i)=>a.send({device_id:i.toString(16).padStart(32,'c')},{headers:{'x-forwarded-for':`192.0.2.${i%4+1}`}})));
  assert.equal(rows.filter(r=>r.code===200).length,100);assert.equal(rows.filter(r=>r.code===429&&r.payload.limit_scope==='global').length,20);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),100);assert.equal(a.models.length,100);
 });
+test('response serialization failure releases an already successful server receipt',async()=>{
+ const a=handler();a.onResponse=code=>{if(code===200)throw Error('synthetic response write failure')};
+ assert.equal((await a.send()).code,503);assert.equal(await count('device'),0);assert.equal(await redis(['ZCARD',`quota:${day}:global`]),0);assert.equal(a.models.length,1);
+});

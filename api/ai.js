@@ -434,9 +434,13 @@ module.exports = async function handler(req, res) {
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
     const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
     const completed = await quota.finish(deviceId, requestId, 'success', Date.now());
+    if (completed !== 'success') {
+      receipt = null;
+      return json(res, 409, { error: '请求已取消或已过期，请重新尝试。' });
+    }
+    const sent = json(res, 200, result);
     receipt = null;
-    if (completed !== 'success') return json(res, 409, { error: '请求已取消或已过期，请重新尝试。' });
-    return json(res, 200, result);
+    return sent;
   } catch (error) {
     try {
       if (receipt) await quota.finish(receipt.deviceId, receipt.requestId, 'failed', Date.now());
