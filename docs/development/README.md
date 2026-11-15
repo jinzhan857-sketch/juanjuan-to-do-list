@@ -4,6 +4,8 @@
 
 ## 准备与命令
 
+本次已确认规则的接手步骤、试玩证据层次、相关任务分工与停止条件见[实施接手](HANDOFF_CONFIRMED_RULES.md)。排期只在总计划#1维护，原文中的单轮#3范围说明保留为当时背景。
+
 固定 Node.js 24.16.0、npm 11.13.0，依据 `.node-version`、`package.json` 和锁文件。版本不符时 npm 会明确失败，先安装指定版本再继续。`npm ci` 按锁文件安装而不改锁文件，依据 [npm 官方说明](https://docs.npmjs.com/cli/v11/commands/npm-ci/)。
 
 ```powershell
