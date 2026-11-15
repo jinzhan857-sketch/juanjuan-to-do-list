@@ -14,6 +14,7 @@ async function fixture(t,kind='schedule'){
  element('#c-title').value='买跑步鞋 https://example.com';
  run("UI.cState.resultTitle='买跑步鞋';UI.cState.resultNote='资料 https://example.com';UI.cState.images=[{id:'pic',name:'合成',data:'data:image/png;base64,AA=='}]");
  const snapshot=async()=>JSON.parse(JSON.stringify(await run("DB.snapshot(['tasks','todos','kv'])")));
- return {ctx,run,json,element,notices,snapshot};
+ const waitFor=async expression=>{for(let i=0;i<1000;i++){if(run(expression))return;await new Promise(setImmediate)}throw Error('Synthetic condition did not become ready: '+expression)};
+ return {ctx,run,json,element,notices,snapshot,waitFor};
 }
 module.exports={fixture};
