@@ -3,6 +3,7 @@ const crypto = require('node:crypto');
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 const DEVICE_LIMIT = 20;
 const IP_LIMIT = 50;
+const GLOBAL_LIMIT = 100;
 
 const SYSTEM_PROMPT = `你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。
 
@@ -390,6 +391,12 @@ module.exports = async function handler(req, res) {
     if (deviceCount > DEVICE_LIMIT || ipCount > IP_LIMIT) {
       await increaseMetric('blocked', quotaDate);
       return json(res, 429, { error: '今天的 AI 识别次数已用完，明天再来吧', limit_scope: deviceCount > DEVICE_LIMIT ? 'device' : 'ip' });
+    }
+
+    const globalCount = await increaseDaily(`limit:${quotaDate}:global`);
+    if (globalCount > GLOBAL_LIMIT) {
+      await increaseMetric('blocked', quotaDate);
+      return json(res, 429, { error: '今日公共免费AI次数已达上限。', limit_scope: 'global' });
     }
 
     await increaseMetric('calls', quotaDate);
