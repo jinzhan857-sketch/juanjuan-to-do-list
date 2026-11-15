@@ -35,8 +35,8 @@ if not state then
  if mode=='cancelled' then redis.call('HSET',KEYS[1],'state','cancelled');redis.call('EXPIRE',KEYS[1],172800) end
  return 'released'
 end
-if redis.call('HGET',KEYS[1],'device')~=KEYS[2] or redis.call('HGET',KEYS[1],'ip')~=KEYS[3] or redis.call('HGET',KEYS[1],'global')~=KEYS[4] then return 'retry' end
 if state~='pending' and state~='success' then return 'released' end
+if redis.call('HGET',KEYS[1],'device')~=KEYS[2] or redis.call('HGET',KEYS[1],'ip')~=KEYS[3] or redis.call('HGET',KEYS[1],'global')~=KEYS[4] then return 'retry' end
 if mode=='success' then
  if state=='success' then return 'success' end
  local now=tonumber(ARGV[2])
