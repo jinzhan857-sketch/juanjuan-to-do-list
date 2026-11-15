@@ -218,6 +218,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 }
 .notice.red{background:var(--red-soft);border-color:var(--red)}
 .notice.blue{background:var(--blue-soft);border-color:var(--blue)}
+.notice-icon{flex:none;align-self:flex-start}
+.notice-body{flex:1;min-width:0;overflow-wrap:anywhere}
 
 /* ---------- 日期切换 ---------- */
 #day-switch{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 10px}
@@ -3397,7 +3399,7 @@ const UI = {
     }
     const now = Date.now();
     const overdue = S.tasks.filter(t=>!t.status && taskDeadline(t) < now);
-    if(overdue.length) add(`⏰ 有 <b>${overdue.length}</b> 个任务已过时间待确认状态，超 24 小时确认会扣分哦！`,'blue');
+    if(overdue.length) add(`<span class="notice-icon" aria-hidden="true">⏰</span><span class="notice-body">有 <b>${overdue.length}</b> 个任务已过时间待确认状态，超 24 小时确认会扣分哦！</span>`,'blue');
   },
 
   renderDaySwitch(){
