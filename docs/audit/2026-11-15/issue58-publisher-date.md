@@ -16,7 +16,7 @@
 
 相关命令：node --test scripts/publisher-date.test.cjs；npm run check；npm run check:archive。
 
-116项日期专项通过，全部D01至D27分别经快速、AI成功和失败入口。R01仅验日期与内容，R02至R08、R14至R16相关日期规则，以及手选、取消、迟到、重复识别、恢复、编辑原身份和数据库重开通过。完整实际字段输出到本地忽略目录 .reports/issue58-fields.json。原129项内容专项与既有发布回归保留。
+受检提交035f85d6f94af5fd38298bf72dba94d9393011f5，npm run check和无Git归档均为678项Node测试及26项稳定断言通过。116项日期专项通过，全部D01至D27分别经快速、AI成功和失败入口。R01仅验日期与内容，R02至R08、R14至R16相关日期规则，以及手选、取消、迟到、重复识别、恢复、编辑原身份和数据库重开通过。完整实际字段输出到本地忽略目录 .reports/issue58-fields.json。原129项内容专项与既有发布回归保留。
 
 电脑内置浏览器4193独立来源，数据库 juanjuan-date-synthetic，CSP禁止外部连接。21项实际IndexedDB组合通过，覆盖12.1、备注背景日期、本周补录、非法日期、仅月份、章节金额反例与三个入口，既有记录、宠物和积分保持。初次夹具误用clear参数触发DataError，零写入；修正为现有DB.batch的type字段后重跑全部通过。
 
