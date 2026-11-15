@@ -79,3 +79,5 @@
 为避免电脑低频调度造成样本不足，观察窗口在至少覆盖 380 毫秒的同时，保证每段至少取得 16 个实际 requestAnimationFrame 回调；不是降低验收门槛。所有实际帧间隔仍保留，采样不足的旧记录不计通过。最终桌面来源为内置浏览器，早先 Chrome 通过记录继续保留。最终源码与记录见后续归档；外部合入、关闭和总计划勾选以 [PR #96](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/96)、[#32](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/32)和[#1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)为准。真实手机验收完成后已关闭临时局域网入口。
 
 最终源码 SHA256 为 4b39f185f1211bedba858c3f92432d8a4b7a7bb78629f2a2df36cd6d50634f3e，基于整合提交 b4aa425bfd6ad848269ecbe22e693bc1bfd4711b。[最终宽屏](issue32-evidence/final-wide.json)和[最终窄屏](issue32-evidence/final-narrow.json)各 26 组全部通过严格核验，[最终截图](issue32-evidence/final-narrow.jpg)同时保留测量结果和正常页面。手机记录、最终两份记录、HTTP 边界以及失败证据回归均通过；没有因验收修正再改应用代码。
+
+最终归档检查已对 2bf123732c940919dbe830f3b245275f80b32750 执行，1392 项 Node、26 项稳定断言及无 Git 来源验证全部通过。本条仅补写已执行结果。合入前重新获取 main，仍为已整合的 d7accb5。
