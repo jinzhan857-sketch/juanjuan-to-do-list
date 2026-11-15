@@ -1174,9 +1174,9 @@ function normalizeTodoLinks(text){
     try{ const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : null; }catch(_){ return null; }
   }).filter(Boolean);
 }
-function extractPublishLinks(text){
+function extractPublishLinks(text,limit=5){
   const found=String(text||'').match(/https?:\/\/[^\s，。；！？、]+/gi)||[];
-  return [...new Set(found)].slice(0,5);
+  return [...new Set(found)].slice(0,limit);
 }
 // Pure publisher date result. Chat target parsing deliberately remains separate.
 function recognizePublishDate(text, base){
@@ -2249,6 +2249,8 @@ async function settlementExpectation(store){
 // All schedule editors use the same existing deadline and settlement rules.
 function prepareScheduleEdit(old,value,now=Date.now()){
   const next=copyData(value);
+  const links=[...new Set([...(old.links||[]),...(next.links||[]),...extractPublishLinks(old.title+'\n'+(old.note||'')+'\n'+next.title+'\n'+(next.note||''),Infinity)])];
+  if(links.length)next.links=links;
   for(const key of ['status','statusAt','statusEditCount','finalScore','parts','timeChangeMul','timeChangeLabel','timeChangeWhy'])if(key in old)next[key]=copyData(old[key]);
   next.isBackfill=dayDiff(next.execDate,todayStr())<0||!!old.isBackfill;
   const changed=['execDate','timeType','startTime','endTime','endDayOffset'].some(key=>(old[key]??null)!==(next[key]??null))||(old.timeType==='slot'&&next.timeType==='slot'&&old.slot!==next.slot);
@@ -4305,7 +4307,7 @@ const UI = {
         c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
       }
       const expected=copyData({[store]:S[store]});
-      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote)])];
+      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote,editingId?Infinity:5)])];
       let value;
       if(store==='todos'){
         value={...copyData(old||{}),id:old?.id||c.draftId,title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source,aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,links:extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote),images:copyData(c.images||[]),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null};
@@ -4314,7 +4316,7 @@ const UI = {
         if(c.timeType!=='exact'||c.endDayOffset!==1)delete value.endDayOffset;
         if(old)value=prepareScheduleEdit(old,value);
       }
-      value.links=preservedLinks;
+      value.links=old&&store==='tasks'?[...new Set([...(value.links||[]),...preservedLinks])]:preservedLinks;
       value.scoreRule=c.ai.source==='rule'?(old?copyData(old.scoreRule||null):{id:c.ai.ruleId,version:c.ai.version,fallback:c.ai.fallback}):null;
       validateStoredRecord(value,store==='tasks');
       const changes=[{store,value}];
