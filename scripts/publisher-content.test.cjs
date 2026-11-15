@@ -1,4 +1,5 @@
 'use strict';
+// Failure cases explicitly click save after recognition; recognition itself never publishes.
 const {test,after}=require('node:test'),assert=require('node:assert/strict');
 const {fixture}=require('./publisher-fixture.cjs');
 const samples=require('./fixtures/publisher-content.json');
@@ -16,7 +17,7 @@ for(const sample of samples)for(const kind of ['schedule','todo'])for(const mode
  if(mode==='success')a.run("AIService.evaluate=async()=>({task:'模型改写，不应采用',note:'模型编造，不应采用',base_score:8.4,source:'ai',detected_date:'2026-12-05',detected_time:'15:00-16:00'})");
  if(mode==='failure')a.run("AIService.evaluate=async()=>{throw Error('synthetic offline')}");
  if(mode!=='quick')await a.run('UI.onAIClick()');
- if(mode!=='failure')await a.run('UI.onSave()');
+ await a.run('UI.onSave()');
  const snapshot=await a.snapshot(),rows=snapshot[kind==='todo'?'todos':'tasks'];
  assert.equal(rows.length,sample.invalid?0:1);assert.deepEqual(a.json('S.pet'),pet);assert.deepEqual(a.json('S.dayStats'),{});
  if(sample.invalid)return;
