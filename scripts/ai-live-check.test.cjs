@@ -1,7 +1,7 @@
 'use strict';
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {createBudgetTransport, reservation, limit} = require('./ai-live-check.cjs');
+const {createBudgetTransport, reservation, planRun, limit, followupLimit} = require('./ai-live-check.cjs');
 const {createModelCheck, createSimulation} = require('./ai-simulation.cjs');
 const {createLocalServer} = require('./ai-local.cjs');
 const endpoint = 'https://api.deepseek.com/chat/completions', key = 'synthetic-only-key';
@@ -125,4 +125,43 @@ for (const role of ['score', 'task', 'planning', 'chat']) test('short JSON reque
   await setup.handler({method: 'POST', headers: {}, body}, {status(v) { status = v; return this; }, json(v) { result = v; }});
   assert.equal(status, 200); assert.equal(calls, 1);
   assert.equal(role === 'score' ? result.base_score : result.type, role === 'score' ? 3 : 'chat');
+});
+
+function firstFailure() {
+  return {session: 'issue81-initial-three-calls', attempts: [{number: 1}], reserved_cny: 0.012412,
+    cases: [{id: 'score', passed: false, status: 503}]};
+}
+test('normal invocation cannot restart a previously failed real test', () => {
+  assert.throws(() => planRun(firstFailure(), {handlerHash: 'new'}), /approved followup/);
+});
+test('approved followup preserves the first attempt and uses cumulative ten-call four-yuan limits', () => {
+  const state = firstFailure(), original = structuredClone(state);
+  const plan = planRun(state, {followup: true, handlerHash: 'new'});
+  assert.deepEqual(state, original); assert.deepEqual(plan.limits, {calls: 10, budget_cny: 4});
+  assert.deepEqual(plan.pending.map(s => s.id), ['score', 'task', 'chat', 'planning']);
+});
+test('followup skips successful cases for the same handler and retains failed cases for review', () => {
+  const state = firstFailure(); state.cases.push({id: 'score', passed: true, handler_sha256: 'new'});
+  assert.deepEqual(planRun(state, {followup: true, handlerHash: 'new'}).pending.map(s => s.id), ['task', 'chat', 'planning']);
+  assert.equal(state.cases.length, 2);
+  assert.equal(planRun(state, {followup: true, handlerHash: 'changed'}).pending.length, 4);
+});
+test('ten cumulative attempts or exhausted reservations prevent followup', () => {
+  const state = firstFailure(); state.attempts = Array.from({length: 10}, (_, i) => ({number: i + 1}));
+  assert.throws(() => planRun(state, {followup: true, handlerHash: 'new'}), /budget/);
+  state.attempts.length = 1; state.reserved_cny = 4;
+  assert.throws(() => planRun(state, {followup: true, handlerHash: 'new'}), /budget/);
+});
+test('followup transport counts the nine existing attempts before permitting only the tenth', async () => {
+  const state = {attempts: Array.from({length: 9}, (_, i) => ({number: i + 1})), reserved_cny: 0.1};
+  let calls = 0;
+  const request = createBudgetTransport({key, state, save() {}, limits: followupLimit, transport: async () => { calls++; return new Response('{}'); }});
+  await request(endpoint, options());
+  await assert.rejects(request(endpoint, options()), /budget/);
+  assert.equal(calls, 1); assert.equal(state.attempts.length, 10); assert.ok(state.reserved_cny > 0.1);
+});
+test('fresh unapproved session keeps the original three-call one-yuan plan', () => {
+  const state = {session: 'issue81-initial-three-calls', attempts: [], cases: [], reserved_cny: 0};
+  const plan = planRun(state, {handlerHash: 'new'});
+  assert.deepEqual(plan.limits, {calls: 3, budget_cny: 1}); assert.equal(plan.pending.length, 3);
 });
