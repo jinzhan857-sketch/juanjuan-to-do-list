@@ -10,6 +10,9 @@ for(const entry of ['form','single','batch'])test(entry+' settled base 2 to 10 r
  assert.equal(a.run('S.tasks.length'),2);assert.equal(a.run('S.tasks[0].images.length'),1);
 });
 const entries=['form','single','batch'];
+for(const empty of ['missing','null'])test('review: restored '+empty+' original snapshot refuses overwriting new record and retains draft',async t=>{
+ const a=await statsFixture(t);await seed(a);a.ctx.empty=empty;a.run("UI.startEdit('a');UI.cState.resultNote='过期草稿保留';if(empty==='missing')delete UI.cState.editSnapshot;else UI.cState.editSnapshot=null;UI.saveCreateDraft()");await a.run("commitDataChanges([{store:'tasks',value:{...copyData(S.tasks[0]),note:'后来保存的新备注',baseScore:8}}])");a.run('UI.resetCreate();UI.restoreCreateDraft()');const before=await a.snapshot();await a.run('UI.onSave()');assert.deepEqual(await a.snapshot(),before);assert.equal(a.run('UI.cState.resultNote'),'过期草稿保留');assert.equal(a.run('UI.cState.saved'),undefined);
+});
 test('review: replacing raw form text retains original embedded attachment',async t=>{
  const a=await statsFixture(t);await seed(a);a.run("S.tasks[0].title='原课程 https://example.org/original';S.tasks[0].links=[]");await a.run("DB.put('tasks',S.tasks[0])");a.run("UI.startEdit('a');UI.cState.rawText='合成新内容';UI.cState.resultTitle='合成新内容';document.querySelector('#c-title').value='合成新内容'");await a.run('UI.onSave()');assert.deepEqual(a.json('S.tasks[0].links'),['https://example.org/original']);
 });

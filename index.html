@@ -4313,7 +4313,8 @@ const UI = {
       const store=c.kind==='todo'?'todos':'tasks',id=todoEditingId||editingId;
       const old=id?S[store].find(t=>t.id===id):null;
       if(id&&!old)throw new Error('原事务已变化，请重新打开');
-      if(editingId&&c.editSnapshot&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
+      if(editingId&&!c.editSnapshot)throw new Error('编辑草稿缺少原件快照，请重新打开原事务核对，草稿已保留');
+      if(editingId&&JSON.stringify(c.editSnapshot)!==JSON.stringify(old))throw new Error('原事务已变化，请重新打开');
       if(!id&&S[store].some(item=>item.id===c.draftId)){
         c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
       }
