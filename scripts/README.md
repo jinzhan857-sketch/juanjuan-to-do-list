@@ -16,6 +16,8 @@
 | `storage-samples.cjs` | 生成不含私人内容的备份样本 | `node scripts/storage-samples.cjs` |
 | `storage-ui-browser.cjs` | 用真正界面验证文件选择、导入取消和恢复，只操作独立合成库 | `node scripts/storage-ui-browser.cjs`，打开输出的随机本机地址 |
 | `storage-ui-browser.test.cjs` | 核对真实界面测试入口的数据库、网络和文件访问隔离 | 由 `npm run check` 调用 |
+| `notice.test.cjs` | 提醒正文结构、截止及扣分边界回归 | 由 `npm run check` 调用 |
+| `notice-browser.cjs` | 首页提醒的内存合成排版验收，不启动数据库与网络 | `node scripts/notice-browser.cjs`，打开4184测试页 |
 | `helpers/` | 共用合成状态与浏览器检查逻辑 | 由测试入口加载 |
 | `check-archive.cjs` | 验证当前提交的无 Git 归档副本 | `npm run check:archive`，先提交，检查的是 HEAD |
 
