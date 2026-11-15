@@ -4286,13 +4286,13 @@ const UI = {
     this.renderCreate();
     try{
       const aborted=new Promise((_,reject)=>request.controller.signal.addEventListener('abort',()=>reject(request.controller.signal.reason),{once:true}));
+      const {shortCopy}=await Promise.race([this.loadScoring(),aborted]);
+      if(this.recognition!==request||this.cState!==c||c.saved)return;
       const res=await Promise.race([AIService.evaluate(title,{signal:request.controller.signal}),aborted]);
       if(this.recognition!==request||this.cState!==c||c.saved)return;
       if(res.vague){this.renderAIResultVague(res.reason);return;}
       if(!Number.isFinite(res.base_score)||res.base_score<0||res.base_score>10)throw new Error('识别结果不合法');
       aiSucceeded=true;
-      const {shortCopy}=await this.loadScoring();
-      if(this.recognition!==request||this.cState!==c)return;
       const reviewed=this.reviewRecognition(res,title),user=c.userFields||{};
       reviewed.reason=shortCopy(reviewed.reason);reviewed.advice=shortCopy(reviewed.advice);
       c.ai=reviewed;c.recognized=true;c.modelRaw=res.model_raw||null;c.reviewedResult=reviewed;
@@ -4312,7 +4312,7 @@ const UI = {
     }finally{
       clearTimeout(timer);
       if(this.recognition===request)this.recognition=null;
-      if(this.cState===c&&!c.saved){$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent='AI 识别';$('#btn-save').disabled=!!c.saving;}
+      if(this.cState===c&&!c.saved){$('#btn-ai').disabled=!!c.saving;$('#btn-ai').textContent=this.recognition?'取消识别':'AI 识别';$('#btn-save').disabled=!!(c.saving||this.recognition);}
     }
   },
 

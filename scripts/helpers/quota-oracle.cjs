@@ -15,7 +15,7 @@ function quotaOracle({commands=[],values=new Map(),expiry=new Map(),now=Date.now
    receipts.set(rk,{state:'pending',keys,day:r.day});metric(r.day,'calls');return 'reserved';
   },
   async finish(device,id,mode){
-   const k=device+':'+id,r=receipts.get(k);if(!r){if(mode==='cancelled')receipts.set(k,{state:'cancelled'});return 'released';}
+   const k=device+':'+id,r=receipts.get(k);if(!r){if(mode!=='success')receipts.set(k,{state:mode});return 'released';}
    if(!['pending','success'].includes(r.state))return 'released';
    if(mode==='success'){if(r.state==='pending')metric(r.day,'success');r.state='success';return 'success';}
    for(const key of r.keys)values.set(key,(values.get(key)||0)-1);

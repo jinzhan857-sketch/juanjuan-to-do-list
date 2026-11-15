@@ -32,7 +32,7 @@ const FINISH = `
 local state=redis.call('HGET',KEYS[1],'state')
 local mode=ARGV[1]
 if not state then
- if mode=='cancelled' then redis.call('HSET',KEYS[1],'state','cancelled');redis.call('EXPIRE',KEYS[1],172800) end
+ if mode~='success' then redis.call('HSET',KEYS[1],'state',mode);redis.call('EXPIRE',KEYS[1],172800) end
  return 'released'
 end
 if state~='pending' and state~='success' then return 'released' end
