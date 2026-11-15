@@ -1,4 +1,5 @@
 'use strict';
+process.env.TZ='Asia/Shanghai';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {statsFixture}=require('./completion-stats-fixture.cjs');
 const {seed,edit}=require('./edit-score-fixture.cjs');
