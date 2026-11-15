@@ -2180,10 +2180,13 @@ function completionSummary(from,to){
   return {schedules,todos,total:schedules+todos};
 }
 async function settlementExpectation(store){
+  const expected=copyData({[store]:S[store],kv:{dayStats:S.dayStats,pet:S.pet}});
   const dayStats=await DB.get('kv','dayStats'),pet=await DB.get('kv','pet');
-  if(JSON.stringify(dayStats??{})!==JSON.stringify(S.dayStats)||JSON.stringify(pet)!==JSON.stringify(S.pet))throw new Error('资料已变化，请重新加载并确认后操作。');
-  return copyData({[store]:S[store],kv:{dayStats,pet}});
+  if(recordFingerprint(expected[store])!==recordFingerprint(S[store])||JSON.stringify(expected.kv.dayStats)!==JSON.stringify(S.dayStats)||JSON.stringify(expected.kv.pet)!==JSON.stringify(S.pet)||JSON.stringify(dayStats??{})!==JSON.stringify(expected.kv.dayStats)||JSON.stringify(pet)!==JSON.stringify(expected.kv.pet))throw new Error('资料已变化，请重新加载并确认后操作。');
+  expected.kv={dayStats,pet};
+  return expected;
 }
+
 const PetSystem = {
 
   // 任务积分 → 食物 → 自动喂养（多余进冰箱）
@@ -2765,9 +2768,11 @@ const UI = {
       if(show){ this.mask('mask-chat-list',false); this.renderAgent(); $('#agent-input').focus(); }
       return empty;
     }
+    const selectedChatId=this.agentChatId;
     const now=Date.now();
     const chat={id:uid(),title:'新聊天',createdAt:now,updatedAt:now};
     await saveChat(chat);
+    if(this.agentChatId!==selectedChatId)return chat;
     this.agentChatId=chat.id;
     localStorage.setItem('juanjuan_active_chat',chat.id);
     if(show){ this.mask('mask-chat-list',false); this.renderAgent(); $('#agent-input').focus(); }
@@ -3152,6 +3157,7 @@ const UI = {
     if(this.agentSending!==sending)return;
     const now=Date.now();
     await saveMessage({id:uid(),chatId:chat.id,role:'user',content,type:'text',createdAt:now,meta:{agentRole:role}});
+    if(this.agentSending!==sending)return;
     const ownMessages=S.messages.filter(x=>x.chatId===chat.id && x.role==='user');
     if(chat.title==='新聊天' && ownMessages.length===1){
       const plain=content.replace(/\s+/g,' '); chat.title=plain.slice(0,18)+(plain.length>18?'…':'');
