@@ -50,3 +50,17 @@ test('quiet page-exit cancellation also stops a chat waiting for user-message pe
  await a.run('UI.cancelAgentMessage({render:false})');a.run('AIService.cancelHostedRequests();resumeUserSave()');await pending;
  assert.equal(calls,0);assert.equal(a.run('UI.agentSending'),null);assert.equal((await a.run("DB.all('messages')")).length,1);
 });
+
+for(const source of ['hosted','custom'])test('intentional '+source+' score cancellation does not report service degradation',async t=>{
+ const a=await client(t);const changes=[];a.ctx.changes=changes;
+ a.run("AIService.source=()=> '"+source+"';AIService.setDegraded=value=>changes.push(value);AIService.customConfig=()=>({endpoint:'https://model.invalid',model:'synthetic',key:'synthetic'});controller=new AbortController()");
+ let started=false;a.ctx.fetch=async(u,o)=>{if(JSON.parse(o.body).mode==='cancel')return reply({released:true});started=true;return new Promise(()=>{})};
+ const pending=a.run("AIService.evaluate('合成取消评分',{signal:controller.signal})");await until(()=>started);a.run('controller.abort()');await assert.rejects(pending);await a.run('AIService.flushQuotaRefunds()');assert.deepEqual(changes,[]);
+});
+
+for(const failure of ['network','timeout'])test('actual '+failure+' remains a service failure with degraded state',async t=>{
+ const a=await client(t),changes=[];a.ctx.changes=changes;a.run('AIService.setDegraded=value=>changes.push(value);controller=new AbortController()');let started=false;
+ a.ctx.fetch=async(u,o)=>{if(JSON.parse(o.body).mode==='cancel')return reply({released:true});started=true;if(failure==='network')throw TypeError('offline');return new Promise(()=>{})};
+ const pending=a.run("AIService.evaluate('合成失败评分',{signal:controller.signal})");pending.catch(()=>{});await until(()=>started);
+ if(failure==='timeout')a.run("controller.abort(new Error('识别超时'))");await assert.rejects(pending);await a.run('AIService.flushQuotaRefunds()');assert.deepEqual(changes,[true]);
+});

@@ -2064,6 +2064,7 @@ const AIService = {
       this.cache[cacheKey] = out;
       return out;
     }catch(e){
+      if(e?.name==='AbortError')throw e;
       console.warn('AI 调用失败：', e);
       this.setDegraded(true);
       throw e;

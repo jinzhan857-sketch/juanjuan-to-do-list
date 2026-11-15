@@ -18,6 +18,7 @@ function reset(next){mode=next;dropRefund=false;api=handlerFixture();api.model=a
 const setup=String.raw`
 const NativeDate=Date;const syntheticClock=new NativeDate('2026-11-15T10:00:00+08:00').getTime();
 Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[syntheticClock]))}static now(){return syntheticClock}};
+const syntheticSetDegraded=AIService.setDegraded.bind(AIService);
 AIService.source=()=> 'hosted';AIService.getDeviceId=()=> 'a'.repeat(32);AIService.setDegraded=()=>{};
 const nativeFetch=fetch;const control=async body=>(await nativeFetch('/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json();
 const ledger=async()=>(await nativeFetch('/ledger')).json();

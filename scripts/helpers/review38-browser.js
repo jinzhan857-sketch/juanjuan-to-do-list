@@ -1,4 +1,5 @@
 const review38Results=[];
+AIService.setDegraded=syntheticSetDegraded;
 function check38(name,condition,details){if(!condition)throw Error(name+' '+JSON.stringify(details));review38Results.push({case:name,...details});output.textContent=JSON.stringify({pass:review38Results.length,results:review38Results},null,2);}
 async function wait38(check){for(let i=0;i<100;i++){if(await check())return;await sleep(10);}throw Error('synthetic operation did not start');}
 document.querySelector('#review38-run').onclick=async()=>{
@@ -6,7 +7,7 @@ document.querySelector('#review38-run').onclick=async()=>{
  try{
   await DB.open();await DB.batch([...DATA_STORES.map(store=>({store,type:'clear'})),{store:'kv',type:'clear'}]);DATA_STORES.forEach(store=>S[store]=[]);S.pet=defaultPet();S.dayStats={};await DB.put('kv',S.pet,'pet');
   let before=await prepare('wait');const score=UI.onAIClick();await wait38(async()=>(await ledger()).models===1);window.dispatchEvent(new Event('pagehide'));await score;await AIService.flushQuotaRefunds();await control({release:true});
-  check38('publisher pagehide is quiet, refunds once and preserves draft database',UI.recognition===null&&notices.length===0&&(await ledger()).global===0&&AIService.refundEntries().length===0&&JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv'])));
+  check38('publisher pagehide is quiet, refunds once and preserves draft database',UI.recognition===null&&!AIService.degraded&&notices.length===0&&(await ledger()).global===0&&AIService.refundEntries().length===0&&JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv'])));
   await prepare('success');let unblock,entered=false;
   fetch=async(u,o)=>{const response=await originalFetch(u,o);if(u==='/api/ai'&&JSON.parse(o.body).mode==='cancel'){entered=true;await new Promise(r=>unblock=r);}return response;};
   AIService.storeRefund({id:'d'.repeat(32),device:'a'.repeat(32),pendingUntil:0});
@@ -19,7 +20,7 @@ document.querySelector('#review38-run').onclick=async()=>{
   before=await prepare('success');let releaseCustom,customStarted=false;AIService.source=()=> 'custom';AIService.customConfig=()=>({endpoint:'https://model.invalid',model:'synthetic',key:'synthetic'});
   fetch=async(u,o)=>{if(u==='https://model.invalid'){customStarted=true;return new Promise(r=>releaseCustom=()=>r({ok:true,json:async()=>({choices:[{message:{content:'{"base_score":8.4}'}}]})}));}return originalFetch(u,o);};
   const custom=UI.onAIClick();await wait38(()=>customStarted);window.dispatchEvent(new Event('pagehide'));await custom;releaseCustom();fetch=originalFetch;AIService.source=()=> 'hosted';
-  check38('custom publisher also stops quietly on pagehide without public quota or writes',UI.recognition===null&&notices.length===0&&(await ledger()).models===0&&JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv'])));
+  check38('custom publisher also stops quietly on pagehide without public quota or writes',UI.recognition===null&&!AIService.degraded&&notices.length===0&&(await ledger()).models===0&&JSON.stringify(before)===JSON.stringify(await DB.snapshot(['tasks','todos','kv'])));
   await prepare('success');const chat={id:'review38-chat',title:'合成聊天',createdAt:Date.now(),updatedAt:Date.now()};await saveChat(chat);UI.agentChatId=chat.id;UI.agentSelectedRole='chat';UI.switchPage('agent');document.querySelector('#agent-input').value='讲个故事';
   const saveOriginal=saveMessage;let resume;
   saveMessage=async m=>{await saveOriginal(m);if(m.role==='user')await new Promise(r=>resume=r);};
