@@ -24,7 +24,7 @@ for(const kind of ['schedule','todo']){
  });
  test(kind+' edit failure requires save and preserves ID',async t=>{
   const a=await fixture(t,kind);await a.run('UI.onSave()');
-  const store=kind==='todo'?'todos':'tasks';a.run("UI.resetCreate("+JSON.stringify(kind)+");UI."+ (kind==='todo'?'todoEditingId':'editingId')+"=S."+store+"[0].id;UI.cState.recognized=true;UI.cState.resultTitle='改标题';UI.cState.userFields.title=true;UI.cState.ai={base_score:2,source:'ai',reason:'旧分'};UI.cState.images=S."+store+"[0].images;AIService.evaluate=async()=>{throw Error('offline')}");
+  const store=kind==='todo'?'todos':'tasks';a.run(kind==='todo'?"UI.openTodoEditor(S.todos[0].id)":"UI.startEdit(S.tasks[0].id)");a.run("UI.cState.recognized=true;UI.cState.resultTitle='改标题';UI.cState.userFields.title=true;UI.cState.ai={base_score:2,source:'ai',reason:'旧分'};UI.cState.images=S."+store+"[0].images;AIService.evaluate=async()=>{throw Error('offline')}");
   await a.run('UI.onAIClick()');assert.equal((await a.snapshot())[store][0].title,'买跑步鞋 https://example.com');await a.run('UI.onSave()');assert.equal((await a.snapshot())[store].length,1);assert.equal((await a.snapshot())[store][0].title,'改标题');
  });
 }
