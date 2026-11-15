@@ -4090,9 +4090,9 @@ const UI = {
     $('#todo-all').textContent=all; $('#todo-open').textContent=all-done; $('#todo-done').textContent=done;
     $$('#todo-scope button').forEach(b=>b.classList.toggle('on',b.dataset.v===this.todoScope));
     const alert=$('#todo-long-alert');
-    const now=new Date(), month=now.getMonth()+1, quarter=Math.floor((month-1)/3)+1, quarterProgress=((month-1)%3+1)/3;
+    const now=new Date(), month=now.getMonth()+1, quarter=Math.floor((month-1)/3)+1;
     const notices=[];
-    if(this.todoScope==='long'&&quarterProgress>=2/3&&S.todos.some(t=>(t.period==='quarter')&&!t.done)) notices.push(`⚠️ 第 ${quarter} 季度已进入最后三分之一，请检查季度待办。`);
+    if(this.todoScope==='long'&&month%3===0&&S.todos.some(t=>(t.period==='quarter')&&!t.done)) notices.push(`⚠️ 第 ${quarter} 季度已进入最后三分之一，请检查季度待办。`);
     if(this.todoScope==='long'&&month>=10&&S.todos.some(t=>(t.period==='year')&&!t.done)) notices.push(`⚠️ ${now.getFullYear()} 年只剩 ${12-month} 个月，请检查年度待办。`);
     alert.style.display=notices.length?'block':'none'; alert.textContent=notices.join(' ');
     $$('#todo-filter button').forEach(b=>b.classList.toggle('on',b.dataset.v===this.todoFilter));
