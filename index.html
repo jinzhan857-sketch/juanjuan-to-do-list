@@ -1783,7 +1783,7 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url==='/api/ai'&&response.status===429){try{const body=await response.json();if(['device','ip','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
@@ -4108,7 +4108,7 @@ const UI = {
     }catch(error){
       if(this.recognition!==request||this.cState!==c||c.saved)return;
       this.recognition=null;
-      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'识别超时，请重试。':error?.name==='TypeError'?'网络错误，请重试。':'识别失败，请重试。';
+      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'识别超时，请重试。':error?.status===429&&error?.limit_scope==='device'?'今日个人免费AI次数已达上限。':error?.status===429&&error?.limit_scope==='ip'?'今日当前网络免费AI次数已达上限。':error?.status===429&&error?.limit_scope==='global'?'今日公共免费AI次数已达上限。':error?.name==='TypeError'?'网络错误，请重试。':'识别失败，请重试。';
       if(aiSucceeded){toast('识别成功，页面更新失败，草稿已保留');this.saveCreateDraft();return;}
       this.saveCreateDraft();this.renderCreate();toast(c.aiFailureReason);
     }finally{
