@@ -7,9 +7,9 @@ for(const kind of ['schedule','todo']){
   const pet=a.json('S.pet');await a.run('UI.onSave()');const s=await a.snapshot(),rows=s[kind==='todo'?'todos':'tasks'];
   assert.equal(rows.length,1);assert.equal(rows[0].baseScore,2);assert.equal(rows[0].aiSource,'rule');assert.equal(rows[0].scoreRule.id,'simple');assert.equal(rows[0].images.length,1);assert.equal(rows[0].links.length,1);assert.deepEqual(a.json('S.pet'),pet);assert.deepEqual(a.json('S.dayStats'),{});
  });
- test(kind+' failure auto publishes once; duplicate clicks ignored',async t=>{
+ test(kind+' failure keeps draft; manual save publishes once',async t=>{
   const a=await fixture(t,kind);a.run("AIService.evaluate=async()=>{throw Error('quota')}");
-  await a.run('Promise.all([UI.onAIClick(),UI.onSave()])');assert.equal((await a.snapshot())[kind==='todo'?'todos':'tasks'].length,1);assert.ok(a.notices.includes('AI识别失败，已快速发布'));
+  await a.run('Promise.all([UI.onAIClick(),UI.onSave()])');assert.equal((await a.snapshot())[kind==='todo'?'todos':'tasks'].length,0);assert.ok(a.notices.includes('识别失败，请重试。'));await a.run('Promise.all([UI.onSave(),UI.onSave()])');assert.equal((await a.snapshot())[kind==='todo'?'todos':'tasks'].length,1);
  });
  test(kind+' AI score remains after editing every field',async t=>{
   const a=await fixture(t,kind);a.run("AIService.evaluate=async()=>({task:'复习课程',base_score:8.7,source:'ai',detected_date:'2026-12-05'});UI.cState.userFields.date=true;UI.cState.date='2026-12-03'");
@@ -54,8 +54,8 @@ test('#44 full months cover leap year and year boundary with selection',async t=
  }
 });
 
-test('timeout auto publishes but explicit cancellation and late rejection never publish',async t=>{
- const a=await fixture(t);a.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick();UI.recognition.controller.abort(new Error('timeout'))");await a.run('pending');a.run("lateReject(Error('late'))");assert.equal((await a.snapshot()).tasks.length,1);
+test('timeout and cancellation never publish, including late rejection',async t=>{
+ const a=await fixture(t);a.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick();UI.recognition.controller.abort(new Error('timeout'))");await a.run('pending');a.run("lateReject(Error('late'))");assert.equal((await a.snapshot()).tasks.length,0);
  const b=await fixture(t);b.run("AIService.evaluate=()=>new Promise((resolve,reject)=>lateReject=reject);pending=UI.onAIClick();UI.cancelRecognition();lateReject(Error('late'))");await b.run('pending');assert.equal((await b.snapshot()).tasks.length,0);
 });
 test('AI service boundary validates hosted score and keeps successful cache separate from rules',async t=>{
@@ -98,7 +98,7 @@ for(const kind of ['schedule','todo']){
    const a=await fixture(t,kind);
    a.element('#c-title').value='递交作业';
    a.run("UI.cState.rawText='递交作业';UI.cState.resultTitle='递交作业';UI.cState.resultNote='';AIService.evaluate=async()=>{throw Error('synthetic offline')}");
-   await a.run(failedAI?'UI.onAIClick()':'UI.onSave()');
+   if(failedAI){await a.run('UI.onAIClick()');assert.equal((await a.snapshot())[kind==='todo'?'todos':'tasks'].length,0)}await a.run('UI.onSave()');
    const row=(await a.snapshot())[kind==='todo'?'todos':'tasks'][0];
    assert.equal(row.category,'学业事务');assert.equal(row.baseScore,3);assert.equal(row.aiSource,'rule');
   }
