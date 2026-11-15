@@ -1262,6 +1262,22 @@ function localPublishContent(text){
   if(cut!==null){inline=title.slice(cut).trim();title=title.slice(0,cut).trim();}
   return {title,note:[inline,...lines].join('\n').trim()};
 }
+function localCourseNote(text){
+  const source=String(text).replace(/(^|[\s，。；！？])([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'$1教室：$2');
+  // Label boundaries identify non-overlapping source spans. Preserve all value
+  // text, punctuation and deliberate repeats instead of rebuilding fragments.
+  const labels=[...source.matchAll(/(^|[\s，。；！？])(教室|教授|老师|地点|地址)/g)].map(match=>({index:match.index+match[1].length,label:match[2],start:match.index+match[0].length})).filter((item,index)=>index===0||/^(?:[ \t]*(?:为|是|[:：])|[ \t]+|[A-Za-z])/.test(source.slice(item.start)));
+  if(!labels.length)return '';
+  const newline=source.indexOf('\n');
+  const prefix=newline>=0&&newline<labels[0].index?source.slice(newline+1,labels[0].index):'';
+  return prefix+labels.map((item,index)=>{
+    const raw=source.slice(item.start,labels[index+1]?.index);
+    const gap=raw.match(/\s*$/)[0];
+    const value=raw.replace(/^[ \t]*(?:为|是|[:：])?[ \t]*/,'').trimEnd();
+    const separator=index<labels.length-1?(gap.includes('\n')?gap.replace(/\r\n?/g,'\n'):'\n'):'';
+    return `${({老师:'教授',地址:'地点'})[item.label]||item.label}：${value}${separator}`;
+  }).join('');
+}
 function publishEditText(t){
   const content=[t.title,t.note].filter(Boolean).join('\n');
   return [content,...(t.links||[]).filter(link=>!content.includes(link))].join('\n');
@@ -2123,16 +2139,8 @@ const AIService = {
     const weekMap={一:1,二:2,三:3,四:4,五:5,六:6,日:7,天:7};
     const courseCode=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0]||'';
     const noteMatch=text.match(/(?:地址|地点)\s*([^，。；！？]+)/);
-    const courseMatch=text.match(/([A-Z]{2,}\d{3,}\s*[^，。；！？]*?)(?=\s*(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/i);
-    // Consume each metadata span once, stopping before the next labelled span.
-    // Keep input order and intentional repetitions; never deduplicate stored notes.
-    const metadataText=text.replace(/\b([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'教室：$1');
-    const metadata=[...metadataText.matchAll(/(教室|教授|老师|地点|地址)[ \t]*(?:为|是|[:：])?[ \t]*([^，。；！？]+?)(?=\s+(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/g)].map(match=>({index:match.index,end:match.index+match[0].length,label:match[1],value:match[2].trim()}));
-    const structuredNote=metadata.map((x,index)=>{
-      const gap=index?metadataText.slice(metadata[index-1].end,x.index):'';
-      const separator=index?(/^\s*$/.test(gap)&&/\n/.test(gap)?gap.replace(/\r\n?/g,'\n'):'\n'):'';
-      return `${separator}${({老师:'教授',地址:'地点'})[x.label]||x.label}：${x.value}`;
-    }).join('');
+    const courseMatch=text.match(/([A-Z]{2,}\d{3,}[ \t]*[^\r\n，。；！？]*?)(?=[ \t]*(?:教室|教授|老师|地点|地址|[A-Za-z]{1,4}[ \t]*\d{2,4}[ \t]*教室)|[\r\n，。；！？]|$)/i);
+    const structuredNote=localCourseNote(text);
     const noteChange=text.match(/备注(?:改成|改为|为)?\s*([^，。；！？]+)/);
     const existing=(context.tasks||[]).filter(task=>courseCode&&String(task.title||'').toUpperCase().includes(courseCode.toUpperCase())).sort((a,b)=>String(a.exec_date).localeCompare(String(b.exec_date)));
     const dateFrom=months?`${year}-${pad(months[1])}-01`:existing[0]?.exec_date||null;
@@ -3043,27 +3051,30 @@ const UI = {
 
   agentQuestionScope(question=''){
     const text=String(question).split(/[，,。；;\n]/).map(clause=>clause.split(/改成|改为|备注(?:为|[:：])/)[0]).join('，');
-    const dates=[...new Set([...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)].map(m=>parseNaturalDate(m[0])).filter(Boolean))];
+    const mentions=[...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)];
+    const dates=[...new Set(mentions.map(m=>parseNaturalDate(m[0])).filter(Boolean))];
+    const dateRange=mentions.length===2&&dates.length===2&&dates[0]<dates[1]&&/^\s*(?:到|至|~|～|—|-)\s*$/.test(text.slice(mentions[0].index+mentions[0][0].length,mentions[1].index))?dates:null;
     const code=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0];
     const titles=[...new Set([...S.tasks,...S.todos].map(t=>t.title).filter(title=>title&&text.includes(title)))].sort((a,b)=>b.length-a.length);
-    return {text,dates,keyword:code||titles[0]||''};
+    return {text,dates,dateRange,keyword:code||titles[0]||''};
   },
   agentSelectedData(question=''){
     const scope=this.agentQuestionScope(question),today=todayStr();
     const relevance=item=>scope.keyword&&`${item.title} ${item.note||''}`.toLowerCase().includes(scope.keyword.toLowerCase());
-    const dateMatch=item=>scope.dates.includes(item.execDate);
-    const score=item=>(dateMatch(item)?4:0)+(relevance(item)?8:0);
+    const dateMatch=item=>scope.dateRange?item.execDate>=scope.dateRange[0]&&item.execDate<=scope.dateRange[1]:scope.dates.includes(item.execDate);
+    const score=item=>(dateMatch(item)?16:0)+(relevance(item)?8:0);
     const ordered=S.tasks.slice().sort((a,b)=>score(b)-score(a)||(!question?String(a.execDate).localeCompare(String(b.execDate)):(Math.abs(dayDiff(today,a.execDate))-Math.abs(dayDiff(today,b.execDate)))));
     return {tasks:ordered.slice(0,100),todos:S.todos.slice().sort((a,b)=>Number(relevance(b))-Number(relevance(a))||(b.createdAt||0)-(a.createdAt||0)).slice(0,100)};
   },
   resolveAgentQuery(query,question){
     const scope=this.agentQuestionScope(question);
-    if(scope.dates.length>1)return null;
+    if(scope.dates.length>1&&!scope.dateRange)return null;
     const q={...query};
     if(/日程|安排/.test(scope.text)&&!/待办/.test(scope.text))q.entity='schedule';
     if(/待办/.test(scope.text)&&!/日程|安排/.test(scope.text))q.entity='todo';
     if(q.entity!=='todo'&&scope.dates.length===1)q.date_from=q.date_to=scope.dates[0];
-    if(scope.keyword)q.keyword=scope.keyword;
+    if(q.entity!=='todo'&&scope.dateRange)[q.date_from,q.date_to]=scope.dateRange;
+    if(scope.keyword&&(q.keyword||/^[A-Z]{2,}\d{3,}$/i.test(scope.keyword)))q.keyword=scope.keyword;
     return q;
   },
   agentContext(chatId,question='',role='chat'){
