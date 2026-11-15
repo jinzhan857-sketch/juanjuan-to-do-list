@@ -1,6 +1,6 @@
 # 开发总计划入口
 
-[版本定位](product/VERSION_POSITIONING.md)解释1.0到4.0及过渡阶段；[nanoMuse研究](reference/nanomuse-research.md)与[语言分工](decisions/0003-javascript-python-boundary.md)供原任务选用。当前修复顺序保持不变，3.5、4.0仅为候选，不新增执行前置。
+[版本定位与开源借鉴](product/VERSION_POSITIONING.md)解释1.0到4.0及过渡阶段；[具体借鉴方案](reference/agent-learning-plan.md)先供审核，Anthropic作为运行机制主要参考，nanoMuse保留局部参考。审核后才把选中的新增实施细节并入原任务；当前顺序、必要依赖和原位置勾选保持，不拆完成与未完成，3.5、4.0仅为候选。
 
 [打开总计划 Issue #1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)：唯一执行队列、已完成成果、3.0和可选研究都在这里。查看进度直接进入总计划，本文只解释使用方法，不复制进度；页面原生子任务计数不代表后来登记的全部任务。
 

@@ -1,5 +1,13 @@
 # 当前状态与接手说明
 
+## 本轮资料更新：产品主线与具体借鉴方案，待审核
+
+2026年11月15日，展确认卷卷以生活日程和待办的可靠记录为基础，事务理解与整理是主要AI能力，规划、聊天和提醒按相关事实与授权资料逐步建设。Anthropic作为后续运行机制的主要架构参考，nanoMuse保留局部实现对照，见[决策0004](decisions/0004-product-and-architecture-references.md)。
+
+原版本文件已改为[版本定位与开源借鉴](product/VERSION_POSITIONING.md)，路径保留；[具体借鉴方案](reference/agent-learning-plan.md)列出适用、不适用、原因、试验、候选版本和原任务映射，具体实施待审核。本轮#1、#53只补方案入口及状态，先不批量改子任务实施范围，当前队列、必要依赖和原位置勾选保留，不拆已完成与未完成。
+
+保留main已合入的#60等成果并解决文档冲突；相对本轮main仅修改资料，未改应用、测试、依赖、版本号或发布，也未调用真实模型和读写业务资料。具体检查与回读见[本轮报告](audit/2026-11-15/anthropic-learning-plan.md)，文档仍在PR #75待审。
+
 ## 本轮资料整理：版本定位、nanoMuse与语言分工
 
 2026年11月15日，展授权先整理[1.0到4.0版本定位](product/VERSION_POSITIONING.md)，再将[nanoMuse研究](reference/nanomuse-research.md)和[JavaScript、Python分工](decisions/0003-javascript-python-boundary.md)关联现有任务。早期按三份飞书资料归纳，1.4左右作为过渡标志；3.5、4.0只记概念候选，不重排当前修复队列，不降低原3.0范围和验收要求。

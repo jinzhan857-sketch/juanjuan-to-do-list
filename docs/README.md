@@ -16,7 +16,7 @@
 
 Agent 还必须阅读根目录 [AGENTS.md](../AGENTS.md)。
 
-理解各代产品先看[1.0到4.0版本定位](product/VERSION_POSITIONING.md)；参考项目取舍见[nanoMuse研究](reference/nanomuse-research.md)，在线业务与独立工具的语言边界见[决策0003](decisions/0003-javascript-python-boundary.md)。这些资料不另建执行队列，3.5与4.0仍是候选方向。
+理解各代产品先看[版本定位与开源借鉴](product/VERSION_POSITIONING.md)；学什么、不学什么及待审核规划见[具体借鉴方案](reference/agent-learning-plan.md)，nanoMuse的局部源码证据见[研究记录](reference/nanomuse-research.md)，语言分工见[决策0003](decisions/0003-javascript-python-boundary.md)。这些资料不另建执行队列，3.5与4.0仍是候选方向。
 
 除 AGENTS.md 外，说明均供人和 Agent 共用。先读简要结论，再按工作需要查看具体操作和证据；不按读者身份另建两套资料。
 

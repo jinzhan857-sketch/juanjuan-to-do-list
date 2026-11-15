@@ -1,6 +1,6 @@
 # 卷卷
 
-卷卷是带宠物陪伴与积分反馈的个人事务助手，帮助用户整理日程、待办，并通过 AI 聊天获得事务处理和规划建议。
+卷卷是以生活日程和待办的可靠记录为基础的个人事务助手。主要AI能力是帮助用户准确理解、整理、查询和修改事务；再根据相关记录、授权偏好与实际反馈，提供规划、聊天和提醒。宠物陪伴与积分提供持续行动的反馈。
 
 当前以浏览器本地应用为主，界面标记为 V2.5。项目正在整理当前代工程，并规划 3.0 的独立后端、账户与跨设备同步。3.0 尚未交付。
 
@@ -17,8 +17,9 @@
 | 本地怎么启动、检查与发布 | [开发说明](docs/development/README.md) |
 | 开发顺序、勾选进度、下一步与前置条件 | [开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1) |
 | 3.0 的完整目标与范围 | [3.0 完整共识稿](docs/V3_CONSENSUS_DRAFT.md) |
-| 1.0 到 4.0 的版本定位与候选方向 | [版本定位](docs/product/VERSION_POSITIONING.md) |
-| nanoMuse 借鉴与语言分工 | [研究建议](docs/reference/nanomuse-research.md)、[JavaScript 与 Python 分工](docs/decisions/0003-javascript-python-boundary.md) |
+| 版本定位与开源借鉴 | [1.0到4.0及参考层级](docs/product/VERSION_POSITIONING.md) |
+| 学什么、不学什么、怎样验证 | [具体借鉴方案，待审核](docs/reference/agent-learning-plan.md)、[nanoMuse局部研究](docs/reference/nanomuse-research.md) |
+| JavaScript与Python怎样分工 | [语言与服务边界](docs/decisions/0003-javascript-python-boundary.md) |
 | Agent 接手时必须遵守什么 | [AGENTS.md](AGENTS.md) |
 
 ## 文件夹分别放什么

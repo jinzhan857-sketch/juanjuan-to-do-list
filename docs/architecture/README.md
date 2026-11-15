@@ -6,6 +6,8 @@
 
 Python独立评测、分析与未来在线计算的边界见[决策0003](../decisions/0003-javascript-python-boundary.md)；nanoMuse仅作[研究候选](../reference/nanomuse-research.md)，没有接入当前系统。
 
+后续运行机制主要参考Anthropic，nanoMuse保留局部参考；具体设计与取舍见[待审核借鉴方案](../reference/agent-learning-plan.md)和[决策0004](../decisions/0004-product-and-architecture-references.md)。这是未来设计入口，不改变本页当前实现图，也不表示后台事件与调度已经建成。
+
 ```mermaid
 flowchart TD
     User[用户界面与确认] --> UI[根目录页面中的 UI 与业务规则]
