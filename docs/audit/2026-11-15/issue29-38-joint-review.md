@@ -1,6 +1,6 @@
 # #29、#38联合复查
 
-2026年11月15日，展要求基于最新main联合复查可信日期、额度、失败与取消退次，发现问题修好，检查通过后保存并同步GitHub，不发布，不继续其他任务。基线main 8b6cb1b，期间再整合main d7accb5与最新531ab14，完整保留并行的离页取消、日程编辑复查与导航修复成果。交付为[PR #101](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/101)，最终受检提交与云端结果在PR记录。
+2026年11月15日，展要求基于最新main联合复查可信日期、额度、失败与取消退次，发现问题修好，检查通过后保存并同步GitHub，不发布，不继续其他任务。基线main 8b6cb1b，期间再整合main d7accb5、531ab14与最新20e47e9，完整保留并行的离页取消、日程编辑复查、导航修复与测试集资料成果。交付为[PR #101](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/101)，最终受检提交与云端结果在PR记录。
 
 ## 三处复现与修复
 

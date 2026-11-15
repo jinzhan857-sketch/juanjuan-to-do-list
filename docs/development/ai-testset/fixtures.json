@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "execution_status": "not_run",
+  "source_commit": "eb520b897e2c1a02221312bb9e9206b54fbdc998",
+  "timezone": "Asia/Shanghai",
+  "warning": "仅为合成场景说明，不是可直接导入的业务备份。通过隔离测试准备完整原生对象，禁止覆盖真实用户数据库。",
+  "field_mapping": {"memory_enabled": "S.pet.memoryEnabled", "todos_period": "week和month属于近期待办，quarter和year属于长期待办；不是把界面range字样直接存入对象。", "clock_priority": "题目明确时钟优先于场景默认；F6的建立时钟与测试时钟分开。C2、C3供第二轮午夜跨年和闰日边界变体使用。"},
+  "clocks": {
+    "C0": "2026-11-15T10:00:00+08:00",
+    "C1": "2026-12-15T10:00:00+08:00",
+    "C2": "2026-12-31T23:59:59.900+08:00",
+    "C3": "2028-02-28T10:00:00+08:00"
+  },
+  "scenarios": {
+    "F0": {"description": "空白独立场景，默认宠物、空日程待办聊天记忆；无模型Key写入浏览器，无业务奖励。", "clock": "C0"},
+    "F1": {
+      "description": "日常种子资料，全部虚构；除明确指定外日程均未完成、无跨日字段，创建日为2026年11月12日。其余字段由测试准备函数填完整默认值。",
+      "clock": "C0",
+      "memory_enabled": true,
+      "tasks": [
+        {"id": "math-am-16", "title": "线性代数课", "seriesId": "math-am", "execDate": "2026-11-16", "timeType": "exact", "startTime": "09:00", "endTime": "10:00", "category": "学业事务", "baseScore": 7, "note": "教授：演示老师甲\n教室：演示楼201", "asset_refs": ["IMG1", "LINK1"]},
+        {"id": "math-am-23", "title": "线性代数课", "seriesId": "math-am", "execDate": "2026-11-23", "timeType": "exact", "startTime": "09:00", "endTime": "10:00", "category": "学业事务", "baseScore": 7, "note": "教授：演示老师甲"},
+        {"id": "math-pm-16", "title": "线性代数课", "seriesId": "math-pm", "execDate": "2026-11-16", "timeType": "exact", "startTime": "15:00", "endTime": "16:00", "category": "学业事务", "baseScore": 7},
+        {"id": "meeting-17", "title": "项目例会", "execDate": "2026-11-17", "timeType": "exact", "startTime": "14:00", "endTime": "15:00", "category": "职场工作", "baseScore": 5.5},
+        {"id": "checkup-18", "title": "体检", "execDate": "2026-11-18", "timeType": "allday", "category": "日常生活", "baseScore": 3},
+        {"id": "reading-15", "title": "读书", "execDate": "2026-11-15", "timeType": "slot", "slot": "evening", "category": "技能学习", "baseScore": 3},
+        {"id": "shift-30", "title": "夜间值班", "execDate": "2026-11-30", "timeType": "exact", "startTime": "23:30", "endTime": "00:30", "endDayOffset": 1, "category": "职场工作", "baseScore": 6},
+        {"id": "utilities-19", "title": "缴水电费", "execDate": "2026-11-19", "timeType": "allday", "category": "日常生活", "baseScore": 2},
+        {"id": "materials-13", "title": "递交材料", "execDate": "2026-11-13", "timeType": "allday", "category": "职场工作", "baseScore": 3}
+      ],
+      "todos": [
+        {"id": "parcel", "title": "取快递", "done": false, "period": "week", "baseScore": 2},
+        {"id": "resume", "title": "更新简历", "done": false, "period": "year", "baseScore": 3},
+        {"id": "expense", "title": "报销交通费", "done": true, "completed_local_date": "2026-11-14", "period": "month", "baseScore": 3},
+        {"id": "photos", "title": "整理摄影作品", "done": false, "period": "quarter", "baseScore": 4},
+        {"id": "milk", "title": "买牛奶", "done": false, "period": "week", "baseScore": 2}
+      ],
+      "memories": [
+        {"id": "pref-steps", "category": "生活习惯", "content": "喜欢把大任务拆成25分钟左右的小步。"},
+        {"id": "home-city", "category": "个人基本信息", "content": "常住城市：上海。这是虚构测试资料，不代表用户位置。"},
+        {"id": "hobby", "category": "兴趣爱好", "content": "喜欢摄影，周末想留一些休息时间。"}
+      ],
+      "chats": [{"id": "chat-a", "title": "演示聊天甲"}, {"id": "chat-b", "title": "演示聊天乙"}],
+      "history": []
+    },
+    "F2": {"base": "F1", "description": "记忆地点冲突", "extra_memories": [{"id": "second-city", "category": "个人基本信息", "content": "常住城市：深圳。与另一条测试记忆冲突。"}]},
+    "F3": {"base": "F1", "description": "明确重叠", "extra_tasks": [{"id": "overlap", "title": "临时碰头会", "execDate": "2026-11-16", "timeType": "exact", "startTime": "09:30", "endTime": "10:30", "category": "职场工作", "baseScore": 3}]},
+    "F4": {"base": "F1", "description": "长背景，目标放在最后", "prepend_noise": {"count": 140, "id_template": "noise-{i}", "title_template": "背景事项{i}", "execDate": "2026-10-01", "timeType": "allday", "status": null}},
+    "F5": {"base": "F1", "description": "禁止使用记忆", "memory_enabled": false},
+    "F6": {"base": "F1", "description": "已结算编辑与撤销", "task_override": {"id": "math-am-16", "status": "done", "status_at_local_date": "2026-11-16", "baseScore": 7}, "setup_clock": "2026-11-16T10:10:00+08:00", "test_clock": "2026-11-17T14:00:00+08:00", "precondition": "通过原结算入口完成并记录积分、食物与成长快照，不手造不完整流水。"},
+    "FW": {"description": "天气工具替身，按日期与城市返回合成响应，非真实天气", "clock": "C0", "cities": ["上海", "深圳", "香港", "呼和浩特"], "response_rule": "由测试工具构造可区分的城市与日期响应，最终显示必须对应本次请求；真实天气另记录当日来源和时间，不比对固定温度。"}
+  },
+  "assets": {
+    "IMG1": {"kind": "synthetic_png", "description": "在测试时生成带DEMO字样的纯色色块，不从用户相册选图；元数据固定为demo.png。"},
+    "IMG2": {"kind": "synthetic_timetable_png", "description": "绘制虚构课程文字：周一09:00至10:00，线性代数课，演示楼201；仅用于检验所选路径是否声明支持图片理解。"},
+    "LINK1": {"url": "https://example.com/course", "description": "占位链接，无实际课程资料；不能声称已读取网页内容。"}
+  },
+  "faults": {
+    "offline": "由隔离工具拒绝请求，不断开用户整机网络。",
+    "http500": "模型替身返回HTTP 500。",
+    "invalid_json": "模型HTTP 200但content为截断JSON，保留合成原文。",
+    "timeout": "可控替身等待至入口超时，不调用真实付费模型制造长等待。",
+    "quota": "依次注入device、ip或global拒绝，写明是替身，不冒充真实Redis。",
+    "late_cancel": "控制A请求迟到、取消、B请求先完成；每条使用独立合成编号。"
+  }
+}
