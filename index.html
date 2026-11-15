@@ -1179,14 +1179,14 @@ function extractPublishLinks(text){
 }
 // Pure publisher date result. Chat target parsing deliberately remains separate.
 function recognizePublishDate(text, base){
-  const line=String(text||'').replace(/\r\n?/g,'\n').split('\n').find(x=>x.trim())||'';
+  const line=(String(text||'').replace(/\r\n?/g,'\n').split('\n').find(x=>x.trim())||'').replace(/https?:\/\/\S+/gi,match=>' '.repeat(match.length));
   const [year,month]=base.split('-').map(Number), hits=[];
   const make=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
   const add=(date)=>hits.push(validDateStr(date)?{kind:'date',date}:{kind:'invalid'});
   const explicit=/(?:(\d{4})[年/\-])?(\d{1,2})(?:月|[./\-])(\d{1,2})(?:日|号)?/g;
   let remaining=line.replace(explicit,(whole,y,m,d,offset)=>{
     const before=line.slice(0,offset),after=line.slice(offset+whole.length);
-    if(/[\d.第]$/.test(before)||/^(?:元|节|章|版本|%)/.test(after)||/^[\d.]/.test(after)&&!/[日号]$/.test(whole))return whole;
+    if(/[\d.]$/.test(before)||/(?:第|编号|版本|章节|[￥¥$])\s*$/.test(before)||/^(?:元|节|章|版本|%)/.test(after)||/^[\d.]/.test(after)&&!/[日号]$/.test(whole))return whole;
     add(make(y?+y:year+(month===12&&+m===1?1:0),+m,+d));return ' '.repeat(whole.length);
   });
   remaining=remaining.replace(/(下下个?月|下个?月|这个月|本月|上个?月)(\d{1,2})(?:日|号)/g,(whole,p,d)=>{
