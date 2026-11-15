@@ -3,6 +3,7 @@ const crypto = require('node:crypto');
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 const DEVICE_LIMIT = 20;
 const IP_LIMIT = 50;
+const GLOBAL_LIMIT = 100;
 
 const SYSTEM_PROMPT = `你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。
 
@@ -68,8 +69,9 @@ const CHAT_SYSTEM_PROMPT = `你是「卷卷聊天」，温和、自然、简洁�
 
 const TASK_EXECUTION_RULES = `事务质量规则：只要缺少执行所必需的信息，每次只追问一个最重要的问题。日期、范围、重复、时间、日程定义不明确时，不能猜测也不能创建。用户提供的信息足够时，立即输出完整确认卡，不要闲聊。日期相同且时间重叠的现有日程要提醒用户核对，但仍保留由用户确认的权利。查询只返回匹配到的本地任务，找不到时明确说明。`;
 
-function today() {
-  return new Date().toISOString().slice(0, 10);
+// Public quota uses a trusted Beijing calendar day, captured once per request.
+function quotaDay() {
+  return new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
 function json(res, code, body) {
@@ -345,13 +347,12 @@ function compactAgentContext(context = {}) {
   };
 }
 
-async function stats(req, res) {
+async function stats(req, res, quotaDate) {
   const ownerToken = req.headers['x-owner-token'];
   if (!safeEqual(String(ownerToken || ''), required('OWNER_STATS_TOKEN'))) {
     return json(res, 401, { error: '管理口令不正确' });
   }
-  const requested = String(req.query?.date || today());
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today();
+  const date = validDate(req.query?.date) || quotaDate;
   const [active, calls, failures, blocked] = await Promise.all([
     redis(['PFCOUNT', `active:${date}`]),
     redis(['GET', `metric:${date}:calls`]),
@@ -368,8 +369,9 @@ async function stats(req, res) {
 }
 
 module.exports = async function handler(req, res) {
+  const quotaDate = quotaDay();
   try {
-    if (req.method === 'GET' && req.query?.stats === '1') return await stats(req, res);
+    if (req.method === 'GET' && req.query?.stats === '1') return await stats(req, res, quotaDate);
     if (req.method !== 'POST') return json(res, 405, { error: '请求方式不支持' });
 
     const body = parseBody(req);
@@ -381,26 +383,32 @@ module.exports = async function handler(req, res) {
       return json(res, 400, { error: '设备编号不合法' });
     }
 
-    const date = validDate(body.client_date) || today();
-    const deviceCount = await increaseDaily(`limit:${date}:device:${deviceId}`);
-    const ipCount = await increaseDaily(`limit:${date}:ip:${ipDigest(requestIp(req), date)}`);
-    await redis(['PFADD', `active:${date}`, deviceId]);
-    await redis(['EXPIRE', `active:${date}`, '2678400']);
+    const modelDate = validDate(body.client_date) || quotaDate;
+    const deviceCount = await increaseDaily(`limit:${quotaDate}:device:${deviceId}`);
+    const ipCount = await increaseDaily(`limit:${quotaDate}:ip:${ipDigest(requestIp(req), quotaDate)}`);
+    await redis(['PFADD', `active:${quotaDate}`, deviceId]);
+    await redis(['EXPIRE', `active:${quotaDate}`, '2678400']);
     if (deviceCount > DEVICE_LIMIT || ipCount > IP_LIMIT) {
-      await increaseMetric('blocked', date);
-      return json(res, 429, { error: '今天的 AI 识别次数已用完，明天再来吧' });
+      await increaseMetric('blocked', quotaDate);
+      return json(res, 429, { error: '今天的 AI 识别次数已用完，明天再来吧', limit_scope: deviceCount > DEVICE_LIMIT ? 'device' : 'ip' });
     }
 
-    await increaseMetric('calls', date);
+    const globalCount = await increaseDaily(`limit:${quotaDate}:global`);
+    if (globalCount > GLOBAL_LIMIT) {
+      await increaseMetric('blocked', quotaDate);
+      return json(res, 429, { error: '今日公共免费AI次数已达上限。', limit_scope: 'global' });
+    }
+
+    await increaseMetric('calls', quotaDate);
     const context = agentMode ? compactAgentContext(body.context) : null;
     const agentRole = body.agent_role === 'task' || body.agent_role === 'planning' ? body.agent_role : 'chat';
     const agentPrompt = agentRole === 'task' ? `${AGENT_SYSTEM_PROMPT}\n${TASK_EXECUTION_RULES}` : agentRole === 'planning' ? PLANNING_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
     const messages = agentMode ? [
       { role: 'system', content: agentPrompt },
-      { role: 'user', content: `今天是${date}。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${input}` },
+      { role: 'user', content: `今天是${modelDate}。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${input}` },
     ] : [
       { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `今天是${date}。待办任务：${input}` },
+      { role: 'user', content: `今天是${modelDate}。待办任务：${input}` },
     ];
     const {response,data:output} = await requestJSON(DEEPSEEK_URL, {
       method: 'POST',
@@ -420,10 +428,10 @@ module.exports = async function handler(req, res) {
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
     const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
-    await increaseMetric('success', date);
+    await increaseMetric('success', quotaDate);
     return json(res, 200, result);
   } catch (error) {
-    try { await increaseMetric('failures', today()); } catch (_) {}
+    try { await increaseMetric('failures', quotaDate); } catch (_) {}
     return json(res, 503, { error: 'AI 服务暂时不可用，请稍后再试' });
   }
 };
