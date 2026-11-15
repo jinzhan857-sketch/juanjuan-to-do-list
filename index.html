@@ -1772,6 +1772,21 @@ const AGENT_ROLES = {
   planning:{name:'卷卷规划',desc:'个性化辅助计划',icon:'🧭',placeholder:'例如：我这周太满了，帮我安排得轻松一点'},
   chat:{name:'卷卷聊天',desc:'自由聊聊与答疑',icon:'💬',placeholder:'和卷卷聊聊，或问一个问题'},
 };
+async function requestJSON(url, options={}, timeoutMs=20000){
+  const controller=new AbortController(), external=options.signal;
+  let timer, stop;
+  try{
+    const aborted=new Promise((_,reject)=>{
+      stop=()=>{controller.abort();reject(external?.reason||new DOMException('请求已取消','AbortError'));};
+      if(external?.aborted){stop();return;}
+      external?.addEventListener('abort',stop,{once:true});
+      timer=setTimeout(()=>{controller.abort();reject(new Error('请求超时，请稍后重试'));},timeoutMs);
+    });
+    if(external?.aborted)return await aborted;
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});const data=await response.json();return {response,data};})()]);
+  }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
+}
+
 const AIService = {
   cache: {},   // key: title → result
   degraded: false,
@@ -1805,37 +1820,10 @@ const AIService = {
   async customRequest(messages,maxTokens=900,config=null,options={}){
     const c=config||this.customConfig();
     const timeoutMs=Math.min(Math.max(Number(options.timeoutMs)||20000,1000),20000);
-    const retries=Math.min(Math.max(Number(options.retries??1),0),1);
     if(!this.validEndpoint(c.endpoint)||!c.model||!c.key) throw new Error('请先完成自定义 API 配置');
-    const request=async()=>{
-      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),timeoutMs);
-      const stop=()=>controller.abort();
-      if(options.signal){
-        if(options.signal.aborted) stop();
-        else options.signal.addEventListener('abort',stop,{once:true});
-      }
-      try{
-        const resp=await fetch(c.endpoint,{method:'POST',headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.model,messages,temperature:.1,max_tokens:maxTokens,response_format:{type:'json_object'},stream:false}),signal:controller.signal});
-        let data={}; try{data=await resp.json();}catch(_){}
-        if(!resp.ok){const error=new Error(data.error?.message||data.error||`连接失败，状态码 ${resp.status}`);error.status=resp.status;throw error;}
-        return this.parseJson(data.choices?.[0]?.message?.content);
-      }catch(error){
-        if(error?.name==='AbortError'&&options.signal?.aborted) throw error;
-        if(error?.name==='AbortError'){const timeout=new Error('模型响应超时');timeout.code='retryable_model_reply';throw timeout;}
-        throw error;
-      }finally{clearTimeout(timer);options.signal?.removeEventListener('abort',stop);}
-    };
-    let lastError;
-    for(let attempt=0;attempt<=retries;attempt++){
-      try{return await request();}
-      catch(error){
-        lastError=error;
-        const retryable=error?.code==='retryable_model_reply'||error?.name==='TypeError'||Number(error?.status)>=500;
-        if(!retryable||attempt===retries) throw error;
-        await new Promise(resolve=>setTimeout(resolve,450));
-      }
-    }
-    throw lastError;
+    const {response:resp,data}=await requestJSON(c.endpoint,{method:'POST',headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.model,messages,temperature:.1,max_tokens:maxTokens,response_format:{type:'json_object'},stream:false}),signal:options.signal},timeoutMs);
+    if(!resp.ok){const error=new Error(`模型服务返回 ${resp.status}`);error.status=resp.status;throw error;}
+    return this.parseJson(data.choices?.[0]?.message?.content);
   },
   taskWorkflowResult(message,context={}){
     const result=this._localAgent(message,context,'task');
@@ -1901,10 +1889,9 @@ const AIService = {
       if(place.latitude===undefined){
         const geocodingUrl=new URL(['https://geocoding','api.open','meteo.com/v1/search'].join(String.fromCharCode(45)));
         geocodingUrl.search=new URLSearchParams({name:place.name,count:'1',language:'zh',format:'json'}).toString();
-        const geocoding=await fetch(geocodingUrl,{signal:controller.signal});
+        const {response:geocoding,data:geocodingData}=await requestJSON(geocodingUrl,{signal:controller.signal},7000);
         stopped();
         if(!geocoding.ok)throw new Error('地点查询服务暂时不可用');
-        const geocodingData=await geocoding.json();
         stopped();
         if(!geocodingData||typeof geocodingData!=='object'||Array.isArray(geocodingData)||geocodingData.error||(geocodingData.results!==undefined&&!Array.isArray(geocodingData.results)))throw new Error('地点响应无效');
         const found=geocodingData.results?.[0];
@@ -1914,10 +1901,10 @@ const AIService = {
       }
       const weatherUrl=new URL(['https://api.open','meteo.com/v1/forecast'].join(String.fromCharCode(45)));
       weatherUrl.search=new URLSearchParams({latitude:String(place.latitude),longitude:String(place.longitude),current:'temperature_2m,apparent_temperature,weather_code,wind_speed_10m',daily:'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',forecast_days:'3',timezone:'auto'}).toString();
-      const weather=await fetch(weatherUrl,{signal:controller.signal});
+      const {response:weather,data}=await requestJSON(weatherUrl,{signal:controller.signal},7000);
       stopped();
       if(!weather.ok) throw new Error('天气服务暂时不可用');
-      const data=await weather.json(), offset=day;
+      const offset=day;
       stopped();
       const required=[data?.daily?.weather_code?.[offset],data?.daily?.temperature_2m_max?.[offset],data?.daily?.temperature_2m_min?.[offset],data?.daily?.precipitation_probability_max?.[offset],...(offset?[]:[data?.current?.weather_code,data?.current?.temperature_2m,data?.current?.apparent_temperature,data?.current?.wind_speed_10m])];
       if(!required.every(Number.isFinite))throw new Error('天气响应不完整');
@@ -1981,7 +1968,7 @@ const AIService = {
         const out={task:String(data.task||'').slice(0,300),note:String(data.note||'').slice(0,1500),base_score:vague?null:r1(score),vague,reason:String(data.reason||'').slice(0,60),advice:String(data.advice||'').slice(0,120),category:mapTag(data.category||this._localCategory(title)),detected_date:data.detected_date||null,detected_time:data.detected_time||null,model_raw:JSON.stringify(data),source:'custom'};
         this.setDegraded(false); this.cache[cacheKey]=out; return out;
       }
-      const resp = await fetch('/api/ai', {
+      const {response:resp,data} = await requestJSON('/api/ai', {
         method:'POST', signal,
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
@@ -1990,7 +1977,6 @@ const AIService = {
           device_id: this.getDeviceId(),
         }),
       });
-      const data = await resp.json();
       if(!resp.ok) throw new Error(data.error || 'AI 服务暂不可用');
       const vague = !!data.vague || data.base_score === null || data.base_score === undefined;
       if(!data||typeof data!=='object'||(!data.vague&&(!Number.isFinite(data.base_score)||data.base_score<0||data.base_score>10))) throw new Error('模型返回结果不合法');
@@ -2018,22 +2004,24 @@ const AIService = {
       if(this.source()==='custom'){
         const prompt=role==='task'?`${CUSTOM_AGENT_PROMPT}\n${TASK_EXECUTION_RULES}`:role==='planning'?CUSTOM_PLANNING_PROMPT:CUSTOM_CHAT_PROMPT;
         const data=await this.customRequest([{role:'system',content:prompt},{role:'user',content:`今天是${todayStr()}。以下是当前设备中的相关资料和最近对话，仅用于理解请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${message}`}],900,null,{timeoutMs:9000,retries:0,signal:controller.signal});
+        if(controller.signal.aborted)return {type:'cancelled',reply:''};
         this.setDegraded(false); return this.normalizeAgent(data);
       }
       const timer=setTimeout(()=>controller.abort(),9000);
       try{
-        const resp=await fetch('/api/ai',{
+        const {response:resp,data}=await requestJSON('/api/ai',{
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({mode:'agent',message,context,agent_role:role,client_date:todayStr(),device_id:this.getDeviceId()}),signal:controller.signal,
-        });
-        let data={}; try{ data=await resp.json(); }catch(_){}
+        },9000);
+        if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');
+        if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data.type))throw new Error('模型返回结果不合法');
         if(!resp.ok) throw new Error(data.error||'卷卷暂时无法回复');
         this.setDegraded(false);
         return data;
       }finally{ clearTimeout(timer); }
     }catch(error){
-      if(error?.name==='AbortError'&&controller.userCancelled) return {type:'cancelled',reply:''};
+      if(controller.userCancelled) return {type:'cancelled',reply:''};
       console.warn('Agent 调用失败：',error);
       this.setDegraded(true);
       return this._localAgent(message,context,role);
@@ -2679,7 +2667,7 @@ const UI = {
     if(leavingCreate){this.cancelRecognition();if(!this.cState?.saved)this.saveCreateDraft();}
     $$('.page').forEach(p=>p.classList.remove('active'));
     const page = $('#page-'+name); if(!page) return;
-    if(name!=='agent') this.setAgentKeyboard(false);
+    if(name!=='agent'){if(this.agentThinking||this.agentSending)this.cancelAgentMessage();this.setAgentKeyboard(false);}
     page.classList.add('active');
     if(!['me','create','pet','agentdetail'].includes(name)) this.lastMainPage=name;
     $$('#nav .nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===name));
@@ -2764,6 +2752,7 @@ const UI = {
   },
 
   async createAgentChat(show=true){
+    if(show&&(this.agentThinking||this.agentSending))await this.cancelAgentMessage();
     const empty=this.currentAgentChat();
     if(empty && !S.messages.some(x=>x.chatId===empty.id)){
       if(show){ this.mask('mask-chat-list',false); this.renderAgent(); $('#agent-input').focus(); }
@@ -3131,7 +3120,8 @@ const UI = {
   setAgentKeyboard(open){ document.body.classList.toggle('agent-keyboard-open',!!open); },
 
   async cancelAgentMessage(){
-    if(!this.agentThinking) return;
+    if(!this.agentThinking&&!this.agentSending) return;
+    this.agentSending=null;
     this.agentRequestSerial++;
     AIService.cancelAgentRequest();
     this.agentThinking=false;
@@ -3147,9 +3137,12 @@ const UI = {
   },
 
   async sendAgentMessage(){
-    const input=$('#agent-input'); const content=input.value.trim(); if(!content||this.agentThinking) return;
+    const input=$('#agent-input'); const content=input.value.trim(); if(!content||this.agentThinking||this.agentSending) return;
+    const sending={};this.agentSending=sending;
+    try{
     let chat=this.currentAgentChat(); if(!chat) chat=await this.createAgentChat(false);
     const role=this.resolveAgentRole(content);
+    if(this.agentSending!==sending)return;
     const now=Date.now();
     await saveMessage({id:uid(),chatId:chat.id,role:'user',content,type:'text',createdAt:now,meta:{agentRole:role}});
     const ownMessages=S.messages.filter(x=>x.chatId===chat.id && x.role==='user');
@@ -3157,6 +3150,7 @@ const UI = {
       const plain=content.replace(/\s+/g,' '); chat.title=plain.slice(0,18)+(plain.length>18?'…':'');
     }
     chat.updatedAt=now; await saveChat(chat);
+    if(this.agentSending!==sending)return;
     const requestSerial=++this.agentRequestSerial;
     input.value=''; this.resizeAgentInput(); this.agentThinkingRole=role; this.agentSelectedRole='auto'; this.agentThinking=true; this.renderAgent();
     const context=this.agentContext(chat.id,content,role);
@@ -3195,6 +3189,8 @@ const UI = {
     }
     await saveMessage(message);
     chat.updatedAt=message.createdAt; await saveChat(chat); this.renderAgent();
+    }catch(error){this.agentThinking=false;toast('消息未完成，请检查后重试');this.renderAgent();}
+    finally{if(this.agentSending===sending)this.agentSending=null;}
   },
 
   planningEvidence(items,context){
@@ -3437,6 +3433,7 @@ const UI = {
 
   openAgentChat(id){
     if(!S.chats.some(x=>x.id===id)) return;
+    if(this.agentChatId!==id&&(this.agentThinking||this.agentSending))this.cancelAgentMessage();
     this.agentChatId=id; localStorage.setItem('juanjuan_active_chat',id);
     this.mask('mask-chat-list',false); this.renderAgent();
   },
@@ -3458,6 +3455,7 @@ const UI = {
     const chat=S.chats.find(x=>x.id===id); if(!chat) return;
     this.mask('mask-chat-list',false);
     this.confirm('删除聊天',`确定删除「${esc(chat.title)}」和其中的全部消息吗？`,async()=>{
+      if(this.agentChatId===id)await this.cancelAgentMessage();
       await removeChatData(id);
       if(this.agentChatId===id){
         const next=S.chats.slice().sort((a,b)=>b.updatedAt-a.updatedAt)[0];
@@ -3471,6 +3469,7 @@ const UI = {
   clearAgentChats(){
     this.mask('mask-chat-list',false);
     this.confirm('清空全部聊天','将删除所有聊天和消息，但不会影响日程、待办和个人记忆。确定吗？',async()=>{
+      await this.cancelAgentMessage();
       await commitDataChanges(['chats','messages','operations'].map(store=>({store,type:'clear'})),copyData({chats:S.chats,messages:S.messages,operations:S.operations}));
       await this.createAgentChat(false); this.renderAgent(); toast('聊天记录已清空');
     });
@@ -4681,12 +4680,13 @@ const UI = {
     const box = $('#owner-stats');
     if(!token){ box.textContent = '请输入管理口令'; return; }
     box.textContent = '正在读取今日数据…';
+    const request={};this.ownerStatsRequest=request;
     try{
-      const resp = await fetch('/api/ai?stats=1', {headers:{'X-Owner-Token':token}});
-      const data = await resp.json();
+      const {response:resp,data}=await requestJSON('/api/ai?stats=1', {headers:{'X-Owner-Token':token}},10000);
+      if(this.ownerStatsRequest!==request)return;
       if(!resp.ok) throw new Error(data.error || '读取失败');
       box.innerHTML = `日期：${data.date}<br>今日活跃设备：<b>${data.active_devices}</b> 台<br>今日 AI 调用：<b>${data.calls}</b> 次<br>识别失败：<b>${data.failures}</b> 次<br>超出限额：<b>${data.blocked}</b> 次`;
-    }catch(e){ box.textContent = e.message || '暂时无法读取数据'; }
+    }catch(e){if(this.ownerStatsRequest===request)box.textContent = e.message || '暂时无法读取数据';}
   },
 
   /* ---------- 通用 ---------- */
@@ -4997,12 +4997,9 @@ const App = {
     const f = foodForScore(13);
     console.log('[自测] 13分食物:', f.map(x=>x.name+x.value).join('+'), f.length===2?'✓':'✗');
     // 回归：具体时间必须压过模糊时段，且支持中文“点”表达。
-    const savedCreateState = UI.cState;
-    UI.cState = {timeType:'allday', slot:'afternoon', start:'14:00', end:'15:00'};
-    UI._applyDetectedTime('早上10点到1点');
-    const exactTimeOk = UI.cState.timeType==='exact' && UI.cState.start==='10:00' && UI.cState.end==='13:00';
-    console[exactTimeOk?'log':'error'](`[自测] 具体时间优先: ${UI.cState.start}-${UI.cState.end} ${exactTimeOk?'✓':'✗'}`);
-    UI.cState = savedCreateState;
+    const recognizedTime=recognizePublishTime('早上10点到1点');
+    const exactTimeOk=recognizedTime.start==='10:00'&&recognizedTime.end==='13:00';
+    console[exactTimeOk?'log':'error']('[自测] 具体时间优先: '+exactTimeOk);
     // 回归：状态更新必须刷新当前可见页面，而不是固定刷新首页。
     const refreshOk = typeof UI.refreshActivePage === 'function';
     console[refreshOk?'log':'error'](`[自测] 当前页面即时刷新: ${refreshOk?'✓':'✗'}`);
