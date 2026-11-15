@@ -101,17 +101,31 @@ function ipDigest(ip, date) {
     .digest('hex');
 }
 
+async function requestJSON(url, options={}, timeoutMs=20000){
+  const controller=new AbortController(), external=options.signal;
+  let timer, stop;
+  try{
+    const aborted=new Promise((_,reject)=>{
+      stop=()=>{controller.abort();reject(external?.reason||new DOMException('请求已取消','AbortError'));};
+      if(external?.aborted){stop();return;}
+      external?.addEventListener('abort',stop,{once:true});
+      timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
+    });
+    if(external?.aborted)return await aborted;
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
+  }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
+}
+
 async function redis(command) {
-  const response = await fetch(required('KV_REST_API_URL'), {
+  const {response,data:payload} = await requestJSON(required('KV_REST_API_URL'), {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${required('KV_REST_API_TOKEN')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(command),
-  });
+  },3000);
   if (!response.ok) throw new Error('统计服务暂不可用');
-  const payload = await response.json();
   return payload.result;
 }
 
@@ -388,7 +402,7 @@ module.exports = async function handler(req, res) {
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: `今天是${date}。待办任务：${input}` },
     ];
-    const response = await fetch(DEEPSEEK_URL, {
+    const {response,data:output} = await requestJSON(DEEPSEEK_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${required('DEEPSEEK_API_KEY')}`,
@@ -404,7 +418,6 @@ module.exports = async function handler(req, res) {
       }),
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
-    const output = await response.json();
     const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
     await increaseMetric('success', date);
     return json(res, 200, result);
