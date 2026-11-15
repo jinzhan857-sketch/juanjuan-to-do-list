@@ -1,5 +1,5 @@
 'use strict';
-// Render the actual home reminders in memory. No app init, database or network.
+// Render the actual quarterly and annual reminders in memory. No app init, database or network.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..');
 const controls="<aside style=\"padding:65px 12px 12px;background:white;color:black\"><label>合成日期 <input id=\"sample-date\" type=\"date\" value=\"2026-11-15\"></label><label>范围 <select id=\"sample-scope\"><option value=\"long\">长期</option><option value=\"near\">近期</option></select></label><p>仅内存合成季度与年度待办，无数据库与外部连接。</p></aside>";
