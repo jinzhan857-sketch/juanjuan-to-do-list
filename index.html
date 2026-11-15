@@ -3064,6 +3064,7 @@ const UI = {
     if(fields.exec_date!==undefined && !validDateStr(fields.exec_date)) return {ok:false,error:'日期需要再确认'};
     if(fields.time_type!==undefined && !['allday','slot','exact'].includes(fields.time_type)) return {ok:false,error:'日程时间类型需要再确认'};
     if(fields.slot!=null && !slotByKey(fields.slot)) return {ok:false,error:'日程时段需要再确认'};
+    for(const key of ['start_time','end_time'])if(fields[key]!=null&&!validTimeStr(fields[key])) return {ok:false,error:'具体开始和结束时间需要再确认'};
     const task=S.tasks.find(x=>x.id===action.target_id);
     const todo=S.todos.find(x=>x.id===action.target_id);
     if(action.kind==='create_schedule_batch'){
@@ -3694,14 +3695,16 @@ const UI = {
     const sbtn = body.querySelector('#td-status');
     if(sbtn) sbtn.onclick = ()=>{ this.mask('mask-task',false); this.openStatusSheet(t.id); };
     const toTodo = body.querySelector('#td-to-todo');
-    if(toTodo) toTodo.onclick = ()=>{
-      this.mask('mask-task',false);
-      this.confirm('转为待办', `将「${esc(t.title)}」移出日程并转为待办吗？`, async()=>{
-        const expected=copyData({tasks:S.tasks,todos:S.todos});
-        const converted={id:uid(),title:t.title,note:t.note||'',category:t.category,baseScore:t.baseScore,aiReason:t.aiReason||'',aiAdvice:t.aiAdvice||'',aiSource:t.aiSource||'local',links:t.links||[],images:t.images||[],done:false,finalScore:0,createdAt:Date.now(),sourceTaskId:t.id};
-        await commitDataChanges([{store:'todos',value:converted},{store:'tasks',type:'delete',key:t.id}],expected); this.switchPage('todo'); toast('已转为待办');
-      });
-    };
+    if(toTodo){
+      const expected=copyData({tasks:S.tasks,todos:S.todos}), source=copyData(t);
+      toTodo.onclick = ()=>{
+        this.mask('mask-task',false);
+        this.confirm('转为待办', `将「${esc(source.title)}」移出日程并转为待办吗？`, async()=>{
+          const converted={id:uid(),title:source.title,note:source.note||'',category:source.category,baseScore:source.baseScore,aiReason:source.aiReason||'',aiAdvice:source.aiAdvice||'',aiSource:source.aiSource||'local',links:source.links||[],images:source.images||[],done:false,finalScore:0,createdAt:Date.now(),sourceTaskId:source.id};
+          await commitDataChanges([{store:'todos',value:converted},{store:'tasks',type:'delete',key:source.id}],expected); this.switchPage('todo'); toast('已转为待办');
+        });
+      };
+    }
     body.querySelector('#td-edit').onclick = ()=>{ this.mask('mask-task',false); this.startEdit(t.id); };
     body.querySelector('#td-del').onclick = ()=>{
       this.mask('mask-task',false);
