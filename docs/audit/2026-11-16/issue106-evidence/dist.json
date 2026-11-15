@@ -1,0 +1,771 @@
+{
+  "sourceSha256": "29b77565c2bbe9c1e22ce2e70ab8bb37aa99dedb363b207489ac8599df8a0569",
+  "testBuild": "579c2c972f30dd79f854100c143e610a2bd7b2169940f8e1184963636d3ad5af",
+  "scenarios": [
+    {
+      "name": "自测先运行，正常应用状态与存储不变",
+      "ok": true
+    },
+    {
+      "name": "真实App.init保留六类记录、附件、草稿、聊天、授权及跨日业务",
+      "ok": true
+    },
+    {
+      "name": "实际日期按钮绑定往返正常",
+      "ok": true
+    },
+    {
+      "name": "正常启动后自测，正常实例不变",
+      "ok": true
+    },
+    {
+      "name": "测试中断于27后正常实例不变",
+      "ok": true
+    },
+    {
+      "name": "测试中断于40后正常实例不变",
+      "ok": true
+    },
+    {
+      "name": "测试初始化失败后正常实例不变",
+      "ok": true
+    },
+    {
+      "name": "测试途中关闭后正常实例不变",
+      "ok": true
+    },
+    {
+      "name": "同日重开不重复结算，持久数据与附件不变",
+      "ok": true
+    },
+    {
+      "name": "重开后两份合成图片实际解码成功",
+      "ok": true
+    },
+    {
+      "name": "首次空库初始化宠物、聊天与资料框正常",
+      "ok": true
+    }
+  ],
+  "legacyResults": [
+    {
+      "id": "01",
+      "ok": true,
+      "detail": "提前1天+晚上+完成: 6.3 expected 6.3"
+    },
+    {
+      "id": "02",
+      "ok": true,
+      "detail": "提前1天+半夜+完成: 5.6 expected 5.6"
+    },
+    {
+      "id": "03",
+      "ok": true,
+      "detail": "提前1天+精确+完成: 6.7 expected 6.7"
+    },
+    {
+      "id": "04",
+      "ok": true,
+      "detail": "超时24h+进行中: 2 expected 2"
+    },
+    {
+      "id": "05",
+      "ok": true,
+      "detail": "补录昨日金钱: 1.1 expected 1.1"
+    },
+    {
+      "id": "06",
+      "ok": true,
+      "detail": "改内容升分: 8.4 expected 8.4"
+    },
+    {
+      "id": "07",
+      "ok": true,
+      "detail": "当日晚建+完成: 2.1 expected 2.1"
+    },
+    {
+      "id": "08",
+      "ok": true,
+      "detail": "13分食物"
+    },
+    {
+      "id": "09",
+      "ok": false,
+      "detail": "[自测] 具体时间优先: false"
+    },
+    {
+      "id": "10",
+      "ok": true,
+      "detail": "[自测] 当前页面即时刷新: ✓"
+    },
+    {
+      "id": "11",
+      "ok": true,
+      "detail": "待办完成积分: 7 expected 7"
+    },
+    {
+      "id": "12",
+      "ok": true,
+      "detail": "[自测] 待办链接过滤: ✓"
+    },
+    {
+      "id": "13",
+      "ok": true,
+      "detail": "[自测] 白蓝主题卡可读性: 11.51 ✓"
+    },
+    {
+      "id": "14",
+      "ok": true,
+      "detail": "[自测] 卷卷信息栏视觉高度: 10px ✓"
+    },
+    {
+      "id": "15",
+      "ok": true,
+      "detail": "[自测] 深色外观上方间距: 2px ✓"
+    },
+    {
+      "id": "16",
+      "ok": true,
+      "detail": "[自测] Agent 本地数据基础: ✓"
+    },
+    {
+      "id": "17",
+      "ok": true,
+      "detail": "[自测] 明天日期换算: ✓"
+    },
+    {
+      "id": "18",
+      "ok": true,
+      "detail": "[自测] 课程名称分类: ✓"
+    },
+    {
+      "id": "19",
+      "ok": true,
+      "detail": "[自测] 发布草稿恢复: ✓"
+    },
+    {
+      "id": "20",
+      "ok": true,
+      "detail": "[自测] 日程日历独立显示: ✓"
+    },
+    {
+      "id": "21",
+      "ok": true,
+      "detail": "[自测] Agent 聊天记录能力: ✓"
+    },
+    {
+      "id": "22",
+      "ok": true,
+      "detail": "[自测] 手机输入与中止处理: ✓"
+    },
+    {
+      "id": "23",
+      "ok": false,
+      "detail": "[自测] 天气地点识别与追问: ✗"
+    },
+    {
+      "id": "24",
+      "ok": true,
+      "detail": "[自测] 天气城市续答识别: ✓"
+    },
+    {
+      "id": "25",
+      "ok": true,
+      "detail": "[自测] Agent 缺失具体时间拦截: ✓"
+    },
+    {
+      "id": "26",
+      "ok": true,
+      "detail": "[自测] Agent 不存在目标拦截: ✓"
+    },
+    {
+      "id": "27",
+      "ok": true,
+      "detail": "[自测] Agent 本地查询: ✓"
+    },
+    {
+      "id": "28",
+      "ok": true,
+      "detail": "[自测] Agent 单条事务操作: ✓"
+    },
+    {
+      "id": "29",
+      "ok": true,
+      "detail": "[自测] 批量日程日期展开: 7 条 ✓"
+    },
+    {
+      "id": "30",
+      "ok": true,
+      "detail": "[自测] 整组身份删除定位: ✓"
+    },
+    {
+      "id": "31",
+      "ok": true,
+      "detail": "[自测] 批量日程具体时间保护: ✓"
+    },
+    {
+      "id": "32",
+      "ok": true,
+      "detail": "[自测] 自定义 API 地址保护: ✓"
+    },
+    {
+      "id": "33",
+      "ok": true,
+      "detail": "[自测] 空模型回复可重试: ✓"
+    },
+    {
+      "id": "34",
+      "ok": true,
+      "detail": "[自测] 批量模型结果校验: ✓"
+    },
+    {
+      "id": "35",
+      "ok": true,
+      "detail": "[自测] 三角色自动分流: ✓"
+    },
+    {
+      "id": "36",
+      "ok": true,
+      "detail": "[自测] 规划交接事务确认卡: ✓"
+    },
+    {
+      "id": "37",
+      "ok": true,
+      "detail": "[自测] 完整事务优先走工作流: ✓"
+    },
+    {
+      "id": "38",
+      "ok": true,
+      "detail": "[自测] 规划只参考近期日程: ✓"
+    },
+    {
+      "id": "39",
+      "ok": true,
+      "detail": "[自测] 规划事实计算: ✓"
+    },
+    {
+      "id": "40",
+      "ok": true,
+      "detail": "[自测] 规划记忆需确认: ✓"
+    },
+    {
+      "id": "41",
+      "ok": true,
+      "detail": "[自测] 事务确认卡身份标签: ✓"
+    },
+    {
+      "id": "42",
+      "ok": true,
+      "detail": "[自测] 事务时间冲突提醒: ✓"
+    }
+  ],
+  "baselineLegacyErrors": [],
+  "normalBefore": {
+    "stored": {
+      "tasks": [
+        {
+          "id": "unrelated-task",
+          "title": "合成保留日程",
+          "execDate": "2026-11-16",
+          "createdAt": 1794794400000,
+          "timeType": "allday",
+          "baseScore": 3,
+          "note": "合成备注",
+          "links": [
+            "https://example.com"
+          ],
+          "images": [
+            {
+              "id": "synthetic-image",
+              "name": "合成像素",
+              "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+            }
+          ]
+        }
+      ],
+      "todos": [
+        {
+          "id": "unrelated-todo",
+          "title": "合成保留待办",
+          "createdAt": 1794794400000,
+          "baseScore": 3,
+          "done": false,
+          "images": [
+            {
+              "id": "synthetic-image",
+              "name": "合成像素",
+              "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+            }
+          ],
+          "links": [
+            "https://example.com"
+          ],
+          "note": "另一条备注"
+        }
+      ],
+      "chats": [
+        {
+          "id": "normal-chat",
+          "title": "合成聊天",
+          "createdAt": 1794794400000,
+          "updatedAt": 1794794400000
+        }
+      ],
+      "messages": [
+        {
+          "id": "normal-message",
+          "chatId": "normal-chat",
+          "role": "user",
+          "content": "合成文字",
+          "createdAt": 1794794400000
+        }
+      ],
+      "memories": [
+        {
+          "id": "normal-memory",
+          "content": "合成记忆",
+          "createdAt": 1794794400000
+        }
+      ],
+      "operations": [
+        {
+          "id": "normal-operation",
+          "createdAt": 1794794400000,
+          "status": "undone"
+        }
+      ],
+      "kv": [
+        [
+          "合成标签"
+        ],
+        {},
+        [],
+        {
+          "personType": "P",
+          "satietyTask": 5,
+          "satietyFridge": 0,
+          "growth": 19.7,
+          "fridge": [],
+          "lastSettle": "2026-11-15",
+          "lowStreakSick": 0,
+          "lowStreakDeath": 0,
+          "sick": false,
+          "alive": true,
+          "streak": 3,
+          "lastStreakDate": null,
+          "todayIntake": 0,
+          "intakeDate": "2026-11-16",
+          "affinity": 5,
+          "behavior": "idle",
+          "hungryStreak": 0,
+          "affNoClickStreak": 0,
+          "clickCount": 0,
+          "lastClickDate": null,
+          "lastClickBonusDate": null,
+          "lastNoon": null,
+          "lastEve": null,
+          "lastDecayDay": null,
+          "bornAt": 1794794400000,
+          "memoryEnabled": false
+        }
+      ]
+    },
+    "state": {
+      "tasks": [],
+      "todos": [],
+      "chats": [],
+      "messages": [],
+      "memories": [],
+      "memoryGroups": [],
+      "operations": [],
+      "pet": {
+        "personType": "P",
+        "satietyTask": 5,
+        "satietyFridge": 0,
+        "growth": 19.7,
+        "fridge": [],
+        "lastSettle": "2026-11-15",
+        "lowStreakSick": 0,
+        "lowStreakDeath": 0,
+        "sick": false,
+        "alive": true,
+        "streak": 3,
+        "lastStreakDate": null,
+        "todayIntake": 0,
+        "intakeDate": "2026-11-16",
+        "affinity": 5,
+        "behavior": "idle",
+        "hungryStreak": 0,
+        "affNoClickStreak": 0,
+        "clickCount": 0,
+        "lastClickDate": null,
+        "lastClickBonusDate": null,
+        "lastNoon": null,
+        "lastEve": null,
+        "lastDecayDay": null,
+        "bornAt": 1794794400000,
+        "memoryEnabled": false
+      },
+      "dayStats": {},
+      "customTags": [],
+      "homeDate": "2026-11-16"
+    },
+    "storage": {
+      "juanjuan_active_chat": "normal-chat",
+      "juanjuan_create_draft": "{\"state\":{\"draftId\":\"mwim8u80l898v\",\"userFields\":{},\"kind\":\"schedule\",\"recognized\":false,\"rawText\":\"合成草稿\",\"resultTitle\":\"合成草稿\",\"resultNote\":\"\",\"images\":[{\"id\":\"synthetic-image\",\"name\":\"合成像素\",\"data\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=\"}],\"missingDate\":false,\"date\":\"2026-11-16\",\"calMonth\":\"2026-11\",\"timeType\":\"allday\",\"slot\":\"afternoon\",\"start\":\"14:00\",\"end\":\"15:00\",\"endDayOffset\":0,\"tag\":\"\",\"period\":\"week\",\"ai\":null,\"aiTitle\":\"\",\"modelRaw\":null,\"reviewedResult\":null,\"saving\":false},\"editingId\":null,\"todoEditingId\":null,\"savedAt\":1794794400000}"
+    }
+  },
+  "normalAfter": {
+    "stored": {
+      "tasks": [
+        {
+          "id": "unrelated-task",
+          "title": "合成保留日程",
+          "execDate": "2026-11-16",
+          "createdAt": 1794794400000,
+          "timeType": "allday",
+          "baseScore": 3,
+          "note": "合成备注",
+          "links": [
+            "https://example.com"
+          ],
+          "images": [
+            {
+              "id": "synthetic-image",
+              "name": "合成像素",
+              "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+            }
+          ]
+        }
+      ],
+      "todos": [
+        {
+          "id": "unrelated-todo",
+          "title": "合成保留待办",
+          "createdAt": 1794794400000,
+          "baseScore": 3,
+          "done": false,
+          "images": [
+            {
+              "id": "synthetic-image",
+              "name": "合成像素",
+              "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+            }
+          ],
+          "links": [
+            "https://example.com"
+          ],
+          "note": "另一条备注"
+        }
+      ],
+      "chats": [
+        {
+          "id": "normal-chat",
+          "title": "合成聊天",
+          "createdAt": 1794794400000,
+          "updatedAt": 1794794400000
+        }
+      ],
+      "messages": [
+        {
+          "id": "normal-message",
+          "chatId": "normal-chat",
+          "role": "user",
+          "content": "合成文字",
+          "createdAt": 1794794400000
+        }
+      ],
+      "memories": [
+        {
+          "id": "normal-memory",
+          "content": "合成记忆",
+          "createdAt": 1794794400000
+        }
+      ],
+      "operations": [
+        {
+          "id": "normal-operation",
+          "createdAt": 1794794400000,
+          "status": "undone"
+        }
+      ],
+      "kv": [
+        [
+          "合成标签"
+        ],
+        {},
+        [
+          {
+            "id": "memory_basic",
+            "name": "个人基本信息",
+            "description": "称呼、城市、学校、专业和当前阶段",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_routine",
+            "name": "固定安排",
+            "description": "课程、上班、健身和长期活动",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_habit",
+            "name": "作息习惯",
+            "description": "起床时间、晚间节奏和周末偏好",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_preference",
+            "name": "事务偏好",
+            "description": "提前规划、通勤缓冲和每日负荷",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_location",
+            "name": "地点信息",
+            "description": "学校、教室、车站和常用出发地",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_travel",
+            "name": "旅行偏好",
+            "description": "节奏、预算、早起和酒店偏好",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_goal",
+            "name": "目标和优先事项",
+            "description": "课程、求职、健身和旅行目标",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_limit",
+            "name": "限制与提醒",
+            "description": "避开时间、不可参加日期和限制",
+            "preset": true,
+            "deleted": false
+          },
+          {
+            "id": "memory_uncategorized",
+            "name": "未分类",
+            "description": "暂未放入其他资料框的内容",
+            "preset": true,
+            "deleted": false
+          }
+        ],
+        {
+          "personType": "P",
+          "satietyTask": 3,
+          "satietyFridge": 0,
+          "growth": 21.7,
+          "fridge": [],
+          "lastSettle": "2026-11-16",
+          "lowStreakSick": 0,
+          "lowStreakDeath": 0,
+          "sick": false,
+          "alive": true,
+          "streak": 0,
+          "lastStreakDate": null,
+          "todayIntake": 0,
+          "intakeDate": "2026-11-16",
+          "affinity": 5,
+          "behavior": "idle",
+          "hungryStreak": 0,
+          "affNoClickStreak": 1,
+          "clickCount": 0,
+          "lastClickDate": null,
+          "lastClickBonusDate": null,
+          "lastNoon": null,
+          "lastEve": null,
+          "lastDecayDay": null,
+          "bornAt": 1794794400000,
+          "memoryEnabled": false
+        }
+      ]
+    },
+    "state": {
+      "tasks": [
+        {
+          "id": "unrelated-task",
+          "title": "合成保留日程",
+          "execDate": "2026-11-16",
+          "createdAt": 1794794400000,
+          "timeType": "allday",
+          "baseScore": 3,
+          "note": "合成备注",
+          "links": [
+            "https://example.com"
+          ],
+          "images": [
+            {
+              "id": "synthetic-image",
+              "name": "合成像素",
+              "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+            }
+          ]
+        }
+      ],
+      "todos": [
+        {
+          "id": "unrelated-todo",
+          "title": "合成保留待办",
+          "createdAt": 1794794400000,
+          "baseScore": 3,
+          "done": false,
+          "images": [
+            {
+              "id": "synthetic-image",
+              "name": "合成像素",
+              "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+            }
+          ],
+          "links": [
+            "https://example.com"
+          ],
+          "note": "另一条备注"
+        }
+      ],
+      "chats": [
+        {
+          "id": "normal-chat",
+          "title": "合成聊天",
+          "createdAt": 1794794400000,
+          "updatedAt": 1794794400000
+        }
+      ],
+      "messages": [
+        {
+          "id": "normal-message",
+          "chatId": "normal-chat",
+          "role": "user",
+          "content": "合成文字",
+          "createdAt": 1794794400000
+        }
+      ],
+      "memories": [
+        {
+          "id": "normal-memory",
+          "content": "合成记忆",
+          "createdAt": 1794794400000
+        }
+      ],
+      "memoryGroups": [
+        {
+          "id": "memory_basic",
+          "name": "个人基本信息",
+          "description": "称呼、城市、学校、专业和当前阶段",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_routine",
+          "name": "固定安排",
+          "description": "课程、上班、健身和长期活动",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_habit",
+          "name": "作息习惯",
+          "description": "起床时间、晚间节奏和周末偏好",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_preference",
+          "name": "事务偏好",
+          "description": "提前规划、通勤缓冲和每日负荷",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_location",
+          "name": "地点信息",
+          "description": "学校、教室、车站和常用出发地",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_travel",
+          "name": "旅行偏好",
+          "description": "节奏、预算、早起和酒店偏好",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_goal",
+          "name": "目标和优先事项",
+          "description": "课程、求职、健身和旅行目标",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_limit",
+          "name": "限制与提醒",
+          "description": "避开时间、不可参加日期和限制",
+          "preset": true,
+          "deleted": false
+        },
+        {
+          "id": "memory_uncategorized",
+          "name": "未分类",
+          "description": "暂未放入其他资料框的内容",
+          "preset": true,
+          "deleted": false
+        }
+      ],
+      "operations": [
+        {
+          "id": "normal-operation",
+          "createdAt": 1794794400000,
+          "status": "undone"
+        }
+      ],
+      "pet": {
+        "personType": "P",
+        "satietyTask": 3,
+        "satietyFridge": 0,
+        "growth": 21.7,
+        "fridge": [],
+        "lastSettle": "2026-11-16",
+        "lowStreakSick": 0,
+        "lowStreakDeath": 0,
+        "sick": false,
+        "alive": true,
+        "streak": 0,
+        "lastStreakDate": null,
+        "todayIntake": 0,
+        "intakeDate": "2026-11-16",
+        "affinity": 5,
+        "behavior": "idle",
+        "hungryStreak": 0,
+        "affNoClickStreak": 1,
+        "clickCount": 0,
+        "lastClickDate": null,
+        "lastClickBonusDate": null,
+        "lastNoon": null,
+        "lastEve": null,
+        "lastDecayDay": null,
+        "bornAt": 1794794400000,
+        "memoryEnabled": false
+      },
+      "dayStats": {},
+      "customTags": [
+        "合成标签"
+      ],
+      "homeDate": "2026-11-16"
+    },
+    "storage": {
+      "juanjuan_active_chat": "normal-chat",
+      "juanjuan_create_draft": "{\"state\":{\"draftId\":\"mwim8u80l898v\",\"userFields\":{},\"kind\":\"schedule\",\"recognized\":false,\"rawText\":\"合成草稿\",\"resultTitle\":\"合成草稿\",\"resultNote\":\"\",\"images\":[{\"id\":\"synthetic-image\",\"name\":\"合成像素\",\"data\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=\"}],\"missingDate\":false,\"date\":\"2026-11-16\",\"calMonth\":\"2026-11\",\"timeType\":\"allday\",\"slot\":\"afternoon\",\"start\":\"14:00\",\"end\":\"15:00\",\"endDayOffset\":0,\"tag\":\"\",\"period\":\"week\",\"ai\":null,\"aiTitle\":\"\",\"modelRaw\":null,\"reviewedResult\":null,\"saving\":false},\"editingId\":null,\"todoEditingId\":null,\"savedAt\":1794794400000}"
+    }
+  },
+  "ok": true,
+  "capturedAt": "2026-11-15T18:37:04.643Z"
+}

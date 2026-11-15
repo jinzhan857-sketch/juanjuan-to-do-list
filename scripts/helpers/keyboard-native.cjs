@@ -1,0 +1,10 @@
+'use strict';
+const crypto=require('node:crypto');
+const template=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><title>原生输入对照</title><style>*{box-sizing:border-box}html,body{margin:0}main{height:100dvh;display:flex;flex-direction:column;padding:12px;background:#fff;color:#222;font:16px sans-serif}h1{font-size:18px}section{flex:1;min-height:0}textarea{display:block;width:100%;font-size:18px;min-height:54px;resize:none}output{display:block;font-size:12px}</style><main><h1>原生输入对照 {{BUILD}}</h1><p>无卷卷布局，无高度补偿。请横屏返回竖屏后打开键盘，再收起重开。</p><output id="status">自动记录尺寸，不记录输入内容</output><section></section><textarea aria-label="原生输入" placeholder="点这里打开键盘，不用输入"></textarea></main><script>
+const events=[],input=document.querySelector('textarea'),output=document.querySelector('output');
+let timer;const capture=label=>{const v=visualViewport,r=input.getBoundingClientRect();events.push({label,t:performance.now(),width:innerWidth,height:innerHeight,outerHeight,screenHeight:screen.height,scrollY,visual:{height:v.height,top:v.offsetTop,pageTop:v.pageTop},input:{top:r.top,bottom:r.bottom}})};
+const save=async()=>{capture('settled');const response=await fetch('/evidence',{method:'POST',body:JSON.stringify({scenario:'native',sourceSha256:{{HASH}},testBuild:{{IDENTITY}},time:new Date().toISOString(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,userAgent:navigator.userAgent,events})});output.textContent=response.ok?'已保存 '+events.length+' 条尺寸记录':'记录未保存'};
+for(const [target,type]of [[window,'resize'],[visualViewport,'resize'],[visualViewport,'scroll'],[input,'focus'],[input,'blur']])target.addEventListener(type,()=>{capture(type);clearTimeout(timer);timer=setTimeout(save,600)});save();
+</script></html>`;
+const sourceSha256=crypto.createHash('sha256').update(template).digest('hex'),testBuild=sourceSha256.slice(0,10);
+module.exports={sourceSha256,testBuild,html:template.replace('{{BUILD}}',testBuild).replace('{{HASH}}',JSON.stringify(sourceSha256)).replace('{{IDENTITY}}',JSON.stringify(testBuild))};

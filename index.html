@@ -496,9 +496,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .agent-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin-bottom:10px}
 .agent-head-btn{height:36px;padding:0 11px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font-size:12px;font-weight:700}
 .agent-head-title{text-align:center;min-width:0}.agent-head-title b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}.agent-head-title span{display:block;font-size:10px;color:var(--text3);margin-top:1px}
-#page-agent.active{display:flex;flex-direction:column;height:100dvh;min-height:0;padding-bottom:calc(96px + env(safe-area-inset-bottom));overflow:hidden}
-body.agent-keyboard-open #nav{visibility:hidden;pointer-events:none}
-body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+body.agent-page-active{min-height:0}
+#page-agent.active{position:fixed;top:0;width:100%;max-width:520px;display:flex;flex-direction:column;height:100dvh;min-height:0;padding-bottom:calc(96px + env(safe-area-inset-bottom));overflow:hidden}
+body.agent-keyboard-open{background-image:none}
+body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-area-inset-bottom));overflow-y:auto}
+body.agent-keyboard-open .agent-composer{box-shadow:none;flex-shrink:0}
 #agent-messages{flex:1;overflow-y:auto;padding:5px 2px 12px;scrollbar-width:none}
 #agent-messages::-webkit-scrollbar{display:none}
 .agent-empty{text-align:center;padding:55px 22px 20px;color:var(--text2)}
@@ -2780,6 +2782,8 @@ const Sound = {
    UI — 页面渲染与交互
 ============================================================ */
 const UI = {
+  agentTouchInput:false,
+  agentViewportGap:null,
   planView:'week',
   planCursor: todayStr(),
   lastMainPage:'home',
@@ -2807,6 +2811,7 @@ const UI = {
     if(leavingCreate){this.cancelRecognition();if(!this.cState?.saved)this.saveCreateDraft();}
     $$('.page').forEach(p=>p.classList.remove('active'));
     const page = $('#page-'+name); if(!page) return;
+    document.body.classList.toggle('agent-page-active',name==='agent');
     if(name!=='agent'){if(this.agentThinking||this.agentSending)this.cancelAgentMessage();this.setAgentKeyboard(false);}
     page.classList.add('active');
     if(!['me','create','pet','agentdetail'].includes(name)) this.lastMainPage=name;
@@ -2819,7 +2824,7 @@ const UI = {
     if(name==='create') this.renderCreate();
     if(name==='plan') this.renderPlan();
     if(name==='todo') this.renderTodos();
-    if(name==='agent') this.renderAgent();
+    if(name==='agent'){this.renderAgent();this.syncAgentViewport();}
     if(name==='agentdetail') this.renderAgentActionDetail();
     if(name==='memory') this.renderMemoryPage();
     if(name==='pet') this.renderPetDetail();
@@ -3304,7 +3309,36 @@ const UI = {
     const input=$('#agent-input'); input.style.height='auto'; input.style.height=Math.min(100,input.scrollHeight)+'px';
   },
 
-  setAgentKeyboard(open){ document.body.classList.toggle('agent-keyboard-open',!!open); },
+  setAgentKeyboard(open){
+    document.body.classList.toggle('agent-keyboard-open',!!open);
+    if(!open){$('#page-agent').style.height='';$('#page-agent').style.top='';$('#page-agent').scrollTop=0;$('#nav').style.bottom='';}
+  },
+
+  syncAgentViewport(){
+    const viewport=window.visualViewport;
+    const focused=['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+    const wasOpen=document.body.classList.contains('agent-keyboard-open');
+    const gap=window.screen.height-viewport.height;
+    if(this.agentViewportGap===null||!wasOpen&&(!focused||!this.agentTouchInput))this.agentViewportGap=gap;
+    const restingHeight=window.screen.height-this.agentViewportGap;
+    const inset=restingHeight-viewport.height;
+    const open=$('#page-agent').classList.contains('active')&&(this.agentTouchInput||wasOpen)&&(focused||wasOpen)
+      &&Math.abs(viewport.scale-1)<.01&&inset>Math.max(100,restingHeight*.15);
+    this.setAgentKeyboard(open);
+    if(open){
+      const windowShrink=Math.max(0,restingHeight-window.innerHeight);
+      // Measured non-content band correction, approved in #33. Rotation limitation: #110.
+      const nonContentInset=Math.min(Math.max(0,this.agentViewportGap),windowShrink);
+      const page=$('#page-agent');
+      page.style.height=(viewport.height-nonContentInset)+'px';
+      page.style.top=viewport.offsetTop+'px';
+      page.scrollTop=page.scrollHeight-page.clientHeight;
+      $('#nav').style.bottom=(Math.min(0,window.innerHeight-restingHeight)-viewport.offsetTop)+'px';
+    }else{
+      if(!wasOpen)this.agentViewportGap=gap;
+      if(wasOpen&&$('#page-agent').classList.contains('active'))window.scrollTo(0,0);
+    }
+  },
 
   async cancelAgentMessage({render=true}={}){
     if(!this.agentThinking&&!this.agentSending) return;
@@ -5018,7 +5052,6 @@ const App = {
     setInterval(async()=>{
       if(S.pet.lastSettle < todayStr()){ await PetSystem.settleDays(); UI.renderHome(); }
     }, 60000);
-    this.selfTest();
   },
 
   bind(){
@@ -5085,8 +5118,13 @@ const App = {
     $('#btn-new-chat').onclick=()=>UI.createAgentChat();
     $('#btn-agent-send').onclick=()=>UI.agentThinking?UI.cancelAgentMessage():UI.sendAgentMessage();
     $('#agent-input').addEventListener('input',()=>UI.resizeAgentInput());
-    $('#agent-input').addEventListener('focus',()=>UI.setAgentKeyboard(true));
-    $('#agent-input').addEventListener('blur',()=>setTimeout(()=>UI.setAgentKeyboard(document.activeElement===$('#agent-input')),80));
+    $('#agent-input').addEventListener('focus',()=>UI.syncAgentViewport());
+    $('#agent-input').addEventListener('blur',()=>UI.syncAgentViewport());
+    document.addEventListener('pointerdown',event=>{UI.agentTouchInput=event.pointerType==='touch'||event.pointerType==='pen';},true);
+    window.visualViewport.addEventListener('resize',()=>UI.syncAgentViewport());
+    window.visualViewport.addEventListener('scroll',()=>UI.syncAgentViewport());
+    window.addEventListener('resize',()=>UI.syncAgentViewport());
+    UI.syncAgentViewport();
     $('#agent-input').addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); UI.sendAgentMessage(); } });
     $('#btn-chat-rename-save').onclick=()=>UI.saveChatRename();
     $('#chat-rename-input').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); UI.saveChatRename(); } });
@@ -5201,154 +5239,7 @@ const App = {
       finally{e.target.value='';}
     };reader.readAsText(file);
   },
-  // 积分引擎自测（仅控制台输出）
-  selfTest(){
-    const A = (name, got, want) => console[Math.abs(got-want)<0.01?'log':'error'](`[自测] ${name}: ${got} (期望 ${want})`);
-    const mk = o => ({id:'t', title:'x', baseScore:10, createdAt:Date.now(), execDate:todayStr(), timeType:'allday', slot:null, startTime:null, endTime:null, category:'成长学习', isBackfill:false, timeChangeMul:null, ...o});
-    const yest = addDays(todayStr(),-1);
-    // 提前1天 + 晚上时段 + 完成目标 = 10×(80%+10%)×70% = 6.3
-    const t1 = mk({createdAt: parseDate(yest).getTime()+10*3600e3, execDate: todayStr(), timeType:'slot', slot:'evening'});
-    A('提前1天+晚上+完成', ScoreEngine.compute(t1,'done', taskDeadline(t1)).score, 6.3);
-    // 半夜时段 +0%：10×80%×70% = 5.6
-    const t2 = mk({createdAt: parseDate(yest).getTime()+10*3600e3, timeType:'slot', slot:'midnight'});
-    A('提前1天+半夜+完成', ScoreEngine.compute(t2,'done',taskDeadline(t2)).score, 5.6);
-    // 精确时间 = 时段+5%：10×(80%+15%)×70% = 6.65 → 6.7
-    const t3 = mk({createdAt: parseDate(yest).getTime()+10*3600e3, timeType:'exact', startTime:'14:00', endTime:'15:00'});
-    A('提前1天+精确+完成', ScoreEngine.compute(t3,'done',taskDeadline(t3)).score, 6.7);
-    // 超24h确认+正在完成中：10×80%×50%×50% = 2
-    const t4 = mk({createdAt: parseDate(addDays(todayStr(),-3)).getTime()+10*3600e3, execDate: addDays(todayStr(),-2)});
-    A('超时24h+进行中', ScoreEngine.compute(t4,'doing', taskDeadline(t4)+30*3600e3).score, 2.0);
-    // 补录昨日金钱：10×(5%+10%)×70% = 1.05 → 1.1
-    const t5 = mk({isBackfill:true, execDate:yest, category:'金钱复盘'});
-    A('补录昨日金钱', ScoreEngine.compute(t5,'done', taskDeadline(t5)).score, 1.1);
-    // 改内容升分 (10-2)*0.8+2 = 8.4
-    A('改内容升分', ScoreEngine.mergeBaseScore(2,10), 8.4);
-    // 当日18点后创建：10×30%×70% = 2.1
-    const d18 = new Date(); d18.setHours(19,0,0,0);
-    const t6 = mk({createdAt:d18.getTime()});
-    A('当日晚建+完成', ScoreEngine.compute(t6,'done', taskDeadline(t6)).score, 2.1);
-    // 食物拆分：13分 → 三文鱼(10)+面包(3)
-    const f = foodForScore(13);
-    console.log('[自测] 13分食物:', f.map(x=>x.name+x.value).join('+'), f.length===2?'✓':'✗');
-    // 回归：具体时间必须压过模糊时段，且支持中文“点”表达。
-    const recognizedTime=recognizePublishTime('早上10点到1点');
-    const exactTimeOk=recognizedTime.start==='10:00'&&recognizedTime.end==='13:00';
-    console[exactTimeOk?'log':'error']('[自测] 具体时间优先: '+exactTimeOk);
-    // 回归：状态更新必须刷新当前可见页面，而不是固定刷新首页。
-    const refreshOk = typeof UI.refreshActivePage === 'function';
-    console[refreshOk?'log':'error'](`[自测] 当前页面即时刷新: ${refreshOk?'✓':'✗'}`);
-    A('待办完成积分', todoScore(10), 7);
-    const linksOk = normalizeTodoLinks('example.com\njavascript:alert(1)\nhttps://openai.com').length===2;
-    console[linksOk?'log':'error'](`[自测] 待办链接过滤: ${linksOk?'✓':'✗'}`);
-    const choice=$('#theme-choices [data-theme="blue"]');
-    const rgb=s=>(s.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
-    const lum=c=>{const v=c.map(x=>{x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*v[0]+.7152*v[1]+.0722*v[2]};
-    const cs=getComputedStyle(choice), l1=lum(rgb(cs.color)), l2=lum(rgb(cs.backgroundColor));
-    const previewContrast=(Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05);
-    console[previewContrast>=4.5?'log':'error'](`[自测] 白蓝主题卡可读性: ${previewContrast.toFixed(2)} ${previewContrast>=4.5?'✓':'✗'}`);
-    const petSummaryPadding=parseFloat(getComputedStyle($('#row-pet-detail')).paddingTop);
-    const petSummaryCompact=petSummaryPadding<=10;
-    console[petSummaryCompact?'log':'error'](`[自测] 卷卷信息栏视觉高度: ${petSummaryPadding}px ${petSummaryCompact?'✓':'✗'}`);
-    const darkThemeLabel=$('#theme-choices .theme-group-label');
-    const darkThemeGap=parseFloat(getComputedStyle(darkThemeLabel).marginTop);
-    const darkThemeGapOk=darkThemeGap<=4;
-    console[darkThemeGapOk?'log':'error'](`[自测] 深色外观上方间距: ${darkThemeGap}px ${darkThemeGapOk?'✓':'✗'}`);
-    const agentStores=['chats','messages','memories','operations'].every(name=>DB._db.objectStoreNames.contains(name));
-    console[agentStores?'log':'error'](`[自测] Agent 本地数据基础: ${agentStores?'✓':'✗'}`);
-    const relativeDateReady=typeof parseNaturalDate==='function';
-    const tomorrowOk=relativeDateReady&&parseNaturalDate('明天晚上',todayStr())===addDays(todayStr(),1);
-    console[tomorrowOk?'log':'error'](`[自测] 明天日期换算: ${tomorrowOk?'✓':'✗'}`);
-    const courseCategoryOk=mapTag(AIService._localCategory('计算机开发与应用'))==='学业事务';
-    console[courseCategoryOk?'log':'error'](`[自测] 课程名称分类: ${courseCategoryOk?'✓':'✗'}`);
-    const draftReady=typeof UI.saveCreateDraft==='function'&&typeof UI.restoreCreateDraft==='function';
-    console[draftReady?'log':'error'](`[自测] 发布草稿恢复: ${draftReady?'✓':'✗'}`);
-    const calendarIndependent=$('#c-calendar-block').parentElement===$('#c-result-panel').parentElement&&$('#c-calendar-block').parentElement!==$('#c-result-panel');
-    console[calendarIndependent?'log':'error'](`[自测] 日程日历独立显示: ${calendarIndependent?'✓':'✗'}`);
-    const agentUiReady=['createAgentChat','sendAgentMessage','renderChatList','deleteAgentChat'].every(name=>typeof UI[name]==='function');
-    console[agentUiReady?'log':'error'](`[自测] Agent 聊天记录能力: ${agentUiReady?'✓':'✗'}`);
-    const activeController=AIService.activeAgentController, testController=new AbortController();
-    AIService.activeAgentController=testController; AIService.cancelAgentRequest();
-    const stopRequestOk=testController.signal.aborted&&testController.userCancelled===true;
-    AIService.activeAgentController=activeController;
-    UI.setAgentKeyboard(true); const keyboardClassOk=document.body.classList.contains('agent-keyboard-open'); UI.setAgentKeyboard(false);
-    const mobileAgentControlReady=['setAgentKeyboard','cancelAgentMessage'].every(name=>typeof UI[name]==='function')&&stopRequestOk&&keyboardClassOk;
-    console[mobileAgentControlReady?'log':'error'](`[自测] 手机输入与中止处理: ${mobileAgentControlReady?'✓':'✗'}`);
-    const weatherHongKong=AIService.weatherLocation('今天天气怎么样？',{memories:[{content:'我住在香港上环。'}]})?.name==='香港';
-    const weatherNeedsLocation=AIService.weatherLocation('今天天气怎么样？',{memories:[]})===null;
-    const weatherExplicitLocation=AIService.weatherLocation('我在新加坡，今天天气怎么样。',{})?.name==='新加坡';
-    const weatherIntent=AIService.isWeatherRequest('明天会下雨吗？')&&AIService.weatherLabel(63)==='中雨';
-    const weatherWorkflowOk=weatherHongKong&&weatherNeedsLocation&&weatherExplicitLocation&&weatherIntent;
-    console[weatherWorkflowOk?'log':'error'](`[自测] 天气地点识别与追问: ${weatherWorkflowOk?'✓':'✗'}`);
-    const weatherFollowupContext={history:[{role:'user',content:'今天天气怎么样？'},{role:'assistant',content:'你想查哪个城市或地区的天气？'}],memories:[]};
-    const weatherFollowupOk=typeof AIService.isWeatherFollowup==='function'&&AIService.isWeatherFollowup('香港',weatherFollowupContext);
-    console[weatherFollowupOk?'log':'error'](`[自测] 天气城市续答识别: ${weatherFollowupOk?'✓':'✗'}`);
-    const exactRejected=!UI.validateAgentAction({kind:'create_schedule',target_id:null,item:{title:'测试课程',exec_date:todayStr(),time_type:'exact',start_time:'10:00',end_time:null}}).ok;
-    console[exactRejected?'log':'error'](`[自测] Agent 缺失具体时间拦截: ${exactRejected?'✓':'✗'}`);
-    const missingTargetRejected=!UI.validateAgentAction({kind:'delete_schedule',target_id:'missing',item:{}}).ok;
-    console[missingTargetRejected?'log':'error'](`[自测] Agent 不存在目标拦截: ${missingTargetRejected?'✓':'✗'}`);
-    const queryTask={id:'agent_query_test',title:'卷卷查询测试',note:'',execDate:todayStr(),timeType:'allday',slot:null,startTime:null,endTime:null,status:null};
-    S.tasks.push(queryTask);
-    const queryOk=UI.queryAgentItems({entity:'schedule',date_from:todayStr(),date_to:todayStr(),status:'open',keyword:'卷卷查询测试'}).some(x=>x.id===queryTask.id);
-    S.tasks=S.tasks.filter(x=>x.id!==queryTask.id);
-    console[queryOk?'log':'error'](`[自测] Agent 本地查询: ${queryOk?'✓':'✗'}`);
-    const agentActionsReady=['validateAgentAction','queryAgentItems','executeAgentAction','undoAgentOperation'].every(name=>typeof UI[name]==='function');
-    console[agentActionsReady?'log':'error'](`[自测] Agent 单条事务操作: ${agentActionsReady?'✓':'✗'}`);
-    const allWeek=[1,2,3,4,5,6,7], batchAction={kind:'create_schedule_batch',rule:{date_from:todayStr(),date_to:addDays(todayStr(),6),weekdays:allWeek,title:'批量测试',note:'',time_type:'exact',slot:null,start_time:'10:00',end_time:'13:00',category:'学业事务',base_score:7}};
-    const batchExpanded=UI.expandBatchSchedule(batchAction), batchOk=batchExpanded.length===7&&batchExpanded.every(item=>item.start_time==='10:00'&&item.end_time==='13:00');
-    console[batchOk?'log':'error'](`[自测] 批量日程日期展开: ${batchExpanded.length} 条 ${batchOk?'✓':'✗'}`);
-    const seriesWeekday=parseDate(todayStr()).getDay()||7, seriesNext=addDays(todayStr(),7), seriesId='agent_series_test';
-    const seriesTaskOne={id:'agent_series_one',seriesId,title:'整组课程一',execDate:todayStr(),timeType:'exact',startTime:'10:00',endTime:'11:00'};
-    const seriesTaskTwo={id:'agent_series_two',seriesId,title:'整组课程二',execDate:seriesNext,timeType:'exact',startTime:'10:00',endTime:'11:00'};
-    S.tasks.push(seriesTaskOne,seriesTaskTwo);
-    const seriesDeleteAction={kind:'delete_schedule_batch',rule:{series_id:seriesId,date_from:todayStr(),date_to:seriesNext,weekdays:[seriesWeekday],match_title:'不参与组身份匹配',match_start_time:null,match_end_time:null},item:{}};
-    const seriesDeleteOk=UI.resolveBatchUpdateTargets(seriesDeleteAction).length===2&&UI.validateAgentAction(seriesDeleteAction).ok;
-    S.tasks=S.tasks.filter(task=>task.id!==seriesTaskOne.id&&task.id!==seriesTaskTwo.id);
-    console[seriesDeleteOk?'log':'error'](`[自测] 整组身份删除定位: ${seriesDeleteOk?'✓':'✗'}`);
-    const vagueBatchRejected=!UI.validateAgentAction({kind:'create_schedule_batch',rule:{...batchAction.rule,time_type:'allday',start_time:null,end_time:null}}).ok;
-    console[vagueBatchRejected?'log':'error'](`[自测] 批量日程具体时间保护: ${vagueBatchRejected?'✓':'✗'}`);
-    const unsafeEndpointRejected=AIService.validEndpoint('https://api.example.com/v1/chat/completions')&&!AIService.validEndpoint('http://example.com/v1/chat/completions');
-    console[unsafeEndpointRejected?'log':'error'](`[自测] 自定义 API 地址保护: ${unsafeEndpointRejected?'✓':'✗'}`);
-    let emptyReplyRetryable=false;
-    try{AIService.parseJson('');}catch(error){emptyReplyRetryable=error?.code==='retryable_model_reply';}
-    console[emptyReplyRetryable?'log':'error'](`[自测] 空模型回复可重试: ${emptyReplyRetryable?'✓':'✗'}`);
-    const normalizedBatch=AIService.normalizeAgent({type:'batch_proposal',reply:'测试',action:{rule:batchAction.rule}});
-    const batchNormalizeOk=normalizedBatch.action?.kind==='create_schedule_batch'&&normalizedBatch.action.rule.weekdays.length===7;
-    console[batchNormalizeOk?'log':'error'](`[自测] 批量模型结果校验: ${batchNormalizeOk?'✓':'✗'}`);
-    const savedRole=UI.agentSelectedRole;
-    UI.agentSelectedRole='auto';
-    const routingOk=UI.resolveAgentRole('建立多个日程，每周五晚上上课')==='task'&&UI.resolveAgentRole('我想减肥，帮我规划并排进日历')==='planning'&&UI.resolveAgentRole('给我讲个笑话')==='chat';
-    UI.agentSelectedRole=savedRole;
-    console[routingOk?'log':'error'](`[自测] 三角色自动分流: ${routingOk?'✓':'✗'}`);
-    const roleTestText='9-11月每个周五晚上19.00-21.30，都设置日程叫：IDAT7224工程技术中的深度学习，KK201教室 教授Dr. C.K. Chan';
-    const taskRoleResult=AIService._localAgent(roleTestText,{tasks:[],todos:[]},'task');
-    const planningRoleResult=AIService._localAgent(roleTestText,{tasks:[],todos:[]},'planning');
-    const roleWorkflowOk=taskRoleResult.type==='batch_proposal'&&taskRoleResult.action?.rule?.title.includes('IDAT7224')&&taskRoleResult.action?.rule?.note.includes('KK201')&&planningRoleResult.type==='recommendation'&&planningRoleResult.recommendations?.[0]?.action?.kind==='create_schedule_batch';
-    console[roleWorkflowOk?'log':'error'](`[自测] 规划交接事务确认卡: ${roleWorkflowOk?'✓':'✗'}`);
-    const taskWorkflowFirst=typeof AIService.taskWorkflowResult==='function'&&AIService.taskWorkflowResult(roleTestText,{tasks:[],todos:[]})?.type==='batch_proposal';
-    console[taskWorkflowFirst?'log':'error'](`[自测] 完整事务优先走工作流: ${taskWorkflowFirst?'✓':'✗'}`);
-    const planningInside={id:'planning_inside_test',title:'规划范围内日程',execDate:todayStr(),createdAt:0};
-    const planningOutside={id:'planning_outside_test',title:'规划范围外日程',execDate:addDays(todayStr(),14),createdAt:0};
-    S.tasks.push(planningInside,planningOutside);
-    const planningData=UI.planningData('减肥计划');
-    const planningScopeOk=planningData.tasks.some(item=>item.id===planningInside.id)&&!planningData.tasks.some(item=>item.id===planningOutside.id);
-    S.tasks=S.tasks.filter(task=>task.id!==planningInside.id&&task.id!==planningOutside.id);
-    console[planningScopeOk?'log':'error'](`[自测] 规划只参考近期日程: ${planningScopeOk?'✓':'✗'}`);
-    const planningInsights=UI.planningInsights([{title:'规划冲突一',execDate:todayStr(),timeType:'exact',startTime:'10:00',endTime:'12:00'},{title:'规划冲突二',execDate:todayStr(),timeType:'exact',startTime:'11:00',endTime:'13:00'},{title:'规划负荷',execDate:todayStr(),timeType:'exact',startTime:'14:00',endTime:'17:00'},{title:'规划未定时',execDate:todayStr(),timeType:'allday',startTime:null,endTime:null}],[{title:'高价值规划待办',baseScore:8}]);
-    const planningFactsOk=planningInsights.conflict_count===1&&planningInsights.busy_days.length===1&&planningInsights.candidate_gaps.length===1&&planningInsights.unscheduled_count===1&&planningInsights.high_value_todos[0]==='高价值规划待办';
-    console[planningFactsOk?'log':'error'](`[自测] 规划事实计算: ${planningFactsOk?'✓':'✗'}`);
-    const savedMemoryEnabled=S.pet.memoryEnabled, savedMemories=S.memories; S.pet.memoryEnabled=true; S.memories=[];
-    const planningMemoryOk=UI.planningMemoryCandidate('我想减肥，帮我做两周计划。')?.category==='目标和优先事项';
-    S.pet.memoryEnabled=savedMemoryEnabled; S.memories=savedMemories;
-    console[planningMemoryOk?'log':'error'](`[自测] 规划记忆需确认: ${planningMemoryOk?'✓':'✗'}`);
-    const taskProposalMeta={action:taskRoleResult.action,status:'pending',agentRole:'task'};
-    const proposalRoleKept=taskProposalMeta.agentRole==='task';
-    console[proposalRoleKept?'log':'error'](`[自测] 事务确认卡身份标签: ${proposalRoleKept?'✓':'✗'}`);
-    const conflictTask={id:'agent_conflict_test',title:'已有日程',execDate:todayStr(),timeType:'exact',startTime:'10:00',endTime:'11:00'};
-    S.tasks.push(conflictTask);
-    const conflictOk=UI.findAgentScheduleConflicts({kind:'create_schedule',item:{title:'冲突测试',exec_date:todayStr(),time_type:'exact',start_time:'10:30',end_time:'11:30'}}).length===1;
-    S.tasks=S.tasks.filter(task=>task.id!==conflictTask.id);
-    console[conflictOk?'log':'error'](`[自测] 事务时间冲突提醒: ${conflictOk?'✓':'✗'}`);
-  },
+
 };
 
 App.init();
