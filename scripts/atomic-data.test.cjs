@@ -373,3 +373,24 @@ test('#64 feedback treats HTML title as text and limits readable identity',async
  try{a.run('validateBackup(data)');assert.fail('must reject');}catch(error){a.ctx.error=error;a.run('App.showImportError(error)');}
  assert.ok(a.run('importFeedback.textContent').includes('<img onerror=alert(1)>'));assert.ok(a.run('importFeedback.textContent.length')<300);assert.equal(a.run('importFeedback.innerHTML'),undefined);
 });
+
+for(const store of ['tasks','todos','chats','messages','memories','memoryGroups'])test('PR68 review: duplicate location in '+store,async t=>{
+ const a=await fixture(t),data=a.backup(),before=await a.snapshot(),memory=a.memory();
+ if(store==='memoryGroups')data.memoryGroups=[{id:'group',name:'合成资料框'}];
+ data[store].push(structuredClone(data[store][0]));a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'),error=>error.field===store+'['+(data[store].length-1)+'].id'&&error.message.includes('与第1条重复'));
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+for(const side of ['before','after'])test('PR68 review: nested batch '+side+' retains exact record path',async t=>{
+ const a=await fixture(t),data=a.backup(),before=await a.snapshot(),memory=a.memory();
+ data.operations=[{id:'op',chatId:'chat',messageId:'m',status:'done',kind:'update_schedule_batch',summary:'合成修改',before:structuredClone(data.tasks.slice(0,2)),after:structuredClone(data.tasks.slice(0,2))}];
+ data.operations[0][side][1].baseScore=-1;a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'),error=>error.field==='operations[0].'+side+'[1].baseScore');
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+test('PR68 review: empty collections import unchanged and invalid missing collection is identified',async t=>{
+ const a=await fixture(t),data=a.backup();for(const key of ['tasks','todos','chats','messages','memories','operations','memoryGroups'])data[key]=[];
+ a.ctx.data=data;assert.deepEqual(a.json('validateBackup(data)'),data);await a.run('replaceBackup(data)');
+ const before=await a.snapshot();delete data.todos;a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'),error=>error.field==='todos');assert.deepEqual(await a.snapshot(),before);
+});
