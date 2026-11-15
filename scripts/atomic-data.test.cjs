@@ -14,7 +14,7 @@ async function fixture(t){
   const json=expr=>JSON.parse(run('JSON.stringify('+expr+')'));
   await run('DB.open()');t.after(()=>run('DB._db.close()'));
   run(require('./helpers/storage-fixture.cjs'));
-  run('UI.mask=()=>{}'); // DOM boundary only; storage and import callbacks remain real.
+  run("importFeedback={hidden:true,textContent:''};document={querySelector:()=>importFeedback};const showImportError=App.showImportError.bind(App);App.showImportError=error=>{showImportError(error);notices.push(importFeedback.textContent);};UI.mask=()=>{}"); // DOM boundary only; storage and import callbacks remain real.
   await run("DB.batch([...DATA_STORES.flatMap(store=>S[store].map(value=>({store,value}))),...DATA_KV.map(key=>({store:'kv',key,value:S[key]}))])");
   ctx.localStorage={setItem(){},removeItem(){}};
   const snapshot=async()=>JSON.parse(JSON.stringify(await run("DB.snapshot(['tasks','todos','chats','messages','memories','operations','kv'])")));
@@ -323,4 +323,74 @@ for(const side of ['before','after'])for(const field of ['finalScore','statusEdi
  await a.run("DB.put('operations',S.operations[0])");const before=await a.snapshot(),memory=a.memory();a.ctx.data=a.backup();
  await assert.rejects(a.run('replaceBackup(data)'));await a.run("UI.undoAgentOperation('m')");
  assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);assert.match(a.json('notices').at(-1),/不合法/);
+});
+
+// #64: use the actual file callback, validator, feedback renderer and database.
+const locationCases=[
+ ['date',d=>d.tasks[1].execDate='2026-02-30','tasks[1].execDate','日程第2条'],
+ ['reverse time',d=>Object.assign(d.tasks[1],{startTime:'23:30',endTime:'16:30'}),'tasks[1].endTime','结束时间早于或等于开始时间'],
+ ['equal time',d=>d.tasks[1].endTime='10:00','tasks[1].endTime','结束时间早于或等于开始时间'],
+ ['start time',d=>d.tasks[1].startTime='bad','tasks[1].startTime','开始时间'],
+ ['duplicate id',d=>d.tasks.push(structuredClone(d.tasks[0])),'tasks[3].id','与第1条重复'],
+ ['missing id',d=>delete d.todos[0].id,'todos[0].id','待办第1条'],
+ ['image',d=>d.tasks[0].images[0].data='private-image-sentinel','tasks[0].images','图片格式'],
+ ['link',d=>d.tasks[0].links=['private-link-sentinel'],'tasks[0].links','链接格式'],
+ ['operation reference',d=>d.operations.push({id:'op',chatId:'chat',messageId:'private-reference-sentinel',status:'done',kind:'create_todo'}),'operations[0].messageId','操作记录第1条'],
+ ['snapshot',d=>d.operations.push({id:'op',chatId:'chat',messageId:'m',status:'done',kind:'create_schedule',summary:'合成',before:null,after:{...d.tasks[0],execDate:'bad'}}),'operations[0].after.execDate','操作记录第1条'],
+ ['message reference',d=>d.messages[0].chatId='private-chat-sentinel','messages[0].chatId','消息第1条'],
+ ['pet',d=>d.pet.growth=-1,'pet.growth','宠物数值'],
+];
+for(const [name,damage,field,reason] of locationCases)test('#64 file error locates '+name+' and preserves all data',async t=>{
+ const a=await fixture(t),before=await a.snapshot(),memory=a.memory(),data=a.backup();damage(data);
+ data.tasks[1].note='PRIVATE_NOTE_MUST_NOT_APPEAR';a.ctx.data=data;
+ a.ctx.FileReader=class{readAsText(value){this.result=value;a.ctx.readDone=this.onload();}};
+ a.run('previewCount=0;UI.confirm=()=>previewCount++');a.ctx.event={target:{files:[JSON.stringify(data)],value:'selected'}};
+ a.run('App.importData(event)');await a.ctx.readDone;
+ const feedback=a.run('importFeedback.textContent');assert.ok(feedback.includes(field),feedback);assert.ok(feedback.includes(reason),feedback);
+ assert.equal(a.run('importFeedback.hidden'),false);assert.equal(a.run('previewCount'),0);assert.equal(a.ctx.event.target.value,'');
+ assert.doesNotMatch(feedback,/PRIVATE_NOTE_MUST_NOT_APPEAR|private-image-sentinel|private-link-sentinel|private-reference-sentinel|private-chat-sentinel/);
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+test('#64 corrected copy previews, cancels without writes, then imports unchanged',async t=>{
+ const a=await fixture(t),before=await a.snapshot(),memory=a.memory(),data=a.backup();Object.assign(data.tasks[1],{startTime:'23:30',endTime:'16:30'});
+ a.ctx.FileReader=class{readAsText(value){this.result=value;a.ctx.readDone=this.onload();}};
+ a.run('UI.confirm=(title,body,ok)=>preview={title,body,ok}');
+ const select=async()=>{a.ctx.event={target:{files:[JSON.stringify(data)],value:'selected'}};a.run('App.importData(event)');await a.ctx.readDone;};
+ await select();assert.match(a.run('importFeedback.textContent'),/同名课程.*2026-11-16/);
+ data.tasks[1].startTime='11:30';await select();assert.equal(a.run('importFeedback.hidden'),true);
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory); // cancel
+ await select();await a.run('preview.ok()');assert.deepEqual((await a.snapshot()).tasks,data.tasks);
+ assert.equal(a.run('S.pet.growth'),data.pet.growth);
+});
+test('#64 malformed JSON and file read errors never echo file content or parser snippets',async t=>{
+ const a=await fixture(t),before=await a.snapshot();a.ctx.FileReader=class{readAsText(value){this.result=value;a.ctx.readDone=this.onload();}};
+ a.ctx.event={target:{files:['{"apiKey":"PRIVATE_SECRET" bad}'],value:'selected'}};a.run('App.importData(event)');await a.ctx.readDone;
+ assert.doesNotMatch(a.run('importFeedback.textContent'),/PRIVATE_SECRET|apiKey/);
+ a.ctx.FileReader=class{readAsText(){this.onerror();}};a.run('App.importData(event)');assert.equal(a.ctx.event.target.value,'');assert.deepEqual(await a.snapshot(),before);
+});
+test('#64 feedback treats HTML title as text and limits readable identity',async t=>{
+ const a=await fixture(t);a.ctx.data=a.backup();a.run('data.tasks[0].title="<img onerror=alert(1)>"+"合".repeat(100);data.tasks[0].execDate="bad"');
+ try{a.run('validateBackup(data)');assert.fail('must reject');}catch(error){a.ctx.error=error;a.run('App.showImportError(error)');}
+ assert.ok(a.run('importFeedback.textContent').includes('<img onerror=alert(1)>'));assert.ok(a.run('importFeedback.textContent.length')<300);assert.equal(a.run('importFeedback.innerHTML'),undefined);
+});
+
+for(const store of ['tasks','todos','chats','messages','memories','memoryGroups'])test('PR68 review: duplicate location in '+store,async t=>{
+ const a=await fixture(t),data=a.backup(),before=await a.snapshot(),memory=a.memory();
+ if(store==='memoryGroups')data.memoryGroups=[{id:'group',name:'合成资料框'}];
+ data[store].push(structuredClone(data[store][0]));a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'),error=>error.field===store+'['+(data[store].length-1)+'].id'&&error.message.includes('与第1条重复'));
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+for(const side of ['before','after'])test('PR68 review: nested batch '+side+' retains exact record path',async t=>{
+ const a=await fixture(t),data=a.backup(),before=await a.snapshot(),memory=a.memory();
+ data.operations=[{id:'op',chatId:'chat',messageId:'m',status:'done',kind:'update_schedule_batch',summary:'合成修改',before:structuredClone(data.tasks.slice(0,2)),after:structuredClone(data.tasks.slice(0,2))}];
+ data.operations[0][side][1].baseScore=-1;a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'),error=>error.field==='operations[0].'+side+'[1].baseScore');
+ assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+});
+test('PR68 review: empty collections import unchanged and invalid missing collection is identified',async t=>{
+ const a=await fixture(t),data=a.backup();for(const key of ['tasks','todos','chats','messages','memories','operations','memoryGroups'])data[key]=[];
+ a.ctx.data=data;assert.deepEqual(a.json('validateBackup(data)'),data);await a.run('replaceBackup(data)');
+ const before=await a.snapshot();delete data.todos;a.ctx.data=data;
+ await assert.rejects(a.run('replaceBackup(data)'),error=>error.field==='todos');assert.deepEqual(await a.snapshot(),before);
 });

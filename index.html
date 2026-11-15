@@ -884,6 +884,7 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
 <div class="mask" id="mask-data">
   <div class="sheet">
     <div class="sheet-title"><span>📦 数据出入与同步</span><button class="close-x" data-close="mask-data">✕</button></div>
+    <div id="import-error" role="alert" hidden style="white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;border:1px solid var(--red);border-radius:12px;margin-bottom:12px"></div>
     <div class="set-item" id="btn-export" style="border-bottom:1px solid var(--line)"><span class="ico">📤</span><span class="grow">导出备份（JSON）</span><span class="arr">›</span></div>
     <div class="set-item" id="btn-import" style="border-bottom:1px solid var(--line)"><span class="ico">📥</span><span class="grow">导入备份（JSON）</span><span class="arr">›</span></div>
     <div class="set-item" id="btn-clean-media" style="border-bottom:1px solid var(--line)"><span class="ico">🧹</span><span class="grow">清理全部附件图片</span><span class="arr">›</span></div>
@@ -1366,86 +1367,120 @@ async function commitDataChanges(changes,expected={}){
 }
 const DATA_STORES=['tasks','todos','chats','messages','memories','operations'];
 const DATA_KV=['pet','dayStats','customTags','memoryGroups'];
+function dataValidationError(message,field){
+  const error=new Error(message);error.field=field;return error;
+}
+function backupRecord(collection,index,item,validate){
+  try{return validate();}catch(error){
+    if(!error.field)throw error;
+    const labels={tasks:'日程',todos:'待办',chats:'聊天',messages:'消息',memories:'记忆',operations:'操作记录',memoryGroups:'资料框'};
+    const identity=[];
+    if(typeof item?.title==='string')identity.push('标题：'+item.title.slice(0,48)+(item.title.length>48?'…':''));
+    if(validDateStr(item?.execDate))identity.push('执行日期：'+item.execDate);
+    error.field=collection+'['+index+'].'+error.field;
+    error.message=(labels[collection]||collection)+'第'+(index+1)+'条'+(identity.length?'（'+identity.join('；')+'）':'')+'\n字段：'+error.field+'\n原因：'+error.message;
+    throw error;
+  }
+}
 function validateStoredRecord(item,schedule){
   const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
-  const fail=message=>{throw new Error(message);};
-  if(!object(item)||typeof item.id!=='string'||!item.id.trim()||item.id!==item.id.trim())fail('记录编号不合法');
+  const fail=(message,field)=>{throw dataValidationError(message,field);};
+  if(!object(item)||typeof item.id!=='string'||!item.id.trim()||item.id!==item.id.trim())fail('记录编号不合法','id');
 
-    if(typeof item.title!=='string'||!item.title.trim())fail('日程或待办缺少标题');
-    if(item.note!==undefined&&typeof item.note!=='string')fail('备注字段不合法');
-    if(item.done!==undefined&&typeof item.done!=='boolean')fail('待办完成状态不合法');
-    if(typeof item.baseScore!=='number'||!Number.isFinite(item.baseScore)||item.baseScore<0||item.baseScore>10)fail('基础分不合法');
-    if((item.finalScore!==undefined||schedule&&item.status!=null)&&(typeof item.finalScore!=='number'||!Number.isFinite(item.finalScore)||item.finalScore<0))fail('所得分不合法');
-    for(const key of ['images','links'])if(item[key]!==undefined&&!Array.isArray(item[key]))fail('附件字段必须是数组');
-    if((item.images||[]).length>5||(item.images||[]).some(img=>!object(img)||typeof img.data!=='string'||!/^data:image\//.test(img.data)))fail('图片格式或数量不合法');
-    if((item.links||[]).length>5||(item.links||[]).some(link=>typeof link!=='string'||!/^https?:\/\//i.test(link)))fail('链接格式或数量不合法');
+    if(typeof item.title!=='string'||!item.title.trim())fail('日程或待办缺少标题','title');
+    if(item.note!==undefined&&typeof item.note!=='string')fail('备注字段不合法','note');
+    if(item.done!==undefined&&typeof item.done!=='boolean')fail('待办完成状态不合法','done');
+    if(typeof item.baseScore!=='number'||!Number.isFinite(item.baseScore)||item.baseScore<0||item.baseScore>10)fail('基础分不合法','baseScore');
+    if((item.finalScore!==undefined||schedule&&item.status!=null)&&(typeof item.finalScore!=='number'||!Number.isFinite(item.finalScore)||item.finalScore<0))fail('所得分不合法','finalScore');
+    for(const key of ['images','links'])if(item[key]!==undefined&&!Array.isArray(item[key]))fail('附件字段必须是数组',key);
+    if((item.images||[]).length>5||(item.images||[]).some(img=>!object(img)||typeof img.data!=='string'||!/^data:image\//.test(img.data)))fail('图片格式或数量不合法','images');
+    if((item.links||[]).length>5||(item.links||[]).some(link=>typeof link!=='string'||!/^https?:\/\//i.test(link)))fail('链接格式或数量不合法','links');
   if(schedule){const task=item;
 
-    if(task.status!==undefined&&task.status!==null&&!CONFIG.STATUS.some(status=>status.key===task.status))fail('日程状态不合法');
-    if((task.statusEditCount!==undefined||task.status!=null)&&(!Number.isInteger(task.statusEditCount)||task.statusEditCount<0))fail('状态修改次数不合法');
-    if(task.statusAt!==undefined&&task.statusAt!==null&&(typeof task.statusAt!=='number'||!Number.isFinite(task.statusAt)||task.statusAt<0))fail('状态结算时间不合法');
+    if(task.status!==undefined&&task.status!==null&&!CONFIG.STATUS.some(status=>status.key===task.status))fail('日程状态不合法','status');
+    if((task.statusEditCount!==undefined||task.status!=null)&&(!Number.isInteger(task.statusEditCount)||task.statusEditCount<0))fail('状态修改次数不合法','statusEditCount');
+    if(task.statusAt!==undefined&&task.statusAt!==null&&(typeof task.statusAt!=='number'||!Number.isFinite(task.statusAt)||task.statusAt<0))fail('状态结算时间不合法','statusAt');
 
-    if(!validDateStr(task.execDate)||!['allday','slot','exact'].includes(task.timeType))fail('日程日期或时间类型不合法');
-    if(task.timeType==='exact'&&(!validTimeStr(task.startTime)||!validTimeStr(task.endTime)||minOf(task.endTime)<=minOf(task.startTime)))fail('日程具体时间不合法');
-    if(task.timeType==='slot'&&!slotByKey(task.slot))fail('日程时段不合法');
-    if(task.seriesId!=null&&!validSeriesId(task.seriesId))fail('日程组编号不合法');
+    if(!validDateStr(task.execDate))fail('日程日期不合法','execDate');
+    if(!['allday','slot','exact'].includes(task.timeType))fail('日程时间类型不合法','timeType');
+    if(task.timeType==='exact'){
+      if(!validTimeStr(task.startTime))fail('日程开始时间不合法','startTime');
+      if(!validTimeStr(task.endTime))fail('日程结束时间不合法','endTime');
+      if(minOf(task.endTime)<=minOf(task.startTime))fail('日程具体时间不合法：结束时间早于或等于开始时间，请核对是否写错或涉及跨日；未自动修正','endTime');
+    }
+    if(task.timeType==='slot'&&!slotByKey(task.slot))fail('日程时段不合法','slot');
+    if(task.seriesId!=null&&!validSeriesId(task.seriesId))fail('日程组编号不合法','seriesId');
   }
 }
 function validateOperationSnapshots(operation){
-  const fail=()=>{throw new Error('操作记录快照不完整或目标不一致，不能导入或撤销。');};
+  const fail=(field='kind/summary')=>{throw dataValidationError('操作记录快照不完整或目标不一致，不能导入或撤销。',field);};
   const kind=operation.kind, allowed=['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'];
   if(!allowed.includes(kind)||typeof operation.summary!=='string')fail();
   const batch=kind.endsWith('_batch'), create=kind.startsWith('create_'), remove=kind.startsWith('delete_'), convert=kind==='convert_schedule_to_todo';
   const records=key=>{
     const value=operation[key], absent=key==='before'?create:remove;
-    if(absent){if(key==='after'&&batch){if(!Array.isArray(value)||value.length)fail();}else if(value!==null)fail();return [];}
+    if(absent){if(key==='after'&&batch){if(!Array.isArray(value)||value.length)fail(key);}else if(value!==null)fail(key);return [];}
     const values=batch?value:[value];
-    if(!Array.isArray(values)||!values.length)fail();
+    if(!Array.isArray(values)||!values.length)fail(key);
     const ids=new Set();
-    for(const record of values){validateStoredRecord(record,convert?key==='before':kind.includes('schedule'));if(ids.has(record.id))fail();ids.add(record.id);}
+    for(const [index,record] of values.entries()){
+      try{validateStoredRecord(record,convert?key==='before':kind.includes('schedule'));if(ids.has(record.id))fail('id');}
+      catch(error){if(error.field)error.field=key+(batch?'['+index+']':'')+'.'+error.field;throw error;}
+      ids.add(record.id);
+    }
     return values;
   };
   const before=records('before'),after=records('after');
-  if(kind.startsWith('update_')&&recordFingerprint(before.map(value=>({id:value.id})))!==recordFingerprint(after.map(value=>({id:value.id}))))fail();
-  if(convert&&after[0].sourceTaskId!==before[0].id)fail();
+  if(kind.startsWith('update_')&&recordFingerprint(before.map(value=>({id:value.id})))!==recordFingerprint(after.map(value=>({id:value.id}))))fail('before/after');
+  if(convert&&after[0].sourceTaskId!==before[0].id)fail('after.sourceTaskId');
 }
 function validateBackup(input){
   const data=copyData(input), object=value=>value&&typeof value==='object'&&!Array.isArray(value);
-  const fail=message=>{throw new Error(message);};
+  const fail=(message,field)=>{throw dataValidationError(message,field);};
   const id=value=>typeof value==='string'&&value.trim()===value&&value.length>0;
-  if(!object(data)||data.app!=='卷卷AI Todo'||data.version!=='2.2')fail('不是当前 2.2 格式的卷卷备份');
+  if(!object(data)||data.app!=='卷卷AI Todo'||data.version!=='2.2')fail('不是当前 2.2 格式的卷卷备份','app/version');
   for(const key of [...DATA_STORES,'memoryGroups']){
-    if(!Array.isArray(data[key]))fail(key+' 必须是数组');
-    const seen=new Set();for(const item of data[key]){if(!object(item)||!id(item.id)||seen.has(item.id))fail(key+' 存在缺少或重复的 id');seen.add(item.id);}
+    if(!Array.isArray(data[key]))fail(key+' 必须是数组',key);
+    const seen=new Map();for(const [index,item] of data[key].entries()){backupRecord(key,index,item,()=>{
+      if(!object(item)||!id(item.id))fail('记录缺少合法的 id','id');
+      if(seen.has(item.id))fail('id 与第'+(seen.get(item.id)+1)+'条重复','id');
+    });seen.set(item.id,index);}
   }
-  for(const item of data.tasks)validateStoredRecord(item,true);
-  for(const item of data.todos)validateStoredRecord(item,false);
+  for(const [index,item] of data.tasks.entries())backupRecord('tasks',index,item,()=>validateStoredRecord(item,true));
+  for(const [index,item] of data.todos.entries())backupRecord('todos',index,item,()=>validateStoredRecord(item,false));
   const chats=new Set(data.chats.map(x=>x.id)), messages=new Set(data.messages.map(x=>x.id));
-  for(const chat of data.chats)if(typeof chat.title!=='string')fail('聊天标题不合法');
-  for(const message of data.messages)if(!chats.has(message.chatId)||!['user','assistant'].includes(message.role)||typeof message.content!=='string')fail('消息内容或聊天引用不合法');
+  for(const [index,chat] of data.chats.entries())backupRecord('chats',index,chat,()=>{if(typeof chat.title!=='string')fail('聊天标题不合法','title');});
+  for(const [index,message] of data.messages.entries())backupRecord('messages',index,message,()=>{
+    if(!chats.has(message.chatId))fail('消息聊天引用不合法','chatId');
+    if(!['user','assistant'].includes(message.role))fail('消息角色不合法','role');
+    if(typeof message.content!=='string')fail('消息内容不合法','content');
+  });
   const kinds=['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'];
-  for(const operation of data.operations){
-    if(!chats.has(operation.chatId)||!messages.has(operation.messageId)||data.messages.find(message=>message.id===operation.messageId)?.chatId!==operation.chatId||!['done','undone'].includes(operation.status)||!kinds.includes(operation.kind))fail('操作记录引用或状态不合法');
+  for(const [index,operation] of data.operations.entries())backupRecord('operations',index,operation,()=>{
+    if(!chats.has(operation.chatId))fail('操作记录聊天引用不合法','chatId');
+    if(!messages.has(operation.messageId)||data.messages.find(message=>message.id===operation.messageId)?.chatId!==operation.chatId)fail('操作记录消息引用不合法','messageId');
+    if(!['done','undone'].includes(operation.status))fail('操作记录状态不合法','status');
+    if(!kinds.includes(operation.kind))fail('操作记录类型不合法','kind');
     validateOperationSnapshots(operation);
-  }
-  for(const memory of data.memories)if(typeof memory.content!=='string')fail('记忆内容不合法');
-  for(const group of data.memoryGroups)if(typeof group.name!=='string'||!group.name.trim())fail('资料框名称不合法');
-  if(!object(data.pet))fail('缺少宠物资料');
+  });
+  for(const [index,memory] of data.memories.entries())backupRecord('memories',index,memory,()=>{if(typeof memory.content!=='string')fail('记忆内容不合法','content');});
+  for(const [index,group] of data.memoryGroups.entries())backupRecord('memoryGroups',index,group,()=>{if(typeof group.name!=='string'||!group.name.trim())fail('资料框名称不合法','name');});
+  if(!object(data.pet))fail('缺少宠物资料','pet');
   for(const [key,value] of Object.entries(defaultPet())){
     const actual=data.pet[key];
-    if(typeof value==='number'&&(typeof actual!=='number'||!Number.isFinite(actual)||actual<0))fail('宠物数值不合法：'+key);
-    if(typeof value==='boolean'&&typeof actual!=='boolean')fail('宠物状态不合法：'+key);
-    if(typeof value==='string'&&typeof actual!=='string')fail('宠物字段不合法：'+key);
+    if(typeof value==='number'&&(typeof actual!=='number'||!Number.isFinite(actual)||actual<0))fail('宠物数值不合法：'+key,'pet.'+key);
+    if(typeof value==='boolean'&&typeof actual!=='boolean')fail('宠物状态不合法：'+key,'pet.'+key);
+    if(typeof value==='string'&&typeof actual!=='string')fail('宠物字段不合法：'+key,'pet.'+key);
   }
-  if(!['J','P'].includes(data.pet.personType)||data.pet.affinity>10||!validDateStr(data.pet.lastSettle)||!Array.isArray(data.pet.fridge))fail('宠物资料不合法');
-  for(const key of ['lastSettle','lastStreakDate','intakeDate','lastClickDate','lastClickBonusDate','lastNoon','lastEve','lastDecayDay'])if(data.pet[key]!=null&&!validDateStr(data.pet[key]))fail('宠物日期不合法：'+key);
-  if(data.pet.memoryEnabled!==undefined&&typeof data.pet.memoryEnabled!=='boolean')fail('记忆开关不合法');
-  const foodIds=new Set();for(const food of data.pet.fridge){if(!object(food)||!id(food.id)||foodIds.has(food.id)||typeof food.value!=='number'||!Number.isFinite(food.value)||food.value<0)fail('冰箱食物不合法');foodIds.add(food.id);}
-  if(!object(data.dayStats))fail('统计字段不合法');
-  for(const [date,stats] of Object.entries(data.dayStats)){if(!validDateStr(date)||!object(stats)||['points','done'].some(key=>typeof stats[key]!=='number'||!Number.isFinite(stats[key]))||(stats.total!==undefined&&(!Number.isFinite(stats.total)||stats.total<0)))fail('逐日统计不合法');}
-  if(!Array.isArray(data.customTags)||data.customTags.some(tag=>typeof tag!=='string'||!tag.trim())||new Set(data.customTags).size!==data.customTags.length)fail('自定义标签不合法');
+  if(!['J','P'].includes(data.pet.personType)||data.pet.affinity>10||!validDateStr(data.pet.lastSettle)||!Array.isArray(data.pet.fridge))fail('宠物资料不合法','pet.personType/affinity/lastSettle/fridge');
+  for(const key of ['lastSettle','lastStreakDate','intakeDate','lastClickDate','lastClickBonusDate','lastNoon','lastEve','lastDecayDay'])if(data.pet[key]!=null&&!validDateStr(data.pet[key]))fail('宠物日期不合法：'+key,'pet.'+key);
+  if(data.pet.memoryEnabled!==undefined&&typeof data.pet.memoryEnabled!=='boolean')fail('记忆开关不合法','pet.memoryEnabled');
+  const foodIds=new Set();for(const [index,food] of data.pet.fridge.entries())backupRecord('pet.fridge',index,food,()=>{if(!object(food)||!id(food.id)||foodIds.has(food.id)||typeof food.value!=='number'||!Number.isFinite(food.value)||food.value<0)fail('冰箱食物不合法','id/value');foodIds.add(food.id);});
+  if(!object(data.dayStats))fail('统计字段不合法','dayStats');
+  for(const [date,stats] of Object.entries(data.dayStats)){if(!validDateStr(date)||!object(stats)||['points','done'].some(key=>typeof stats[key]!=='number'||!Number.isFinite(stats[key]))||(stats.total!==undefined&&(!Number.isFinite(stats.total)||stats.total<0)))fail('逐日统计不合法','dayStats 中第'+(Object.keys(data.dayStats).indexOf(date)+1)+'项的日期/points/done/total');}
+  if(!Array.isArray(data.customTags)||data.customTags.some(tag=>typeof tag!=='string'||!tag.trim())||new Set(data.customTags).size!==data.customTags.length)fail('自定义标签不合法','customTags');
   const appearance=data.appearance;
-  if(!object(appearance)||typeof appearance.followSystem!=='boolean'||!['warm','blue'].includes(appearance.lightTheme)||!['soft','black'].includes(appearance.darkTheme)||!['warm','blue','soft','black'].includes(appearance.fixedTheme))fail('外观配置不合法');
+  if(!object(appearance)||typeof appearance.followSystem!=='boolean'||!['warm','blue'].includes(appearance.lightTheme)||!['soft','black'].includes(appearance.darkTheme)||!['warm','blue','soft','black'].includes(appearance.fixedTheme))fail('外观配置不合法','appearance');
   return data;
 }
 async function replaceBackup(input,expected){
@@ -4731,10 +4766,15 @@ const App = {
     toast('数据已导出 📤');
   },
 
+  showImportError(error){
+    const detail=error.field?error.message+(error.message.includes('字段：')?'':'\n字段：'+error.field):'文件格式或读取过程异常，请核对备份文件。';
+    const element=$('#import-error');element.textContent='导入失败：'+detail+'\n整份备份未导入，当前资料保留。请核对副本后重试，不要覆盖原备份。';element.hidden=false;
+  },
   importData(e){
     const file=e.target.files[0];if(!file)return;
+    const feedback=$('#import-error');feedback.hidden=true;feedback.textContent='';
     const reader=new FileReader();
-    reader.onerror=()=>toast('导入失败：文件无法读取');
+    reader.onerror=()=>{this.showImportError(new Error('文件无法读取'));e.target.value='';};
     reader.onload=async()=>{
       try{
         const data=validateBackup(JSON.parse(reader.result));
@@ -4758,7 +4798,7 @@ const App = {
           }catch(error){toast(completed?'资料已导入，界面刷新失败，请重新打开页面。':'导入未保存，原资料保留：'+error.message);}
           finally{running=false;}
         });
-      }catch(error){toast('导入失败：'+error.message);}
+      }catch(error){this.showImportError(error);}
       finally{e.target.value='';}
     };reader.readAsText(file);
   },
