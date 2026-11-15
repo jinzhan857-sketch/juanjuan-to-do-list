@@ -5,3 +5,4 @@ scripts/*.cjs text eol=lf
 package*.json text eol=lf
 .node-version text eol=lf
 .source-revision text eol=lf
+docs/history/2026-11-15-roadmap-before-compaction.md -text
