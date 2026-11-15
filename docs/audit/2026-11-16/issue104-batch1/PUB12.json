@@ -1,0 +1,464 @@
+{
+  "id": "PUB12",
+  "name": "只有月份，手选补日期，P1",
+  "group": "G02",
+  "specification": "\n- 准备及完整输入：F0，日程，“12月复习英语。”，点击AI识别；检查无具体日期的提示后，手选2026年12月5日，保持全天，再主动发布。\n- 字段预期：任务定义始终为“12月复习英语。”；备注空；手选前日期未明确，不能按默认今天直接保存；手选后日期12月5日、全天可做；任务标签技能学习；基础价值分有成功AI分则沿用，没有则主动发布时用规则3分并明确来源，不冒充AI；附件无。\n- 轮数与条数：原文提交1轮，手选日期1次；不额外要求再次调用AI；最终候选1条。\n- 确认前后及重开：补日前不得保存；补日但未发布仍0；主动发布后1，重开仍1；不自动切待办或建立月份重复组。\n\n",
+  "started_at": "2026-11-15T16:59:13.928Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [
+    {
+      "number": 10,
+      "body": {
+        "model": "deepseek-v4-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。\n\n【三大评判维度】\n1．社会契约强度：任务绑定他人、规则的约束程度，违约带来的代价高低。\n2．认知摩擦系数：完成任务需要大脑切换思维模式的频次、动脑复杂程度。\n3．资产沉淀可能性：做完能否留存可长期重复使用的资料、能力、内容、成品。\n\n【标准锚点分值对照表】\n0 分 打游戏。\n1 分 吃饭。\n2 分 通勤、排队办事。\n3 分 健身、跑步。\n3．5 分 聚餐。\n4．5 分 约会、陪伴家人。\n5．5 分 无汇报纯开会。\n6 分 写日记、个人复盘。\n7 分 听讲座。\n8 分 运营小红书、撰写博客。\n9 分 开展分享会。\n10 分 独立完成 Vibe Coding 开发项目。\n\ntask 和 note 由你负责。没有地点、材料、链接、限制条件、提醒内容等附加信息时，task 尽量保留用户原话，note 必须是空字符串。有附加信息时，task 保留核心事务，note 保留附加信息，绝不把整段原话重复复制进 note。任务描述模糊宽泛时，base_score 必须为 null，vague 必须为 true，并请用户补充具体对象、动作与产出。advice 必须针对当前事务，优先给出材料准备、预约咨询、执行顺序、遗漏步骤、地点交通风险、降低执行难度或成果沉淀建议。禁止「提前做好准备」「合理安排时间」「把任务写具体」等套话。办银行卡必须建议提前电话咨询所需材料、营业时间、排队情况或预约方式。确实无需建议时写「这项事务已经很明确，可以直接执行。」严格只返回 JSON，不输出任何多余文字。字段为 task，note，base_score，vague，reason，advice，category，detected_date，detected_time。detected_date 必须结合用户消息里的今天日期返回 YYYY-MM-DD。课程名、课程编号、教室、上课、作业和学校事务优先归学业事务。\n\n时间识别规则：只要原文出现具体时间或时间范围，detected_time 必须优先返回标准 24 小时格式 HH:MM 或 HH:MM-HH:MM，不能只返回“早上”“下午”等模糊时段。例如“早上10点到1点”返回“10:00-13:00”。\n\n分类规则：category 只能从「日常生活、学业事务、职场工作、技能学习、金钱复盘、休闲娱乐、社交约定、旅行出行」中选择。学校课程、校招、学生证和校内流程优先归学业事务；家人一起看展、去博物馆或短途游玩优先归旅行出行；社交约定仅用于社交、人脉和约人见面；日常生活仅用于家务、采购和个人琐事。"
+          },
+          {
+            "role": "user",
+            "content": "今天是2026-11-15。待办任务：12月复习英语。"
+          }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 300,
+        "thinking": {
+          "type": "disabled"
+        },
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false
+      },
+      "final_answer": "{\"task\":\"12月复习英语\",\"note\":\"\",\"base_score\":null,\"vague\":true,\"reason\":\"任务仅给出月份和科目，未说明复习范围、目标考试、每日投入或产出形式，认知摩擦与资产沉淀无法判断，社会契约强度也不明确。\",\"advice\":\"请补充：复习针对哪类考试或教材、每天可投入时长、希望达成的具体产出（如完成真题几套、背完多少词汇、写几篇作文）。可先确定12月第一周要完成的单元或真题范围，再倒推每周任务。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-15\",\"detected_time\":\"\"}",
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 143,
+        "total_tokens": 833,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 178
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "input": "12月复习英语。",
+      "draft": {
+        "draftId": "mwh6szk08k7gi",
+        "userFields": {},
+        "kind": "schedule",
+        "recognized": false,
+        "rawText": "12月复习英语。",
+        "resultTitle": "12月复习英语。",
+        "resultNote": "",
+        "images": [],
+        "missingDate": true,
+        "date": "2026-11-15",
+        "calMonth": "2026-11",
+        "timeType": "allday",
+        "slot": "afternoon",
+        "start": "14:00",
+        "end": "15:00",
+        "endDayOffset": 0,
+        "tag": "",
+        "period": "week",
+        "ai": null,
+        "aiTitle": "",
+        "modelRaw": null,
+        "reviewedResult": null,
+        "dateResult": {
+          "kind": "month",
+          "message": "只有月份，尚无具体日期，请切换到待办，或手动选择具体日期。"
+        },
+        "dateError": "只有月份，尚无具体日期，请切换到待办，或手动选择具体日期。",
+        "dateConflict": "",
+        "timeResult": {
+          "kind": "none"
+        },
+        "timeError": "",
+        "timeConflict": "",
+        "aiFailureReason": null
+      }
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [
+          {
+            "id": "mwh6szk08k7gi",
+            "title": "12月复习英语。",
+            "createdAt": 1794708000000,
+            "execDate": "2026-12-05",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "note": "",
+            "links": [],
+            "images": [],
+            "category": "学业事务",
+            "baseScore": 3,
+            "aiReason": "常规任务",
+            "aiAdvice": "",
+            "aiSource": "rule",
+            "aiModelRaw": null,
+            "aiReviewedResult": null,
+            "pageResult": {
+              "title": "12月复习英语。",
+              "note": "",
+              "category": "学业事务",
+              "date": "2026-12-05",
+              "timeType": "allday",
+              "start": "14:00",
+              "end": "15:00",
+              "endDayOffset": 0
+            },
+            "isBackfill": false,
+            "status": null,
+            "statusAt": null,
+            "statusEditCount": 0,
+            "finalScore": 0,
+            "parts": null,
+            "timeChangeMul": null,
+            "timeChangeLabel": null,
+            "timeChangeWhy": null,
+            "scoreRule": {
+              "id": "routine",
+              "version": "1.0.2",
+              "fallback": true
+            }
+          }
+        ],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [
+          {
+            "id": "mwh6szk08k7gi",
+            "title": "12月复习英语。",
+            "createdAt": 1794708000000,
+            "execDate": "2026-12-05",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "note": "",
+            "links": [],
+            "images": [],
+            "category": "学业事务",
+            "baseScore": 3,
+            "aiReason": "常规任务",
+            "aiAdvice": "",
+            "aiSource": "rule",
+            "aiModelRaw": null,
+            "aiReviewedResult": null,
+            "pageResult": {
+              "title": "12月复习英语。",
+              "note": "",
+              "category": "学业事务",
+              "date": "2026-12-05",
+              "timeType": "allday",
+              "start": "14:00",
+              "end": "15:00",
+              "endDayOffset": 0
+            },
+            "isBackfill": false,
+            "status": null,
+            "statusAt": null,
+            "statusEditCount": 0,
+            "finalScore": 0,
+            "parts": null,
+            "timeChangeMul": null,
+            "timeChangeLabel": null,
+            "timeChangeWhy": null,
+            "scoreRule": {
+              "id": "routine",
+              "version": "1.0.2",
+              "fallback": true
+            }
+          }
+        ],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "frontend_requests": [
+    {
+      "title": "12月复习英语。",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "b1be4dc630264b80bb592c5c9e625c5c"
+    }
+  ],
+  "final_draft": {
+    "draftId": "mwh6szk0ew7he",
+    "userFields": {},
+    "kind": "schedule",
+    "recognized": false,
+    "rawText": "",
+    "resultTitle": "",
+    "resultNote": "",
+    "images": [],
+    "missingDate": false,
+    "date": "2026-11-15",
+    "calMonth": "2026-11",
+    "timeType": "allday",
+    "slot": "afternoon",
+    "start": "14:00",
+    "end": "15:00",
+    "endDayOffset": 0,
+    "tag": "",
+    "period": "week",
+    "ai": null,
+    "aiTitle": "",
+    "modelRaw": null,
+    "reviewedResult": null
+  },
+  "reopen_equal": true,
+  "notices": [
+    "发布成功"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 1,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:15.460Z",
+  "review": {
+    "status": "待判断",
+    "note": "补日后规则3分符合无成功AI分分支；类别实际学业事务，题目预期技能学习，规则待判断。",
+    "raw_model_calls": 1,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [],
+    "unchanged_original_todo_ids": [],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}

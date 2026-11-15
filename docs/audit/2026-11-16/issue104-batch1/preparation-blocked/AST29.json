@@ -1,0 +1,363 @@
+{
+  "id": "AST29",
+  "name": "聊天创建请求转事务，原N01，C4",
+  "group": "G05",
+  "specification": "\n- 准备及完整输入：F0，明确选择聊天，“帮我创建明天下午三点的日程。”。\n- 回复及指标：明确请切换卷卷事务，不继续代收标题、日期等字段，不输出action或可执行建议，不说已经安排；发布字段不适用，不填虚构分数。\n- 轮数与条数：用户1轮，可执行候选0；不切角色、不确认。\n- 确认前后及重开：新增/修改/删除0；重开无日程，不能把不创建记成漏建失败。\n\n",
+  "started_at": "2026-11-15T16:59:29.780Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "帮我创建明天下午三点的日程。",
+      "role": "chat",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0evhcg",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "帮我创建明天下午三点的日程。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "chat"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "帮我创建明天下午三点的日程。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0evhcg",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "帮我创建明天下午三点的日程。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "帮我创建明天下午三点的日程。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0evhcg",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "帮我创建明天下午三点的日程。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "帮我创建明天下午三点的日程。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0evhcg",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "帮我创建明天下午三点的日程。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "帮我创建明天下午三点的日程。",
+      "role": "chat",
+      "result": null
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "帮我创建明天下午三点的日程。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "帮我创建明天下午三点的日程。"
+          }
+        ]
+      },
+      "agent_role": "chat",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "20f9185b0ede497090eef97da2c367cb"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "20f9185b0ede497090eef97da2c367cb"
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [
+    "消息未完成，请检查后重试"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:29.791Z"
+}

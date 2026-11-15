@@ -1,0 +1,503 @@
+{
+  "id": "AST10",
+  "name": "两轮改口，只建最新卡，原Q01，T1加更正",
+  "group": "G03",
+  "specification": "\n- 准备及完整输入：F0，事务，第1轮“明天15点到16点复习。”；第2轮“不，是16点到17点。”；只确认最新卡片，再尝试旧卡确认。\n- 字段预期：日程定义“复习”、备注空、日期2026年11月16日、最终精确16:00至17:00、标签学业事务或技能学习、基础价值分记录两版及理由，不因单纯改时无理由变分；附件无。\n- 轮数与条数：用户2轮，最终有效候选1条；新卡确认1次，旧卡执行尝试1次。\n- 确认前后及重开：确认前0，新卡后1，旧卡尝试后仍1；重开仅最新时段1条。旧版候选不可再执行，模型实际请求数另记，不为凑两次强迫付费。\n\n",
+  "started_at": "2026-11-15T16:59:29.420Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "明天15点到16点复习。",
+      "role": "task",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0lgac2",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "明天15点到16点复习。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        }
+      ]
+    },
+    {
+      "input": "不，是16点到17点。",
+      "role": "task",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "明天15点到16点复习。"
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0lgac2",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "明天15点到16点复习。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        },
+        {
+          "id": "mwh6szk0g7311",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "不，是16点到17点。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "明天15点到16点复习。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0g7311",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "不，是16点到17点。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          },
+          {
+            "id": "mwh6szk0lgac2",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "明天15点到16点复习。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "明天15点到16点复习。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0g7311",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "不，是16点到17点。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          },
+          {
+            "id": "mwh6szk0lgac2",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "明天15点到16点复习。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "明天15点到16点复习。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0g7311",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "不，是16点到17点。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          },
+          {
+            "id": "mwh6szk0lgac2",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "明天15点到16点复习。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "明天15点到16点复习。",
+      "role": "task",
+      "result": {
+        "type": "proposal",
+        "reply": "我已整理好这条日程，请确认后创建。",
+        "action": {
+          "kind": "create_schedule",
+          "target_id": null,
+          "item": {
+            "title": "复习。",
+            "note": "",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "15:00",
+            "end_time": "16:00",
+            "category": "日常生活",
+            "base_score": 3
+          }
+        }
+      }
+    },
+    {
+      "text": "不，是16点到17点。",
+      "role": "task",
+      "result": null
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "明天15点到16点复习。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "明天15点到16点复习。"
+          }
+        ]
+      },
+      "agent_role": "task",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "c2882967513942bfa4071ac6e0dcf802"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "c2882967513942bfa4071ac6e0dcf802"
+    },
+    {
+      "mode": "agent",
+      "message": "不，是16点到17点。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "明天15点到16点复习。"
+          },
+          {
+            "role": "user",
+            "content": "不，是16点到17点。"
+          }
+        ]
+      },
+      "agent_role": "task",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "52050f5a7edd442c96d708f84efec02e"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "52050f5a7edd442c96d708f84efec02e"
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [
+    "消息未完成，请检查后重试",
+    "消息未完成，请检查后重试"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:29.435Z"
+}

@@ -1,0 +1,207 @@
+{
+  "id": "AST24",
+  "name": "取消A、B先回、A迟到，服务替身",
+  "group": "G05",
+  "specification": "\n- 准备及完整输入：F0，事务，A输入“创建明天15:00到16:00复习线性代数的日程。”；传输替身暂扣A，点取消；B输入“创建明天16:00到17:00复习线性代数的日程。”；让B先返回，再释放A。只确认B卡片。\n- 字段预期：B定义“复习线性代数”、备注空、日期2026年11月16日、精确16:00至17:00、学业事务；替身给固定合成基础分6并明确非AI实测分；附件无。A不能抢显示或解锁B，取消通知幂等。\n- 轮数与条数：用户2轮，取消1次、B确认1次；真实模型请求0，有效候选仅B一条。\n- 确认前后及重开：确认前0，B后1，A迟到后仍1；重开仅B字段。若网页本地接管而无法触发所需等待点，记录该路径受阻，不能用改应用强行制造付费请求。\n\n",
+  "started_at": "2026-11-15T16:59:29.692Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [
+    "受阻：本地事务接管无法安全触发指定传输等待点，本题不改应用强迫调用。"
+  ],
+  "reopen_equal": true,
+  "notices": [],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "blocked",
+  "ended_at": "2026-11-15T16:59:29.698Z",
+  "review": {
+    "status": "受阻",
+    "note": "本地事务路径接管，未建立传输暂扣和迟到点，零模型请求；本题未执行所要求的竞态。",
+    "raw_model_calls": 0,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [],
+    "unchanged_original_todo_ids": [],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}

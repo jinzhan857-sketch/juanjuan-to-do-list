@@ -1,0 +1,458 @@
+{
+  "id": "AST31",
+  "name": "普通问答，C1",
+  "group": "G05",
+  "specification": "\n- 准备及完整输入：F0，明确选择聊天，“用两句话解释日程和待办的区别，不要创建任何记录。”。\n- 回复及指标：解释日程有执行日期安排，待办无固定执行日期且可按周期组织；回答两句话，概念正确；不编用户资料，不冒称实时检索，不输出执行动作。发布字段不适用。\n- 轮数与条数：用户1轮，可执行候选0；无确认动作。\n- 确认前后及重开：业务零改动，重开日程待办仍空；文案句数与概念正确性分别判。\n\n",
+  "started_at": "2026-11-15T17:02:09.524Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [
+    {
+      "number": 50,
+      "body": {
+        "model": "deepseek-v4-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是「卷卷聊天」，温和、自然、简洁。你可以使用用户授权的相关记忆和最近聊天来提供个性化陪伴与答疑。严格只返回 JSON，格式只能是 {\"type\":\"chat\",\"reply\":\"回复\"} 或 {\"type\":\"clarify\",\"reply\":\"追问\"}。不能编造实时信息、外部搜索结果或不存在的资料。不能创建、修改或删除任务；用户需要落地执行时，提醒可以交给卷卷事务。用户要求新建、修改或删除日程、待办时，必须明确提示切换「卷卷事务」，不要替事务模式收集标题、日期等创建信息，不要说「我帮你记下来」「已经安排好」或暗示聊天模式能执行。此时返回 {\"type\":\"chat\",\"reply\":\"这需要交给卷卷事务处理，请切换到卷卷事务，再告诉它要安排的内容。\"}。\n上下文只含按问题选择的有限资料，selection.partial始终为true，不能声称查过完整数据库。查询返回query条件由程序核对；资料不足或目标不唯一时追问。"
+          },
+          {
+            "role": "user",
+            "content": "今天是2026-11-15。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n{\"tasks\":[],\"todos\":[],\"selection\":{\"tasks_total\":0,\"todos_total\":0,\"tasks_selected\":0,\"todos_selected\":0,\"partial\":true},\"memories\":[],\"history\":[{\"role\":\"user\",\"content\":\"用两句话解释日程和待办的区别，不要创建任何记录。\"}],\"planning\":{\"date_from\":null,\"date_to\":null,\"schedule_count\":0,\"todo_count\":0,\"memory_count\":0,\"schedule_examples\":[],\"todo_examples\":[],\"memory_examples\":[],\"insights\":{}}}\n\n用户刚刚说：用两句话解释日程和待办的区别，不要创建任何记录。"
+          }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 900,
+        "thinking": {
+          "type": "disabled"
+        },
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false
+      },
+      "final_answer": "{\"type\":\"chat\",\"reply\":\"日程是有明确时间点、需要按时去做的事，比如明天下午三点的会议；待办是需要在某段时间内完成、但不一定绑定具体时刻的事项，比如本周内整理完资料。简单说，日程强调“什么时候做”，待办强调“要做什么”。\"}",
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 408,
+        "completion_tokens": 65,
+        "total_tokens": 473,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 280
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "input": "用两句话解释日程和待办的区别，不要创建任何记录。",
+      "role": "chat",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0fju8x",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "用两句话解释日程和待办的区别，不要创建任何记录。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "chat"
+          }
+        },
+        {
+          "id": "mwh6szk04bs4q",
+          "chatId": "chat-a",
+          "role": "assistant",
+          "content": "日程是有明确时间点、需要按时去做的事，比如明天下午三点的会议；待办是需要在某段时间内完成、但不一定绑定具体时刻的事项，比如本周内整理完资料。简单说，日程强调“什么时候做”，待办强调“要做什么”。",
+          "type": "chat",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "chat"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "用两句话解释日程和待办的区别，不要创…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk04bs4q",
+            "chatId": "chat-a",
+            "role": "assistant",
+            "content": "日程是有明确时间点、需要按时去做的事，比如明天下午三点的会议；待办是需要在某段时间内完成、但不一定绑定具体时刻的事项，比如本周内整理完资料。简单说，日程强调“什么时候做”，待办强调“要做什么”。",
+            "type": "chat",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          },
+          {
+            "id": "mwh6szk0fju8x",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "用两句话解释日程和待办的区别，不要创建任何记录。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "用两句话解释日程和待办的区别，不要创…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk04bs4q",
+            "chatId": "chat-a",
+            "role": "assistant",
+            "content": "日程是有明确时间点、需要按时去做的事，比如明天下午三点的会议；待办是需要在某段时间内完成、但不一定绑定具体时刻的事项，比如本周内整理完资料。简单说，日程强调“什么时候做”，待办强调“要做什么”。",
+            "type": "chat",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          },
+          {
+            "id": "mwh6szk0fju8x",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "用两句话解释日程和待办的区别，不要创建任何记录。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "用两句话解释日程和待办的区别，不要创…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk04bs4q",
+            "chatId": "chat-a",
+            "role": "assistant",
+            "content": "日程是有明确时间点、需要按时去做的事，比如明天下午三点的会议；待办是需要在某段时间内完成、但不一定绑定具体时刻的事项，比如本周内整理完资料。简单说，日程强调“什么时候做”，待办强调“要做什么”。",
+            "type": "chat",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          },
+          {
+            "id": "mwh6szk0fju8x",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "用两句话解释日程和待办的区别，不要创建任何记录。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "chat"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "用两句话解释日程和待办的区别，不要创建任何记录。",
+      "role": "chat",
+      "result": null
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "用两句话解释日程和待办的区别，不要创建任何记录。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "用两句话解释日程和待办的区别，不要创建任何记录。"
+          }
+        ]
+      },
+      "agent_role": "chat",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "c212132f31624cdf8d03de23ffcd2415"
+    }
+  ],
+  "handler_responses": [
+    {
+      "status": 200,
+      "parsed": {
+        "type": "chat",
+        "reply": "日程是有明确时间点、需要按时去做的事，比如明天下午三点的会议；待办是需要在某段时间内完成、但不一定绑定具体时刻的事项，比如本周内整理完资料。简单说，日程强调“什么时候做”，待办强调“要做什么”。",
+        "used_evidence": []
+      }
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T17:02:10.626Z",
+  "review": {
+    "status": "待判断",
+    "note": "两句话且零写入，但“日程有明确时间点”未涵盖全天日程，概念表述待判断。",
+    "raw_model_calls": 1,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [],
+    "unchanged_original_todo_ids": [],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}

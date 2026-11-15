@@ -1,0 +1,610 @@
+{
+  "id": "PUB13",
+  "name": "钟点模糊后补全，P1",
+  "group": "G02",
+  "specification": "\n- 准备及完整输入：F0，日程，先输入“三点复习演示课程。”并识别；再把原文改成“明天下午三点到四点复习演示课程。”并识别，最后确认发布。\n- 字段预期：首轮保留原文并提示补充上下午或手选，不能猜精确钟点保存；最终任务定义为第二轮完整原句，备注空，日期2026年11月16日，精确15:00至16:00，任务标签学业事务，基础价值分为最终成功AI分，附件无。\n- 轮数与条数：原文提交2轮；不是助手对话；最终候选1条。\n- 确认前后及重开：首轮新增0；最终确认前0，确认后1；重开仅最终版本1条。\n\n",
+  "started_at": "2026-11-15T16:59:15.463Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [
+    {
+      "number": 11,
+      "body": {
+        "model": "deepseek-v4-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。\n\n【三大评判维度】\n1．社会契约强度：任务绑定他人、规则的约束程度，违约带来的代价高低。\n2．认知摩擦系数：完成任务需要大脑切换思维模式的频次、动脑复杂程度。\n3．资产沉淀可能性：做完能否留存可长期重复使用的资料、能力、内容、成品。\n\n【标准锚点分值对照表】\n0 分 打游戏。\n1 分 吃饭。\n2 分 通勤、排队办事。\n3 分 健身、跑步。\n3．5 分 聚餐。\n4．5 分 约会、陪伴家人。\n5．5 分 无汇报纯开会。\n6 分 写日记、个人复盘。\n7 分 听讲座。\n8 分 运营小红书、撰写博客。\n9 分 开展分享会。\n10 分 独立完成 Vibe Coding 开发项目。\n\ntask 和 note 由你负责。没有地点、材料、链接、限制条件、提醒内容等附加信息时，task 尽量保留用户原话，note 必须是空字符串。有附加信息时，task 保留核心事务，note 保留附加信息，绝不把整段原话重复复制进 note。任务描述模糊宽泛时，base_score 必须为 null，vague 必须为 true，并请用户补充具体对象、动作与产出。advice 必须针对当前事务，优先给出材料准备、预约咨询、执行顺序、遗漏步骤、地点交通风险、降低执行难度或成果沉淀建议。禁止「提前做好准备」「合理安排时间」「把任务写具体」等套话。办银行卡必须建议提前电话咨询所需材料、营业时间、排队情况或预约方式。确实无需建议时写「这项事务已经很明确，可以直接执行。」严格只返回 JSON，不输出任何多余文字。字段为 task，note，base_score，vague，reason，advice，category，detected_date，detected_time。detected_date 必须结合用户消息里的今天日期返回 YYYY-MM-DD。课程名、课程编号、教室、上课、作业和学校事务优先归学业事务。\n\n时间识别规则：只要原文出现具体时间或时间范围，detected_time 必须优先返回标准 24 小时格式 HH:MM 或 HH:MM-HH:MM，不能只返回“早上”“下午”等模糊时段。例如“早上10点到1点”返回“10:00-13:00”。\n\n分类规则：category 只能从「日常生活、学业事务、职场工作、技能学习、金钱复盘、休闲娱乐、社交约定、旅行出行」中选择。学校课程、校招、学生证和校内流程优先归学业事务；家人一起看展、去博物馆或短途游玩优先归旅行出行；社交约定仅用于社交、人脉和约人见面；日常生活仅用于家务、采购和个人琐事。"
+          },
+          {
+            "role": "user",
+            "content": "今天是2026-11-15。待办任务：三点复习演示课程。"
+          }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 300,
+        "thinking": {
+          "type": "disabled"
+        },
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false
+      },
+      "final_answer": "{\"task\":\"三点复习演示课程\",\"note\":\"\",\"base_score\":7.0,\"vague\":false,\"reason\":\"复习演示课程属于学习类任务，需要理解与记忆，认知摩擦中等偏高；课程复习可沉淀笔记与知识体系，但绑定他人程度较低，故评为7.0分。\",\"advice\":\"建议先整理演示课程的讲义与操作步骤，按流程分模块复习；对易错环节做标注并动手复演一遍，把关键步骤整理成可复用的操作清单。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-15\",\"detected_time\":\"15:00\"}",
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 133,
+        "total_tokens": 823,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 178
+      }
+    },
+    {
+      "number": 12,
+      "body": {
+        "model": "deepseek-v4-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。\n\n【三大评判维度】\n1．社会契约强度：任务绑定他人、规则的约束程度，违约带来的代价高低。\n2．认知摩擦系数：完成任务需要大脑切换思维模式的频次、动脑复杂程度。\n3．资产沉淀可能性：做完能否留存可长期重复使用的资料、能力、内容、成品。\n\n【标准锚点分值对照表】\n0 分 打游戏。\n1 分 吃饭。\n2 分 通勤、排队办事。\n3 分 健身、跑步。\n3．5 分 聚餐。\n4．5 分 约会、陪伴家人。\n5．5 分 无汇报纯开会。\n6 分 写日记、个人复盘。\n7 分 听讲座。\n8 分 运营小红书、撰写博客。\n9 分 开展分享会。\n10 分 独立完成 Vibe Coding 开发项目。\n\ntask 和 note 由你负责。没有地点、材料、链接、限制条件、提醒内容等附加信息时，task 尽量保留用户原话，note 必须是空字符串。有附加信息时，task 保留核心事务，note 保留附加信息，绝不把整段原话重复复制进 note。任务描述模糊宽泛时，base_score 必须为 null，vague 必须为 true，并请用户补充具体对象、动作与产出。advice 必须针对当前事务，优先给出材料准备、预约咨询、执行顺序、遗漏步骤、地点交通风险、降低执行难度或成果沉淀建议。禁止「提前做好准备」「合理安排时间」「把任务写具体」等套话。办银行卡必须建议提前电话咨询所需材料、营业时间、排队情况或预约方式。确实无需建议时写「这项事务已经很明确，可以直接执行。」严格只返回 JSON，不输出任何多余文字。字段为 task，note，base_score，vague，reason，advice，category，detected_date，detected_time。detected_date 必须结合用户消息里的今天日期返回 YYYY-MM-DD。课程名、课程编号、教室、上课、作业和学校事务优先归学业事务。\n\n时间识别规则：只要原文出现具体时间或时间范围，detected_time 必须优先返回标准 24 小时格式 HH:MM 或 HH:MM-HH:MM，不能只返回“早上”“下午”等模糊时段。例如“早上10点到1点”返回“10:00-13:00”。\n\n分类规则：category 只能从「日常生活、学业事务、职场工作、技能学习、金钱复盘、休闲娱乐、社交约定、旅行出行」中选择。学校课程、校招、学生证和校内流程优先归学业事务；家人一起看展、去博物馆或短途游玩优先归旅行出行；社交约定仅用于社交、人脉和约人见面；日常生活仅用于家务、采购和个人琐事。"
+          },
+          {
+            "role": "user",
+            "content": "今天是2026-11-15。待办任务：明天下午三点到四点复习演示课程。"
+          }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 300,
+        "thinking": {
+          "type": "disabled"
+        },
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false
+      },
+      "final_answer": "{\"task\":\"复习演示课程\",\"note\":\"明天下午三点到四点\",\"base_score\":7.0,\"vague\":false,\"reason\":\"复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资产沉淀可能性较高。\",\"advice\":\"先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-16\",\"detected_time\":\"15:00-16:00\"}",
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 694,
+        "completion_tokens": 158,
+        "total_tokens": 852,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 182
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "input": "三点复习演示课程。",
+      "draft": {
+        "draftId": "mwh6szk0wjs41",
+        "userFields": {},
+        "kind": "schedule",
+        "recognized": true,
+        "rawText": "三点复习演示课程。",
+        "resultTitle": "三点复习演示课程。",
+        "resultNote": "",
+        "images": [],
+        "missingDate": false,
+        "date": "2026-11-15",
+        "calMonth": "2026-11",
+        "timeType": "allday",
+        "slot": "afternoon",
+        "start": "14:00",
+        "end": "15:00",
+        "endDayOffset": 0,
+        "tag": "学业事务",
+        "period": "week",
+        "ai": {
+          "task": "三点复习演示课程。",
+          "note": "",
+          "base_score": 7,
+          "vague": false,
+          "reason": "复习演示课程属于学习类任务，需要理解与记忆，认知摩擦中等偏高；课程复习可沉淀笔记与知识体系，但绑定他人程度较低，故评为7",
+          "advice": "建议先整理演示课程的讲义与操作步骤，按流程分模块复习；对易错环节做标注并动手复演一遍，把关键步骤整理成可复用的操作清单。",
+          "category": "学业事务",
+          "detected_date": null,
+          "detected_time": null,
+          "source": "ai"
+        },
+        "aiTitle": "",
+        "modelRaw": "{\"task\":\"三点复习演示课程\",\"note\":\"\",\"base_score\":7.0,\"vague\":false,\"reason\":\"复习演示课程属于学习类任务，需要理解与记忆，认知摩擦中等偏高；课程复习可沉淀笔记与知识体系，但绑定他人程度较低，故评为7.0分。\",\"advice\":\"建议先整理演示课程的讲义与操作步骤，按流程分模块复习；对易错环节做标注并动手复演一遍，把关键步骤整理成可复用的操作清单。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-15\",\"detected_time\":\"15:00\"}",
+        "reviewedResult": {
+          "task": "三点复习演示课程。",
+          "note": "",
+          "base_score": 7,
+          "vague": false,
+          "reason": "复习演示课程属于学习类任务，需要理解与记忆，认知摩擦中等偏高；课程复习可沉淀笔记与知识体系，但绑定他人程度较低，故评为7",
+          "advice": "建议先整理演示课程的讲义与操作步骤，按流程分模块复习；对易错环节做标注并动手复演一遍，把关键步骤整理成可复用的操作清单。",
+          "category": "学业事务",
+          "detected_date": null,
+          "detected_time": null,
+          "source": "ai"
+        },
+        "dateResult": {
+          "kind": "none"
+        },
+        "dateError": "",
+        "dateConflict": "",
+        "timeResult": {
+          "kind": "uncertain",
+          "message": "时间段尚不明确，请补充上下午，或手动选择具体时间。"
+        },
+        "timeError": "时间段尚不明确，请补充上下午，或手动选择具体时间。",
+        "timeConflict": "",
+        "aiFailureReason": null
+      }
+    },
+    {
+      "input": "明天下午三点到四点复习演示课程。",
+      "draft": {
+        "draftId": "mwh6szk0wjs41",
+        "userFields": {},
+        "kind": "schedule",
+        "recognized": true,
+        "rawText": "明天下午三点到四点复习演示课程。",
+        "resultTitle": "明天下午三点到四点复习演示课程。",
+        "resultNote": "",
+        "images": [],
+        "missingDate": false,
+        "date": "2026-11-16",
+        "calMonth": "2026-11",
+        "timeType": "exact",
+        "slot": "afternoon",
+        "start": "15:00",
+        "end": "16:00",
+        "endDayOffset": 0,
+        "tag": "学业事务",
+        "period": "week",
+        "ai": {
+          "task": "明天下午三点到四点复习演示课程。",
+          "note": "",
+          "base_score": 7,
+          "vague": false,
+          "reason": "复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资",
+          "advice": "先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。",
+          "category": "学业事务",
+          "detected_date": "2026-11-16",
+          "detected_time": "15:00-16:00",
+          "source": "ai"
+        },
+        "aiTitle": "",
+        "modelRaw": "{\"task\":\"复习演示课程\",\"note\":\"明天下午三点到四点\",\"base_score\":7.0,\"vague\":false,\"reason\":\"复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资产沉淀可能性较高。\",\"advice\":\"先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-16\",\"detected_time\":\"15:00-16:00\"}",
+        "reviewedResult": {
+          "task": "明天下午三点到四点复习演示课程。",
+          "note": "",
+          "base_score": 7,
+          "vague": false,
+          "reason": "复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资",
+          "advice": "先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。",
+          "category": "学业事务",
+          "detected_date": "2026-11-16",
+          "detected_time": "15:00-16:00",
+          "source": "ai"
+        },
+        "dateResult": {
+          "kind": "date",
+          "date": "2026-11-16"
+        },
+        "dateError": "",
+        "dateConflict": "",
+        "timeResult": {
+          "kind": "exact",
+          "start": "15:00",
+          "end": "16:00",
+          "startOffset": 0,
+          "endOffset": 0
+        },
+        "timeError": "",
+        "timeConflict": "",
+        "aiFailureReason": null,
+        "timeDateShift": 0,
+        "timeDateRaw": "明天下午三点到四点复习演示课程。"
+      }
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [
+          {
+            "id": "mwh6szk0wjs41",
+            "title": "明天下午三点到四点复习演示课程。",
+            "createdAt": 1794708000000,
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": "afternoon",
+            "startTime": "15:00",
+            "endTime": "16:00",
+            "note": "",
+            "links": [],
+            "images": [],
+            "category": "学业事务",
+            "baseScore": 7,
+            "aiReason": "复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资",
+            "aiAdvice": "先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。",
+            "aiSource": "ai",
+            "aiModelRaw": "{\"task\":\"复习演示课程\",\"note\":\"明天下午三点到四点\",\"base_score\":7.0,\"vague\":false,\"reason\":\"复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资产沉淀可能性较高。\",\"advice\":\"先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-16\",\"detected_time\":\"15:00-16:00\"}",
+            "aiReviewedResult": {
+              "task": "明天下午三点到四点复习演示课程。",
+              "note": "",
+              "base_score": 7,
+              "vague": false,
+              "reason": "复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资",
+              "advice": "先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。",
+              "category": "学业事务",
+              "detected_date": "2026-11-16",
+              "detected_time": "15:00-16:00",
+              "source": "ai"
+            },
+            "pageResult": {
+              "title": "明天下午三点到四点复习演示课程。",
+              "note": "",
+              "category": "学业事务",
+              "date": "2026-11-16",
+              "timeType": "exact",
+              "start": "15:00",
+              "end": "16:00",
+              "endDayOffset": 0
+            },
+            "isBackfill": false,
+            "status": null,
+            "statusAt": null,
+            "statusEditCount": 0,
+            "finalScore": 0,
+            "parts": null,
+            "timeChangeMul": null,
+            "timeChangeLabel": null,
+            "timeChangeWhy": null,
+            "scoreRule": null
+          }
+        ],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [
+          {
+            "id": "mwh6szk0wjs41",
+            "title": "明天下午三点到四点复习演示课程。",
+            "createdAt": 1794708000000,
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": "afternoon",
+            "startTime": "15:00",
+            "endTime": "16:00",
+            "note": "",
+            "links": [],
+            "images": [],
+            "category": "学业事务",
+            "baseScore": 7,
+            "aiReason": "复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资",
+            "aiAdvice": "先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。",
+            "aiSource": "ai",
+            "aiModelRaw": "{\"task\":\"复习演示课程\",\"note\":\"明天下午三点到四点\",\"base_score\":7.0,\"vague\":false,\"reason\":\"复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资产沉淀可能性较高。\",\"advice\":\"先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。\",\"category\":\"学业事务\",\"detected_date\":\"2026-11-16\",\"detected_time\":\"15:00-16:00\"}",
+            "aiReviewedResult": {
+              "task": "明天下午三点到四点复习演示课程。",
+              "note": "",
+              "base_score": 7,
+              "vague": false,
+              "reason": "复习课程属于学习任务，需要切换思维模式理解内容，认知摩擦中等；绑定课程进度有一定约束；复习成果可沉淀为笔记或知识体系，资",
+              "advice": "先明确演示课程的具体科目和复习范围，把要复习的章节或演示案例列成清单；三点到四点仅一小时，建议按“回顾要点—重做关键演示—记录疑问”三段分配，结束后把易错点整理成一页笔记便于后续复用。",
+              "category": "学业事务",
+              "detected_date": "2026-11-16",
+              "detected_time": "15:00-16:00",
+              "source": "ai"
+            },
+            "pageResult": {
+              "title": "明天下午三点到四点复习演示课程。",
+              "note": "",
+              "category": "学业事务",
+              "date": "2026-11-16",
+              "timeType": "exact",
+              "start": "15:00",
+              "end": "16:00",
+              "endDayOffset": 0
+            },
+            "isBackfill": false,
+            "status": null,
+            "statusAt": null,
+            "statusEditCount": 0,
+            "finalScore": 0,
+            "parts": null,
+            "timeChangeMul": null,
+            "timeChangeLabel": null,
+            "timeChangeWhy": null,
+            "scoreRule": null
+          }
+        ],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "frontend_requests": [
+    {
+      "title": "三点复习演示课程。",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "c5fa9315a9704135832459c68ebbf163"
+    },
+    {
+      "title": "明天下午三点到四点复习演示课程。",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "a819f88d81cd4c9db9851b61dc73fd55"
+    }
+  ],
+  "final_draft": {
+    "draftId": "mwh6szk09kybk",
+    "userFields": {},
+    "kind": "schedule",
+    "recognized": false,
+    "rawText": "",
+    "resultTitle": "",
+    "resultNote": "",
+    "images": [],
+    "missingDate": false,
+    "date": "2026-11-15",
+    "calMonth": "2026-11",
+    "timeType": "allday",
+    "slot": "afternoon",
+    "start": "14:00",
+    "end": "15:00",
+    "endDayOffset": 0,
+    "tag": "",
+    "period": "week",
+    "ai": null,
+    "aiTitle": "",
+    "modelRaw": null,
+    "reviewedResult": null
+  },
+  "reopen_equal": true,
+  "notices": [
+    "发布成功"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 1,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:18.882Z",
+  "review": {
+    "status": "符合本题已核对项",
+    "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+    "raw_model_calls": 2,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [],
+    "unchanged_original_todo_ids": [],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}

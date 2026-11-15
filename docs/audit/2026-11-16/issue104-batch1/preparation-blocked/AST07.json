@@ -1,0 +1,381 @@
+{
+  "id": "AST07",
+  "name": "一组有限重复，原I01，T5",
+  "group": "G03",
+  "specification": "\n- 准备及完整输入：F0，事务，“11月16日至30日，每周一19:00到20:00练瑜伽。”。\n- 字段预期：每条日程定义“练瑜伽”、备注空、精确19:00至20:00、任务标签日常生活、基础价值分同组一致且来源明确；展开日期2026年11月16日、23日、30日，含两端；附件无。\n- 轮数与条数：用户1轮，组候选1组、成员3条，确认卡显示范围、星期与数量；本题不确认。\n- 确认前后及重开：新增0、持久组0，重开仍0；不误排每天，不让模型编造已有组ID。\n\n",
+  "started_at": "2026-11-15T16:59:29.364Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+      "role": "task",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0pjpxh",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "11月16日至30日，每周一19:0…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0pjpxh",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "11月16日至30日，每周一19:0…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0pjpxh",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "11月16日至30日，每周一19:0…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0pjpxh",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+      "role": "task",
+      "result": {
+        "type": "proposal",
+        "reply": "我已整理好这条日程，请确认后创建。",
+        "action": {
+          "kind": "create_schedule",
+          "target_id": null,
+          "item": {
+            "title": "至30日，每周一练瑜伽。",
+            "note": "",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "19:00",
+            "end_time": "20:00",
+            "category": "日常生活",
+            "base_score": 3
+          }
+        }
+      }
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "11月16日至30日，每周一19:00到20:00练瑜伽。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "11月16日至30日，每周一19:00到20:00练瑜伽。"
+          }
+        ]
+      },
+      "agent_role": "task",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "69a254ce621c455e99f6c9915704a439"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "69a254ce621c455e99f6c9915704a439"
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [
+    "消息未完成，请检查后重试"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:29.379Z"
+}

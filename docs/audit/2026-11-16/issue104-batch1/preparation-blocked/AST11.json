@@ -1,0 +1,381 @@
+{
+  "id": "AST11",
+  "name": "确认与最终保存，原T01，T1",
+  "group": "G03",
+  "specification": "\n- 准备及完整输入：F0，事务，“创建明天15:00至16:00复习的确认卡。”，先读未确认数据库，再确认一次，随后重复点击确认入口一次。\n- 字段预期：日程定义“复习”、备注空、日期2026年11月16日、精确15:00至16:00、标签学业事务或技能学习、基础价值分与主动确认卡完全相同；附件无。\n- 轮数与条数：用户1轮，候选1条；首次确认1次，重复确认尝试1次。\n- 确认前后及重开：确认前0，首次后1，重复后仍1；重开全字段与卡片一致，操作不重复、零奖励。\n\n",
+  "started_at": "2026-11-15T16:59:29.437Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "创建明天15:00至16:00复习的确认卡。",
+      "role": "task",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk02nkao",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "创建明天15:00至16:00复习的确认卡。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "创建明天15:00至16:00复习的…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk02nkao",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "创建明天15:00至16:00复习的确认卡。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "创建明天15:00至16:00复习的…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk02nkao",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "创建明天15:00至16:00复习的确认卡。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "创建明天15:00至16:00复习的…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk02nkao",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "创建明天15:00至16:00复习的确认卡。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "创建明天15:00至16:00复习的确认卡。",
+      "role": "task",
+      "result": {
+        "type": "proposal",
+        "reply": "我已整理好这条日程，请确认后创建。",
+        "action": {
+          "kind": "create_schedule",
+          "target_id": null,
+          "item": {
+            "title": "复习的确认卡。",
+            "note": "",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "15:00",
+            "end_time": "16:00",
+            "category": "日常生活",
+            "base_score": 3
+          }
+        }
+      }
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "创建明天15:00至16:00复习的确认卡。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "创建明天15:00至16:00复习的确认卡。"
+          }
+        ]
+      },
+      "agent_role": "task",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "1e7ed8a1a55847669f6746798f6c8160"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "1e7ed8a1a55847669f6746798f6c8160"
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [
+    "消息未完成，请检查后重试"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:29.454Z"
+}
