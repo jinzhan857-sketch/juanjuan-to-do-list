@@ -1,10 +1,10 @@
 # 开发总计划入口
 
-[打开总计划 Issue #1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)：开发顺序流程图、分阶段勾选清单和 19 项子任务都在这里。查看进度直接进入总计划，本文只解释使用方法，不复制进度。
+[打开总计划 Issue #1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)：唯一执行队列、已完成成果、3.0和可选研究都在这里。查看进度直接进入总计划，本文只解释使用方法，不复制进度；页面原生子任务计数不代表后来登记的全部任务。
 
 ## 从哪里开始
 
-先阅读[当前状态与接手说明](STATUS.md)，再执行 [保存电脑上的最新代码，让 GitHub 下载后也能检查（#2）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/2)，验收后进入 [统一启动、打包和自动检查的方法（#3）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/3)。[确定 3.0 的发布规则、数据格式和验收标准（#11）](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11) 可按授权先做产品规则设计。其余任务检查各自前置条件，不只按编号推进。
+先阅读[当前状态与接手说明](STATUS.md)和[已确认规则实施接手](development/HANDOFF_CONFIRMED_RULES.md)，再从总计划选择展授权的具体任务。#2、#3等已完成基础工作不再写成下一项；已关闭任务保留成果，新观察先核对是否已被较新提交修复。[3.0规则设计#11](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/11)可按授权提前讨论，账户同步方向不变。施工顺序不新增逐项关闭的硬前置，仍须核对原有必要依赖。
 
 ## 标签是什么意思
 
