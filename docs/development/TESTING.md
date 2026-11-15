@@ -4,6 +4,8 @@
 
 运行 node scripts/navigation-browser.cjs，在独立 4232 来源点击“测量导航”，仅使用 juanjuan-issue32-synthetic 合成库。四页全部往返、空内容、长内容及连续切换的逐帧记录保存到 .reports，使用 node scripts/check-navigation-evidence.cjs 报告路径 检查布局、滚动与数据不变。真实手机仍须单独实测，进度及根因对照见[#32报告](../audit/2026-11-15/issue32-navigation.md)。HTTP 隔离边界测试已纳入统一检查。
 
+#31、#39后续复查新增 scripts/review31-39.test.cjs 及 scripts/review31-39-browser.cjs，覆盖大量同名旧记录、区间查询和课程原文边界，运行记录见[复查报告](../audit/2026-11-15/issue31-39-followup-review.md)。只用独立合成库、固定北京时间及明确模型替身；上下文原生样例补齐#28已要求的slot初值，完整字段断言保留。
+
 ## #81本机AI第一部分
 
 最新收尾按累计10次、2元完成，原失败与修正后的DeepSeek回答、事务确认、持久化及撤销结果见[收尾报告](../audit/2026-11-15/issue81-acceptance.md)。ai-acceptance.test.cjs含9项离线检查，使用固定时钟、独立fake-indexeddb及已保存回答回放；ai-local.test.cjs另检查最新request_id和取消合同。专项79项、整合最新main后统一1347项Node检查通过。原应用确认及撤销函数不改，显示边界替换。收尾原始回答只在展明确授权的固定合成题中保存，默认服务日志仍不存输入或回复。当前累计10次已满，禁止把反复运行检查当作新增真实调用授权。下方较早数量和预算保留为历史。

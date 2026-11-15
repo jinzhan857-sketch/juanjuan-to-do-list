@@ -24,7 +24,7 @@ document.querySelector('#nav-run').onclick=async()=>{
   for(const from of ['home','plan','todo','agent'])for(const target of ['home','plan','todo','agent'].filter(x=>x!==from)){
    UI.switchPage(from);for(let i=0;i<20;i++)await frame();
    const beforeSwitch=measure(),started=performance.now();UI.switchPage(target);const switchMs=performance.now()-started;const samples=[beforeSwitch,measure()];const end=performance.now()+380;
-   while(performance.now()<end){await frame();samples.push(measure());}
+   while(performance.now()<end||samples.length<16){await frame();samples.push(measure());}
    const scroller=target==='agent'?document.querySelector('#agent-messages'):document.scrollingElement;
    scroller.scrollTop=0;const bottom=scroller.scrollHeight-scroller.clientHeight;scroller.scrollTop=bottom;await frame();const scrollActual=scroller.scrollTop;scroller.scrollTop=0;
    evidence.runs.push({length,from,target,samples,scrollActual,switchMs});
