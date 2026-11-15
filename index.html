@@ -2126,7 +2126,7 @@ const AIService = {
     const courseMatch=text.match(/([A-Z]{2,}\d{3,}\s*[^，。；！？]*?)(?=\s*(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/i);
     // Consume each metadata span once, stopping before the next labelled span.
     // Keep input order and intentional repetitions; never deduplicate stored notes.
-    const metadataText=text.replace(/\b([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?![：:是为])/g,'教室：$1');
+    const metadataText=text.replace(/\b([A-Za-z]{1,4}[ \t]*\d{2,4})[ \t]*教室(?=$|[，。；！？]|\s*(?:教授|老师|地点|地址))/g,'教室：$1');
     const metadata=[...metadataText.matchAll(/(教室|教授|老师|地点|地址)[ \t]*(?:为|是|[:：])?[ \t]*([^，。；！？]+?)(?=\s+(?:教室|教授|老师|地点|地址)|[，。；！？]|$)/g)].map(match=>({index:match.index,end:match.index+match[0].length,label:match[1],value:match[2].trim()}));
     const structuredNote=metadata.map((x,index)=>{
       const gap=index?metadataText.slice(metadata[index-1].end,x.index):'';

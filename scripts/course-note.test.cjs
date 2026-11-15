@@ -21,6 +21,8 @@ for(const [suffix,expected]of [
  ['教室：A101\n带电脑\n\n教授：Dr. A. Example','教室：A101\n带电脑\n\n教授：Dr. A. Example'],
  ['A101教室 教授Dr. A. Example','教室：A101\n教授：Dr. A. Example'],
  ['地点：教学楼 教室：A101 老师是老师甲','地点：教学楼\n教室：A101\n教授：老师甲'],
+ ['教室 A101 教授 老师甲','教室：A101\n教授：老师甲'],
+ ['教室是A101 教授为老师甲','教室：A101\n教授：老师甲'],
 ])test('metadata retains order and deliberate duplicate: '+suffix,async t=>{const a=await setup(t);a.ctx.input='创建11到11月每周日10:00到11:00 IDAT9001 '+suffix;assert.equal(a.json("AIService._localAgent(input,{tasks:[],todos:[]},'task')").action.rule.note,expected)});
 test('preexisting repeated lines survive repeated form editing and failed recognition',async t=>{
  const a=await setup(t),repeated='教室：A101\n教授：老师甲\n\n教授：老师甲\nhttps://example.com';a.element('#c-title').value='历史合成课程\n'+repeated;a.element('#c-title').listeners.input();await a.run('UI.onSave()');const original=(await a.snapshot()).tasks[0];a.ctx.id=original.id;
