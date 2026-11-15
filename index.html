@@ -2096,9 +2096,10 @@ const AIService = {
 
   _localCategory(title){
     const t = title;
-    if(/(记账|理财|对账|报销|收支|花了多少钱|基金|股票|银行卡|银行页面|银行业务)/.test(t)) return '金钱复盘';
+    if(/(记账|理财|对账|报销|收支|花了多少钱|基金|股票|银行卡|银行页面|银行业务)|核对.{0,30}支出/.test(t)) return '金钱复盘';
     if(/(旅行|旅游|出行|看展|展览|博物馆|景点|行程|短途|度假)/.test(t)) return '旅行出行';
     if(/教程|技术学习/.test(t)) return '技能学习';
+    if(/阅读第\d+(?:\.\d+)*[章节]/.test(t)) return '学业事务';
     if(/(学校|课程|校招|学生证|校内|教室|作业|学习|复习|背单词|刷题|读书|看书|上课|网课|考研|考试|实验课|研讨课|论文|老师|原理|导论|概论|高等数学|数据库|计算机|人工智能|系统开发|软件工程|程序设计|大学英语|专业课|选修课|必修课|[A-Z]{2,}\d{3,})/i.test(t)) return '学业事务';
     if(/(开会|周会|工作|文档|周报|方案|汇报|面试|答辩|客户)/.test(t)) return '职场工作';
     if(/(开发项目|开发应用|开发网站|写代码|编程|技术学习|卷卷\s*AI\s*Todo.{0,10}开发)/i.test(t)) return '技能学习';
@@ -4759,7 +4760,7 @@ const App = {
       UI.cancelRecognition();UI.syncPublishContent($('#c-title').value);$('#c-result-title').value=UI.cState.resultTitle;$('#c-note').value=UI.cState.resultNote;
       $('#btn-ai').textContent='AI 识别';$('#btn-save').disabled=false;
       $('#c-type-suggest').classList.toggle('show',UI.cState.kind==='todo'&&!!parseExactTime(UI.cState.rawText));
-      UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();
+      UI.renderCreate();
     });
     $('#c-result-title').addEventListener('input',e=>{(UI.cState.userFields||={}).title=true;UI.cState.resultTitle=e.target.value;UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();});
     $('#c-note').addEventListener('input',e=>{(UI.cState.userFields||={}).note=true;UI.cState.resultNote=e.target.value;UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();});
