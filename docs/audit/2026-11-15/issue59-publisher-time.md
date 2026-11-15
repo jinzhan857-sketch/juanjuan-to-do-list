@@ -2,6 +2,8 @@
 
 基于#58的d6a09c71bf3c4c43bec4b79c21152e6326b023ec，分支codex/publisher-time-recognition。展已明确同意日期成果保存后继续时间，两个PR分别审查，不擅自合入、不发布。跨日数据和行为方案已通过弹窗确认，见[方案](issue59-cross-day-plan.md)。
 
+成果：[PR #77](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/77)，以日期PR #76为基线。受检提交8e474a8a4a665ee77feb3fa30c9578a2f413b719，无Git归档通过，[Windows与Ubuntu检查](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43696459334)通过。后续文档提交不改变受检应用代码。
+
 ## 问题与结果
 
 旧发布表单依赖AI成功才提取时间，单端默认半小时，会把“三点建议”等数量表达当作钟点，失败路径可能直接写成全天。同日校验也不能表达跨日。
