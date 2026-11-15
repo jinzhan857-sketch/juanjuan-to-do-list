@@ -2,7 +2,7 @@
 // Render the actual home reminders in memory. No app init, database or network.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..');
-const controls='<aside style="padding:12px;background:white;color:black"><label>合成待确认数量 <select id="notice-count"><option>0</option><option selected>1</option><option>10</option><option>100</option></select></label> <label><input id="notice-large" type="checkbox">双倍字体</label><p>#62 合成验收，无数据库与网络。长正文为真实提醒全文。</p></aside>';
+const controls='<aside style="padding:64px 12px 12px;background:white;color:black"><label>合成待确认数量 <select id="notice-count"><option>0</option><option selected>1</option><option>10</option><option>100</option></select></label> <label><input id="notice-large" type="checkbox">双倍字体</label><p>#62 合成验收，无数据库与网络。长正文为真实提醒全文。</p></aside>';
 const setup=`
 S.pet=defaultPet();S.pet.alive=true;S.pet.sick=false;S.pet.fridge=[];
 function previewNotices(){
@@ -16,6 +16,7 @@ previewNotices();`;
 http.createServer((req,res)=>{
  if(req.url!=='/'){res.writeHead(404).end();return;}
  const original=fs.readFileSync(process.env.NOTICE_SOURCE||path.join(root,'index.html'),'utf8');
+ if((original.match(/^App\.init\(\);$/gm)||[]).length!==1)throw Error('Expected exactly one app initialization to disable');
  const html=original.replace('<body>','<body>'+controls).replace(/^App\.init\(\);$/m,setup);
  res.setHeader('Content-Type','text/html;charset=utf-8');res.setHeader('Cache-Control','no-store');
  res.setHeader('Content-Security-Policy',"connect-src 'none'; img-src data:; font-src 'none'");res.end(html);
