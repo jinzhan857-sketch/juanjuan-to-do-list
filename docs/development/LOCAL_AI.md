@@ -1,6 +1,6 @@
 # 本机 AI 服务与人工交接
 
-本页承接 [#81](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81)。本地启动和免费模拟测试已完成，真实模型测试已准备，等待展填写本机Key。真实模型与真实Redis尚未验收，任务保持打开。公网共享AI和网址分别在[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)、[#83](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83)讨论。
+本页承接 [#81](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81)。本地启动和免费模拟已完成，展已填写Key，首条真实请求连通DeepSeek但评分失败，按约定停止。设置修正和离线复现已完成，等待展确认是否使用剩余2次补测；真实功能和Redis尚未验收，任务保持打开。当前证据见[首轮记录](../audit/2026-11-15/issue81-live-first-attempt.md)。公网共享AI和网址分别在[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)、[#83](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83)讨论。
 
 ## 分三部分推进
 
@@ -42,13 +42,15 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:4177/api/ai -ContentType 'a
 
 返回头X-Juanjuan-AI-Mode为simulation表示模拟，不以结果中的source字段单独判断是否真实调用。每条完成请求只记录请求编号、运行模式、状态码、耗时与处理函数SHA256，不记录输入、回复、Key、口令或存储地址。现有设备20次和IP50次规则继续由原处理函数运行，本任务不修改额度或计费规则。
 
-## 第二部分：到这里等待人工
+## 第二部分：人工配置已完成
 
 ### 当前已确认与展只需做的一步
 
 展已选择DeepSeek，同意本轮最多3次真实请求、不自动重试、预算1元；这只是本轮测试约定，后续可重新讨论放宽，不是产品永久限制。
 
 本机根目录已准备私有.env，展只需在DEEPSEEK_API_KEY等号后填写自己的Key并保存，然后回复“已填好”。不要将Key发送到聊天。Codex只用程序检查是否填写，不打印文件或密钥值。
+
+展已完成上述操作，Key已经通过首次真实请求的认证，不需要再次粘贴。已用1次请求，保留原账本，不清零或盲目重跑。首条失败后暂停来自本轮已约定的“失败即停止、不自动重试”。后续建议使用剩余2次补测评分和日程，聊天留待后续；需展确认后再运行，不通过删除账本或重置次数继续调用。
 
 本轮采用真实DeepSeek加本地合成额度存储，因此不需要展申请或配置Redis。测试完整经过本机HTTP入口、原handler、真实模型和原解析器，额度仍标明合成模拟。它不验证真实Redis、云端全站额度或浏览器写入；这与后续完整真实服务配置分开。
 

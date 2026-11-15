@@ -413,6 +413,7 @@ module.exports = async function handler(req, res) {
         messages,
         temperature: 0.1,
         max_tokens: agentMode ? 900 : 300,
+        thinking: { type: 'disabled' },
         response_format: { type: 'json_object' },
         stream: false,
       }),

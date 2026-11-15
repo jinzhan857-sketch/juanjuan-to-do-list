@@ -37,6 +37,12 @@ function createBudgetTransport({key, state, save, transport = fetch, limits = li
       entry.http_status = response.status;
       if (response.ok) {
         const payload = await response.clone().json(), usage = payload.usage;
+        const choice = payload.choices?.[0], message = choice?.message;
+        entry.response_shape = {
+          finish_reason: ['stop', 'length', 'tool_calls', 'content_filter', 'insufficient_system_resource'].includes(choice?.finish_reason) ? choice.finish_reason : 'other',
+          content_chars: typeof message?.content === 'string' ? message.content.length : 0,
+          reasoning_chars: typeof message?.reasoning_content === 'string' ? message.reasoning_content.length : 0,
+        };
         if (Number.isFinite(usage?.prompt_tokens) && usage.prompt_tokens >= 0 && Number.isFinite(usage?.completion_tokens) && usage.completion_tokens >= 0) {
           entry.usage = {input_tokens: usage.prompt_tokens, output_tokens: usage.completion_tokens};
           entry.estimated_cny_at_peak = (usage.prompt_tokens * prices.input + usage.completion_tokens * prices.output) / 1e6;

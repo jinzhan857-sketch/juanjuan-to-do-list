@@ -53,6 +53,20 @@ test('actual token counts are recorded without storing model text or credentials
   assert.equal(a.state.attempts[0].estimated_cny_at_peak, 0.00036);
   assert.doesNotMatch(JSON.stringify(a.state), new RegExp(key));
 });
+
+test('truncated thinking output records only its shape and not sensitive text', async () => {
+  const a = budget(async () => new Response(JSON.stringify({choices: [{finish_reason: 'length', message: {content: '', reasoning_content: key}}]})));
+  await a.request(endpoint, options());
+  assert.deepEqual(a.state.attempts[0].response_shape, {finish_reason: 'length', content_chars: 0, reasoning_chars: key.length});
+  assert.doesNotMatch(JSON.stringify(a.state), new RegExp(key));
+});
+
+test('unknown response metadata cannot write arbitrary provider text to the ledger', async () => {
+  const a = budget(async () => new Response(JSON.stringify({choices: [{finish_reason: key, message: {content: key}}]})));
+  await a.request(endpoint, options());
+  assert.deepEqual(a.state.attempts[0].response_shape, {finish_reason: 'other', content_chars: key.length, reasoning_chars: 0});
+  assert.doesNotMatch(JSON.stringify(a.state), new RegExp(key));
+});
 test('HTTP errors reserve the attempt even when no usage is returned', async () => {
   const a = budget(async () => new Response('secret-error-body', {status: 401}));
   const response = await a.request(endpoint, options()); assert.equal(response.status, 401);
@@ -92,4 +106,23 @@ test('default simulation ignores attempts to enable a live transport', async () 
   const req = {method: 'POST', headers: {}, body: {title: '合成输入', device_id: 'syntheticdevice0123456789abcd'}};
   let status; await setup.handler(req, {status(v) { status = v; return this; }, json() {}});
   assert.equal(status, 200); assert.equal(calls, 0);
+});
+
+for (const role of ['score', 'task', 'planning', 'chat']) test('short JSON request gets a final answer when provider defaults to thinking: ' + role, async () => {
+  let calls = 0;
+  const setup = createModelCheck({key, request: async (url, opts) => {
+    calls++;
+    const body = JSON.parse(opts.body);
+    // Reproduce a provider spending the entire short output limit on reasoning.
+    const message = body.thinking?.type === 'disabled'
+      ? {content: JSON.stringify(role === 'score' ? {task: '合成测试', base_score: 3, vague: false} : {type: 'chat', reply: '合成回复'})}
+      : {content: '', reasoning_content: 'synthetic reasoning filling the output allowance'};
+    return new Response(JSON.stringify({choices: [{message}]}));
+  }});
+  const body = {device_id: 'syntheticdevice0123456789abcd', client_date: '2026-11-15',
+    ...(role === 'score' ? {title: '整理书桌'} : {mode: 'agent', agent_role: role, message: '合成测试', context: {}})};
+  let status, result;
+  await setup.handler({method: 'POST', headers: {}, body}, {status(v) { status = v; return this; }, json(v) { result = v; }});
+  assert.equal(status, 200); assert.equal(calls, 1);
+  assert.equal(role === 'score' ? result.base_score : result.type, role === 'score' ? 3 : 'chat');
 });
