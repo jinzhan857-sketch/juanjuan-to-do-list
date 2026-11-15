@@ -2967,6 +2967,8 @@ const UI = {
     const scope=this.agentQuestionScope(question);
     if(scope.dates.length>1)return null;
     const q={...query};
+    if(/日程|安排/.test(scope.text)&&!/待办/.test(scope.text))q.entity='schedule';
+    if(/待办/.test(scope.text)&&!/日程|安排/.test(scope.text))q.entity='todo';
     if(q.entity!=='todo'&&scope.dates.length===1)q.date_from=q.date_to=scope.dates[0];
     if(scope.keyword)q.keyword=scope.keyword;
     return q;
@@ -3146,13 +3148,13 @@ const UI = {
     return {ok:true};
   },
 
-  queryAgentItems(query){
+  queryAgentItems(query,data=S){
     const q=query||{}; const keyword=String(q.keyword||'').toLowerCase();
-    if(q.entity==='todo') return S.todos.filter(item=>{
+    if(q.entity==='todo') return data.todos.filter(item=>{
       const statusOk=q.status==='all'||(q.status==='done'?item.done:!item.done);
       return statusOk&&(!keyword||`${item.title} ${item.note||''}`.toLowerCase().includes(keyword));
     }).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).map(item=>({id:item.id,title:item.title,meta:item.done?'已完成':'未完成'}));
-    return S.tasks.filter(item=>{
+    return data.tasks.filter(item=>{
       const statusOk=q.status==='all'||(q.status==='done'?item.status==='done':item.status!=='done');
       const dateOk=(!q.date_from||item.execDate>=q.date_from)&&(!q.date_to||item.execDate<=q.date_to);
       return statusOk&&dateOk&&(!keyword||`${item.title} ${item.note||''}`.toLowerCase().includes(keyword));
@@ -3226,7 +3228,9 @@ const UI = {
       const query=this.resolveAgentQuery(result.query,content);
       if(!query){message.type='clarify';message.content='请明确这次要查询的日期。';}
       else{
-        const results=this.queryAgentItems(query);
+        const data=await DB.snapshot(['tasks','todos']);
+        if(requestSerial!==this.agentRequestSerial)return;
+        const results=this.queryAgentItems(query,data);
         message.meta={query,results:results.slice(0,30),total:results.length,agentRole:role};
         message.content=`已按查询条件核对当前本地记录，共 ${results.length} 条，最多显示前 30 条。`;
       }
