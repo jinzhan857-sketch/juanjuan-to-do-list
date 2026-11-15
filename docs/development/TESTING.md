@@ -4,6 +4,9 @@
 
 原日期、客户端、退次专项继续由npm run check执行。scripts/quota-redis.test.cjs新增3项迟到预占回归，只在CI独立Redis容器运行；补偿先到、普通午夜、跨年与新编号重试均验收。原迟到界面测试现在等待模型确实启动再操作，准备阶段取消独立检查零请求。原生浏览器可运行scripts/review38-browser.cjs，在4214先跑退次37项、离页8项，再准备进行中刷新并核对业务不变；原字段矩阵仍保留80项。范围、失败证据与未测层次见[联合报告](../audit/2026-11-15/issue29-38-joint-review.md)。
 
+## #32 导航动态验收
+
+运行 node scripts/navigation-browser.cjs，在独立 4232 来源点击“测量导航”，仅使用 juanjuan-issue32-synthetic 合成库。四页全部往返、空内容、长内容及连续切换的逐帧记录保存到 .reports，使用 node scripts/check-navigation-evidence.cjs 报告路径 检查布局、滚动与数据不变。真实手机仍须单独实测，进度及根因对照见[#32报告](../audit/2026-11-15/issue32-navigation.md)。HTTP 隔离边界测试已纳入统一检查。
 
 #31、#39后续复查新增 scripts/review31-39.test.cjs 及 scripts/review31-39-browser.cjs，覆盖大量同名旧记录、区间查询和课程原文边界，运行记录见[复查报告](../audit/2026-11-15/issue31-39-followup-review.md)。只用独立合成库、固定北京时间及明确模型替身；上下文原生样例补齐#28已要求的slot初值，完整字段断言保留。
 
