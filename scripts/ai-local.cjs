@@ -3,6 +3,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const {loadAIEnvironment} = require('./ai-config.cjs');
 const requiredNames = ['DEEPSEEK_API_KEY', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'RATE_LIMIT_SALT', 'OWNER_STATS_TOKEN'];
 const root = path.join(__dirname, '..');
 const maxBodyBytes = 128 * 1024;
@@ -82,10 +83,7 @@ function createLocalServer({handler, mode, env = {}, onResult = () => {}}) {
 async function main(args = process.argv.slice(2)) {
   if (args.some(arg => arg !== '--live')) throw Error('只支持默认模拟模式或显式 --live');
   const live = args.includes('--live');
-  if (live) {
-    try { process.loadEnvFile(path.join(root, '.env')); }
-    catch (error) { if (error.code !== 'ENOENT') throw Error('.env读取失败，请在本机检查文件格式'); }
-  }
+  if (live) loadAIEnvironment();
   const setup = live ? {handler: require('../api/ai.js'), env: process.env}
     : require('./ai-simulation.cjs').createSimulation();
   const mode = live ? 'live' : 'simulation';

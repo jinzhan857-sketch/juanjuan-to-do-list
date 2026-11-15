@@ -2,6 +2,8 @@
 
 ## #81本机AI第一部分
 
+本机共享模型Key后，新增ai-config.test.cjs的10项合成配置检查，覆盖新工作区、优先级、空占位、权限读取失败及独立进程。专项68项、统一1088项Node与26项稳定断言通过，全部离线检查仍不读取个人共享Key；本机实际配置另以只读状态检查验证，证据见[共享配置验收](../audit/2026-11-15/issue81-shared-machine-config.md)。
+
 npm run ai:test验证本地HTTP入口、配置加载、密钥与文件边界、现有识别及三种助手请求、额度和服务异常。依赖为合成模型及内存额度替身，不读取真实.env或访问外部服务，结果不计为真实模型或Redis验收。已并入npm run check；人工配置与后续真实验收见[本机AI说明](LOCAL_AI.md)。
 
 真实测试执行器另有ai-live-check.test.cjs离线验证次数和金额预留保护，已并入ai:test及check。ai:live-check仅检查本机配置；ai:live-test会访问DeepSeek，必须按[人工交接](LOCAL_AI.md)完成Key和预算确认后才执行。准备记录见[报告](../audit/2026-11-15/issue81-live-preparation.md)。

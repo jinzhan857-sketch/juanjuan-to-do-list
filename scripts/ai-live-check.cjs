@@ -4,6 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const {createLocalServer} = require('./ai-local.cjs');
 const {createModelCheck} = require('./ai-simulation.cjs');
+const {loadAIEnvironment} = require('./ai-config.cjs');
 const root = path.join(__dirname, '..');
 const endpoint = 'https://api.deepseek.com/chat/completions';
 // Conservative peak prices, RMB per million tokens, verified 2026-11-15.
@@ -76,9 +77,9 @@ function createBudgetTransport({key, state, save, transport = fetch, limits = li
 async function run(args = process.argv.slice(2)) {
   if (args.some(arg => !['--check', '--approved-followup'].includes(arg))) throw Error('Unsupported arguments');
   const followup = args.includes('--approved-followup'), activeLimit = followup ? followupLimit : limit;
-  try { process.loadEnvFile(path.join(root, '.env')); } catch (error) { if (error.code !== 'ENOENT') throw Error('Cannot load local configuration'); }
+  const configuration = loadAIEnvironment();
   const key = String(process.env.DEEPSEEK_API_KEY || '').trim();
-  const config = {key_configured: !!key, model: 'deepseek-v4-flash', quota: 'simulation', max_calls: activeLimit.calls, budget_cny: activeLimit.budget_cny};
+  const config = {...configuration, model: 'deepseek-v4-flash', quota: 'simulation', max_calls: activeLimit.calls, budget_cny: activeLimit.budget_cny};
   if (args.includes('--check')) { console.log(JSON.stringify(config)); return; }
   if (!key) throw Error('DEEPSEEK_API_KEY is missing');
   const dir = path.join(root, '.reports'); fs.mkdirSync(dir, {recursive: true});

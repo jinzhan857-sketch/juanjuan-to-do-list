@@ -7,6 +7,8 @@
 | `check-docs.cjs` | 检查文档里的本地链接和标题跳转有没有失效 | 在仓库根目录执行 `node scripts/check-docs.cjs` |
 | `serve.cjs` | 只提供允许的页面文件 | `npm run dev` 或 `npm run preview` |
 | `ai-local.cjs` | 独立本机AI入口，默认模拟，真实连接须先确认 | `npm run ai:dev`，详见[人工交接](../docs/development/LOCAL_AI.md) |
+| `ai-config.cjs` | 显式真实入口读取工作区配置及用户目录共享模型Key | 由真实入口调用，只共享模型Key；免费模拟不读私有配置 |
+| `ai-config.test.cjs` | 用合成Key检查共享配置、优先级及两个新工作区进程 | 由ai:test和check调用，不读取个人Key，不访问模型 |
 | `ai-simulation.cjs` | 加载原AI处理函数，隔离模拟模型与额度，不访问外网 | 由本机模拟和专项测试加载 |
 | `ai-local.test.cjs` | 验证本机AI请求、配置、服务错误和密钥保护 | `npm run ai:test`，已并入统一检查 |
 | `ai-live-check.cjs` | 经授权的真实模型测试，初始3次1元，明确批准的续测累计10次4元，额度为合成模拟 | `npm run ai:live-check`仅检查，`npm run ai:live-test`可能产生费用；续测须显式参数并复用原账本，先看[人工清单](../docs/development/LOCAL_AI.md) |

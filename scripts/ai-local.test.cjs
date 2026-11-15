@@ -127,7 +127,8 @@ test('simulation instances have separate counters and never fall through to real
 async function cli(t, live) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'juanjuan-ai81-'));
   fs.mkdirSync(path.join(dir, 'scripts')); fs.mkdirSync(path.join(dir, 'api'));
-  for (const name of ['ai-local.cjs', 'ai-simulation.cjs']) fs.copyFileSync(path.join(__dirname, name), path.join(dir, 'scripts', name));
+  for (const name of ['ai-local.cjs', 'ai-simulation.cjs', 'ai-config.cjs']) fs.copyFileSync(path.join(__dirname, name), path.join(dir, 'scripts', name));
+  if (!live) fs.writeFileSync(path.join(dir, 'scripts/ai-config.cjs'), "module.exports={loadAIEnvironment(){throw Error('Simulation attempted private configuration')}};");
   const secret = 'synthetic-env-value-never-print';
   if (live) fs.writeFileSync(path.join(dir, 'api/ai.js'), `module.exports=(req,res)=>res.status(200).json({loaded:process.env.DEEPSEEK_API_KEY===${JSON.stringify(secret)}});`);
   else fs.copyFileSync(path.join(root, 'api/ai.js'), path.join(dir, 'api/ai.js'));
