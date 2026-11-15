@@ -569,7 +569,7 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
 <div class="page active" id="page-home">
   <div id="home-stats">
     <div class="stat"><div class="num" id="st-today-score">0</div><div class="lbl">今日积分</div></div>
-    <div class="stat"><div class="num" id="st-today-done">0</div><div class="lbl">完成任务</div></div>
+    <div class="stat"><div class="num" id="st-today-done">0</div><div class="lbl">今日完成（日程按开始日，待办按完成日）</div></div>
     <div class="stat"><div class="num" id="st-streak">0</div><div class="lbl">连续打卡</div></div>
   </div>
 
@@ -2174,6 +2174,16 @@ const AIService = {
 /* ============================================================
    PetSystem — 饱食度 / 成长值 / 等级 / 生病死亡 / 每日结算
 ============================================================ */
+function completionSummary(from,to){
+  const schedules=S.tasks.filter(t=>t.status==='done'&&t.execDate>=from&&t.execDate<=to).length;
+  const todos=S.todos.filter(t=>t.done&&Number.isFinite(t.completedAt)&&fmtDate(new Date(t.completedAt))>=from&&fmtDate(new Date(t.completedAt))<=to).length;
+  return {schedules,todos,total:schedules+todos};
+}
+async function settlementExpectation(store){
+  const dayStats=await DB.get('kv','dayStats'),pet=await DB.get('kv','pet');
+  if(JSON.stringify(dayStats??{})!==JSON.stringify(S.dayStats)||JSON.stringify(pet)!==JSON.stringify(S.pet))throw new Error('资料已变化，请重新加载并确认后操作。');
+  return copyData({[store]:S[store],kv:{dayStats,pet}});
+}
 const PetSystem = {
 
   // 任务积分 → 食物 → 自动喂养（多余进冰箱）
@@ -2193,18 +2203,14 @@ const PetSystem = {
     return {fed:fedTotal, foods};
   },
 
-  // 记录当日积分与完成数（按确认日归属）
-  async recordToday(score, doneInc){
-    const d = todayStr();
-    if(!S.dayStats[d]) S.dayStats[d] = {points:0, done:0};
-    S.dayStats[d].points = r1(S.dayStats[d].points + score);
-    S.dayStats[d].done  += doneInc;
-    if(doneInc > 0 && S.pet.lastStreakDate !== d){
-      S.pet.streak = (S.pet.lastStreakDate === addDays(d,-1)) ? S.pet.streak + 1 : 1;
-      S.pet.lastStreakDate = d;
-      await savePet();
-    }
-    await saveDayStats();
+  // Build settlement changes without publishing memory before the transaction commits.
+  prepareSettlement(score,doneInc){
+    const day=todayStr(),stats=copyData(S.dayStats),pet=score>0?this.prepareAward(score):copyData(S.pet);
+    if(pet.intakeDate!==day){pet.intakeDate=day;pet.todayIntake=0;}
+    stats[day]||={points:0,done:0};
+    stats[day].points=r1(stats[day].points+score);stats[day].done+=doneInc;
+    if(doneInc>0&&pet.lastStreakDate!==day){pet.streak=pet.lastStreakDate===addDays(day,-1)?pet.streak+1:1;pet.lastStreakDate=day;}
+    return [{store:'kv',key:'dayStats',value:stats},{store:'kv',key:'pet',value:pet}];
   },
 
   // 三档喂养：0~饱线 只加当前饱度；饱线~上限 加饱度+成长（冰箱喂养×50%）；超上限进冰箱
@@ -2329,16 +2335,17 @@ const PetSystem = {
     S.pet.affinity = Math.max(1, Math.min(10, S.pet.affinity + delta));
   },
 
+  todayIntake(){return S.pet.intakeDate===todayStr()?S.pet.todayIntake:0;},
+
   // 情绪优先级：情绪 > 健康 > 行为
   mood(){
     if(!S.pet.alive) return 'dead';
     if(S.pet.affinity <= 2) return 'depressed';
     if(S.pet.affinity >= 8) return 'happy';
     if(S.pet.sick) return 'sick';
-    this._touchIntake();
     const sat = petSatiety();
     if(sat <= 0.05 || sat < petFullLine()*0.45) return 'hungry';
-    if(S.pet.todayIntake >= petFullLine()) return 'happy';
+    if(this.todayIntake() >= petFullLine()) return 'happy';
     return 'normal';
   },
 
@@ -2491,7 +2498,7 @@ const PetView = {
     $('#satiety-num').textContent = sat;
     $('#satiety-max').textContent = petEatMax();
     $('#satiety-line').textContent = `（饱线 ${petFullLine()}）`;
-    $('#satiety-hint').textContent = `今日进食 ${S.pet.todayIntake} 点`;
+    $('#satiety-hint').textContent = `今日进食 ${PetSystem.todayIntake()} 点`;
     $('#pet-level').textContent = 'Lv.' + petLevel();
     $('#growth-num').textContent = S.pet.growth;
     $('#growth-next').textContent = levelNextText();
@@ -3480,7 +3487,7 @@ const UI = {
     const d = todayStr();
     const st = S.dayStats[d] || {points:0, done:0};
     $('#st-today-score').textContent = r1(st.points);
-    $('#st-today-done').textContent = st.done;
+    $('#st-today-done').textContent = completionSummary(d,d).total;
     $('#st-streak').textContent = S.pet.streak;
     PetView.render();
     this.renderNotices();
@@ -3497,8 +3504,8 @@ const UI = {
       return;
     }
     if(S.pet.sick) add(`🤒 卷卷生病了！连续 3 天饱度低于饱线 30% 就会生病，今天多完成任务让它好起来吧！`,'red');
-    if(S.pet.todayIntake < petFullLine() && S.pet.fridge.length > 0){
-      const n = add(`🍚 卷卷今天还没吃饱（${r1(S.pet.todayIntake)}/${petFullLine()}）～冰箱里有 ${S.pet.fridge.length} 份存粮，点这里去喂它！`);
+    if(PetSystem.todayIntake() < petFullLine() && S.pet.fridge.length > 0){
+      const n = add(`🍚 卷卷今天还没吃饱（${r1(PetSystem.todayIntake())}/${petFullLine()}）～冰箱里有 ${S.pet.fridge.length} 份存粮，点这里去喂它！`);
       n.style.cursor='pointer'; n.onclick = ()=>this.openFridge();
     }
     const now = Date.now();
@@ -3601,28 +3608,25 @@ const UI = {
   },
 
   async confirmStatus(t, key, confirmAt){
-    const res = ScoreEngine.compute(t, key, confirmAt);
-    const oldScore = t.status ? t.finalScore : 0;
-    const wasDone = t.status === 'done';
-    if(t.status) t.statusEditCount++;
-    t.status = key;
-    t.statusAt = Date.now();
-    t.finalScore = res.score;
-    t.parts = res.parts.map(p=>({label:p.label, why:p.why, type:p.type}));
-    await saveTask(t);
-    const delta = r1(res.score - oldScore);
-    await PetSystem.recordToday(delta, (key==='done'?1:0) - (wasDone?1:0));
-    let fedInfo = {foods:[]};
-    if(delta > 0) fedInfo = await PetSystem.award(delta);
-    this.mask('mask-status', false);
-    if(res.score > 0){
-      PetView.celebrate(res.score, foodForScore(delta>0?delta:res.score));
-      PetView.bubble(delta>0?'喵呜～有吃的了，谢谢你！':'状态更新啦～');
-    } else {
-      toast(key==='skipped' ? '标记为没有去做，0 分…卷卷有点饿' : '已结算 0 分');
-      PetView.bubble('呜…没有小鱼干吃了喵…');
-    }
-    this.refreshActivePage();
+    this.statusSaving||=new Set();
+    if(!t||this.statusSaving.has(t.id))return;
+    this.statusSaving.add(t.id);
+    let committed=false;
+    try{
+      const old=S.tasks.find(item=>item.id===t.id);
+      if(!old||old.status===key)return;
+      if(!CONFIG.STATUS.some(item=>item.key===key))throw new Error('请选择有效状态');
+      if(old.status&&old.statusEditCount>=CONFIG.STATUS_EDIT_MAX)throw new Error('状态修改次数已用完（最多 2 次）');
+      const expected=await settlementExpectation('tasks');
+      const res=ScoreEngine.compute(old,key,confirmAt),delta=r1(res.score-(old.status?old.finalScore:0));
+      const value={...copyData(old),status:key,statusAt:Date.now(),statusEditCount:(old.statusEditCount||0)+(old.status?1:0),finalScore:res.score,parts:res.parts.map(p=>({label:p.label,why:p.why,type:p.type}))};
+      const changes=[{store:'tasks',value},...PetSystem.prepareSettlement(delta,(key==='done'?1:0)-(old.status==='done'?1:0))];
+      await commitDataChanges(changes,expected);committed=true;
+      this.mask('mask-status',false);
+      if(delta>0)PetView.celebrate(delta,foodForScore(delta));
+      toast('状态已保存');this.refreshActivePage();
+    }catch(error){toast(committed?'状态已保存，页面刷新失败，请重新打开查看':'状态未保存：'+error.message);}
+    finally{this.statusSaving.delete(t.id);}
   },
 
   /* ---------- 任务详情 ---------- */
@@ -4295,10 +4299,20 @@ const UI = {
   },
 
   completeTodo(id){
-    const t=S.todos.find(x=>x.id===id); if(!t||t.done)return;
+    const t=S.todos.find(x=>x.id===id);if(!t||t.done)return;
     const score=todoScore(t.baseScore);
     this.confirm('完成待办',`完成后可获得 ${score} 分，并为卷卷补充食物。确定完成吗？`,async()=>{
-      t.done=true;t.completedAt=Date.now();t.finalScore=score;await saveTodo(t);await PetSystem.recordToday(score,1);if(score>0)await PetSystem.award(score);this.renderTodos();PetView.celebrate(score,foodForScore(score));toast(`待办完成，获得 ${score} 分`);
+      this.todoCompleting||=new Set();if(this.todoCompleting.has(id))return;
+      this.todoCompleting.add(id);let committed=false;
+      try{
+        const old=S.todos.find(x=>x.id===id);if(!old||old.done)return;
+        if(old.baseScore!==t.baseScore)throw new Error('待办已变化，请重新确认');
+        const expected=await settlementExpectation('todos');
+        const value={...copyData(old),done:true,completedAt:Date.now(),finalScore:score};
+        await commitDataChanges([{store:'todos',value},...PetSystem.prepareSettlement(score,1)],expected);committed=true;
+        this.renderTodos();PetView.celebrate(score,foodForScore(score));toast(`待办完成，获得 ${score} 分`);
+      }catch(error){toast(committed?'待办已完成，页面刷新失败，请重新打开查看':'完成未保存：'+error.message);}
+      finally{this.todoCompleting.delete(id);}
     });
   },
 
@@ -4394,7 +4408,7 @@ const UI = {
     let points = 0;
     Object.entries(S.dayStats).forEach(([d,v])=>{ if(d>=sStr && d<=todayStr()) points = r1(points+v.points); });
     const dueTasks = tasks.filter(t=>t.execDate <= todayStr());
-    const rate = dueTasks.length ? Math.round(done.length/dueTasks.length*100) : null;
+    const rate = dueTasks.length ? Math.round(dueTasks.filter(t=>t.status==='done').length/dueTasks.length*100) : null;
     // 分类占比
     const catCnt = {};
     tasks.forEach(t=>catCnt[t.category]=(catCnt[t.category]||0)+1);
@@ -4410,22 +4424,24 @@ const UI = {
     const overdue=S.tasks.filter(t=>taskDeadline(t)<Date.now()&&t.status!=='done');
     const delayedSlots=overdue.map(t=>t.timeType==='exact'?Number((t.startTime||'00').slice(0,2))<12?'上午':Number((t.startTime||'00').slice(0,2))<18?'下午':'晚上':t.timeType==='slot'?(slotByKey(t.slot)?.name||'未标注时段'):'全天').filter(Boolean);
     const delayedSlot=delayedSlots.length?Object.entries(delayedSlots.reduce((all,slot)=>{all[slot]=(all[slot]||0)+1;return all;},{})).sort((a,b)=>b[1]-a[1])[0][0]:'数据还不够';
-    const recentPoints=Object.entries(S.dayStats).filter(([d])=>d>=addDays(todayStr(),-6)).reduce((sum,[,v])=>sum+(v.points||0),0);
-    const recentDays=Object.entries(S.dayStats).filter(([d])=>d>=addDays(todayStr(),-13));
-    const firstWeek=recentDays.filter(([d])=>d<addDays(todayStr(),-6)).reduce((n,[,v])=>n+(v.completed||0),0), lastWeek=recentDays.filter(([d])=>d>=addDays(todayStr(),-6)).reduce((n,[,v])=>n+(v.completed||0),0);
-    const trend=recentDays.length<7?'数据还不够':lastWeek>firstWeek?'较上周上升':lastWeek<firstWeek?'较上周下降':'与上周持平';
+    const recentPoints=Object.entries(S.dayStats).filter(([d])=>d>=addDays(todayStr(),-6)&&d<=todayStr()).reduce((sum,[,v])=>sum+(v.points||0),0);
+    const firstWeek=completionSummary(addDays(todayStr(),-13),addDays(todayStr(),-7)).total;
+    const lastWeek=completionSummary(addDays(todayStr(),-6),todayStr()).total;
+    const trend=firstWeek+lastWeek===0?'数据还不够':lastWeek>firstWeek?'较上周上升':lastWeek<firstWeek?'较上周下降':'与上周持平';
+    const completed=completionSummary(sStr,eStr);
     const colors = ['var(--pink)','var(--mint)','var(--peach)','var(--lav)','var(--blue)','var(--yellow)'];
     $('#report-body').innerHTML = `
       <div class="card" style="margin-bottom:10px">
-        <div class="report-row"><span>期间总积分</span><b>${points} 分</b></div>
-        <div class="report-row"><span>日程完成率（完成目标／应完成）</span><b>${rate===null?'数据还不够':rate+'%'}</b></div>
-        <div class="report-row"><span>创建任务 / 已确认 / 完成目标</span><b>${tasks.length} / ${confirmed.length} / ${done.length}</b></div>
+        <div class="report-row"><span>期间完成（日程及待办）</span><b>${completed.total} 项（日程 ${completed.schedules}，待办 ${completed.todos}）</b></div>
+        <div class="report-row"><span>期间总积分（按结算日）</span><b>${points} 分</b></div>
+        <div class="report-row"><span>日程完成率（截至今日，按开始日）</span><b>${rate===null?'数据还不够':rate+'%'}</b></div>
+        <div class="report-row"><span>日程总数 / 已确认 / 完成目标（按开始日）</span><b>${tasks.length} / ${confirmed.length} / ${done.length}</b></div>
         <div class="report-row"><span>平均规划提前量</span><b>${avgAhead===null?'数据还不够':avgAhead+' 天'}</b></div>
-        <div class="report-row"><span>待办完成率 / 积压</span><b>${todoRate===null?'数据还不够':todoRate+'%'} / ${backlog} 项</b></div>
+        <div class="report-row"><span>全部待办完成率 / 积压</span><b>${todoRate===null?'数据还不够':todoRate+'%'} / ${backlog} 项</b></div>
         <div class="report-row"><span>任务最密集的星期</span><b>${busyDay}</b></div>
         <div class="report-row"><span>临时创建比例</span><b>${tasks.length?Math.round(late/tasks.length*100)+'%':'数据还不够'}</b></div>
         <div class="report-row"><span>最容易拖延的时段</span><b>${delayedSlot}</b></div>
-        <div class="report-row"><span>每周完成趋势</span><b>${trend}</b></div>
+        <div class="report-row"><span>近7天完成趋势（日程按开始日，待办按完成日）</span><b>${trend}</b></div>
         <div class="report-row"><span>近期积分 / 卷卷成长</span><b>${r1(recentPoints)} 分 / ${r1(S.pet.growth)} 成长</b></div>
         <div class="report-row"><span>近期精力趋势</span><b>${S.pet.personType==='J'?'高精力计划':'随性轻计划'}</b></div>
         <div class="report-row" style="border:none"><span>高优先级待办平均处理时间</span><b>数据还不够</b></div>
