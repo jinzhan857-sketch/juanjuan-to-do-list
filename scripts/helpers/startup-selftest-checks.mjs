@@ -160,3 +160,10 @@ export async function runChecks(api,{dom=false,failAt=null}={}){
     check('42', conflictOk, `[自测] 事务时间冲突提醒: ${conflictOk?'✓':'✗'}`);
   return results;
 }
+
+// A successful run must also persist its matching evidence successfully.
+export async function saveEvidence(report,send){
+  const response=await send('/evidence',{method:'POST',body:JSON.stringify(report)});
+  if(!response.ok)throw Error('Evidence save failed: '+response.status);
+  return report;
+}

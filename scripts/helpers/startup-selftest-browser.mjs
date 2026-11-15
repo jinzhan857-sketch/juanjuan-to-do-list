@@ -1,4 +1,4 @@
-import {runChecks} from './checks.mjs';
+import {runChecks,saveEvidence} from './checks.mjs';
 const result=document.querySelector('#result'),frames=document.querySelector('#frames');
 const canonical=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 const expect=(ok,message)=>{if(!ok)throw Error(message)};
@@ -57,7 +57,7 @@ async function run(){
   record('实际日期按钮绑定往返正常');
   const stable=await snapshot(normal.api);
   for(const failAt of [null,'27','40']){
-   const test=await create();try{if(failAt){let error;try{await regression(test,{failAt})}catch(e){error=e}expect(error?.message.includes('Injected interruption'),'Failure injection missing');}else await regression(test);}finally{test.dispose()}
+   const test=await create();try{if(failAt){let error;try{await regression(test,{failAt})}catch(e){error=e}expect(error?.message.includes('Injected interruption'),'Failure injection missing');}else {const results=await regression(test);expect(results.length===42&&canonical(results.filter(r=>!r.ok).map(r=>r.id))===canonical(['09','23']),'Post-start regression results changed');}}finally{test.dispose()}
    await verifyUnchanged(normal.api,stable,'Test after startup '+failAt);record(failAt?'测试中断于'+failAt+'后正常实例不变':'正常启动后自测，正常实例不变');
   }
   const broken=await create();broken.api.DB.open=async()=>{throw Error('Injected initialization failure')};try{await regression(broken);throw Error('Expected failure')}catch(e){expect(e.message==='Injected initialization failure','Wrong initialization failure')}finally{broken.dispose()}
@@ -70,6 +70,9 @@ async function run(){
   const fresh=await create();try{await seed(fresh.api,{empty:true});await fresh.api.App.init();expect(fresh.api.S.chats.length===1&&fresh.api.S.tasks.length===0,'Fresh initialization incorrect');expect(!!await fresh.api.DB.get('kv','pet'),'Initial pet missing');expect(Array.isArray(await fresh.api.DB.get('kv','memoryGroups')),'Memory groups missing');record('首次空库初始化宠物、聊天与资料框正常')}finally{fresh.dispose()}
   report.ok=true;
  }catch(e){report.ok=false;report.error=e.stack;}finally{normal.dispose()}
- await fetch('/evidence',{method:'POST',body:JSON.stringify(report)});show();return report;
+ await saveEvidence(report,fetch);show();return report;
 }
-document.querySelector('#run').onclick=()=>run().catch(e=>{result.textContent=e.stack});
+document.querySelector('#run').onclick=async()=>{
+ const button=document.querySelector('#run');if(button.disabled)return;button.disabled=true;
+ try{await run()}catch(e){result.textContent='验收未完成：'+e.stack}finally{button.disabled=false}
+};

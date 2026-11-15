@@ -43,3 +43,10 @@ test('synthetic browser entry only serves explicit resources and isolates databa
  assert.equal((await fetch(new URL('/app?instance=..%2Fprivate',url))).status,400);
  assert.equal((await fetch(new URL('evidence',url),{method:'POST',body:JSON.stringify({sourceSha256:'wrong',scenarios:[]})})).status,400);
 });
+
+test('evidence rejection or network failure cannot be reported as successful validation',async()=>{
+ const {saveEvidence}=await import('./helpers/startup-selftest-checks.mjs');const report={sourceSha256:'synthetic',ok:true};
+ await assert.rejects(saveEvidence(report,async()=>({ok:false,status:400})),/Evidence save failed: 400/);
+ await assert.rejects(saveEvidence(report,async()=>{throw Error('offline')}),/offline/);
+ let saved;assert.equal(await saveEvidence(report,async(url,options)=>{assert.equal(url,'/evidence');saved=JSON.parse(options.body);return {ok:true}}),report);assert.deepEqual(saved,report);
+});
