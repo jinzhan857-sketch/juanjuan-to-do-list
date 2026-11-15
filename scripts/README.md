@@ -9,6 +9,8 @@
 | `ai-local.cjs` | 独立本机AI入口，默认模拟，真实连接须先确认 | `npm run ai:dev`，详见[人工交接](../docs/development/LOCAL_AI.md) |
 | `ai-simulation.cjs` | 加载原AI处理函数，隔离模拟模型与额度，不访问外网 | 由本机模拟和专项测试加载 |
 | `ai-local.test.cjs` | 验证本机AI请求、配置、服务错误和密钥保护 | `npm run ai:test`，已并入统一检查 |
+| `ai-live-check.cjs` | 经授权的3次真实模型测试，额度存储为合成模拟 | `npm run ai:live-check`仅检查，`npm run ai:live-test`可能产生费用，先看[人工清单](../docs/development/LOCAL_AI.md) |
+| `ai-live-check.test.cjs` | 离线核对真实测试的次数、预算预留和失败停止保护 | 由ai:test与统一检查调用，不发外部请求 |
 | `build.cjs` | 生成页面和来源记录 | `npm run build` |
 | `check-baseline.cjs` | 核对稳定断言与已知问题，保留历史脚本 | 由 `npm run check` 调用 |
 | `toolchain.test.cjs` | 验证工程错误路径与 HTTP 边界 | `node --test scripts/toolchain.test.cjs` |

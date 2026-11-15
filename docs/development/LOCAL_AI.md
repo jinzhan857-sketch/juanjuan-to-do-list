@@ -1,6 +1,6 @@
 # 本机 AI 服务与人工交接
 
-本页承接 [#81](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81)。第一部分已提供本地启动和免费模拟测试。真实模型与真实Redis尚未验收，任务保持打开。公网共享AI和网址分别在[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)、[#83](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83)讨论。
+本页承接 [#81](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81)。本地启动和免费模拟测试已完成，真实模型测试已准备，等待展填写本机Key。真实模型与真实Redis尚未验收，任务保持打开。公网共享AI和网址分别在[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)、[#83](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83)讨论。
 
 ## 分三部分推进
 
@@ -44,6 +44,22 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:4177/api/ai -ContentType 'a
 
 ## 第二部分：到这里等待人工
 
+### 当前已确认与展只需做的一步
+
+展已选择DeepSeek，同意本轮最多3次真实请求、不自动重试、预算1元；这只是本轮测试约定，后续可重新讨论放宽，不是产品永久限制。
+
+本机根目录已准备私有.env，展只需在DEEPSEEK_API_KEY等号后填写自己的Key并保存，然后回复“已填好”。不要将Key发送到聊天。Codex只用程序检查是否填写，不打印文件或密钥值。
+
+本轮采用真实DeepSeek加本地合成额度存储，因此不需要展申请或配置Redis。测试完整经过本机HTTP入口、原handler、真实模型和原解析器，额度仍标明合成模拟。它不验证真实Redis、云端全站额度或浏览器写入；这与后续完整真实服务配置分开。
+
+填写后由Codex先运行npm run ai:live-check，只检查配置、不调用模型。再按已经确认的范围运行npm run ai:live-test，依次检查评分、创建日程建议和普通聊天，任一失败立即停止，没有自动重试，不执行模型提出的事务。规划模式本轮不增加真实调用，保留模拟覆盖。
+
+执行器在发送前记录本轮尝试次数和保守金额预留，最多3次；网络失败也保留预留，不因重启或重跑自动恢复次数。账本保存在被忽略的.reports/issue81-live-budget.json，互斥文件阻止并发启动同一会话。结果已记录或次数已用尽时，须由Codex先复查，再经展授权开启后续测试，不删除记录来绕过上限。
+
+金额按[DeepSeek官方价格](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)的Flash高峰价格估算：每百万输入2元、输出8元，使用输入字节数加安全余量及请求输出上限做预留；得到实际Token用量后另记高峰价估算。此为保守预算门槛，不是供应商账单硬封顶，也不是实际扣款。请求数不超过3次是本轮程序约束。没有真实Key前，不运行收费测试。
+
+### 原完整真实服务的确认清单
+
 Codex先给展以下清单，并等待完成，不自行选择收费资源或使用发现的其他Key：
 
 1. 确认供应商和模型。本入口目前复用api/ai.js中的DeepSeek地址与模型配置，不接受客户端提交任意模型地址；更换供应商需要先明确范围。
@@ -59,7 +75,7 @@ Codex先给展以下清单，并等待完成，不自行选择收费资源或使
 npm run ai:serve
 ```
 
-只有这个显式真实入口会加载工作区根目录.env，并复用现有api/ai.js。已有进程环境变量优先于.env，修改后需重启。它只绑定127.0.0.1，不开放公网、不配置跨域放行。请用Codex的本机HTTP测试调用，不直接把4173网页指向此跨端口服务；本任务没有改网页路由。
+这个完整真实入口会加载工作区根目录.env，并复用现有api/ai.js，需要真实模型及真实Redis配置；当前尚未运行。另一条显式ai:live-test命令只测试真实模型，额度为合成模拟。已有进程环境变量优先于.env，修改后需重启。它们只绑定127.0.0.1，不开放公网、不配置跨域放行。请用Codex的本机HTTP测试调用，不直接把4173网页指向此跨端口服务；本任务没有改网页路由。
 
 先GET /api/health，检查mode为live，ready为true。missing和invalid只列配置名称，不返回值。配置齐全只证明已填写，健康检查不发网络请求，也不证明余额、模型、Redis或网络有效。未配齐时POST返回503且不调用处理函数；只有后续POST才可能产生费用。
 

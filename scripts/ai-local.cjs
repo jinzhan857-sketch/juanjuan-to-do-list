@@ -18,7 +18,7 @@ function configuration(env) {
 }
 
 function createLocalServer({handler, mode, env = {}, onResult = () => {}}) {
-  if (!['simulation', 'live'].includes(mode) || typeof handler !== 'function') throw Error('Invalid local server setup');
+  if (!['simulation', 'live', 'live-model-test'].includes(mode) || typeof handler !== 'function') throw Error('Invalid local server setup');
   const sourceHash = crypto.createHash('sha256').update(fs.readFileSync(path.join(root, 'api/ai.js'))).digest('hex');
   const server = http.createServer(async (req, res) => {
     const started = performance.now(), requestId = crypto.randomUUID();
@@ -39,7 +39,7 @@ function createLocalServer({handler, mode, env = {}, onResult = () => {}}) {
     catch { send(400, {error: '请求地址不合法'}); return; }
     if (url.pathname === '/api/health' && req.method === 'GET') {
       send(200, {mode, ...configuration(env), handler_sha256: sourceHash,
-        note: mode === 'simulation' ? '模型与额度均为合成模拟，不访问外网，不验证真实模型或Redis。' : '仅检查配置是否填写，不证明远程服务可用。'}); return;
+        note: mode === 'simulation' ? '模型与额度均为合成模拟，不访问外网，不验证真实模型或Redis。' : mode === 'live-model-test' ? '真实模型测试，额度存储为合成模拟，不验证真实Redis。' : '仅检查配置是否填写，不证明远程服务可用。'}); return;
     }
     if (url.pathname !== '/api/ai') { send(404, {error: '入口不存在'}); return; }
     if (!['POST', 'GET'].includes(req.method) || (req.method === 'GET' && url.searchParams.get('stats') !== '1')) {

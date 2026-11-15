@@ -1,5 +1,5 @@
 'use strict';
-// Test fixture only. No network fetch or real environment is passed into this context.
+// Default fixture has no network. The separate model check supplies an explicit bounded transport.
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -12,7 +12,7 @@ const syntheticEnv = Object.freeze({
   OWNER_STATS_TOKEN: 'synthetic-owner-token',
 });
 
-function createSimulation({modelFailure = false, quotaFailure = false} = {}) {
+function createHarness({modelFailure = false, quotaFailure = false, liveModel = null} = {}) {
   const now = Date.parse('2026-11-15T04:00:00Z');
   class SyntheticDate extends Date {
     constructor(...args) { super(...(args.length ? args : [now])); }
@@ -48,6 +48,7 @@ function createSimulation({modelFailure = false, quotaFailure = false} = {}) {
     }
     if (String(url) === 'https://api.deepseek.com/chat/completions') {
       modelCalls++;
+      if (liveModel) return liveModel.request(url, options);
       if (modelFailure) throw Error('Synthetic model failure');
       const body = JSON.parse(options.body);
       const result = body.max_tokens === 300
@@ -59,11 +60,18 @@ function createSimulation({modelFailure = false, quotaFailure = false} = {}) {
   };
   const context = vm.createContext({
     require(name) { if (name === 'node:crypto') return crypto; throw Error('Unexpected simulation dependency'); },
-    module: {exports: {}}, process: {env: {...syntheticEnv}},
+    module: {exports: {}}, process: {env: {...syntheticEnv, ...(liveModel ? {DEEPSEEK_API_KEY: liveModel.key} : {})}},
     fetch: simulatedFetch, Date: SyntheticDate, Buffer, AbortController, DOMException, setTimeout, clearTimeout,
   });
   const filename = path.join(__dirname, '../api/ai.js');
   vm.runInContext(fs.readFileSync(filename, 'utf8'), context, {filename, timeout: 1000});
-  return {handler: context.module.exports, inspect: () => ({modelCalls, quotaCalls}), env: syntheticEnv};
+  return {handler: context.module.exports, inspect: () => ({modelCalls, quotaCalls}), env: {...syntheticEnv, ...(liveModel ? {DEEPSEEK_API_KEY: liveModel.key} : {})}};
 }
-module.exports = {createSimulation};
+function createSimulation({modelFailure = false, quotaFailure = false} = {}) {
+  return createHarness({modelFailure, quotaFailure});
+}
+function createModelCheck({key, request}) {
+  if (typeof key !== 'string' || !key.trim() || typeof request !== 'function') throw Error('Model check requires explicit credentials and transport');
+  return createHarness({liveModel: {key, request}});
+}
+module.exports = {createSimulation, createModelCheck};
