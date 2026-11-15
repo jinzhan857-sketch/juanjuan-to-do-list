@@ -618,7 +618,7 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
     <div class="seg publish-kind" id="c-kind"><button data-v="schedule" class="on">📅 日程</button><button data-v="todo">✅ 待办</button></div>
     <div class="publish-composer">
       <div class="form-label">告诉卷卷你想做什么 <span class="opt">时间、地点、链接都可以直接写</span></div>
-      <textarea id="c-title" rows="4" maxlength="1500" placeholder="例如：明天下午 3 点到 5 点学习 vibe coding，资料链接是……"></textarea>
+      <textarea id="c-title" rows="4" placeholder="例如：明天下午 3 点到 5 点学习 vibe coding，资料链接是……"></textarea>
       <div class="publish-image-add"><button class="btn ghost sm" id="btn-c-images">＋ 添加图片</button><span class="hint grow">最多 5 张，自动压缩</span><button class="btn ghost sm" id="btn-clear-draft">清空重写</button><input id="c-images-input" type="file" accept="image/*" multiple></div>
       <div class="image-preview" id="c-image-preview"></div>
     </div>
@@ -635,8 +635,8 @@ body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-
     </div>
     <div class="publish-result" id="c-result-panel">
       <div class="publish-result-title">发布内容，可直接修改</div>
-      <div class="form-block"><div class="form-label">任务定义</div><input id="c-result-title" maxlength="300" placeholder="任务标题"></div>
-      <div class="form-block"><div class="form-label">📝 备注 <span class="opt">原话、链接和补充信息会尽量保留</span></div><textarea id="c-note" rows="4" maxlength="1500" placeholder="地点、材料、链接或注意事项"></textarea></div>
+      <div class="form-block"><div class="form-label">任务定义</div><input id="c-result-title" placeholder="任务标题"></div>
+      <div class="form-block"><div class="form-label">📝 备注 <span class="opt">原话、链接和补充信息会尽量保留</span></div><textarea id="c-note" rows="4" placeholder="地点、材料、链接或注意事项"></textarea></div>
     <div id="c-schedule-fields">
     <!-- 时间精度 -->
     <div class="form-block">
@@ -1177,21 +1177,26 @@ function extractPublishLinks(text){
   return [...new Set(found)].slice(0,5);
 }
 function localPublishContent(text){
-  const raw=String(text||'').trim();
-  const withoutLinks=raw.replace(/https?:\/\/[^\s，。；！？、]+/gi,'').replace(/\s+/g,' ').trim();
-  const parts=withoutLinks.split(/[，；\n]/).map(x=>x.trim()).filter(Boolean);
-  const core=(parts[0]||withoutLinks||raw).replace(/[。！？]+$/,'').trim();
-  const title=trimSchedulePrefix(core);
-  const coreAt=raw.indexOf(core);
-  const rest=coreAt>=0?raw.slice(coreAt+core.length).replace(/^[\s，；\n]+/,'').trim():'';
-  const note=/^[。！？]+$/.test(rest)?'':rest;
-  return {title:title.slice(0,300),note:note.slice(0,1500)};
+  const raw=String(text||'').replace(/\r\n?/g,'\n').trim();
+  const [first='',...lines]=raw.split('\n');
+  let title=first.trim(),inline='';
+  // Only explicit metadata labels or a device model plus year identify an inline boundary.
+  const labelled=/\s+(?=(?:老师|教授|教室|地点|型号|材料)(?:是|[：:]))/.exec(title);
+  const model=/(?:电脑|手机|平板|相机|打印机|设备|汽车)\s+([\p{Script=Han}]*[a-z]+[0-9][a-z0-9-]*\s+[0-9]{4}年(?:\s|$))/iu.exec(title);
+  const boundaries=[labelled?.index,model?model.index+model[0].indexOf(model[1]):null].filter(x=>x!=null);
+  const cut=boundaries.length?Math.min(...boundaries):null;
+  if(cut!==null){inline=title.slice(cut).trim();title=title.slice(0,cut).trim();}
+  return {title,note:[inline,...lines].join('\n').trim()};
 }
-function trimSchedulePrefix(title){
-  return String(title||'')
-    .replace(/^(?:今天|明天|后天|大后天|今晚|明晚|下周[一二三四五六日天]|(?:周|星期)[一二三四五六日天])\s*/,'')
-    .replace(/^(?:凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里|半夜)\s*(?:\d{1,2}\s*(?:[:：]\s*\d{0,2}|点\s*(?:半|\d{0,2}分?)?)(?:\s*(?:到|至|~|～)\s*\d{1,2}\s*(?:[:：]\s*\d{0,2}|点\s*(?:半|\d{0,2}分?)?))?\s*)?/,'')
-    .trim();
+function publishEditText(t){
+  const content=[t.title,t.note].filter(Boolean).join('\n');
+  return [content,...(t.links||[]).filter(link=>!content.includes(link))].join('\n');
+}
+function validatePublishContent(raw,title,note,{checkRaw=true}={}){
+  if(checkRaw&&String(raw).length>1500)throw new Error('原文超过1500字，请缩短后再发布，内容未截断');
+  if(!title.trim())throw new Error('事务内容不能为空');
+  if(title.length>300)throw new Error('任务定义超过300字，请手动调整，内容未截断');
+  if(note.length>1500)throw new Error('备注超过1500字，请手动调整，内容未截断');
 }
 function compressTodoImage(file){
   return new Promise((resolve,reject)=>{
@@ -3667,12 +3672,12 @@ const UI = {
     this.cancelRecognition();this.todoEditingId=null;
     this.editingId = id;
     this.cState = {
-      draftId:uid(), userFields:{date:true,time:true,tag:true},
-      kind:'schedule', recognized:true, rawText:[t.title,t.note].filter(Boolean).join('，'), resultTitle:t.title, resultNote:t.note||'', images:(t.images||[]).map(x=>({...x})), missingDate:false,
+      draftId:uid(), userFields:{date:true,time:true,tag:true,title:true,note:true},
+      kind:'schedule', recognized:true, rawText:publishEditText(t), resultTitle:t.title, resultNote:t.note||'', images:(t.images||[]).map(x=>({...x})), missingDate:false,
       date: t.execDate, calMonth: t.execDate.slice(0,7),
       timeType: t.timeType, slot: t.slot||'afternoon',
       start: t.startTime||'14:00', end: t.endTime||'15:00',
-      tag: mapTag(t.category), ai: {base_score:t.baseScore, reason:t.aiReason, advice:t.aiAdvice, category:mapTag(t.category), source:t.aiSource}, aiTitle: [t.title,t.note].filter(Boolean).join('，'), modelRaw:t.aiModelRaw||null, reviewedResult:t.aiReviewedResult||null,
+      tag: mapTag(t.category), ai: {base_score:t.baseScore, reason:t.aiReason, advice:t.aiAdvice, category:mapTag(t.category), source:t.aiSource}, aiTitle: publishEditText(t), modelRaw:t.aiModelRaw||null, reviewedResult:t.aiReviewedResult||null,
     };
     $('#c-title').value = this.cState.rawText;
     $('#c-note').value = t.note || '';
@@ -3864,7 +3869,7 @@ const UI = {
       slot: c.timeType==='slot' ? c.slot : (c.timeType==='exact'? slotForTime(c.start).key : null),
       startTime: c.timeType==='exact' ? c.start : null,
       endTime: c.timeType==='exact' ? c.end : null,
-      note: c.resultNote.trim(), links:extractPublishLinks(`${c.rawText}\n${c.resultNote}`), images:(c.images||[]).slice(0,5),
+      note: c.resultNote.trim(), links:extractPublishLinks(`${c.rawText}\n${c.resultTitle}\n${c.resultNote}`), images:(c.images||[]).slice(0,5),
       category: c.tag || '日常生活',
       baseScore: c.ai ? c.ai.base_score : 2,
       aiReason: c.ai ? c.ai.reason : '',
@@ -3882,17 +3887,22 @@ const UI = {
     };
   },
 
+  syncPublishContent(rawText){
+    const c=this.cState,content=localPublishContent(rawText),user=c.userFields||{};
+    if(!user.title)c.resultTitle=content.title;
+    if(!user.note)c.resultNote=content.note;
+    c.rawText=rawText;
+  },
+
   reviewRecognition(modelResult, rawText){
     const fallback=localPublishContent(rawText);
     const exact=parseExactTime(rawText);
     const detectedDate=parseNaturalDate(rawText);
     const localTag=mapTag(AIService._localCategory(rawText));
     const category=localTag!=='日常生活'?localTag:mapTag(modelResult.category||localTag);
-    const note=String(modelResult.note||fallback.note).trim();
-    const missingLinks=extractPublishLinks(rawText).filter(link=>!note.includes(link));
     return {
-      task:String(modelResult.task||fallback.title).trim().slice(0,300),
-      note:[note,...missingLinks].filter(Boolean).join('\n').slice(0,1500),
+      task:fallback.title,
+      note:fallback.note,
       base_score:modelResult.base_score,
       vague:!!modelResult.vague,
       reason:String(modelResult.reason||'').slice(0,60),
@@ -3915,6 +3925,8 @@ const UI = {
     const c=this.cState,title=$('#c-title').value.trim();
     if(c.saving||c.saved)return;
     if(!title){toast('请输入事务内容');return;}
+    this.syncPublishContent($('#c-title').value);
+    try{validatePublishContent(c.rawText,c.resultTitle,c.resultNote);}catch(error){toast(error.message);return;}
     const before={raw:title,title:c.resultTitle,note:c.resultNote,tag:c.tag,date:c.date,time:JSON.stringify([c.timeType,c.slot,c.start,c.end])};
     const request={controller:new AbortController(),draft:c};
     this.recognition=request;
@@ -3933,7 +3945,7 @@ const UI = {
       const reviewed=this.reviewRecognition(res,title),user=c.userFields||{};
       reviewed.reason=shortCopy(reviewed.reason);reviewed.advice=shortCopy(reviewed.advice);
       c.ai=reviewed;c.recognized=true;c.modelRaw=res.model_raw||null;c.reviewedResult=reviewed;
-      if(!user.title&&c.resultTitle===before.title&&$('#c-title').value.trim()===before.raw)c.resultTitle=shortCopy(reviewed.task);
+      if(!user.title&&c.resultTitle===before.title&&$('#c-title').value.trim()===before.raw)c.resultTitle=reviewed.task;
       if(!user.note&&c.resultNote===before.note)c.resultNote=reviewed.note;
       if(!user.tag&&c.tag===before.tag)c.tag=reviewed.category;
       const date=reviewed.detected_date;
@@ -3977,7 +3989,9 @@ const UI = {
       this.renderCreate();
       if(this.publishImageJob?.draft===c)await this.publishImageJob.promise;
       if(c.imageError)throw new Error('图片处理失败，请重新添加图片');
-      c.rawText=$('#c-title').value;
+      if(c.rawText!==$('#c-title').value||!c.resultTitle)this.syncPublishContent($('#c-title').value);
+      // Editing reconstructs the composer from separate valid fields; enforce their own limits.
+      validatePublishContent(c.rawText,c.resultTitle,c.resultNote,{checkRaw:!isEdit});
       c.draftId||=uid();
       if(!c.resultTitle.trim())throw new Error('事务内容不能为空');
       if(c.kind==='schedule'&&!validDateStr(c.date))throw new Error('请选择有效日期');
@@ -3994,10 +4008,10 @@ const UI = {
         c.saved=true;this.resetCreate(c.kind);this.switchPage(store==='todos'?'todo':'home');toast('此草稿已保存');return;
       }
       const expected=copyData({[store]:S[store]});
-      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultNote)])];
+      const preservedLinks=[...new Set([...(old?.links||[]),...extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote)])];
       let value;
       if(store==='todos'){
-        value={...copyData(old||{}),id:old?.id||c.draftId,title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source,aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,links:extractPublishLinks(c.rawText+'\n'+c.resultNote),images:copyData(c.images||[]),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null};
+        value={...copyData(old||{}),id:old?.id||c.draftId,title:c.resultTitle.trim(),note:c.resultNote.trim(),category:c.tag||'日常生活',period:c.period||'week',baseScore:c.ai.base_score,aiReason:c.ai.reason||'',aiAdvice:c.ai.advice||'',aiSource:c.ai.source,aiModelRaw:c.modelRaw,aiReviewedResult:c.reviewedResult,links:extractPublishLinks(c.rawText+'\n'+c.resultTitle+'\n'+c.resultNote),images:copyData(c.images||[]),done:old?.done||false,finalScore:old?.finalScore||0,createdAt:old?.createdAt||Date.now(),completedAt:old?.completedAt||null};
       }else{
         value={...copyData(old||{}),...this.buildDraft(c,editingId),id:old?.id||c.draftId};
         if(old){
@@ -4147,7 +4161,7 @@ const UI = {
     this.resetCreate('todo');
     if(t){
       this.todoEditingId=t.id;
-      this.cState={...this.cState,recognized:true,rawText:[t.title,t.note,...(t.links||[])].filter(Boolean).join('，'),resultTitle:t.title,resultNote:t.note||'',images:(t.images||[]).map(x=>({...x})),tag:mapTag(t.category),ai:{base_score:t.baseScore,reason:t.aiReason,advice:t.aiAdvice,category:mapTag(t.category),source:t.aiSource},aiTitle:[t.title,t.note,...(t.links||[])].filter(Boolean).join('，'),modelRaw:t.aiModelRaw||null,reviewedResult:t.aiReviewedResult||null};
+      this.cState={...this.cState,userFields:{...this.cState.userFields,title:true,note:true},recognized:true,rawText:publishEditText(t),resultTitle:t.title,resultNote:t.note||'',images:(t.images||[]).map(x=>({...x})),tag:mapTag(t.category),ai:{base_score:t.baseScore,reason:t.aiReason,advice:t.aiAdvice,category:mapTag(t.category),source:t.aiSource},aiTitle:publishEditText(t),modelRaw:t.aiModelRaw||null,reviewedResult:t.aiReviewedResult||null};
     }
     $('#c-title').value=this.cState.rawText;
     this.switchPage('create');
@@ -4693,7 +4707,8 @@ const App = {
     $('#c-start').onchange = e=>{ (UI.cState.userFields||={}).time=true;UI.cState.start=e.target.value; UI.renderCreate(); };
     $('#c-end').onchange   = e=>{ (UI.cState.userFields||={}).time=true;UI.cState.end=e.target.value; UI.renderCreate(); };
     $('#c-title').addEventListener('input', ()=>{
-      UI.cState.rawText=$('#c-title').value;UI.cState.resultTitle=UI.cState.rawText.trim();$('#c-result-title').value=UI.cState.resultTitle;
+      UI.cancelRecognition();UI.syncPublishContent($('#c-title').value);$('#c-result-title').value=UI.cState.resultTitle;$('#c-note').value=UI.cState.resultNote;
+      $('#btn-ai').textContent='AI 识别';$('#btn-save').disabled=false;
       $('#c-type-suggest').classList.toggle('show',UI.cState.kind==='todo'&&!!parseExactTime(UI.cState.rawText));
       UI.saveCreateDraft();UI.renderPublishSummary();UI.refreshRulePreview();
     });

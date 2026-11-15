@@ -1,21 +1,6 @@
 'use strict';
-const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
-const {IDBFactory}=require('fake-indexeddb');
-async function fixture(t,kind='schedule'){
- const elements=new Map(),notices=[],storage=new Map();
- const element=key=>{if(!elements.has(key))elements.set(key,{value:'',disabled:false,textContent:'',style:{},classList:{add(){},remove(){},toggle(){}},children:[],appendChild(x){this.children.push(x)},set innerHTML(v){this.children=[]},get innerHTML(){return ''}});return elements.get(key)};
- const ctx=vm.createContext({console,URL,AbortController,DOMException,structuredClone,setTimeout,clearTimeout,indexedDB:new IDBFactory(),document:{querySelector:element,querySelectorAll:()=>[],createElement:()=>element(Math.random())},localStorage:{setItem:(k,v)=>storage.set(k,v),getItem:k=>storage.get(k),removeItem:k=>storage.delete(k)}});
- const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
- vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),ctx);
- const run=code=>vm.runInContext(code,ctx),json=expr=>JSON.parse(run('JSON.stringify('+expr+')'));
- ctx.scoring=await import('../src/rules/quick-score.mjs');ctx.notices=notices;
- run("toast=s=>notices.push(s);UI.loadScoring=async()=>scoring;S.pet=defaultPet();S.tasks=[];S.todos=[];S.dayStats={};actualRender=UI.renderCreate;UI.renderCreate=()=>{};UI.switchPage=()=>{};UI.renderAIResultVague=()=>{};UI.resetCreate("+JSON.stringify(kind)+");");
- await run('DB.open()');t.after(()=>run('DB._db.close()'));
- element('#c-title').value='买跑步鞋 https://example.com';
- run("UI.cState.resultTitle='买跑步鞋';UI.cState.resultNote='资料 https://example.com';UI.cState.images=[{id:'pic',name:'合成',data:'data:image/png;base64,AA=='}]");
- const snapshot=async()=>JSON.parse(JSON.stringify(await run("DB.snapshot(['tasks','todos','kv'])")));
- return {ctx,run,json,element,notices,snapshot};
-}
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {fixture}=require('./publisher-fixture.cjs');
 for(const kind of ['schedule','todo']){
  test(kind+' quick publish stores attachments and rule evidence without AI or rewards',async t=>{
   const a=await fixture(t,kind);a.run("AIService.evaluate=()=>{throw Error('must not call')}");
@@ -39,8 +24,8 @@ for(const kind of ['schedule','todo']){
  });
  test(kind+' edit failure requires save and preserves ID',async t=>{
   const a=await fixture(t,kind);await a.run('UI.onSave()');
-  const store=kind==='todo'?'todos':'tasks';a.run("UI.resetCreate("+JSON.stringify(kind)+");UI."+ (kind==='todo'?'todoEditingId':'editingId')+"=S."+store+"[0].id;UI.cState.recognized=true;UI.cState.resultTitle='改标题';UI.cState.ai={base_score:2,source:'ai',reason:'旧分'};UI.cState.images=S."+store+"[0].images;AIService.evaluate=async()=>{throw Error('offline')}");
-  await a.run('UI.onAIClick()');assert.equal((await a.snapshot())[store][0].title,'买跑步鞋');await a.run('UI.onSave()');assert.equal((await a.snapshot())[store].length,1);assert.equal((await a.snapshot())[store][0].title,'改标题');
+  const store=kind==='todo'?'todos':'tasks';a.run("UI.resetCreate("+JSON.stringify(kind)+");UI."+ (kind==='todo'?'todoEditingId':'editingId')+"=S."+store+"[0].id;UI.cState.recognized=true;UI.cState.resultTitle='改标题';UI.cState.userFields.title=true;UI.cState.ai={base_score:2,source:'ai',reason:'旧分'};UI.cState.images=S."+store+"[0].images;AIService.evaluate=async()=>{throw Error('offline')}");
+  await a.run('UI.onAIClick()');assert.equal((await a.snapshot())[store][0].title,'买跑步鞋 https://example.com');await a.run('UI.onSave()');assert.equal((await a.snapshot())[store].length,1);assert.equal((await a.snapshot())[store][0].title,'改标题');
  });
 }
 test('#43 selected date retained with time-only recognition and persisted without second click',async t=>{
