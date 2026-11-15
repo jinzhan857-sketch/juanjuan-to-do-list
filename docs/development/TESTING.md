@@ -1,5 +1,9 @@
 # 测试与验收
 
+## #32 导航动态验收
+
+运行 node scripts/navigation-browser.cjs，在独立 4232 来源点击“测量导航”，仅使用 juanjuan-issue32-synthetic 合成库。四页全部往返、空内容、长内容及连续切换的逐帧记录保存到 .reports，使用 node scripts/check-navigation-evidence.cjs 报告路径 检查布局、滚动与数据不变。真实手机仍须单独实测，进度及根因对照见[#32报告](../audit/2026-11-15/issue32-navigation.md)。HTTP 隔离边界测试已纳入统一检查。
+
 #31 新增 scripts/agent-context.test.cjs 与 scripts/agent-context-browser.cjs。前者包含上下文、服务端替身与最终数据库回归，后者使用随机来源及专用合成库核对真实消息流程、失败、取消和重开。固定北京时间2026年11月15日10:00，模型为明确替身，实际结果见[#31报告](../audit/2026-11-15/issue31-context.md)。
 
 ## PR #89、#91联合复查
