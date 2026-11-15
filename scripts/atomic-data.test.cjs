@@ -420,3 +420,25 @@ for(const entry of ['assistant','ordinary'])for(const fault of [null,'todos','ta
   if(entry==='assistant'){assert.deepEqual(after.operations[0].before,original);assert.deepEqual(after.operations[0].after,todo);await a.run("UI.undoAgentOperation('m')");const undone=await a.snapshot();assert.deepEqual(undone.tasks,before.tasks);assert.deepEqual(undone.todos,before.todos);assert.deepEqual(undone.kv,before.kv);}
  });
 }
+
+for(const kind of ['update_schedule','update_schedule_batch']){
+ for(const item of [{title:''},{title:'   '},{base_score:999},{base_score:-1},{base_score:NaN},{time_type:'invalid'},{time_type:null},{time_type:'slot',slot:'invalid'},{slot:'invalid'},{start_time:'bad'},{end_time:'09:00'}])test('issue30 rejects '+kind+' '+JSON.stringify(item),async t=>{
+  const a=await fixture(t);a.ctx.patch=item;
+  a.run(kind==='update_schedule'?"action={kind:'update_schedule',target_id:'a',item:patch};UI.captureAgentScope(action)":"action.item=patch;UI.captureAgentScope(action)");
+  await a.run("S.messages[0].meta.action=action;DB.put('messages',S.messages[0])");
+  const before=await a.snapshot(),memory=a.memory();assert.equal(a.json('UI.validateAgentAction(action).ok'),false);
+  await assert.rejects(a.run("UI.executeAgentAction(action,S.messages[0])"));assert.deepEqual(await a.snapshot(),before);assert.deepEqual(a.memory(),memory);
+ });
+ for(const item of [{note:'仅改备注'},{base_score:4.5},{start_time:'10:15'},{end_time:'11:15'},{time_type:'exact',start_time:'10:15'}])test('issue30 partial '+kind+' '+JSON.stringify(item),async t=>{
+  const a=await fixture(t);a.ctx.patch=item;
+  a.run(kind==='update_schedule'?"action={kind:'update_schedule',target_id:'a',item:patch};UI.captureAgentScope(action)":"action.item=patch;UI.captureAgentScope(action)");
+  await a.run("S.messages[0].meta.action=action;DB.put('messages',S.messages[0])");
+  const before=await a.snapshot();assert.equal(a.json('UI.validateAgentAction(action).ok'),true);await a.run("UI.executeAgentAction(action,S.messages[0])");const after=await a.snapshot();
+  for(const task of before.tasks){const actual=after.tasks.find(x=>x.id===task.id);if(task.id==='a'||(kind.endsWith('_batch')&&task.id==='b')){const expected={...task,isBackfill:a.run('dayDiff('+JSON.stringify(task.execDate)+',todayStr())<0')};for(const [key,val] of Object.entries(item))expected[({base_score:'baseScore',start_time:'startTime',end_time:'endTime',time_type:'timeType'})[key]||key]=val;if(item.time_type)expected.slot=null;assert.deepEqual(actual,expected);}else assert.deepEqual(actual,task);}
+  for(const key of ['todos','kv','memories','chats'])assert.deepEqual(after[key],before[key]);a.run('DB._db.close()');await a.run('DB.open()');assert.deepEqual(await a.snapshot(),after);
+ });
+}
+
+test('issue30 validates merged time against every member before any writes',async t=>{
+ const a=await fixture(t);a.run("S.tasks[1].endTime='10:20';action.item={start_time:'10:30'};UI.captureAgentScope(action)");await a.run("DB.put('tasks',S.tasks[1]);DB.put('messages',S.messages[0])");const before=await a.snapshot();assert.equal(a.json('UI.validateAgentAction(action).ok'),false);await assert.rejects(a.run('UI.executeAgentAction(action,S.messages[0])'));assert.deepEqual(await a.snapshot(),before);
+});
