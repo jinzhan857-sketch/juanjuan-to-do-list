@@ -3387,7 +3387,7 @@ const UI = {
       const todo=copyData(S.todos.find(x=>x.id===action.target_id)); operation.before=clone(todo); changes.push({store:'todos',type:'delete',key:todo.id}); operation.summary=`已删除待办「${todo.title}」。`;
     }else if(action.kind==='convert_schedule_to_todo'){
       const task=copyData(S.tasks.find(x=>x.id===action.target_id)); operation.before=clone(task);
-      const todo={id:uid(),title:task.title,note:task.note||'',category:task.category,baseScore:task.baseScore,aiReason:task.aiReason||'',aiAdvice:task.aiAdvice||'',aiSource:task.aiSource||'agent',links:[],images:[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:task.id};
+      const todo={id:uid(),title:task.title,note:task.note||'',category:task.category,baseScore:task.baseScore,aiReason:task.aiReason||'',aiAdvice:task.aiAdvice||'',aiSource:task.aiSource||'agent',links:task.links||[],images:task.images||[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:task.id};
       changes.push({store:'todos',value:todo}); changes.push({store:'tasks',type:'delete',key:task.id}); operation.after=clone(todo); operation.summary=`已将「${task.title}」转为待办。`;
     }
     changes.push({store:'operations',value:operation});

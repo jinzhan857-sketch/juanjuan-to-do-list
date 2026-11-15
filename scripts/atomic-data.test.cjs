@@ -394,3 +394,29 @@ test('PR68 review: empty collections import unchanged and invalid missing collec
  const before=await a.snapshot();delete data.todos;a.ctx.data=data;
  await assert.rejects(a.run('replaceBackup(data)'),error=>error.field==='todos');assert.deepEqual(await a.snapshot(),before);
 });
+
+for(const entry of ['assistant','ordinary'])for(const fault of [null,'todos','tasks','operations','messages']){
+ if(entry==='ordinary'&&['operations','messages'].includes(fault))continue;
+ test('issue27 '+entry+' conversion '+(fault||'confirm and undo'),async t=>{
+  const a=await fixture(t);
+  a.run("Object.assign(S.tasks[0],{category:'学业事务',aiReason:'合成理由',aiAdvice:'合成建议',aiSource:'rules',createdAt:1794700000000});action={kind:'convert_schedule_to_todo',target_id:'a',item:{}};UI.captureAgentScope(action);S.messages[0].meta.action=action");
+  await a.run("DB.put('tasks',S.tasks[0]);DB.put('messages',S.messages[0])");
+  const before=await a.snapshot(),original=structuredClone(before.tasks.find(x=>x.id==='a'));
+  if(entry==='ordinary'){
+   const nodes=new Map(),el=k=>{if(!nodes.has(k))nodes.set(k,{innerHTML:'',querySelector:el,querySelectorAll:()=>[]});return nodes.get(k)};
+   a.ctx.document={querySelector:el};a.run("UI.confirm=(title,body,ok)=>confirmed=ok;UI.openTaskDetail('a')");el('#td-to-todo').onclick();
+   assert.deepEqual(await a.snapshot(),before);
+  }
+  if(fault)a.fail(fault,1,fault==='tasks'?'delete':'put');
+  const execute=()=>a.run(entry==='ordinary'?'confirmed()':"UI.confirmAgentAction('m')");
+  if(fault){if(entry==='ordinary')await assert.rejects(execute());else await execute();assert.deepEqual(await a.snapshot(),before);return;}
+  await execute();const after=await a.snapshot(),todo=after.todos.find(x=>x.sourceTaskId==='a');
+  assert.equal(after.tasks.length,before.tasks.length-1);assert.equal(after.todos.length,before.todos.length+1);
+  for(const key of ['title','note','category','baseScore','aiReason','aiAdvice','aiSource','links','images'])assert.deepEqual(todo[key],original[key],key);
+  assert.equal(todo.done,false);assert.equal(todo.finalScore,0);
+  for(const key of ['kv','memories','chats'])assert.deepEqual(after[key],before[key]);
+  assert.deepEqual(after.tasks,before.tasks.filter(x=>x.id!=='a'));assert.deepEqual(after.todos.filter(x=>x.id!==todo.id),before.todos);
+  a.run('DB._db.close()');await a.run('DB.open()');assert.deepEqual(await a.snapshot(),after);
+  if(entry==='assistant'){assert.deepEqual(after.operations[0].before,original);assert.deepEqual(after.operations[0].after,todo);await a.run("UI.undoAgentOperation('m')");const undone=await a.snapshot();assert.deepEqual(undone.tasks,before.tasks);assert.deepEqual(undone.todos,before.todos);assert.deepEqual(undone.kv,before.kv);}
+ });
+}
