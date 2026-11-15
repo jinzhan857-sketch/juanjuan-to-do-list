@@ -11,7 +11,7 @@ function load(){
   const run=code=>vm.runInContext(code,app,{timeout:2000});
   run("S.tasks=[{id:'a',title:'同名课程',seriesId:'group-A',execDate:'2026-11-09',timeType:'exact',startTime:'10:00',endTime:'11:00',note:'old',baseScore:7},{id:'b',title:'同名课程',seriesId:'group-A',execDate:'2026-11-16',timeType:'exact',startTime:'10:00',endTime:'11:00',note:'old',baseScore:7},{id:'c',title:'同名课程',seriesId:'group-B',execDate:'2026-11-10',timeType:'exact',startTime:'10:00',endTime:'11:00',note:'other',baseScore:7}];S.todos=[];S.messages=[];S.operations=[];S.pet={synthetic:true};DB.writes=[];DB.deleted=[];DB.put=async(store,value)=>DB.writes.push({store,value:JSON.parse(JSON.stringify(value))});DB.del=async(store,id)=>DB.deleted.push({store,id});UI.renderAgent=()=>{};UI.agentChatId='test';toast=()=>{};");
   run("DB.get=async(store,key)=>structuredClone(S[key]);DB.batch=async(changes)=>{for(const c of changes){if(c.type==='delete')await DB.del(c.store,c.key);else await DB.put(c.store,c.value,c.key);}};");
-  const api=vm.createContext({require,module:{exports:{}},process:{env:{}},console,URL,AbortController,DOMException,setTimeout,clearTimeout});
+  const ledger=require('./helpers/quota-oracle.cjs').quotaOracle();const api=vm.createContext({require:name=>name==='./quota.cjs'?{createQuota:()=>ledger}:require(name),module:{exports:{}},process:{env:{}},console,URL,AbortController,DOMException,setTimeout,clearTimeout});
   vm.runInContext(fs.readFileSync(path.join(process.env.ISSUE5_SOURCE_ROOT||path.join(__dirname,'..'),'api/ai.js'),'utf8'),api);
   const wire=JSON.parse(run("JSON.stringify(UI.agentContext('test','','task'))"));
   const parse=(data,context=wire)=>{api.data=data;api.context=context;return JSON.parse(vm.runInContext('JSON.stringify(parseAgentResult(JSON.stringify(data),compactAgentContext(context)))',api));};
@@ -97,12 +97,12 @@ test('hosted handler sends group IDs and rejects model-invented IDs without netw
     assert.equal(url,'https://api.deepseek.com/chat/completions');calls++;sent=JSON.parse(options.body);
     return {ok:true,json:async()=>({choices:[{message:{content:JSON.stringify(output)}}]})};
   };
-  const req={method:'POST',headers:{},body:{mode:'agent',agent_role:'task',device_id:'syntheticdevice0123456789abcd',message:'每周一同名课程备注改成new',context:a.wire,client_date:'2026-11-15'}};
+  const req={method:'POST',headers:{},body:{mode:'agent',agent_role:'task',request_id:'a'.repeat(32),device_id:'syntheticdevice0123456789abcd',message:'每周一同名课程备注改成new',context:a.wire,client_date:'2026-11-15'}};
   let result,status;const res={setHeader(){},status(code){status=code;return this;},json(value){result=value;return value;}};
   await a.api.module.exports(req,res);assert.equal(status,200);assert.equal(result.action.rule.series_id,'group-A');
   assert.match(sent.messages[1].content,/"series_id":"group-A"/);
   assert.match(sent.messages[0].content,/rule.series_id/);
-  output=proposal('invented');await a.api.module.exports(req,res);
+  output=proposal('invented');req.body.request_id='b'.repeat(32);await a.api.module.exports(req,res);
   assert.equal(result.type,'clarify');assert.equal(calls,2);
 });
 

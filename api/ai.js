@@ -375,6 +375,8 @@ async function stats(req, res, quotaDate) {
 
 module.exports = async function handler(req, res) {
   const quotaDate = quotaDay();
+  const quota = require('./quota.cjs').createQuota(redis);
+  let receipt = null;
   try {
     if (req.method === 'GET' && req.query?.stats === '1') return await stats(req, res, quotaDate);
     if (req.method !== 'POST') return json(res, 405, { error: '请求方式不支持' });
@@ -382,29 +384,33 @@ module.exports = async function handler(req, res) {
     const body = parseBody(req);
     const agentMode = body.mode === 'agent';
     const deviceId = body.device_id;
-    const input = String(agentMode ? body.message : body.title || '').trim();
-    if (!input || input.length > (agentMode ? 1000 : 300)) return json(res, 400, { error: agentMode ? '消息内容不合法' : '任务内容不合法' });
+    const requestId = body.request_id;
     if (!/^[A-Za-z0-9]{24,64}$/.test(String(deviceId || ''))) {
       return json(res, 400, { error: '设备编号不合法' });
     }
+    if (typeof requestId !== 'string' || !/^[a-f0-9]{32}$/.test(requestId)) return json(res, 400, { error: '请求编号不合法' });
+    if (body.mode === 'cancel') {
+      await quota.finish(deviceId, requestId, 'cancelled', Date.now());
+      return json(res, 200, { released: true });
+    }
+    const input = String(agentMode ? body.message : body.title || '').trim();
+    if (!input || input.length > (agentMode ? 1000 : 300)) return json(res, 400, { error: agentMode ? '消息内容不合法' : '任务内容不合法' });
 
     const modelDate = validDate(body.client_date) || quotaDate;
-    const deviceCount = await increaseDaily(`limit:${quotaDate}:device:${deviceId}`);
-    const ipCount = await increaseDaily(`limit:${quotaDate}:ip:${ipDigest(requestIp(req), quotaDate)}`);
+    // Record identity before admission: a lost Redis response may already have reserved quota.
+    receipt = { deviceId, requestId };
+    const admission = await quota.reserve({device:deviceId, id:requestId, day:quotaDate,
+      ip:ipDigest(requestIp(req), quotaDate), deviceLimit:DEVICE_LIMIT, ipLimit:IP_LIMIT, globalLimit:GLOBAL_LIMIT, now:Date.now()});
+    if (['device','ip','global'].includes(admission)) {
+      receipt = null;
+      return json(res, 429, { error: '今日免费AI次数已达上限。', limit_scope: admission });
+    }
+    if (admission !== 'reserved') {
+      receipt = null;
+      return json(res, 409, { error: '请求已处理或已取消，请重新尝试。' });
+    }
     await redis(['PFADD', `active:${quotaDate}`, deviceId]);
     await redis(['EXPIRE', `active:${quotaDate}`, '2678400']);
-    if (deviceCount > DEVICE_LIMIT || ipCount > IP_LIMIT) {
-      await increaseMetric('blocked', quotaDate);
-      return json(res, 429, { error: '今天的 AI 识别次数已用完，明天再来吧', limit_scope: deviceCount > DEVICE_LIMIT ? 'device' : 'ip' });
-    }
-
-    const globalCount = await increaseDaily(`limit:${quotaDate}:global`);
-    if (globalCount > GLOBAL_LIMIT) {
-      await increaseMetric('blocked', quotaDate);
-      return json(res, 429, { error: '今日公共免费AI次数已达上限。', limit_scope: 'global' });
-    }
-
-    await increaseMetric('calls', quotaDate);
     const context = agentMode ? compactAgentContext(body.context) : null;
     const agentRole = body.agent_role === 'task' || body.agent_role === 'planning' ? body.agent_role : 'chat';
     const agentPrompt = agentRole === 'task' ? `${AGENT_SYSTEM_PROMPT}\n${TASK_EXECUTION_RULES}` : agentRole === 'planning' ? PLANNING_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
@@ -432,10 +438,19 @@ module.exports = async function handler(req, res) {
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
     const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
-    await increaseMetric('success', quotaDate);
-    return json(res, 200, result);
+    const completed = await quota.finish(deviceId, requestId, 'success', Date.now());
+    if (completed !== 'success') {
+      receipt = null;
+      return json(res, 409, { error: '请求已取消或已过期，请重新尝试。' });
+    }
+    const sent = json(res, 200, result);
+    receipt = null;
+    return sent;
   } catch (error) {
-    try { await increaseMetric('failures', quotaDate); } catch (_) {}
+    try {
+      if (receipt) await quota.finish(receipt.deviceId, receipt.requestId, 'failed', Date.now());
+      else await increaseMetric('failures', quotaDate);
+    } catch (_) { /* Client keeps the receipt until release is confirmed. Pending leases also expire. */ }
     return json(res, 503, { error: 'AI 服务暂时不可用，请稍后再试' });
   }
 };

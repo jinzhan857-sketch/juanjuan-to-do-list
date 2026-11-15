@@ -173,3 +173,9 @@ node docs/audit/2026-11-14/check-baseline.cjs
 ## #28 编辑计分一致性
 
 node --test scripts/edit-score.test.cjs使用#8固定时钟夹具和独立fake-indexeddb，覆盖三个实际业务入口、所有结算状态、改时边界、内容和日期、混合正负差额、跨日附件、撤销、并发、保存失败与重开。node scripts/edit-score-browser.cjs启动随机独立端口，仅开放合成页面与评分模块，使用juanjuan-issue28-synthetic数据库，禁止外部连接。点击“运行编辑合成验收”执行真实控件与原生数据库检查，页面输出完整字段和快照。实际结果和版本见[#28报告](../audit/2026-11-15/issue28-edit-score.md)。
+
+## #38 失败取消退次
+
+客户端、handler和#29可信日期联验纳入npm run check。Lua原子逻辑由独立CI作业quota-redis在一次性Redis容器验证，固定官方镜像摘要，只使用127.0.0.1:16379。脚本会清空该专用库，禁止对生产或个人Redis运行；不需要新增npm依赖。本机无Redis时不把替身当成Lua实测。
+
+浏览器入口node scripts/quota-refund-browser.cjs使用4198与juanjuan-quota-refund-synthetic，真实页面和handler配离线模型及独立额度替身，CSP只允许同源连接。准备刷新补退后实际刷新，再核对补退；首次按钮只清空专用合成库。已有端口占用时不结束其他进程。数量、附件、无关资料、积分和宠物均核对最终数据库，详见[#38报告](../audit/2026-11-15/issue38-quota-refund.md)。
