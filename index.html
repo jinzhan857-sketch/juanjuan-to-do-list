@@ -1808,6 +1808,7 @@ const AIService = {
   cancelAgentRequest(){ if(this.activeAgentController){this.activeAgentController.userCancelled=true;this.activeAgentController.abort();} },
 
   activeHosted:new Map(),
+  hostedGeneration:0,
   refundEntries(){const entries=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith('juanjuan_quota_pending:'))entries.push(JSON.parse(localStorage.getItem(key)));}return entries;},
   storeRefund(item){localStorage.setItem('juanjuan_quota_pending:'+item.id,JSON.stringify(item));},
   forgetRefund(id){localStorage.removeItem('juanjuan_quota_pending:'+id);},
@@ -1844,10 +1845,16 @@ const AIService = {
     try{this.readyRefund(id);}catch(_){this.refundStatus('次数退回待确认，请联网后重试。');}
     void this.flushQuotaRefunds().catch(()=>this.refundStatus('次数退回待确认，请联网后重试。'));
   },
-  cancelHostedRequests(){for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);},
+  cancelHostedRequests(){
+    this.hostedGeneration++;
+    this.cancelAgentRequest();
+    for(const [id,controller] of this.activeHosted)this.cancelHosted(id,controller);
+  },
   async hostedRequest(payload,{signal,timeoutMs=20000,accept=data=>data}={}){
+    const generation=this.hostedGeneration;
     if(signal?.aborted)throw signal.reason;
     await this.flushQuotaRefunds();
+    if(generation!==this.hostedGeneration)throw new DOMException('请求已取消','AbortError');
     if(signal?.aborted)throw signal.reason;
     const id=crypto.randomUUID().replaceAll('-',''),device=this.getDeviceId(),controller=new AbortController();
     const stop=()=>this.cancelHosted(id,controller,signal.reason);
@@ -3260,14 +3267,13 @@ const UI = {
 
   setAgentKeyboard(open){ document.body.classList.toggle('agent-keyboard-open',!!open); },
 
-  async cancelAgentMessage(){
+  async cancelAgentMessage({render=true}={}){
     if(!this.agentThinking&&!this.agentSending) return;
     this.agentSending=null;
     this.agentRequestSerial++;
     AIService.cancelAgentRequest();
     this.agentThinking=false;
-    this.renderAgent();
-    $('#agent-input').focus();
+    if(render){this.renderAgent();$('#agent-input').focus();}
   },
 
   retryAgentMessage(id){
@@ -4963,7 +4969,7 @@ const App = {
     AIService.setDegraded(false);
     this.bind();
     window.addEventListener('online',()=>{void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));});
-    window.addEventListener('pagehide',()=>AIService.cancelHostedRequests());
+    window.addEventListener('pagehide',()=>{UI.cancelRecognition();void UI.cancelAgentMessage({render:false});AIService.cancelHostedRequests();});
     void AIService.flushQuotaRefunds().catch(()=>AIService.refundStatus('次数退回待确认，请联网后重试。'));
     if(!UI.restoreCreateDraft()) UI.resetCreate(localStorage.getItem('juanjuan_publish_kind')||'schedule');
     UI.switchPage('home');
