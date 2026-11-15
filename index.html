@@ -1213,25 +1213,30 @@ function recognizePublishDate(text, base){
 
 function recognizePublishTime(text){
   let line=String(text||'').replace(/\r\n?/g,'\n').split('\n').find(x=>x.trim())||'';
-  line=normalizeChineseHour(line.replace(/https?:\/\/\S+/g,'').replace(/\d+\.\d+/g,''));
-  const pattern=/(半夜|凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里)?\s*(\d{1,2})(?::(\d{1,2})|点(?:(半|一刻|三刻)|(\d{1,2})分?)?)/g;
+  line=normalizeChineseHour(line.replace(/https?:\/\/\S+/gi,'').replace(/\d+\.\d+/g,'').replace(/[：﹕]/g,':'));
+  const pattern=/(?<![\d:])(半夜|凌晨|清晨|早上|上午|中午|下午|黄昏|傍晚|晚上|夜里)?\s*(\d+)(?::(\d+)|点(?:(半|一刻|三刻)|(\d+)分?)?)(?!\d|:\d)/g;
   const clocks=[...line.matchAll(pattern)].filter(m=>!(m[3]===undefined&&/^(?:建议|要求|意见|问题|内容|事项|原因|经验|注意|总结|结论)/.test(line.slice(m.index+m[0].length))));
   const uncertain={kind:'uncertain',message:'时间段尚不明确，请补充上下午，或手动选择具体时间。'};
   const invalid={kind:'invalid',message:'时间无效，请核对具体起止时间。'};
+  if([...line.matchAll(/\d+(?::\d+)+/g)].some(m=>!/^\d{1,2}:\d{1,2}$/.test(m[0])))return invalid;
   if(clocks.length){
     if(clocks.length>2)return uncertain;
     const values=[];let period='';
     for(const m of clocks){
       period=m[1]||period;
       let h=+m[2],minute=m[3]!==undefined?+m[3]:m[4]==='半'?30:m[4]==='一刻'?15:m[4]==='三刻'?45:+(m[5]||0);
-      if(h>24||minute>59||h===24&&minute!==0)return invalid;
+      if(m[2].length>2||(m[3]||m[5]||'').length>2||h>24||minute>59||h===24&&minute!==0)return invalid;
       if(!period&&m[3]===undefined&&h>0&&h<=12)return uncertain;
-      if(period&&h>0&&h<=12){if(/下午|黄昏|傍晚|晚上|夜里/.test(period)&&h<12)h+=12;if(period==='中午'&&h<11)h+=12;if(/凌晨|半夜/.test(period)&&h===12)h=0;}
+      if(/^(?:晚上|夜里)$/.test(period)&&h<=12){
+        if(h===3||h===4)return {...uncertain,message:'时间段尚不明确，请明确是凌晨还是早上，或手动选择具体时间。'};
+        h=h===12||h===0?24:h<=2?h+24:h+12;
+      }else if(period&&h>0&&h<=12){if(/下午|黄昏|傍晚/.test(period)&&h<12)h+=12;if(period==='中午'&&h<11)h+=12;if(/凌晨|半夜/.test(period)&&h===12)h=0;}
       values.push(h*60+minute);
     }
     let start,end;
-    if(values.length===2){if(values[0]===1440)return invalid;if(!/(?:到|至|~|～|—|–|-)/.test(line.slice(clocks[0].index+clocks[0][0].length,clocks[1].index)))return uncertain;[start,end]=values;if(end<start)end+=1440;if(end===start)return invalid;}
-    else {const m=clocks[0],before=line.slice(0,m.index),after=line.slice(m.index+m[0].length);if(/截[止至][^，,。；;]*$/.test(before)||/^\s*(?:结束|截止|之前|前)/.test(after)){end=values[0];start=end-60;}else{start=values[0];if(start===1440)return invalid;end=start+60;}}
+    const nightMidnight=/^(?:晚上|夜里)$/.test(clocks[0][1]||'')&&[0,12].includes(+clocks[0][2]);
+    if(values.length===2){if(values[0]===1440&&!nightMidnight)return invalid;if(!/(?:到|至|~|～|—|–|-)/.test(line.slice(clocks[0].index+clocks[0][0].length,clocks[1].index)))return uncertain;[start,end]=values;if(end<start)end+=1440;if(end===start)return invalid;}
+    else {const m=clocks[0],before=line.slice(0,m.index),after=line.slice(m.index+m[0].length);if(/截[止至][^，,。；;]*$/.test(before)||/^\s*(?:结束|截止|之前|前)/.test(after)){end=values[0];start=end-60;}else{start=values[0];if(start===1440&&!nightMidnight)return invalid;end=start+60;}}
     const fmt=value=>`${pad(Math.floor(((value%1440)+1440)%1440/60))}:${pad(((value%60)+60)%60)}`;
     return {kind:'exact',start:fmt(start),end:fmt(end),startOffset:Math.floor(start/1440),endOffset:Math.floor(end/1440)};
   }
@@ -4001,7 +4006,7 @@ const UI = {
     else if(result.kind==='exact'){
       c.timeType='exact';c.start=result.start;c.end=result.end;
       c.endDayOffset=result.endOffset-result.startOffset;
-      if(!c.userFields?.date){const anchor=c.dateResult?.kind==='date'?c.dateResult.date:todayStr();c.date=addDays(anchor,result.startOffset);c.calMonth=c.date.slice(0,7);c.timeDateShift=result.startOffset;}
+      if(!c.userFields?.date){const anchor=c.dateResult?.kind==='date'?c.dateResult.date:todayStr();c.date=addDays(anchor,result.startOffset);c.calMonth=c.date.slice(0,7);c.timeDateShift=result.startOffset;c.timeDateRaw=c.rawText;}
     }else if(result.kind==='slot'){c.timeType='slot';c.slot=result.slot;c.endDayOffset=0;}
     else if(result.kind==='allday'){c.timeType='allday';c.endDayOffset=0;}
     return result;
@@ -4012,12 +4017,13 @@ const UI = {
     if(c.kind!=='schedule')return;
     const result=recognizePublishDate(c.rawText,todayStr());
     const previous=c.dateResult;
+    const selectedTimeShift=c.userFields?.time&&c.timeDateRaw===c.rawText?(c.timeDateShift||0):0;
     c.dateResult=result;c.dateError='';c.dateConflict='';
     if(c.userFields?.date){
       if(result.kind==='date'&&result.date!==c.date)c.dateConflict='识别日期 '+result.date+'，已保留你选择的 '+c.date;
-    }else if(result.kind==='date'){c.date=result.date;c.calMonth=c.date.slice(0,7);}
+    }else if(result.kind==='date'){c.date=addDays(result.date,selectedTimeShift);c.calMonth=c.date.slice(0,7);}
     else if(result.kind!=='none')c.dateError=result.message;
-    else if(previous?.kind==='date'||c.timeDateShift){c.date=todayStr();c.calMonth=c.date.slice(0,7);c.timeDateShift=0;}
+    else if(previous?.kind==='date'||c.timeDateShift){c.date=addDays(todayStr(),selectedTimeShift);c.calMonth=c.date.slice(0,7);c.timeDateShift=selectedTimeShift;}
     c.missingDate=!!c.dateError||!validDateStr(c.date);
     return result;
   },
