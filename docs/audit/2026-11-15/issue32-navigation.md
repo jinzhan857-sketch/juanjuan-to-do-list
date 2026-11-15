@@ -50,7 +50,7 @@
 
 [窄屏截图](issue32-evidence/desktop-narrow.jpg)仅为合成数据现场，动态验收以原始采样为准。电脑窄屏不计为手机。
 
-## 仍需完成
+## 初期收尾记录（历史）
 
 2026 年 11 月 15 日，源码及证据保存为 2ee444914ac4bee783a0f4edbfe4e4fb16634702。npm run check:archive 已对该提交的无 Git 归档完成安装、1187 项 Node 检查、26 项稳定断言及来源验证，全部通过。随后仅补写本条检查结果，应用源码未变。
 
@@ -71,3 +71,11 @@
 合入前再次整合 main 8b6cb1b48d53f127c7a44296eecc9e8330ccfc16，保留 #28、#39、#81 及后续复查成果。三份共用文档和检查命令冲突逐段合并，双方内容和测试保留。与手机受检版本逐字比较，全部样式及 switchPage 完全相同；最新业务改动另运行全部 1363 项 Node 检查和 26 项稳定断言通过，桌面导航重新采样，手机证据继续对应上述实际版本，不冒称在另一提交重新操作过手机。
 
 未测范围：其他手机、iPhone、真实模型、正式发布和 #33 真实软键盘行为不属于本项通过范围。没有关闭或转交 #33。
+
+## 最终复查
+
+再次整合 d7accb5167505a0ed36773aae341e1bd0e6a6ad0 的并行编辑与请求退出修复，1392 项 Node 与 26 项稳定断言通过。手机受检版本与本轮最终版本的全部样式、switchPage 逐字一致。没有把业务并行修复回退成旧代码。
+
+为避免电脑低频调度造成样本不足，观察窗口在至少覆盖 380 毫秒的同时，保证每段至少取得 16 个实际 requestAnimationFrame 回调；不是降低验收门槛。所有实际帧间隔仍保留，采样不足的旧记录不计通过。最终桌面来源为内置浏览器，早先 Chrome 通过记录继续保留。最终源码与记录见后续归档；外部合入、关闭和总计划勾选以 [PR #96](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/96)、[#32](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/32)和[#1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)为准。真实手机验收完成后已关闭临时局域网入口。
+
+最终源码 SHA256 为 4b39f185f1211bedba858c3f92432d8a4b7a7bb78629f2a2df36cd6d50634f3e，基于整合提交 b4aa425bfd6ad848269ecbe22e693bc1bfd4711b。[最终宽屏](issue32-evidence/final-wide.json)和[最终窄屏](issue32-evidence/final-narrow.json)各 26 组全部通过严格核验，[最终截图](issue32-evidence/final-narrow.jpg)同时保留测量结果和正常页面。手机记录、最终两份记录、HTTP 边界以及失败证据回归均通过；没有因验收修正再改应用代码。
