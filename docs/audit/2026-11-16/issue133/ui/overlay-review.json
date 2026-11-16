@@ -1,0 +1,38 @@
+[
+  {
+    "theme": "暖色陪伴",
+    "composerBottom": 744.0000228881836,
+    "menuBottom": 687.3333435058594,
+    "menuTop": 501,
+    "messagesBottom": 774,
+    "round": "18px",
+    "triggerTop": 697.3333740234375
+  },
+  {
+    "theme": "白蓝专注",
+    "composerBottom": 744.0000228881836,
+    "menuBottom": 687.3333435058594,
+    "menuTop": 501,
+    "messagesBottom": 774,
+    "round": "18px",
+    "triggerTop": 697.3333740234375
+  },
+  {
+    "theme": "暗色陪伴",
+    "composerBottom": 744.0000228881836,
+    "menuBottom": 687.3333435058594,
+    "menuTop": 501,
+    "messagesBottom": 774,
+    "round": "18px",
+    "triggerTop": 697.3333740234375
+  },
+  {
+    "theme": "纯黑专注",
+    "composerBottom": 744.0000228881836,
+    "menuBottom": 687.3333435058594,
+    "menuTop": 501,
+    "messagesBottom": 774,
+    "round": "18px",
+    "triggerTop": 697.3333740234375
+  }
+]

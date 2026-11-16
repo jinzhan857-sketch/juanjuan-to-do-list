@@ -1,0 +1,552 @@
+{
+  "version": "d-v1",
+  "frozenAt": "2026-11-16T06:13:30.692Z",
+  "cases": [
+    {
+      "id": "D01",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请分析12月2日的设备巡检安排是否合理，先别创建候选。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D02",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "只讨论12月4日研究交流的安排，不要建立日程。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D03",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "我不需要保存任何日程，只分析12月6日参加观摩的利弊。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D04",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "同伴说“创建12月8日资料收集”，这里只分析这句话，不要创建。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D05",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请仅讨论12月10日的问卷审查，不生成事务候选。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D06",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "先不要新建12月12日的采访安排，解释一下准备事项。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D07",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "12月14日讨论会先只分析，不要生成候选卡。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D08",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "我想了解12月16日的观测计划，先别建立任务。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D09",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "不要创建12月18日的查验日程，只帮我讨论步骤。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D10",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "仅分析12月20日的研读时间，不创建或改动事项。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "D11",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月2日23:10到次日00:20的日程“夜间任务1”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "23:10",
+      "end": "00:20"
+    },
+    {
+      "id": "D12",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月3日22:20到次日01:10的日程“夜间任务2”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "22:20",
+      "end": "01:10"
+    },
+    {
+      "id": "D13",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月4日23:40到次日00:50的日程“夜间任务3”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "23:40",
+      "end": "00:50"
+    },
+    {
+      "id": "D14",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月5日21:30到次日00:10的日程“夜间任务4”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "21:30",
+      "end": "00:10"
+    },
+    {
+      "id": "D15",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月6日23:15到次日00:45的日程“夜间任务5”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "23:15",
+      "end": "00:45"
+    },
+    {
+      "id": "D16",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月7日22:45到次日01:15的日程“夜间任务6”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "22:45",
+      "end": "01:15"
+    },
+    {
+      "id": "D17",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月8日23:55到次日00:25的日程“夜间任务7”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "23:55",
+      "end": "00:25"
+    },
+    {
+      "id": "D18",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月9日20:50到次日00:30的日程“夜间任务8”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "20:50",
+      "end": "00:30"
+    },
+    {
+      "id": "D19",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月10日23:05到次日00:35的日程“夜间任务9”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "23:05",
+      "end": "00:35"
+    },
+    {
+      "id": "D20",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月11日22:35到次日01:05的日程“夜间任务10”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "22:35",
+      "end": "01:05"
+    },
+    {
+      "id": "D21",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月1日全天“核验”和12月12日全天“核验”。",
+        "核验加备注带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "D22",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月2日全天“材料核对”和12月13日全天“材料核对”。",
+        "所有材料核对事项都补充备注：带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "includes": "资料夹"
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "资料夹"
+        }
+      ]
+    },
+    {
+      "id": "D23",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月3日全天“器材交接”和12月14日全天“器材交接”。",
+        "器材交接加备注带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "D24",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月4日全天“文稿审阅”和12月15日全天“文稿审阅”。",
+        "所有文稿审阅事项都补充备注：带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "includes": "资料夹"
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "资料夹"
+        }
+      ]
+    },
+    {
+      "id": "D25",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月5日全天“联系导师”和12月16日全天“联系导师”。",
+        "联系导师加备注带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "D26",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月6日全天“清理档案”和12月17日全天“清理档案”。",
+        "所有清理档案事项都补充备注：带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "includes": "资料夹"
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "资料夹"
+        }
+      ]
+    },
+    {
+      "id": "D27",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月7日全天“确认报名”和12月18日全天“确认报名”。",
+        "确认报名加备注带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "D28",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月8日全天“核对排期”和12月19日全天“核对排期”。",
+        "所有核对排期事项都补充备注：带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "includes": "资料夹"
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "资料夹"
+        }
+      ]
+    },
+    {
+      "id": "D29",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "请创建12月9日全天“整理表格”和12月20日全天“整理表格”。",
+        "整理表格加备注带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "D30",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "请创建12月10日全天“访谈预约”和12月21日全天“访谈预约”。",
+        "所有访谈预约事项都补充备注：带资料夹。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "includes": "资料夹"
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "资料夹"
+        }
+      ]
+    },
+    {
+      "id": "D31",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "创建12月8日14:15至15:45审查照片的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:30"
+    },
+    {
+      "id": "D32",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "创建12月9日13:00至15:00练习演示的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    },
+    {
+      "id": "D33",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "创建12月10日14:15至15:45复查图表的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:30"
+    },
+    {
+      "id": "D34",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "创建12月11日13:00至15:00制作索引的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    },
+    {
+      "id": "D35",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "创建12月12日14:15至15:45安排采访的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:30"
+    },
+    {
+      "id": "D36",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "创建12月13日13:00至15:00准备答辩的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    },
+    {
+      "id": "D37",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "创建12月14日14:15至15:45撰写总结的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:30"
+    },
+    {
+      "id": "D38",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "创建12月15日13:00至15:00整理素材的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    },
+    {
+      "id": "D39",
+      "batch": "D",
+      "route": "hosted",
+      "turns": [
+        "创建12月16日14:15至15:45修改提纲的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:30"
+    },
+    {
+      "id": "D40",
+      "batch": "D",
+      "route": "custom",
+      "turns": [
+        "创建12月17日13:00至15:00阅读规范的日程。",
+        "改为晚上十一点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "23:00",
+      "end": "01:00",
+      "overnight": true
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # 测试与验收
 
+#133新增scripts/assistant-unified.test.cjs覆盖实际发送入口的四种意图提示、自然改口、授权记忆和单一候选身份。scripts/assistant-unified-live.cjs的40项属于真实模型消息入口集成，不是原生网页；真实网页单独按A8、B8记录。scripts/assistant-browser-results.cjs只核对已记录数据库，不驱动UI。关机暂停时A8最终通过，B前6项通过，剩2项未测，见[完整交接](../audit/2026-11-16/issue133/CHECKPOINT.md)。历史断言原件保留，#115全天重复和#133关键词分流按展明确授权的新测试替代，不改写旧证据。
+
 ## #33 输入与真实键盘
 
 运行 `node scripts/keyboard-browser.cjs`，默认仅 4234 loopback 来源，使用专用合成库 juanjuan-issue33-synthetic。页面版本由实际源码与采集脚本共同计算，旧页面上传被拒绝；桌面按钮覆盖聚焦、新建、角色、离页返回及小高度滚动。手机入口仅在明确授权后临时绑定局域网，不能用窄屏或合成事件替代真机。`node scripts/check-keyboard-evidence.cjs desktop 报告路径` 与 `phone 报告路径` 只检查记录中的几何和数据不变，手机视觉结论还须单独记录。`/native` 是无卷卷代码和数据库的原生输入对照。复现、失败、修复及展批准暂缓的 #110 边界见[#33报告](../audit/2026-11-15/issue33-keyboard.md)，19 项专项已加入统一检查。没有真实模型请求或日常数据写入。

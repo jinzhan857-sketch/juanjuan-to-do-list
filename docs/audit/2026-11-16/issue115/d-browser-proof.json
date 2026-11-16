@@ -1,0 +1,232 @@
+{
+  "sourceSha256": "4c1d5dfe26d1cd61113a4ea174fb9df2bd249b760dde990fa8115c70e936dfde",
+  "tasks": [
+    {
+      "id": "mwivlh1owkmyo",
+      "title": "6098项目上交日期",
+      "date": "2026-12-01",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    },
+    {
+      "id": "mwivlh1pctzmj",
+      "title": "7215项目pre",
+      "date": "2026-12-03",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    },
+    {
+      "id": "mwivlm6z5ggli",
+      "title": "7224深度学习期末考",
+      "date": "2026-12-11",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    },
+    {
+      "id": "mwivlm6za76z2",
+      "title": "7215项目递交时间",
+      "date": "2026-12-07",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    },
+    {
+      "id": "mwivlm6zevv5c",
+      "title": "7508智能系统安全期末考",
+      "date": "2026-12-08",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    },
+    {
+      "id": "mwivlm6zt5yup",
+      "title": "7215编程与应用期末考",
+      "date": "2026-12-10",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    },
+    {
+      "id": "mwivlm6zwq7mp",
+      "title": "TCL参观",
+      "date": "2026-12-15",
+      "start": null,
+      "end": null,
+      "timeType": "allday",
+      "note": ""
+    }
+  ],
+  "cards": [
+    {
+      "card_id": "mwivlar86le37",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "7215项目pre",
+          "exec_date": "2026-12-03",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    },
+    {
+      "card_id": "mwivlar8frv29",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "7224深度学习期末考",
+          "exec_date": "2026-12-11",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    },
+    {
+      "card_id": "mwivlar8hp3m2",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "7508智能系统安全期末考",
+          "exec_date": "2026-12-08",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    },
+    {
+      "card_id": "mwivlar8r6wfh",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "7215编程与应用期末考",
+          "exec_date": "2026-12-10",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    },
+    {
+      "card_id": "mwivlar84b908",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "TCL参观",
+          "exec_date": "2026-12-15",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    },
+    {
+      "card_id": "mwivlar8tcf3z",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "6098项目上交日期",
+          "exec_date": "2026-12-01",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    },
+    {
+      "card_id": "mwivlar8ombgh",
+      "version": 1,
+      "status": "done",
+      "action": {
+        "kind": "create_schedule",
+        "item": {
+          "title": "7215项目递交时间",
+          "exec_date": "2026-12-07",
+          "time_type": "allday",
+          "category": "学业事务",
+          "base_score": 7
+        }
+      },
+      "selected": false,
+      "sources": {
+        "title": "user",
+        "exec_date": "user",
+        "time_type": "user",
+        "category": "user",
+        "base_score": "user"
+      }
+    }
+  ],
+  "operations": 7
+}

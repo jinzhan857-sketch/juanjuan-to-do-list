@@ -1,0 +1,170 @@
+{
+  "source": "cc408438b0fc39bd458612b39b2a66316a0b461f69ca817cdb8f9691354ff2ea",
+  "mode": "real_model_send_entry_integration",
+  "browser": false,
+  "passed": 40,
+  "total": 40,
+  "model_calls": 92,
+  "cases": [
+    {
+      "id": "auto/correction",
+      "passed": true
+    },
+    {
+      "id": "auto/clarification",
+      "passed": true
+    },
+    {
+      "id": "auto/discussion-to-create",
+      "passed": true
+    },
+    {
+      "id": "auto/planning-to-create",
+      "passed": true
+    },
+    {
+      "id": "auto/mixed",
+      "passed": true
+    },
+    {
+      "id": "auto/repeat-groups",
+      "passed": true
+    },
+    {
+      "id": "auto/same-title",
+      "passed": true
+    },
+    {
+      "id": "auto/todo-note",
+      "passed": true
+    },
+    {
+      "id": "auto/created-edit",
+      "passed": true
+    },
+    {
+      "id": "auto/cancel-part",
+      "passed": true
+    },
+    {
+      "id": "chat/correction",
+      "passed": true
+    },
+    {
+      "id": "chat/clarification",
+      "passed": true
+    },
+    {
+      "id": "chat/discussion-to-create",
+      "passed": true
+    },
+    {
+      "id": "chat/planning-to-create",
+      "passed": true
+    },
+    {
+      "id": "chat/mixed",
+      "passed": true
+    },
+    {
+      "id": "chat/repeat-groups",
+      "passed": true
+    },
+    {
+      "id": "chat/same-title",
+      "passed": true
+    },
+    {
+      "id": "chat/todo-note",
+      "passed": true
+    },
+    {
+      "id": "chat/created-edit",
+      "passed": true
+    },
+    {
+      "id": "chat/cancel-part",
+      "passed": true
+    },
+    {
+      "id": "planning/correction",
+      "passed": true
+    },
+    {
+      "id": "planning/clarification",
+      "passed": true
+    },
+    {
+      "id": "planning/discussion-to-create",
+      "passed": true
+    },
+    {
+      "id": "planning/planning-to-create",
+      "passed": true
+    },
+    {
+      "id": "planning/mixed",
+      "passed": true
+    },
+    {
+      "id": "planning/repeat-groups",
+      "passed": true
+    },
+    {
+      "id": "planning/same-title",
+      "passed": true
+    },
+    {
+      "id": "planning/todo-note",
+      "passed": true
+    },
+    {
+      "id": "planning/created-edit",
+      "passed": true
+    },
+    {
+      "id": "planning/cancel-part",
+      "passed": true
+    },
+    {
+      "id": "task/correction",
+      "passed": true
+    },
+    {
+      "id": "task/clarification",
+      "passed": true
+    },
+    {
+      "id": "task/discussion-to-create",
+      "passed": true
+    },
+    {
+      "id": "task/planning-to-create",
+      "passed": true
+    },
+    {
+      "id": "task/mixed",
+      "passed": true
+    },
+    {
+      "id": "task/repeat-groups",
+      "passed": true
+    },
+    {
+      "id": "task/same-title",
+      "passed": true
+    },
+    {
+      "id": "task/todo-note",
+      "passed": true
+    },
+    {
+      "id": "task/created-edit",
+      "passed": true
+    },
+    {
+      "id": "task/cancel-part",
+      "passed": true
+    }
+  ]
+}

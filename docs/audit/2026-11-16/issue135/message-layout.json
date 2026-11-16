@@ -1,0 +1,62 @@
+{
+  "before": {
+    "avatars": 1,
+    "left": 52,
+    "radius": "16px",
+    "roleHeadings": 0,
+    "timeBelow": true,
+    "timestampOutside": true,
+    "width": 304.66668701171875
+  },
+  "after": {
+    "avatars": 1,
+    "left": 52,
+    "radius": "16px",
+    "roleHeadings": 0,
+    "timeBelow": true,
+    "timestampOutside": true,
+    "width": 304.66668701171875
+  },
+  "themes": [
+    {
+      "theme": "暖色陪伴",
+      "avatars": 1,
+      "left": 52,
+      "radius": "16px",
+      "roleHeadings": 0,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 304.66668701171875
+    },
+    {
+      "theme": "白蓝专注",
+      "avatars": 1,
+      "left": 52,
+      "radius": "16px",
+      "roleHeadings": 0,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 304.66668701171875
+    },
+    {
+      "theme": "暗色陪伴",
+      "avatars": 1,
+      "left": 52,
+      "radius": "16px",
+      "roleHeadings": 0,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 304.66668701171875
+    },
+    {
+      "theme": "纯黑专注",
+      "avatars": 1,
+      "left": 52,
+      "radius": "16px",
+      "roleHeadings": 0,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 304.66668701171875
+    }
+  ]
+}

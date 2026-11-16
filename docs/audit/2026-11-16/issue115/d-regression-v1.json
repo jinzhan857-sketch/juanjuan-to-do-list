@@ -1,0 +1,222 @@
+{
+  "version": "d-regression-v1",
+  "frozenAt": "2026-11-16T06:13:30.694Z",
+  "cases": [
+    {
+      "id": "A03",
+      "partition": "regression",
+      "date": "2026-11-15",
+      "turns": [
+        "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+        "两组都到11月30日结束，包含当天。"
+      ],
+      "tasks": 5,
+      "todos": 0,
+      "groups": 2,
+      "dates": [
+        "2026-11-16",
+        "2026-11-23",
+        "2026-11-30",
+        "2026-11-18",
+        "2026-11-25"
+      ],
+      "originalId": "AST09",
+      "batch": "D-regression",
+      "route": "hosted"
+    },
+    {
+      "id": "A04",
+      "partition": "regression",
+      "date": "2026-11-15",
+      "turns": [
+        "明天15点到16点复习。",
+        "不，是16点到17点。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "16:00",
+      "end": "17:00",
+      "originalId": "AST10",
+      "batch": "D-regression",
+      "route": "custom"
+    },
+    {
+      "id": "A08",
+      "partition": "variant",
+      "turns": [
+        "创建两组全天日程：12月1日至12月14日每周二清洁书架，每周四整理发票。"
+      ],
+      "tasks": 4,
+      "todos": 0,
+      "groups": 2,
+      "originalId": "all-day-groups",
+      "batch": "D-regression",
+      "route": "custom"
+    },
+    {
+      "id": "A14",
+      "partition": "stability",
+      "turns": [
+        "帮我创建多个日程：\n6098项目上交日期 12月1号\n7215项目pre 12月3日\n7215项目递交时间 12月7日\n7508智能系统安全期末考 12月8号\n7215编程与应用期末考 12月10号\n7224深度学习期末考 12月11号\nTCL参观 12月15号",
+        {
+          "confirm": 2
+        },
+        "全都是晚上7点。",
+        "6098在A楼，7215项目pre在B楼，帮我备注上去。",
+        "6098在A楼，7211在B楼。",
+        "所有7215的事项都备注B楼。",
+        {
+          "confirm": "all"
+        },
+        "6098再加一条备注：带电脑，其他不变。"
+      ],
+      "tasks": 7,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:00",
+      "allExact": true,
+      "noteChecks": [
+        [
+          "6098",
+          "A楼",
+          "带电脑"
+        ],
+        [
+          "7215项目pre",
+          "B楼"
+        ],
+        [
+          "7215项目递交时间",
+          "B楼"
+        ],
+        [
+          "7215编程",
+          "B楼"
+        ]
+      ],
+      "originalId": "seven-partial-lifecycle",
+      "batch": "D-regression",
+      "route": "custom"
+    },
+    {
+      "id": "A24",
+      "batch": "D-regression",
+      "route": "custom",
+      "turns": [
+        "请创建12月2日资料整理和12月3日资料核查。",
+        "都是全天。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "allDay": true
+    },
+    {
+      "id": "C03",
+      "batch": "D-regression",
+      "route": "hosted",
+      "turns": [
+        "请创建12月9日23点30分到次日0点30分的日程“夜间观测”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "23:30",
+      "end": "00:30",
+      "overnight": true
+    },
+    {
+      "id": "C05",
+      "batch": "D-regression",
+      "route": "hosted",
+      "turns": [
+        "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+        "复查加备注带清单。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "C11",
+      "batch": "D-regression",
+      "route": "hosted",
+      "turns": [
+        "先帮我理清：12月1日模型研读，但不要创建或保存。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "C15",
+      "batch": "D-regression",
+      "route": "hosted",
+      "turns": [
+        "请建12月5日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    },
+    {
+      "id": "C16",
+      "batch": "D-regression",
+      "route": "custom",
+      "turns": [
+        "先帮我理清：12月6日模型研读，但不要创建或保存。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "C21",
+      "batch": "D-regression",
+      "route": "hosted",
+      "turns": [
+        "先帮我理清：12月11日模型研读，但不要创建或保存。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "C25",
+      "batch": "D-regression",
+      "route": "hosted",
+      "turns": [
+        "请建12月15日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    },
+    {
+      "id": "C26",
+      "batch": "D-regression",
+      "route": "custom",
+      "turns": [
+        "先帮我理清：12月16日模型研读，但不要创建或保存。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "C30",
+      "batch": "D-regression",
+      "route": "custom",
+      "turns": [
+        "请建12月20日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00"
+    }
+  ]
+}

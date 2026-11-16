@@ -1,0 +1,38 @@
+[
+  {
+    "theme": "暖色陪伴",
+    "appearance": "none",
+    "arrowRight": "14px",
+    "arrowWidth": "6px",
+    "height": 38,
+    "text": "auto",
+    "width": 64
+  },
+  {
+    "theme": "白蓝专注",
+    "appearance": "none",
+    "arrowRight": "14px",
+    "arrowWidth": "6px",
+    "height": 38,
+    "text": "auto",
+    "width": 64
+  },
+  {
+    "theme": "暗色陪伴",
+    "appearance": "none",
+    "arrowRight": "14px",
+    "arrowWidth": "6px",
+    "height": 38,
+    "text": "auto",
+    "width": 64
+  },
+  {
+    "theme": "纯黑专注",
+    "appearance": "none",
+    "arrowRight": "14px",
+    "arrowWidth": "6px",
+    "height": 38,
+    "text": "auto",
+    "width": 64
+  }
+]
