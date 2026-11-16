@@ -719,7 +719,7 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
   <div id="agent-messages"></div>
   <div id="agent-material-preview" aria-live="polite"></div>
   <div class="agent-composer">
-    <textarea id="agent-input" rows="1" maxlength="5000" aria-label="聊天消息，最多5000字" placeholder="发消息，最多5000字……"></textarea>
+    <textarea id="agent-input" rows="1" maxlength="5000" aria-label="聊天消息" placeholder="和卷卷说点什么吧……"></textarea>
     <button id="agent-add-image" aria-label="添加图片" title="添加图片"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><input id="agent-images" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
     <button class="agent-send" id="btn-agent-send" aria-label="发送消息">↑</button>
   </div>
@@ -875,26 +875,40 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
 #llm-hosted-fields .hint,#llm-hosted-fields .form-label,#llm-hosted-fields .opt{color:color-mix(in srgb,var(--text) 85%,var(--card))}
 #btn-experience-redeem{background:var(--text);color:var(--card)}
 #btn-experience-remove.hidden{display:none}
+#hosted-quota-note{margin:0;line-height:1.8}
+.llm-section-divider{border:0;border-top:1px solid var(--line);margin:16px 0}
+.experience-purchase{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.experience-purchase p{margin:6px 0;line-height:1.8;font-size:12px;color:var(--text)}
+.experience-binding-row{display:flex;align-items:center;gap:12px;margin-top:16px}
+.experience-binding-row p{flex:1;min-width:0;margin:0;font-size:12px;line-height:1.8;color:var(--text)}
+.experience-binding-row .btn{flex:none;white-space:nowrap;padding:8px 12px}
 </style>
 <!-- ==================== 弹窗：大模型配置 ==================== -->
 <div class="mask" id="mask-llm">
   <div class="sheet">
     <div class="sheet-title"><span>🤖 大模型配置</span><button class="close-x" data-close="mask-llm">✕</button></div>
     <div class="llm-recommend">推荐使用自己的 API，额度和模型由你掌控。API Key 只保存在当前设备，不会进入数据备份。</div>
-    <div class="seg" id="llm-source-seg" style="margin-bottom:15px">
+    <div class="seg" id="llm-source-seg" style="margin-bottom:5px">
       <button data-v="hosted">卷卷提供</button>
       <button data-v="custom">自定义 API</button>
     </div>
     <div id="llm-hosted-fields" class="llm-fields">
-      <div class="hint" style="line-height:1.8;background:var(--card2);border-radius:12px;padding:10px 12px">无需配置，每台设备每天 300 次、每周 300 次，公共额度全站每周 1000 次。日额度在北京时间零点恢复，周额度在周一零点恢复。云端暂不支持图片。</div>
-      <div class="form-block" style="margin-top:20px">
+      <p class="hint" id="hosted-quota-note">无需配置，每台设备每天 300 次、每周 300 次，公共额度全站每周 1000 次。日额度在北京时间零点恢复，周额度在周一零点恢复。云端暂不支持图片。</p>
+      <hr class="llm-section-divider">
+      <div class="form-block">
         <label class="form-label" for="experience-code">专属体验卡 <span class="opt">选填</span></label>
         <input id="experience-code" type="password" maxlength="60" autocomplete="off" spellcheck="false" aria-describedby="experience-help experience-status" placeholder="粘贴提供者发给你的兑换码">
-        <div class="hint" id="experience-help" style="margin-top:8px">首次兑换后绑定当前浏览器，按累计余额使用，不占公共额度，也不受公共日限额和周限额影响。需要重新绑定时，请联系提供者。</div>
+        <div class="hint" id="experience-help" style="margin-top:8px">首次兑换后绑定当前浏览器，按累计余额使用，不占公共额度，也不受公共日限额和周限额影响。</div>
       </div>
       <div class="row" style="gap:9px"><button class="btn sm grow" id="btn-experience-redeem">兑换体验卡</button><button class="btn ghost sm hidden" id="btn-experience-remove">切回公共额度</button></div>
-      <button class="btn ghost sm" id="btn-experience-copy-device" style="margin-top:10px">复制设备编号</button>
-      <div class="hint" id="experience-status" role="status" aria-live="polite" style="margin-top:12px;line-height:1.8"></div>
+      <section class="experience-purchase" aria-label="体验卡购买说明">
+        <p>体验卡购买说明：100次1元，1000次5元。具体价格与优惠咨询开发者微信： jinzhanjz</p>
+      </section>
+      <div class="experience-binding-row">
+        <p>如有问题，点击右侧获取编码后添加开发者微信咨询</p>
+        <button class="btn ghost sm" id="btn-experience-copy-device">复制设备编号</button>
+      </div>
+      <div class="hint" role="status" aria-live="polite" style="margin-top:16px;line-height:1.8">目前状况：<span id="experience-status"></span></div>
     </div>
     <div id="llm-custom-fields" class="llm-fields hidden">
       <div class="form-block"><div class="form-label">接口地址</div><input id="llm-endpoint" type="url" placeholder="https://api.deepseek.com/chat/completions"></div>
