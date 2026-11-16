@@ -3144,13 +3144,455 @@
           "todos": 4,
           "operations": 42
         }
+      },
+      {
+        "id": "B07",
+        "family": "创建后修改原组",
+        "passed": true,
+        "chat_id": "mwiz5ugfr7fq9",
+        "actual": {
+          "tasks": [
+            {
+              "id": "mwiz5wg498nmf",
+              "seriesId": "mwiz5wg3p35d2",
+              "seriesRule": {
+                "date_from": "2027-01-05",
+                "date_to": "2027-01-18",
+                "weekdays": [
+                  2
+                ]
+              },
+              "title": "复盘项目",
+              "note": "地点：D楼",
+              "createdAt": 1794816097923,
+              "execDate": "2027-01-05",
+              "timeType": "exact",
+              "slot": "afternoon",
+              "startTime": "15:00",
+              "endTime": "16:00",
+              "category": "学业事务",
+              "baseScore": 7,
+              "aiReason": "由卷卷助手批量创建",
+              "aiAdvice": "",
+              "aiSource": "agent",
+              "isBackfill": false,
+              "status": null,
+              "statusAt": null,
+              "statusEditCount": 0,
+              "finalScore": 0,
+              "parts": null,
+              "timeChangeMul": null,
+              "timeChangeLabel": null,
+              "timeChangeWhy": null
+            },
+            {
+              "id": "mwiz5wg42kw42",
+              "seriesId": "mwiz5wg3p35d2",
+              "seriesRule": {
+                "date_from": "2027-01-05",
+                "date_to": "2027-01-18",
+                "weekdays": [
+                  2
+                ]
+              },
+              "title": "复盘项目",
+              "note": "地点：D楼",
+              "createdAt": 1794816097923,
+              "execDate": "2027-01-12",
+              "timeType": "exact",
+              "slot": "afternoon",
+              "startTime": "15:00",
+              "endTime": "16:00",
+              "category": "学业事务",
+              "baseScore": 7,
+              "aiReason": "由卷卷助手批量创建",
+              "aiAdvice": "",
+              "aiSource": "agent",
+              "isBackfill": false,
+              "status": null,
+              "statusAt": null,
+              "statusEditCount": 0,
+              "finalScore": 0,
+              "parts": null,
+              "timeChangeMul": null,
+              "timeChangeLabel": null,
+              "timeChangeWhy": null
+            }
+          ],
+          "todos": [],
+          "operations": [
+            {
+              "id": "mwiz5wg3qdbsi",
+              "chatId": "mwiz5ugfr7fq9",
+              "messageId": "mwiz5w29xkina",
+              "kind": "create_schedule_batch",
+              "before": null,
+              "after": [
+                {
+                  "id": "mwiz5wg498nmf",
+                  "seriesId": "mwiz5wg3p35d2",
+                  "seriesRule": {
+                    "date_from": "2027-01-05",
+                    "date_to": "2027-01-18",
+                    "weekdays": [
+                      2
+                    ]
+                  },
+                  "title": "复盘项目",
+                  "note": "",
+                  "createdAt": 1794816097923,
+                  "execDate": "2027-01-05",
+                  "timeType": "exact",
+                  "slot": null,
+                  "startTime": "15:00",
+                  "endTime": "16:00",
+                  "category": "学业事务",
+                  "baseScore": 7,
+                  "aiReason": "由卷卷助手批量创建",
+                  "aiAdvice": "",
+                  "aiSource": "agent",
+                  "isBackfill": false,
+                  "status": null,
+                  "statusAt": null,
+                  "statusEditCount": 0,
+                  "finalScore": 0,
+                  "parts": null,
+                  "timeChangeMul": null,
+                  "timeChangeLabel": null,
+                  "timeChangeWhy": null
+                },
+                {
+                  "id": "mwiz5wg42kw42",
+                  "seriesId": "mwiz5wg3p35d2",
+                  "seriesRule": {
+                    "date_from": "2027-01-05",
+                    "date_to": "2027-01-18",
+                    "weekdays": [
+                      2
+                    ]
+                  },
+                  "title": "复盘项目",
+                  "note": "",
+                  "createdAt": 1794816097923,
+                  "execDate": "2027-01-12",
+                  "timeType": "exact",
+                  "slot": null,
+                  "startTime": "15:00",
+                  "endTime": "16:00",
+                  "category": "学业事务",
+                  "baseScore": 7,
+                  "aiReason": "由卷卷助手批量创建",
+                  "aiAdvice": "",
+                  "aiSource": "agent",
+                  "isBackfill": false,
+                  "status": null,
+                  "statusAt": null,
+                  "statusEditCount": 0,
+                  "finalScore": 0,
+                  "parts": null,
+                  "timeChangeMul": null,
+                  "timeChangeLabel": null,
+                  "timeChangeWhy": null
+                }
+              ],
+              "status": "done",
+              "createdAt": 1794816097923,
+              "summary": "已为你创建 2 条日程。"
+            },
+            {
+              "id": "mwiz8h6tamtjj",
+              "chatId": "mwiz5ugfr7fq9",
+              "messageId": "mwiz8gyoazejd",
+              "kind": "update_schedule_batch",
+              "before": [
+                {
+                  "id": "mwiz5wg498nmf",
+                  "seriesId": "mwiz5wg3p35d2",
+                  "seriesRule": {
+                    "date_from": "2027-01-05",
+                    "date_to": "2027-01-18",
+                    "weekdays": [
+                      2
+                    ]
+                  },
+                  "title": "复盘项目",
+                  "note": "",
+                  "createdAt": 1794816097923,
+                  "execDate": "2027-01-05",
+                  "timeType": "exact",
+                  "slot": null,
+                  "startTime": "15:00",
+                  "endTime": "16:00",
+                  "category": "学业事务",
+                  "baseScore": 7,
+                  "aiReason": "由卷卷助手批量创建",
+                  "aiAdvice": "",
+                  "aiSource": "agent",
+                  "isBackfill": false,
+                  "status": null,
+                  "statusAt": null,
+                  "statusEditCount": 0,
+                  "finalScore": 0,
+                  "parts": null,
+                  "timeChangeMul": null,
+                  "timeChangeLabel": null,
+                  "timeChangeWhy": null
+                },
+                {
+                  "id": "mwiz5wg42kw42",
+                  "seriesId": "mwiz5wg3p35d2",
+                  "seriesRule": {
+                    "date_from": "2027-01-05",
+                    "date_to": "2027-01-18",
+                    "weekdays": [
+                      2
+                    ]
+                  },
+                  "title": "复盘项目",
+                  "note": "",
+                  "createdAt": 1794816097923,
+                  "execDate": "2027-01-12",
+                  "timeType": "exact",
+                  "slot": null,
+                  "startTime": "15:00",
+                  "endTime": "16:00",
+                  "category": "学业事务",
+                  "baseScore": 7,
+                  "aiReason": "由卷卷助手批量创建",
+                  "aiAdvice": "",
+                  "aiSource": "agent",
+                  "isBackfill": false,
+                  "status": null,
+                  "statusAt": null,
+                  "statusEditCount": 0,
+                  "finalScore": 0,
+                  "parts": null,
+                  "timeChangeMul": null,
+                  "timeChangeLabel": null,
+                  "timeChangeWhy": null
+                }
+              ],
+              "after": [
+                {
+                  "id": "mwiz5wg498nmf",
+                  "seriesId": "mwiz5wg3p35d2",
+                  "seriesRule": {
+                    "date_from": "2027-01-05",
+                    "date_to": "2027-01-18",
+                    "weekdays": [
+                      2
+                    ]
+                  },
+                  "title": "复盘项目",
+                  "note": "地点：D楼",
+                  "createdAt": 1794816097923,
+                  "execDate": "2027-01-05",
+                  "timeType": "exact",
+                  "slot": "afternoon",
+                  "startTime": "15:00",
+                  "endTime": "16:00",
+                  "category": "学业事务",
+                  "baseScore": 7,
+                  "aiReason": "由卷卷助手批量创建",
+                  "aiAdvice": "",
+                  "aiSource": "agent",
+                  "isBackfill": false,
+                  "status": null,
+                  "statusAt": null,
+                  "statusEditCount": 0,
+                  "finalScore": 0,
+                  "parts": null,
+                  "timeChangeMul": null,
+                  "timeChangeLabel": null,
+                  "timeChangeWhy": null
+                },
+                {
+                  "id": "mwiz5wg42kw42",
+                  "seriesId": "mwiz5wg3p35d2",
+                  "seriesRule": {
+                    "date_from": "2027-01-05",
+                    "date_to": "2027-01-18",
+                    "weekdays": [
+                      2
+                    ]
+                  },
+                  "title": "复盘项目",
+                  "note": "地点：D楼",
+                  "createdAt": 1794816097923,
+                  "execDate": "2027-01-12",
+                  "timeType": "exact",
+                  "slot": "afternoon",
+                  "startTime": "15:00",
+                  "endTime": "16:00",
+                  "category": "学业事务",
+                  "baseScore": 7,
+                  "aiReason": "由卷卷助手批量创建",
+                  "aiAdvice": "",
+                  "aiSource": "agent",
+                  "isBackfill": false,
+                  "status": null,
+                  "statusAt": null,
+                  "statusEditCount": 0,
+                  "finalScore": 0,
+                  "parts": null,
+                  "timeChangeMul": null,
+                  "timeChangeLabel": null,
+                  "timeChangeWhy": null
+                }
+              ],
+              "status": "done",
+              "createdAt": 1794816218117,
+              "summary": "已修改 2 条整组日程。"
+            }
+          ]
+        },
+        "before_confirmation": {
+          "tasks": 43,
+          "todos": 6,
+          "operations": 46
+        }
+      },
+      {
+        "id": "B08",
+        "family": "第二项改口",
+        "passed": true,
+        "chat_id": "mwiz611ur4ma9",
+        "actual": {
+          "tasks": [
+            {
+              "id": "mwiz6q8gny1wf",
+              "title": "讨论设计",
+              "note": "",
+              "createdAt": 1794816136528,
+              "execDate": "2027-01-28",
+              "timeType": "exact",
+              "slot": null,
+              "startTime": "10:00",
+              "endTime": "11:00",
+              "category": "学业事务",
+              "baseScore": 5,
+              "aiReason": "由卷卷助手创建",
+              "aiAdvice": "",
+              "aiSource": "agent",
+              "isBackfill": false,
+              "status": null,
+              "statusAt": null,
+              "statusEditCount": 0,
+              "finalScore": 0,
+              "parts": null,
+              "timeChangeMul": null,
+              "timeChangeLabel": null,
+              "timeChangeWhy": null
+            },
+            {
+              "id": "mwiz6q8hkx6x1",
+              "title": "检查样机",
+              "note": "",
+              "createdAt": 1794816136529,
+              "execDate": "2027-01-29",
+              "timeType": "exact",
+              "slot": null,
+              "startTime": "16:00",
+              "endTime": "17:00",
+              "category": "学业事务",
+              "baseScore": 5,
+              "aiReason": "由卷卷助手创建",
+              "aiAdvice": "",
+              "aiSource": "agent",
+              "isBackfill": false,
+              "status": null,
+              "statusAt": null,
+              "statusEditCount": 0,
+              "finalScore": 0,
+              "parts": null,
+              "timeChangeMul": null,
+              "timeChangeLabel": null,
+              "timeChangeWhy": null
+            }
+          ],
+          "todos": [],
+          "operations": [
+            {
+              "id": "mwiz6q8gvyimz",
+              "chatId": "mwiz611ur4ma9",
+              "messageId": "mwiz675a28jkb",
+              "kind": "create_schedule",
+              "before": null,
+              "after": {
+                "id": "mwiz6q8gny1wf",
+                "title": "讨论设计",
+                "note": "",
+                "createdAt": 1794816136528,
+                "execDate": "2027-01-28",
+                "timeType": "exact",
+                "slot": null,
+                "startTime": "10:00",
+                "endTime": "11:00",
+                "category": "学业事务",
+                "baseScore": 5,
+                "aiReason": "由卷卷助手创建",
+                "aiAdvice": "",
+                "aiSource": "agent",
+                "isBackfill": false,
+                "status": null,
+                "statusAt": null,
+                "statusEditCount": 0,
+                "finalScore": 0,
+                "parts": null,
+                "timeChangeMul": null,
+                "timeChangeLabel": null,
+                "timeChangeWhy": null
+              },
+              "status": "done",
+              "createdAt": 1794816136528,
+              "summary": "已为你创建日程「讨论设计」。"
+            },
+            {
+              "id": "mwiz6q8hywp32",
+              "chatId": "mwiz611ur4ma9",
+              "messageId": "mwiz6prsm9bzl",
+              "kind": "create_schedule",
+              "before": null,
+              "after": {
+                "id": "mwiz6q8hkx6x1",
+                "title": "检查样机",
+                "note": "",
+                "createdAt": 1794816136529,
+                "execDate": "2027-01-29",
+                "timeType": "exact",
+                "slot": null,
+                "startTime": "16:00",
+                "endTime": "17:00",
+                "category": "学业事务",
+                "baseScore": 5,
+                "aiReason": "由卷卷助手创建",
+                "aiAdvice": "",
+                "aiSource": "agent",
+                "isBackfill": false,
+                "status": null,
+                "statusAt": null,
+                "statusEditCount": 0,
+                "finalScore": 0,
+                "parts": null,
+                "timeChangeMul": null,
+                "timeChangeLabel": null,
+                "timeChangeWhy": null
+              },
+              "status": "done",
+              "createdAt": 1794816136529,
+              "summary": "已为你创建日程「检查样机」。"
+            }
+          ]
+        },
+        "before_confirmation": {
+          "tasks": 45,
+          "todos": 6,
+          "operations": 47
+        }
       }
     ],
-    "passed": 6,
-    "total": 6
+    "passed": 8,
+    "total": 8
   },
-  "B_not_run": [
-    "B07",
-    "B08"
-  ]
+  "B_not_run": []
 }

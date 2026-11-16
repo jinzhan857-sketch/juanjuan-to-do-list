@@ -2873,7 +2873,7 @@ const UI = {
   },
   assistantCandidateContext(chatId){
     const cards=this.assistantCurrentCards(chatId),last=cards.at(-1)?.meta.workflow.batchId;
-    return globalThis.JuanjuanWorkflow.contextCards(cards.filter(m=>m.meta.workflow.batchId===last&&m.meta.status!=='cancelled').map(m=>({card_id:m.meta.workflow.cardId,version:m.meta.workflow.version,status:m.meta.status,action:m.meta.action,selected:!!this.assistantSelected?.has(m.id),sources:m.meta.workflow.sources||{}})));
+    return globalThis.JuanjuanWorkflow.contextCards(cards.filter(m=>m.meta.workflow.batchId===last&&m.meta.status!=='cancelled').map(m=>({card_id:m.meta.workflow.cardId,version:m.meta.workflow.version,status:m.meta.status,action:m.meta.action,...(m.meta.recordIds?.length?{record_count:m.meta.recordIds.length}:{}),selected:!!this.assistantSelected?.has(m.id),sources:m.meta.workflow.sources||{}})));
   },
   assistantEditAction(message){
     const action=copyData(message.meta.action);
