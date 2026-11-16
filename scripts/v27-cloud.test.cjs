@@ -216,8 +216,13 @@ test('basic identity facts are retained when many newer memories exceed the cont
  const items=a.json("UI.planningMemoryItems('我几岁了')");assert.equal(items[0].id,'birth');assert.ok(items.reduce((n,m)=>n+m.content.length,0)<=2400);
 });
 
+test('an oversized memory cannot exhaust the budget and hide all later short facts',async t=>{
+ const a=await fixture(t);a.run("S.memories=[{id:'long',category:'个人基本信息',content:'长'.repeat(4000),createdAt:2},{id:'birth',category:'个人基本信息',content:'我出生于2001年。',createdAt:1}]");
+ assert.deepEqual(a.json("UI.planningMemoryItems('我几岁了').map(m=>m.id)"),['birth']);
+});
+
 test('feeding notice uses current satiety and fresh pets start within their profile cap',async t=>{
  const a=await fixture(t);assert.equal(a.run('S.pet.satietyTask'),a.run('petFullLine()'));assert.ok(a.run('petSatiety()<=petEatMax()'));
- a.run("noticeHtml=[];document.createElement=()=>({style:{},set innerHTML(text){noticeHtml.push(text)},querySelector:()=>({})});S.tasks=[];S.pet.satietyTask=5;S.pet.todayIntake=0;S.pet.fridge=[{id:'food',value:1,name:'饼干',emo:'🍪'}];UI.renderNotices()");assert.equal(a.json('noticeHtml').some(text=>text.includes('没吃饱')),false);const before=a.json('S.pet');assert.equal(await a.run("PetSystem.feedFromFridge('food')"),null);assert.deepEqual(a.json('S.pet'),before);
+ a.run("noticeHtml=[];document.createElement=()=>({style:{},setAttribute(){},set innerHTML(text){noticeHtml.push(text)},querySelector:()=>({})});S.tasks=[];S.pet.satietyTask=5;S.pet.todayIntake=0;S.pet.fridge=[{id:'food',value:1,name:'饼干',emo:'🍪'}];UI.renderNotices()");assert.equal(a.json('noticeHtml').some(text=>text.includes('没吃饱')),false);const before=a.json('S.pet');assert.equal(await a.run("PetSystem.feedFromFridge('food')"),null);assert.deepEqual(a.json('S.pet'),before);
  a.run("S.pet.satietyTask=1;S.pet.todayIntake=20;noticeHtml=[];UI.renderNotices()");assert.ok(a.json('noticeHtml').some(text=>text.includes('现在还没吃饱（1/2）')));assert.ok((await a.run("PetSystem.feedFromFridge('food')")).fed>0);
 });
