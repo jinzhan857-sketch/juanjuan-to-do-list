@@ -8,7 +8,7 @@ const bootstrap=`
 const directFetch=window.fetch.bind(window);
 window.fetch=async(url,options={})=>{
  if(String(url)!==${JSON.stringify(endpoint)}||options.method!=='POST')return directFetch(url,options);
- const payload=JSON.parse(options.body);if(payload.mode==='cancel')return directFetch(url,options);
+ const payload=JSON.parse(options.body);if(['cancel','experience'].includes(payload.mode))return directFetch(url,options);
  const reserved=await directFetch('/__reserve',{method:'POST',body:JSON.stringify(payload)});if(!reserved.ok){const failure=await reserved.json();throw Error(failure.error||'本轮真实测试预算已到上限');}const receipt=await reserved.json();
  const response=await directFetch(url,options);const result=await response.clone().json();
  if(result.provider_usage)await directFetch('/__result',{method:'POST',body:JSON.stringify({id:receipt.id,usage:result.provider_usage})});
@@ -37,5 +37,5 @@ const server=http.createServer(async(req,res)=>{
  }
  res.writeHead(404).end();
 });
-server.listen(4297,'127.0.0.1',()=>console.log('Real cloud acceptance at http://127.0.0.1:4297/; isolated synthetic database; budget 100 requests / 1 CNY'));
+server.listen(4297,'127.0.0.1',()=>console.log('Real cloud acceptance at http://127.0.0.1:4297/; isolated synthetic database; budget 200 requests / 1 CNY'));
 const stop=()=>server.close(()=>{budget.close();process.exit();});process.once('SIGINT',stop);process.once('SIGTERM',stop);

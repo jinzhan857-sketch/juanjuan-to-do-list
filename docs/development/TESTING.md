@@ -1,6 +1,6 @@
 # 测试与验收
 
-V2.7新增 `scripts/v27-cloud.test.cjs`、`scripts/v27-budget.test.cjs`，已并入统一检查，覆盖云端边界、资料、长回复、记忆导入与首次初始化。真实Redis专项为 `node scripts/v27-redis-check.cjs --live`，只操作唯一合成前缀并清理自己创建的键，不调用模型。真实网页入口为 `node scripts/v27-browser.cjs --live`，4297来源使用专用合成库和本轮累计100次、1元账本，模型、Search、Fetch、失败及重试分别计账。不得清账本或另加默认预算。
+V2.7新增 `scripts/v27-cloud.test.cjs`、`scripts/v27-budget.test.cjs`、`scripts/experience.test.cjs`，已并入统一检查，覆盖云端边界、资料、长回复、记忆导入与首次初始化。真实Redis专项为 `node scripts/v27-redis-check.cjs --live`，只操作唯一合成前缀并清理自己创建的键，不调用模型。真实网页入口为 `node scripts/v27-browser.cjs --live`，4297来源使用专用合成库和本轮累计200次、1元账本，模型、Search、Fetch、失败及重试分别计账。不得清账本或另加默认预算。
 
 原A8/B8题目与断言沿用；`scripts/assistant-browser-results.cjs`按各题完成确认时的实际数据库核对编号、范围、无关资料与kv。明确复测可在独立合成库使用最新同题对话，原失败不删除；断言不放宽。页面、费用、原失败与最终来源见[V2.7验收记录](../audit/2026-11-16/v27-cloud-preparation.md)。试用站验收不能代替正式Pages发布后的验证。
 

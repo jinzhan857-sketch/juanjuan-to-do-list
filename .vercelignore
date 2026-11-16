@@ -2,6 +2,7 @@
 !api/
 !api/ai.js
 !api/quota.cjs
+!api/experience.cjs
 !api/cloud.cjs
 !src/
 !src/assistant/

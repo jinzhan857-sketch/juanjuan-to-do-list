@@ -871,6 +871,11 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
   </div>
 </div>
 
+<style>
+#llm-hosted-fields .hint,#llm-hosted-fields .form-label,#llm-hosted-fields .opt{color:color-mix(in srgb,var(--text) 85%,var(--card))}
+#btn-experience-redeem{background:var(--text);color:var(--card)}
+#btn-experience-remove.hidden{display:none}
+</style>
 <!-- ==================== 弹窗：大模型配置 ==================== -->
 <div class="mask" id="mask-llm">
   <div class="sheet">
@@ -881,7 +886,15 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
       <button data-v="custom">自定义 API</button>
     </div>
     <div id="llm-hosted-fields" class="llm-fields">
-      <div class="hint" style="line-height:1.8;background:var(--card2);border-radius:12px;padding:10px 12px">无需配置，每台设备每天最多使用 50 次，全站每天 100 次，北京时间零点恢复。云端暂不支持图片。</div>
+      <div class="hint" style="line-height:1.8;background:var(--card2);border-radius:12px;padding:10px 12px">无需配置，每台设备每天 300 次、每周 300 次，公共额度全站每周 1000 次。日额度在北京时间零点恢复，周额度在周一零点恢复。云端暂不支持图片。</div>
+      <div class="form-block" style="margin-top:20px">
+        <label class="form-label" for="experience-code">专属体验卡 <span class="opt">选填</span></label>
+        <input id="experience-code" type="password" maxlength="60" autocomplete="off" spellcheck="false" aria-describedby="experience-help experience-status" placeholder="粘贴提供者发给你的兑换码">
+        <div class="hint" id="experience-help" style="margin-top:8px">首次兑换后绑定当前浏览器，按累计余额使用，不占公共额度，也不受公共日限额和周限额影响。需要重新绑定时，请联系提供者。</div>
+      </div>
+      <div class="row" style="gap:9px"><button class="btn sm grow" id="btn-experience-redeem">兑换体验卡</button><button class="btn ghost sm hidden" id="btn-experience-remove">切回公共额度</button></div>
+      <button class="btn ghost sm" id="btn-experience-copy-device" style="margin-top:10px">复制设备编号</button>
+      <div class="hint" id="experience-status" role="status" aria-live="polite" style="margin-top:12px;line-height:1.8"></div>
     </div>
     <div id="llm-custom-fields" class="llm-fields hidden">
       <div class="form-block"><div class="form-label">接口地址</div><input id="llm-endpoint" type="url" placeholder="https://api.deepseek.com/chat/completions"></div>
@@ -1836,7 +1849,7 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url===AIService.hostedEndpoint){try{const body=await response.json();if(response.status===429&&['device','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;if(['service_disabled','images_unsupported','payload_too_large','origin_denied','output_limit','invalid_model_reply'].includes(body?.code))error.message=body.error;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url===AIService.hostedEndpoint){try{const body=await response.json();if(response.status===429&&['device','global'].includes(body?.limit_scope)){error.limit_scope=body.limit_scope;error.limit_period=body.limit_period;error.message=body.limit_scope==='global'?'本周公共免费AI次数已达上限。':body.limit_period==='week'?'本周个人免费AI次数已达上限。':'今日个人免费AI次数已达上限。';}if(['experience_invalid','experience_revoked','experience_expired','experience_bound','experience_unredeemed','experience_exhausted'].includes(body?.code)){error.code=body.code;error.message=String(body.error||'体验卡暂时不可用，请联系提供者').slice(0,160);}if(['service_disabled','images_unsupported','payload_too_large','origin_denied','output_limit','invalid_model_reply'].includes(body?.code))error.message=body.error;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
@@ -1853,6 +1866,12 @@ const AIService = {
       localStorage.setItem('juanjuan_device_id', id);
     }
     return id;
+  },
+  experienceCode(){return localStorage.getItem('juanjuan_experience_code')||'';},
+  async experienceRequest(code,operation){
+    const {data}=await requestJSON(this.hostedEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'experience',operation,experience_code:code,device_id:this.getDeviceId()})},10000);
+    if(data?.active!==true||!Number.isInteger(data.total_credits)||!Number.isInteger(data.remaining_credits)||!Number.isSafeInteger(data.expires_at))throw Error('体验码确认失败，请重试');
+    return data;
   },
   setDegraded(on){
     this.degraded = on;
@@ -1916,7 +1935,8 @@ const AIService = {
     try{
       // Persist before dispatch so a reload can finish an interrupted refund.
       this.storeRefund({id,device,pendingUntil:Date.now()+timeoutMs});
-      const {data}=await requestJSON(this.hostedEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,device_id:device,request_id:id}),signal:controller.signal},timeoutMs);
+      const experienceCode=this.experienceCode();
+      const {data}=await requestJSON(this.hostedEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,...(experienceCode?{experience_code:experienceCode}:{}),device_id:device,request_id:id}),signal:controller.signal},timeoutMs);
       if(controller.signal.aborted)throw controller.signal.reason;
       const result=accept(data);
       this.forgetRefund(id);
@@ -4598,7 +4618,7 @@ const UI = {
     }catch(error){
       if(this.recognition!==request||this.cState!==c||c.saved)return;
       this.recognition=null;
-      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'识别超时，请重试。':error?.status===429&&error?.limit_scope==='device'?'今日个人免费AI次数已达上限。':error?.status===429&&error?.limit_scope==='global'?'今日公共免费AI次数已达上限。':error?.name==='TypeError'?'网络错误，请重试。':'识别失败，请重试。';
+      c.aiFailureReason=error?.code==='request_timeout'||/超时/.test(error?.message)?'识别超时，请重试。':error?.status===429&&['device','global'].includes(error?.limit_scope)||error?.code?.startsWith('experience_')?error.message:error?.name==='TypeError'?'网络错误，请重试。':'识别失败，请重试。';
       if(aiSucceeded){toast('识别成功，页面更新失败，草稿已保留');this.saveCreateDraft();return;}
       this.saveCreateDraft();this.renderCreate();toast(c.aiFailureReason);
     }finally{
@@ -4971,6 +4991,23 @@ const UI = {
     $('#llm-custom-fields').classList.toggle('hidden',source!=='custom');
     $('#llm-endpoint').value=config.endpoint; $('#llm-model').value=config.model; $('#llm-key').value=config.key;
     $('#llm-test-status').textContent='';
+    $('#experience-code').value='';this.refreshExperienceStatus();
+  },
+  async refreshExperienceStatus(){
+    const code=AIService.experienceCode(),box=$('#experience-status');
+    $('#btn-experience-remove').classList.toggle('hidden',!code);
+    if(!code){box.textContent='未使用体验码，当前使用公共额度。';return;}
+    box.textContent='正在核对体验卡余额…';
+    try{const data=await AIService.experienceRequest(code,'status');if(code!==AIService.experienceCode())return;box.textContent=`体验卡已启用，剩余 ${data.remaining_credits} / ${data.total_credits} 次。${data.expires_at?'有效至 '+new Date(data.expires_at).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false})+'（北京时间）。':'不设到期时间，余额用完为止。'}`;}
+    catch(error){if(code===AIService.experienceCode())box.textContent=error.message+'。可联系提供者，或切回公共额度。';}
+  },
+  async redeemExperience(){
+    const input=$('#experience-code'),code=input.value.trim(),button=$('#btn-experience-redeem'),box=$('#experience-status');
+    if(!/^JJ-[a-f0-9]{24}-[a-f0-9]{32}$/i.test(code)){box.textContent='请粘贴完整体验码后再兑换。';return;}
+    button.disabled=true;box.textContent='正在兑换体验码…';
+    try{await AIService.experienceRequest(code,'redeem');localStorage.setItem('juanjuan_experience_code',code);AIService.cache={};input.value='';await this.refreshExperienceStatus();}
+    catch(error){box.textContent=error.message;}
+    finally{button.disabled=false;}
   },
 
   setLLMSource(source){
@@ -5461,6 +5498,9 @@ const App = {
     });
     // 我的页 → 设置入口
     $('#row-llm').onclick = ()=>{ UI.renderLLMConfig(); UI.mask('mask-llm', true); };
+    $('#btn-experience-redeem').onclick=()=>UI.redeemExperience();
+    $('#btn-experience-copy-device').onclick=async()=>{try{await navigator.clipboard.writeText(AIService.getDeviceId());toast('设备编号已复制，可发给提供者重新绑定');}catch(_){$('#experience-status').textContent='当前设备编号：'+AIService.getDeviceId();}};
+    $('#btn-experience-remove').onclick=()=>{localStorage.removeItem('juanjuan_experience_code');AIService.cache={};UI.refreshExperienceStatus();};
     $('#row-memory').onclick = ()=>UI.switchPage('memory');
     $('#memory-page-toggle').onchange=async e=>{S.pet.memoryEnabled=e.target.checked;await savePet();};
     $('#btn-memory-page-preview').onclick=()=>{

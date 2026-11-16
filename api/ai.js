@@ -2,8 +2,8 @@ function workflowContract(){return require('../src/assistant/workflow.js');}
 const crypto = require('node:crypto');
 
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
-const DEVICE_LIMIT = 50;
-const GLOBAL_LIMIT = 100;
+const DEVICE_LIMIT = 300;
+const GLOBAL_LIMIT = 1000;
 
 const SYSTEM_PROMPT = `你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。
 
@@ -36,6 +36,7 @@ task 和 note 由你负责。没有地点、材料、链接、限制条件、提
 function quotaDay() {
   return new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
+function quotaWeek(day){const d=new Date(day+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
 
 function json(res, code, body) {
   res.status(code).json(body);
@@ -359,6 +360,12 @@ module.exports = async function handler(req, res) {
     if (!/^[A-Za-z0-9]{24,64}$/.test(String(deviceId || ''))) {
       return json(res, 400, { error: '设备编号不合法' });
     }
+    if(body.mode==='experience'){
+      if(!['redeem','status'].includes(body.operation))return json(res,400,{error:'体验码操作不合法'});
+      const grant=await require('./experience.cjs').experience(redis,body.experience_code,deviceId,body.operation==='redeem'?'redeem':'check');
+      if(!grant.ok)return json(res,403,grant);
+      return json(res,200,{active:true,total_credits:grant.total,remaining_credits:grant.remaining,expires_at:grant.expires});
+    }
     if (typeof requestId !== 'string' || !/^[a-f0-9]{32}$/.test(requestId)) return json(res, 400, { error: '请求编号不合法' });
     if (body.mode === 'cancel') {
       await quota.finish(deviceId, requestId, 'cancelled', Date.now());
@@ -368,14 +375,31 @@ module.exports = async function handler(req, res) {
     if (!input || input.length > (agentMode ? 5000 : 300)) return json(res, 400, { error: agentMode ? '消息内容为空或超过5000字，请分段发送' : '任务内容不合法' });
     if (body.context?.selected_images?.length || body.images?.length) return json(res, 400, {error: '云端AI暂不支持图片，请发送文字或公开网页链接', code: 'images_unsupported'});
 
+    let pool,credit;
+    if(body.experience_code){
+      const grant=await require('./experience.cjs').experience(redis,body.experience_code,deviceId);
+      if(!grant.ok)return json(res,403,grant);
+      credit={id:grant.id,total:grant.total,hash:grant.hash};
+    }else{
+      const epoch=String(await redis(['GET',`quota-public-epoch:${quotaWeek(quotaDate)}`])||'0');
+      if(!/^[a-f0-9]{1,32}$/.test(epoch))throw Error('额度周期配置无效');
+      pool='public-'+epoch;
+    }
+
     const modelDate = validDate(body.client_date) || quotaDate;
     // Record identity before admission: a lost Redis response may already have reserved quota.
     receipt = { deviceId, requestId };
     const admission = await quota.reserve({device:deviceId, id:requestId, day:quotaDate,
-      deviceLimit:DEVICE_LIMIT, globalLimit:GLOBAL_LIMIT, now:Date.now()});
-    if (['device','global'].includes(admission)) {
+      dailyLimit:DEVICE_LIMIT,deviceLimit:DEVICE_LIMIT,globalLimit:GLOBAL_LIMIT,pool,credit,now:Date.now()});
+    if(admission.startsWith('experience_')){
+      receipt=null;const kind=admission.slice(11);
+      return json(res,403,{error:require('./experience.cjs').errors[kind],code:admission});
+    }
+    if(admission==='credit'){receipt=null;return json(res,429,{error:'体验卡余额已用完，可联系提供者补充额度，或在大模型配置中切回公共额度。',code:'experience_exhausted'});}
+    if (['device','device_week','global'].includes(admission)) {
       receipt = null;
-      return json(res, 429, { error: '今日免费AI次数已达上限。', limit_scope: admission });
+      const scope=admission==='device_week'?'device':admission,period=admission==='device'?'day':'week';
+      return json(res,429,{error:period==='day'?'今日个人免费AI次数已达上限。':scope==='device'?'本周个人免费AI次数已达上限。':'本周公共免费AI次数已达上限。',limit_scope:scope,limit_period:period});
     }
     if (admission !== 'reserved') {
       receipt = null;

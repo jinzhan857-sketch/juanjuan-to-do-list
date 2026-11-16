@@ -1,3 +1,5 @@
+const {quotaKeys:weeklyKeys,weekStart}=require('../api/quota.cjs');
+const quotaKey=day=>weeklyKeys({day,device:'a'.repeat(32)})[2];
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {fixture}=require('./publisher-fixture.cjs');
@@ -21,13 +23,13 @@ const crypto=require('node:crypto');const {handlerFixture}=require('./helpers/re
 for(const scope of ['device','global'])test('review: '+scope+' block crossing midnight retains the start day for every key',async()=>{
  const day='2026-12-31',device='a'.repeat(32);
  const a=handlerFixture({now:Date.parse('2026-12-31T23:59:59.999+08:00')});
- const key=scope==='global'?'quota:'+day+':global':'quota:'+day+':'+scope+':'+device;
- a.values.set(key,scope==='device'?50:100);
+ const key=weeklyKeys({day,device})[scope==='global'?2:0];
+ a.values.set(key,scope==='device'?300:1000);
  const reserve=a.quota.reserve;let captured;
  a.quota.reserve=async r=>{captured=r;a.clock.now=Date.parse('2027-01-01T00:00:01+08:00');return reserve(r)};
  const result=await a.send({client_date:'2025-01-01'});
  assert.equal(result.code,429);assert.equal(result.payload.limit_scope,scope);assert.equal(a.models.length,0);
  assert.equal(captured.day,day);assert.equal('ip' in captured,false);
- for(const c of a.commands)assert.match(c[1],/^(quota|active|metric):2026-12-31(?:$|:)/);
+ for(const c of a.commands)assert.ok(c[1].includes('2026-12-31')||c[1].includes('2026-12-28'));
  assert.ok(a.commands.some(c=>c[0]==='INCR'&&c[1]==='metric:2026-12-31:blocked'));assert.equal(a.commands.some(c=>c[1].endsWith(':calls')),false);
 });

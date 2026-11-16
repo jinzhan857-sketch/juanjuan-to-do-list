@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
-const limits={requests:100,microCny:1000000};
+const limits={requests:200,microCny:1000000};
 function openBudget(directory=path.join(os.homedir(),'.config/juanjuan/v27')){
  fs.mkdirSync(directory,{recursive:true});const file=path.join(directory,'budget.json'),lock=path.join(directory,'budget.lock');
  const handle=fs.openSync(lock,'wx');let state;
