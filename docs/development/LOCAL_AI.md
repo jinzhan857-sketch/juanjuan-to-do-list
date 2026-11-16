@@ -1,5 +1,7 @@
 # 本机 AI 服务与人工交接
 
+常规真实AI测试的最新长期授权见根目录[AGENTS.md](../../AGENTS.md#常规真实ai测试授权)：优先接通真实AI，每个Codex聊天累计5次、0.5元以内无需再次确认；已单独确认的专项仍按原账本执行，不叠加或清零。下方#81次数与费用属于当时单轮历史，不替代这项长期规则，也不能重置原专项记录。
+
 本页承接 [#81](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/81)。本机启动、共享Key、免费模拟、真实模型链路和适用的日程确认、持久化及撤销已经验收，证据及DeepSeek实际回答见[收尾报告](../audit/2026-11-15/issue81-acceptance.md)。最新批准本轮累计10次、2元，已用满10次，按高峰价保守估算0.02345元。真实Redis、原生浏览器组合和公网服务未验，不能据此宣布公共AI已经上线。公网共享AI和网址分别在[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)、[#83](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/83)讨论。
 
 ## 分三部分推进
