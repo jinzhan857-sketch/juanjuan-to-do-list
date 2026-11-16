@@ -2,6 +2,8 @@
 
 本页描述当前代。3.0 的独立后端与可配置系统另见[完整方案](../V3_CONSENSUS_DRAFT.md)，不要把下图读成未来系统已经建成。
 
+3.0前后端、React与Vue、后端框架及配套数据方案的[技术栈评审草案](V3_STACK_REVIEW.md)提供推荐与待验证项，尚未批准或安装新增选型，不改变当前代实现或V2.6排期。
+
 后端实现方向以[决策 0002](../decisions/0002-backend-language.md)为准：优先采用 JavaScript，替代旧共识的 Python 优先偏好；独立后端职责与数据保护要求不变。
 
 Python独立评测、分析与未来在线计算的边界见[决策0003](../decisions/0003-javascript-python-boundary.md)；nanoMuse仅作[研究候选](../reference/nanomuse-research.md)，没有接入当前系统。
