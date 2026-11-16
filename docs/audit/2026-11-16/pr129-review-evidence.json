@@ -1,0 +1,159 @@
+{
+  "original_head": "a33cb66fcaf9abf54b5a97bda87736f6bc6b1b20",
+  "reproduction": {
+    "tests": 11,
+    "pass": 0,
+    "fail": 11
+  },
+  "offline": {
+    "new_regressions": 20,
+    "full_tests": 1560,
+    "pass": 1560,
+    "fail": 0
+  },
+  "final_source_sha256": {
+    "index.html": "dc6f34932592332f436bb3f1e45bfd0620bc54edda382abf8b7ed8d22f9b55d0",
+    "src/assistant/materials.js": "c95889d9d64a0aecc88a34830d291f72e401520535c21bbc96f4e8c46d9298f6",
+    "scripts/helpers/issue119-budget.cjs": "103b6622e4a6cba94167b010c2b138458cfe05b23175f1e80a5de69d42311319",
+    "scripts/issue119-review.test.cjs": "c261e62e395acdba66c206fad618dd0c1b44686f40b8fefb574df4b4853b9d88"
+  },
+  "browser": [
+    {
+      "file": "review-browser-first.json",
+      "mode": "offline_synthetic_browser",
+      "sources": {
+        "index.html": "0283939c0d9a8afdc4c134ce0bb5750042708abfeb345e52b3635e8de0c36d84",
+        "src/assistant/materials.js": "6460387eb91f2ab369b74b9e0eb7b3881f7a9d36cabb56071d2cde3760d31784"
+      },
+      "events": [
+        {
+          "calls": 1,
+          "failSave": false,
+          "input": "",
+          "selected": 0,
+          "hasDraft": false,
+          "draftImages": 0,
+          "controls": [
+            {
+              "label": "选择图片",
+              "width": 40.66666793823242,
+              "height": 38
+            }
+          ],
+          "businessCounts": {
+            "tasks": 0,
+            "todos": 0,
+            "operations": 0
+          }
+        },
+        {
+          "calls": 1,
+          "failSave": true,
+          "input": "保存失败时保留这张图和原文",
+          "selected": 1,
+          "hasDraft": true,
+          "draftImages": 1,
+          "controls": [
+            {
+              "label": "移除图片 notice.png",
+              "width": 44,
+              "height": 32
+            },
+            {
+              "label": "选择图片",
+              "width": 40.66666793823242,
+              "height": 38
+            }
+          ],
+          "businessCounts": {
+            "tasks": 0,
+            "todos": 0,
+            "operations": 0
+          }
+        },
+        {
+          "calls": 1,
+          "failSave": false,
+          "input": "",
+          "selected": 0,
+          "hasDraft": false,
+          "draftImages": 0,
+          "controls": [
+            {
+              "label": "选择图片",
+              "width": 40.66666793823242,
+              "height": 38
+            }
+          ],
+          "businessCounts": {
+            "tasks": 0,
+            "todos": 0,
+            "operations": 0
+          }
+        }
+      ]
+    },
+    {
+      "file": "review-browser.json",
+      "mode": "offline_synthetic_browser",
+      "sources": {
+        "index.html": "16d75123043dd319b097a9c4dc6773a69b5f22cf360a9b4a3a08f956b7178375",
+        "src/assistant/materials.js": "c95889d9d64a0aecc88a34830d291f72e401520535c21bbc96f4e8c46d9298f6"
+      },
+      "events": [
+        {
+          "calls": 1,
+          "failSave": false,
+          "input": "",
+          "selected": 0,
+          "hasDraft": false,
+          "draftImages": 0,
+          "controls": [
+            {
+              "label": "选择图片",
+              "width": 40.66666793823242,
+              "height": 38
+            }
+          ],
+          "businessCounts": {
+            "tasks": 0,
+            "todos": 0,
+            "operations": 0
+          }
+        },
+        {
+          "calls": 0,
+          "failSave": false,
+          "input": "",
+          "selected": 0,
+          "hasDraft": false,
+          "draftImages": 0,
+          "controls": [
+            {
+              "label": "选择图片",
+              "width": 40.66666793823242,
+              "height": 38
+            }
+          ],
+          "businessCounts": {
+            "tasks": 0,
+            "todos": 0,
+            "operations": 0
+          }
+        }
+      ]
+    }
+  ],
+  "review_paid_attempts": 0,
+  "cumulative": {
+    "attempts": 18,
+    "model": 12,
+    "search": 2,
+    "fetch": 4,
+    "reserved_cny": 2.43,
+    "estimated_peak_cny": 0.083638,
+    "provider_debit_verified": false
+  },
+  "real_phone": false,
+  "deployed": false
+}
