@@ -12,7 +12,7 @@ const bootstrap=`
 localStorage.setItem('juanjuan_llm_source','custom');localStorage.setItem('juanjuan_llm_endpoint','https://api.deepseek.com/chat/completions');localStorage.setItem('juanjuan_llm_model','deepseek-flash');localStorage.setItem('juanjuan_llm_key',${JSON.stringify(key)});
 const directFetch=window.fetch.bind(window);window.fetch=async(url,options={})=>{
  if(!String(url).startsWith('https://api.deepseek.com/'))return directFetch(url,options);
- const body=JSON.parse(options.body);if(String(url).endsWith('/chat/completions')){const text=JSON.stringify(body.messages, (k,v)=>k==='image_url'?{url:'pixel-content'}:v);if(new TextEncoder().encode(text).length>60000||body.max_tokens>6000)throw Error('真实测试输入超出预留边界');}
+ const body=JSON.parse(options.body);if(String(url).endsWith('/chat/completions')){const text=JSON.stringify(body.messages, (k,v)=>k==='image_url'?{url:'pixel-content'}:v);if(new TextEncoder().encode(text).length>70000||body.max_tokens>6000)throw Error('真实测试输入超出预留边界');}
  const kind=String(url).endsWith('/search')?'search':String(url).endsWith('/fetch')?'fetch':'model';
  const r=await directFetch('/__reserve',{method:'POST',body:JSON.stringify({kind})});const receipt=await r.json();if(!receipt.id)throw Error('预算拒绝');
  try{const response=await directFetch(url,options);const data=await response.clone().json();await directFetch('/__result',{method:'POST',body:JSON.stringify({id:receipt.id,status:response.status,usage:data.usage,kind,result_count:data.results?.length,has_page_content:!!data.content,finish_reason:data.choices?.[0]?.finish_reason})});return response;}catch(error){await directFetch('/__result',{method:'POST',body:JSON.stringify({id:receipt.id,kind,error:error.name})});throw error;}
