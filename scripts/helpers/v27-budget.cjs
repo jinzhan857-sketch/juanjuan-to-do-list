@@ -15,6 +15,9 @@ function openBudget(directory=path.join(os.homedir(),'.config/juanjuan/v27')){
   // The server excludes previous_materials from its compact model context and
   // selects at most 65536 UTF8 bytes below; do not count all saved pages twice.
   const input={...body};if(body.context){input.context={...body.context};delete input.context.previous_materials;}
+  // Match the existing server history bound. The current message is included in
+  // full separately; historical copies do not consume their full length again.
+  if(Array.isArray(input.context?.history))input.context.history=input.context.history.slice(-12).map(item=>({...item,content:String(item.content||'').slice(0,500)}));
   const bytes=Buffer.byteLength(JSON.stringify(input));
   if(Buffer.byteLength(JSON.stringify(body))>1024*1024||bytes>32768||body.context?.selected_images?.length)throw Error('Live synthetic input exceeds budget boundary');
   // Two model calls, at most two Fetch and one Search. External text is capped at

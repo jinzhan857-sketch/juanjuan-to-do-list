@@ -722,7 +722,7 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
   <div class="agent-route" id="agent-route"></div>
   <div id="agent-material-preview" aria-live="polite"></div>
   <div class="agent-composer">
-    <textarea id="agent-input" rows="1" maxlength="1000" placeholder="和卷卷说点什么……"></textarea>
+    <textarea id="agent-input" rows="1" maxlength="5000" aria-label="聊天消息，最多5000字" placeholder="发消息，最多5000字……"></textarea>
     <div class="agent-role-picker" id="agent-role-picker"></div>
     <button class="btn ghost sm" id="agent-add-image" aria-label="选择图片">图片</button><input id="agent-images" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
     <button class="agent-send" id="btn-agent-send" aria-label="发送消息">↑</button>
@@ -1484,7 +1484,7 @@ const S = {
 function defaultPet(){
   return {
     personType:'P',                       // 默认 随性轻计划（轻松型）；可在「我的-精力」切换
-    satietyTask: 5, satietyFridge: 0,    // 当前饱度（任务粮 + 冰箱粮）
+    satietyTask: CONFIG.PERSON.P.full, satietyFridge: 0,    // 当前饱度（任务粮 + 冰箱粮）
     growth: 0, fridge: [],
     lastSettle: todayStr(),
     lowStreakSick: 0, lowStreakDeath: 0,
@@ -1838,7 +1838,7 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url===AIService.hostedEndpoint){try{const body=await response.json();if(response.status===429&&['device','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;if(['service_disabled','images_unsupported','payload_too_large','origin_denied','output_limit'].includes(body?.code))error.message=body.error;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url===AIService.hostedEndpoint){try{const body=await response.json();if(response.status===429&&['device','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;if(['service_disabled','images_unsupported','payload_too_large','origin_denied','output_limit','invalid_model_reply'].includes(body?.code))error.message=body.error;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
@@ -3071,7 +3071,7 @@ const UI = {
       this.setAgentModeMenu(true,false);const next=event.key==='Home'?0:event.key==='End'?options.length-1:index<0?(event.key==='ArrowUp'?options.length-1:0):(index+(event.key==='ArrowDown'?1:-1)+options.length)%options.length;options[next].focus();
     };
     $('#agent-route').textContent='';
-    const input=$('#agent-input');if(input)input.placeholder='和卷卷说点什么……';
+    const input=$('#agent-input');if(input)input.placeholder='发消息，最多5000字……';
   },
 
   setAgentModeMenu(open,focus=true){
@@ -3243,7 +3243,7 @@ const UI = {
     const keywords=(String(question).match(/[\u4e00-\u9fa5]{2,}/g)||[]).filter(word=>!['帮我','一下','一个','怎么','什么','可以','需要','规划','安排'].includes(word));
     let size=0;
     return S.memories.slice().sort((left,right)=>{
-      const score=item=>{const source=`${item.category||''}${item.content||''}`;return (categories.includes(item.category)?2:0)+keywords.reduce((total,word)=>total+(source.includes(word)?3:0),0);};
+      const score=item=>{const source=`${item.category||''}${item.content||''}`;return (categories.includes(item.category)?2:0)+(item.category==='个人基本信息'?1:0)+keywords.reduce((total,word)=>total+(source.includes(word)?3:0),0);};
       return score(right)-score(left)||(right.createdAt||0)-(left.createdAt||0);
     }).filter(item=>{
       const source=`${item.category||''}${item.content||''}`;
@@ -3583,10 +3583,15 @@ const UI = {
     $('#agent-input').value=previous.content;this.agentPictures=copyData(previous.meta?.images||[]);this.renderMaterialPreview(); this.resizeAgentInput(); this.sendAgentMessage();
   },
 
+  guardAgentPaste(event){
+    const input=event.currentTarget,text=event.clipboardData.getData('text/plain');
+    if(input.value.length-(input.selectionEnd-input.selectionStart)+text.length>5000){event.preventDefault();toast('粘贴内容超过5000字，请分段发送，输入框原文未改');}
+  },
   async sendAgentMessage(){
     if(this.agentDraftRead){toast('草稿正在恢复，请稍候再发送');return;}
     if(this.agentPictureRead){toast('图片正在读取，请稍候再发送');return;}
     const input=$('#agent-input'); const content=input.value.trim()||((this.agentPictures||[]).length?'请说明这些图片的内容，辨认不清的地方请明确说明。':''); if(!content||this.agentThinking||this.agentSending) return;
+    if(content.length>5000){toast('每条消息最多5000字，请分段发送，原文已保留');return;}
     const pictures=copyData(this.agentPictures||[]);
     const sending={};this.agentSending=sending;
     try{
@@ -4020,8 +4025,8 @@ const UI = {
       return;
     }
     if(S.pet.sick) add(`🤒 卷卷生病了！连续 3 天饱度低于饱线 30% 就会生病，今天多完成任务让它好起来吧！`,'red');
-    if(PetSystem.todayIntake() < petFullLine() && S.pet.fridge.length > 0){
-      const n = add(`🍚 卷卷今天还没吃饱（${r1(PetSystem.todayIntake())}/${petFullLine()}）～冰箱里有 ${S.pet.fridge.length} 份存粮，点这里去喂它！`);
+    if(petSatiety() < petFullLine() && petSatiety() < petEatMax() && S.pet.fridge.length > 0){
+      const n = add(`🍚 卷卷现在还没吃饱（${petSatiety()}/${petFullLine()}）～冰箱里有 ${S.pet.fridge.length} 份存粮，点这里去喂它！`);
       n.style.cursor='pointer'; n.onclick = ()=>this.openFridge();
     }
     const now = Date.now();
@@ -5429,6 +5434,7 @@ const App = {
     $('#btn-chat-list').onclick=()=>{ UI.renderChatList(); UI.mask('mask-chat-list',true); };
     $('#btn-new-chat').onclick=()=>UI.createAgentChat();
     $('#btn-agent-send').onclick=()=>UI.agentThinking?UI.cancelAgentMessage():UI.sendAgentMessage();
+    $('#agent-input').addEventListener('paste',event=>UI.guardAgentPaste(event));
     $('#agent-input').addEventListener('input',()=>{UI.resizeAgentInput();UI.saveMaterialDraft().catch(()=>toast('草稿未保存，请保留当前页面'));});
     $('#agent-add-image').onclick=()=>{if(AIService.source()!=='custom'){toast('云端AI暂不支持图片，请发送文字或公开网页链接');return;}$('#agent-images').click();};
     $('#agent-images').onchange=e=>{const files=[...e.target.files];e.target.value='';void UI.addMaterialImages(files);};

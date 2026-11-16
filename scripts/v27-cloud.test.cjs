@@ -184,3 +184,40 @@ test('onboarding records use normal editing completion rewards and deletion',asy
  await a.run("UI.confirmStatus(S.tasks.find(t=>t.title==='欢迎使用卷卷！'),'done',Date.now())");assert.equal(a.run("S.tasks.find(t=>t.title==='欢迎使用卷卷！').status"),'done');
  await a.run('removeTodo(todoId);removeTask(S.tasks[0].id)');assert.equal((await a.snapshot()).todos.length,2);assert.equal((await a.snapshot()).tasks.length,1);assert.equal(await a.run('App.initializeFirstUse()'),false);
 });
+
+test('5000 Chinese characters reach the provider intact and 5001 reject before dispatch',async()=>{
+ const a=hosted(),text='合'.repeat(4996)+'结尾标记';assert.equal(text.length,5000);const r=await a.send({mode:'agent',message:text,context:{}});assert.equal(r.code,200);assert.ok(a.calls[0].body.messages.at(-1).content.endsWith(text));
+ const rejected=hosted(),bad=await rejected.send({mode:'agent',message:text+'超',context:{}});assert.equal(bad.code,400);assert.match(bad.body.error,/5000/);assert.equal(rejected.calls.length,0);
+});
+
+test('long chat drafts survive restoration and sending without losing the ending',async t=>{
+ const a=await fixture(t);a.run("S.chats=[{id:'long',title:'新聊天'}];S.messages=[];UI.agentChatId='long';UI.agentPictures=[];UI.renderAgent=()=>{};UI.resizeAgentInput=()=>{};UI.renderMaterialPreview=()=>{};AIService.agent=async text=>{sentText=text;return {type:'chat',reply:'已收到'}}");await a.run("DB.put('chats',S.chats[0])");
+ const text='长'.repeat(4996)+'结尾标记';a.element('#agent-input').value=text;await a.run('UI.saveMaterialDraft()');a.element('#agent-input').value='';await a.run('UI.restoreMaterialDraft()');assert.equal(a.element('#agent-input').value,text);
+ await a.run('UI.sendAgentMessage()');assert.equal(a.run('sentText'),text);assert.equal(a.run("S.messages.find(m=>m.role==='user').content"),text);
+ a.element('#agent-input').value=text+'超';a.run('sentText=null');await a.run('UI.sendAgentMessage()');assert.equal(a.run('sentText'),null);assert.match(a.notices.at(-1),/5000/);assert.equal(a.element('#agent-input').value,text+'超');
+});
+
+test('oversized paste preserves existing text while selected-text replacement fits',async t=>{
+ const a=await fixture(t);let prevented=0;const event={currentTarget:{value:'原文',selectionStart:0,selectionEnd:2},clipboardData:{getData:()=> '长'.repeat(5000)},preventDefault(){prevented++;}};a.ctx.pasteEvent=event;
+ a.run('UI.guardAgentPaste(pasteEvent)');assert.equal(prevented,0);event.currentTarget.selectionEnd=0;a.run('UI.guardAgentPaste(pasteEvent)');assert.equal(prevented,1);assert.equal(event.currentTarget.value,'原文');assert.match(a.notices.at(-1),/原文未改/);
+});
+
+test('unstructured model replies have a precise failure and known usage while refunding quota',async()=>{
+ const a=hosted(async()=>json({choices:[{finish_reason:'stop',message:{content:'我没有你的出生年份。'}}],usage:{prompt_tokens:100,completion_tokens:20}}));
+ const r=await a.send({mode:'agent',message:'我几岁了',context:{}});assert.equal(r.code,503);assert.equal(r.body.code,'invalid_model_reply');assert.match(r.body.error,/回答格式/);assert.equal(r.body.provider_usage.complete,true);assert.equal(r.body.provider_usage.model_requests,1);assert.equal(r.body.provider_usage.completion_tokens,20);assert.equal([...a.values].filter(([k])=>k.startsWith('quota:')).every(([,v])=>v===0),true);
+});
+
+test('network failures retain unknown model billing rather than reporting zero known cost',async()=>{
+ const a=hosted(async()=>{throw Error('synthetic network failure')});const r=await a.send({mode:'agent',message:'合成',context:{}});assert.equal(r.code,503);assert.equal(r.body.provider_usage.complete,false);assert.equal(r.body.provider_usage.model_requests,1);
+});
+
+test('basic identity facts are retained when many newer memories exceed the context budget',async t=>{
+ const a=await fixture(t);a.run("S.pet.memoryEnabled=true;S.memories=[{id:'birth',category:'个人基本信息',content:'我出生于2001年。',createdAt:1},...Array.from({length:40},(_,i)=>({id:'work'+i,category:'学业与工作',content:'合成项目背景'.repeat(20),createdAt:100+i}))]");
+ const items=a.json("UI.planningMemoryItems('我几岁了')");assert.equal(items[0].id,'birth');assert.ok(items.reduce((n,m)=>n+m.content.length,0)<=2400);
+});
+
+test('feeding notice uses current satiety and fresh pets start within their profile cap',async t=>{
+ const a=await fixture(t);assert.equal(a.run('S.pet.satietyTask'),a.run('petFullLine()'));assert.ok(a.run('petSatiety()<=petEatMax()'));
+ a.run("noticeHtml=[];document.createElement=()=>({style:{},set innerHTML(text){noticeHtml.push(text)},querySelector:()=>({})});S.tasks=[];S.pet.satietyTask=5;S.pet.todayIntake=0;S.pet.fridge=[{id:'food',value:1,name:'饼干',emo:'🍪'}];UI.renderNotices()");assert.equal(a.json('noticeHtml').some(text=>text.includes('没吃饱')),false);const before=a.json('S.pet');assert.equal(await a.run("PetSystem.feedFromFridge('food')"),null);assert.deepEqual(a.json('S.pet'),before);
+ a.run("S.pet.satietyTask=1;S.pet.todayIntake=20;noticeHtml=[];UI.renderNotices()");assert.ok(a.json('noticeHtml').some(text=>text.includes('现在还没吃饱（1/2）')));assert.ok((await a.run("PetSystem.feedFromFridge('food')")).fed>0);
+});

@@ -28,7 +28,7 @@ test('all settled statuses remain excluded while missing and null statuses remai
  assert.equal(a.area.children.length,1);assert.match(a.area.children[0].innerHTML,/<b>2<\/b>/);
 });
 test('sick and hungry notices coexist with pending reminder and keep feeding action',()=>{
- const a=fixture();a.run("S.pet.sick=true;S.pet.todayIntake=0;S.pet.fridge=[{}];S.tasks=[{execDate:'2020-01-01',timeType:'allday'}];before=JSON.stringify(S);UI.renderNotices()");
+ const a=fixture();a.run("S.pet.sick=true;S.pet.satietyTask=1;S.pet.todayIntake=0;S.pet.fridge=[{}];S.tasks=[{execDate:'2020-01-01',timeType:'allday'}];before=JSON.stringify(S);UI.renderNotices()");
  assert.equal(a.area.children.length,3);
  assert.match(a.area.children[0].innerHTML,/卷卷生病了/);
  assert.match(a.area.children[1].innerHTML,/冰箱里有 1 份存粮/);
