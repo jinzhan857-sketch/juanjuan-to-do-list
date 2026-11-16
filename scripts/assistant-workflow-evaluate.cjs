@@ -9,8 +9,8 @@ async function run(){
  const partition=process.argv.find(x=>x.startsWith('--partition='))?.split('=')[1]||'regression';
  const repeat=Number(process.argv.find(x=>x.startsWith('--repeat='))?.split('=')[1]||1);
  const addendum=process.argv.includes('--c-addendum');
- const dMode=['D','D-regression','D-review'].includes(batch);
- const caseFile=dMode?'docs/audit/2026-11-16/issue115/'+(batch==='D'?'d-v1.json':batch==='D-review'?'d-review-v1.json':'d-regression-v1.json'):addendum?'docs/audit/2026-11-16/issue115/c-addendum-v1.json':batch?'docs/audit/2026-11-16/issue115/batches-v1.json':'docs/audit/2026-11-16/issue115/cases.json';
+ const dMode=['D','D-regression','D-review','Final-review'].includes(batch);
+ const caseFile=dMode?'docs/audit/2026-11-16/issue115/'+(batch==='D'?'d-v1.json':batch==='D-review'?'d-review-v1.json':batch==='Final-review'?'final-review-v1.json':'d-regression-v1.json'):addendum?'docs/audit/2026-11-16/issue115/c-addendum-v1.json':batch?'docs/audit/2026-11-16/issue115/batches-v1.json':'docs/audit/2026-11-16/issue115/cases.json';
  const bytes=fs.readFileSync(caseFile),caseHash=crypto.createHash('sha256').update(bytes).digest('hex');
  const parsedCases=JSON.parse(bytes.toString().replace(/^\uFEFF/,''));
  const scenarios=(batch?parsedCases.cases:parsedCases).filter(s=>addendum?true:batch?s.batch===batch:s.partition===partition);

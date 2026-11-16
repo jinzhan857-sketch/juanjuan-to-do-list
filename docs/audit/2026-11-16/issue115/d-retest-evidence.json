@@ -1,0 +1,5585 @@
+{
+  "purpose": "Real model regression and final-source review evidence. Not unseen D cases.",
+  "cases": [
+    {
+      "phase": "D-regression",
+      "id": "A03",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A03",
+        "partition": "regression",
+        "date": "2026-11-15",
+        "turns": [
+          "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+          "两组都到11月30日结束，包含当天。"
+        ],
+        "tasks": 5,
+        "todos": 0,
+        "groups": 2,
+        "dates": [
+          "2026-11-16",
+          "2026-11-23",
+          "2026-11-30",
+          "2026-11-18",
+          "2026-11-25"
+        ],
+        "originalId": "AST09",
+        "batch": "D-regression",
+        "route": "hosted"
+      },
+      "turns": [
+        {
+          "input": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将创建两组每周重复日程：每周一19:00-20:00练瑜伽、每周三18:00-19:00练吉他，均从2026-11-16起。结束日期尚未提供，请核对；后续可补充结束日期。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule_batch\",\"rule\":{\"title\":\"练瑜伽\",\"date_from\":\"2026-11-16\",\"weekdays\":[1],\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:00\",\"category\":\"休闲娱乐\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule_batch\",\"rule\":{\"title\":\"练吉他\",\"date_from\":\"2026-11-16\",\"weekdays\":[3],\"time_type\":\"exact\",\"start_time\":\"18:00\",\"end_time\":\"19:00\",\"category\":\"技能学习\",\"base_score\":6}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将创建两组每周重复日程：每周一19:00-20:00练瑜伽、每周三18:00-19:00练吉他，均从2026-11-16起。结束日期尚未提供，请核对；后续可补充结束日期。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule_batch",
+                  "rule": {
+                    "title": "练瑜伽",
+                    "date_from": "2026-11-16",
+                    "weekdays": [
+                      1
+                    ],
+                    "time_type": "exact",
+                    "start_time": "19:00",
+                    "end_time": "20:00",
+                    "category": "休闲娱乐",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule_batch",
+                  "rule": {
+                    "title": "练吉他",
+                    "date_from": "2026-11-16",
+                    "weekdays": [
+                      3
+                    ],
+                    "time_type": "exact",
+                    "start_time": "18:00",
+                    "end_time": "19:00",
+                    "category": "技能学习",
+                    "base_score": 6
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0edk3d",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule_batch",
+                "rule": {
+                  "title": "练瑜伽",
+                  "date_from": "2026-11-16",
+                  "weekdays": [
+                    1
+                  ],
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "休闲娱乐",
+                  "base_score": 3
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "date_from": "user",
+                "weekdays": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwh6szk0nfwp3",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule_batch",
+                "rule": {
+                  "title": "练吉他",
+                  "date_from": "2026-11-16",
+                  "weekdays": [
+                    3
+                  ],
+                  "time_type": "exact",
+                  "start_time": "18:00",
+                  "end_time": "19:00",
+                  "category": "技能学习",
+                  "base_score": 6
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "date_from": "user",
+                "weekdays": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "两组都到11月30日结束，包含当天。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"为两组重复日程补充结束日期2026-11-30（含当天），请核对\",\"entries\":[{\"card_id\":\"mwh6szk0edk3d\",\"version\":1,\"patch\":{\"date_to\":\"2026-11-30\"}},{\"card_id\":\"mwh6szk0nfwp3\",\"version\":1,\"patch\":{\"date_to\":\"2026-11-30\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "为两组重复日程补充结束日期2026-11-30（含当天），请核对",
+            "entries": [
+              {
+                "card_id": "mwh6szk0edk3d",
+                "version": 1,
+                "patch": {
+                  "date_to": "2026-11-30"
+                }
+              },
+              {
+                "card_id": "mwh6szk0nfwp3",
+                "version": 1,
+                "patch": {
+                  "date_to": "2026-11-30"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0edk3d",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule_batch",
+                "rule": {
+                  "title": "练瑜伽",
+                  "date_from": "2026-11-16",
+                  "weekdays": [
+                    1
+                  ],
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "休闲娱乐",
+                  "base_score": 3,
+                  "date_to": "2026-11-30"
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "date_from": "user",
+                "weekdays": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user",
+                "date_to": "user"
+              }
+            },
+            {
+              "card_id": "mwh6szk0nfwp3",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule_batch",
+                "rule": {
+                  "title": "练吉他",
+                  "date_from": "2026-11-16",
+                  "weekdays": [
+                    3
+                  ],
+                  "time_type": "exact",
+                  "start_time": "18:00",
+                  "end_time": "19:00",
+                  "category": "技能学习",
+                  "base_score": 6,
+                  "date_to": "2026-11-30"
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "date_from": "user",
+                "weekdays": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user",
+                "date_to": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwh6szk05pbel",
+          "seriesId": "mwh6szk0euetx",
+          "seriesRule": {
+            "date_from": "2026-11-16",
+            "date_to": "2026-11-30",
+            "weekdays": [
+              3
+            ]
+          },
+          "title": "练吉他",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-18",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "18:00",
+          "endTime": "19:00",
+          "category": "技能学习",
+          "baseScore": 6,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk07og2s",
+          "seriesId": "mwh6szk0euetx",
+          "seriesRule": {
+            "date_from": "2026-11-16",
+            "date_to": "2026-11-30",
+            "weekdays": [
+              3
+            ]
+          },
+          "title": "练吉他",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-25",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "18:00",
+          "endTime": "19:00",
+          "category": "技能学习",
+          "baseScore": 6,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk09vqnq",
+          "seriesId": "mwh6szk0n9739",
+          "seriesRule": {
+            "date_from": "2026-11-16",
+            "date_to": "2026-11-30",
+            "weekdays": [
+              1
+            ]
+          },
+          "title": "练瑜伽",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-16",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "休闲娱乐",
+          "baseScore": 3,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk0j2d1w",
+          "seriesId": "mwh6szk0n9739",
+          "seriesRule": {
+            "date_from": "2026-11-16",
+            "date_to": "2026-11-30",
+            "weekdays": [
+              1
+            ]
+          },
+          "title": "练瑜伽",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-30",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "休闲娱乐",
+          "baseScore": 3,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk0tdvmr",
+          "seriesId": "mwh6szk0n9739",
+          "seriesRule": {
+            "date_from": "2026-11-16",
+            "date_to": "2026-11-30",
+            "weekdays": [
+              1
+            ]
+          },
+          "title": "练瑜伽",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-23",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "休闲娱乐",
+          "baseScore": 3,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-regression",
+      "id": "C03",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C03",
+        "batch": "D-regression",
+        "route": "hosted",
+        "turns": [
+          "请创建12月9日23点30分到次日0点30分的日程“夜间观测”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "23:30",
+        "end": "00:30",
+        "overnight": true
+      },
+      "turns": [
+        {
+          "input": "请创建12月9日23点30分到次日0点30分的日程“夜间观测”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对：创建跨日日程“夜间观测”，12月9日23:30开始，次日00:30结束。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间观测\",\"exec_date\":\"2026-12-09\",\"end_day_offset\":1,\"time_type\":\"exact\",\"start_time\":\"23:30\",\"end_time\":\"00:30\",\"category\":\"休闲娱乐\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对：创建跨日日程“夜间观测”，12月9日23:30开始，次日00:30结束。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间观测",
+                    "exec_date": "2026-12-09",
+                    "end_day_offset": 1,
+                    "time_type": "exact",
+                    "start_time": "23:30",
+                    "end_time": "00:30",
+                    "category": "休闲娱乐",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u8009d8h",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "夜间观测",
+                  "exec_date": "2026-12-09",
+                  "end_day_offset": 1,
+                  "time_type": "exact",
+                  "start_time": "23:30",
+                  "end_time": "00:30",
+                  "category": "休闲娱乐",
+                  "base_score": 3
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "end_day_offset": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80lk1bo",
+          "title": "夜间观测",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-09",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "23:30",
+          "endTime": "00:30",
+          "endDayOffset": 1,
+          "category": "休闲娱乐",
+          "baseScore": 3,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-regression",
+      "id": "C05",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C05",
+        "batch": "D-regression",
+        "route": "hosted",
+        "turns": [
+          "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "复查加备注带清单。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "turns": [
+        {
+          "input": "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对两个“复查”日程：12月6日与12月8日，均为全天。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两个“复查”日程：12月6日与12月8日，均为全天。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80s28ss",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-06",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u802dd6v",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "复查加备注带清单。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"复查\"},\"reply\":\"为两个“复查”日程补充备注“带清单”，请核对\",\"entries\":[{\"card_id\":\"mwim8u80s28ss\",\"version\":1,\"append_note\":\"带清单\"},{\"card_id\":\"mwim8u802dd6v\",\"version\":1,\"append_note\":\"带清单\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80s28ss",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-06",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u802dd6v",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80ab4sr",
+          "title": "复查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80lk97z",
+          "title": "复查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-06",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-regression",
+      "id": "C11",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C11",
+        "batch": "D-regression",
+        "route": "hosted",
+        "turns": [
+          "先帮我理清：12月1日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "turns": [
+        {
+          "input": "先帮我理清：12月1日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"明白，先不创建也不保存。已理清：12月1日有一项“模型研读”，目前只作为待整理事项记录，不生成日程或待办。需要继续讨论时间、分类或备注时告诉我。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "明白，先不创建也不保存。已理清：12月1日有一项“模型研读”，目前只作为待整理事项记录，不生成日程或待办。需要继续讨论时间、分类或备注时告诉我。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": []
+        }
+      ],
+      "tasks": [],
+      "todos": [],
+      "operations": 0
+    },
+    {
+      "phase": "D-regression",
+      "id": "C15",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C15",
+        "batch": "D-regression",
+        "route": "hosted",
+        "turns": [
+          "请建12月5日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "turns": [
+        {
+          "input": "请建12月5日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月5日14:00-16:00 核对引文\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-05\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月5日14:00-16:00 核对引文",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-05",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80bm7vo",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "核对引文",
+                  "exec_date": "2026-12-05",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "16:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“核对引文”改为19:00开始，保留原2小时时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u80bm7vo\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“核对引文”改为19:00开始，保留原2小时时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80bm7vo",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80bm7vo",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "核对引文",
+                  "exec_date": "2026-12-05",
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "21:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80qoev1",
+          "title": "核对引文",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-05",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "21:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-regression",
+      "id": "C21",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C21",
+        "batch": "D-regression",
+        "route": "hosted",
+        "turns": [
+          "先帮我理清：12月11日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "turns": [
+        {
+          "input": "先帮我理清：12月11日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，只帮你理清，不创建也不保存：12月11日有一项“模型研读”，目前只确定日期，可先按全天事项理解，归入技能学习。需要时再告诉我具体时间或补充备注。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，只帮你理清，不创建也不保存：12月11日有一项“模型研读”，目前只确定日期，可先按全天事项理解，归入技能学习。需要时再告诉我具体时间或补充备注。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": []
+        }
+      ],
+      "tasks": [],
+      "todos": [],
+      "operations": 0
+    },
+    {
+      "phase": "D-regression",
+      "id": "C25",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C25",
+        "batch": "D-regression",
+        "route": "hosted",
+        "turns": [
+          "请建12月15日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "turns": [
+        {
+          "input": "请建12月15日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月15日14:00-16:00 核对引文\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-15\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月15日14:00-16:00 核对引文",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-15",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u804xors",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "核对引文",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "16:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“核对引文”改为19:00开始，保留原2小时时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u804xors\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“核对引文”改为19:00开始，保留原2小时时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u804xors",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u804xors",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "核对引文",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "21:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80eze5a",
+          "title": "核对引文",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-15",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "21:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-regression",
+      "id": "A04",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A04",
+        "partition": "regression",
+        "date": "2026-11-15",
+        "turns": [
+          "明天15点到16点复习。",
+          "不，是16点到17点。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "16:00",
+        "end": "17:00",
+        "originalId": "AST10",
+        "batch": "D-regression",
+        "route": "custom"
+      },
+      "turns": [
+        {
+          "input": "明天15点到16点复习。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对：明天（2026-11-16）15:00–16:00 复习\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复习\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"start_time\":\"15:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对：明天（2026-11-16）15:00–16:00 复习",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复习",
+                    "exec_date": "2026-11-16",
+                    "time_type": "exact",
+                    "start_time": "15:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0d4i53",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复习",
+                  "exec_date": "2026-11-16",
+                  "time_type": "exact",
+                  "start_time": "15:00",
+                  "end_time": "16:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "不，是16点到17点。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对：将「复习」改为 2026-11-16 16:00–17:00\",\"entries\":[{\"card_id\":\"mwh6szk0d4i53\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"16:00\",\"end_time\":\"17:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对：将「复习」改为 2026-11-16 16:00–17:00",
+            "entries": [
+              {
+                "card_id": "mwh6szk0d4i53",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "16:00",
+                  "end_time": "17:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0d4i53",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复习",
+                  "exec_date": "2026-11-16",
+                  "time_type": "exact",
+                  "start_time": "16:00",
+                  "end_time": "17:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwh6szk0okm5d",
+          "title": "复习",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-16",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "16:00",
+          "endTime": "17:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-regression",
+      "id": "A08",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A08",
+        "partition": "variant",
+        "turns": [
+          "创建两组全天日程：12月1日至12月14日每周二清洁书架，每周四整理发票。"
+        ],
+        "tasks": 4,
+        "todos": 0,
+        "groups": 2,
+        "originalId": "all-day-groups",
+        "batch": "D-regression",
+        "route": "custom"
+      },
+      "turns": [
+        {
+          "input": "创建两组全天日程：12月1日至12月14日每周二清洁书架，每周四整理发票。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两组重复日程：12月1日至12月14日每周二清洁书架、每周四整理发票，均为全天。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule_batch\",\"rule\":{\"title\":\"清洁书架\",\"date_from\":\"2026-12-01\",\"date_to\":\"2026-12-14\",\"weekdays\":[2],\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule_batch\",\"rule\":{\"title\":\"整理发票\",\"date_from\":\"2026-12-01\",\"date_to\":\"2026-12-14\",\"weekdays\":[4],\"time_type\":\"allday\",\"category\":\"金钱复盘\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两组重复日程：12月1日至12月14日每周二清洁书架、每周四整理发票，均为全天。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule_batch",
+                  "rule": {
+                    "title": "清洁书架",
+                    "date_from": "2026-12-01",
+                    "date_to": "2026-12-14",
+                    "weekdays": [
+                      2
+                    ],
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule_batch",
+                  "rule": {
+                    "title": "整理发票",
+                    "date_from": "2026-12-01",
+                    "date_to": "2026-12-14",
+                    "weekdays": [
+                      4
+                    ],
+                    "time_type": "allday",
+                    "category": "金钱复盘",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u807sksr",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule_batch",
+                "rule": {
+                  "title": "清洁书架",
+                  "date_from": "2026-12-01",
+                  "date_to": "2026-12-14",
+                  "weekdays": [
+                    2
+                  ],
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "date_from": "user",
+                "date_to": "user",
+                "weekdays": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u802pgbh",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule_batch",
+                "rule": {
+                  "title": "整理发票",
+                  "date_from": "2026-12-01",
+                  "date_to": "2026-12-14",
+                  "weekdays": [
+                    4
+                  ],
+                  "time_type": "allday",
+                  "category": "金钱复盘",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "date_from": "user",
+                "date_to": "user",
+                "weekdays": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u803oclc",
+          "seriesId": "mwim8u801mpkm",
+          "seriesRule": {
+            "date_from": "2026-12-01",
+            "date_to": "2026-12-14",
+            "weekdays": [
+              4
+            ]
+          },
+          "title": "整理发票",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-10",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "金钱复盘",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80ehpqj",
+          "seriesId": "mwim8u801mpkm",
+          "seriesRule": {
+            "date_from": "2026-12-01",
+            "date_to": "2026-12-14",
+            "weekdays": [
+              4
+            ]
+          },
+          "title": "整理发票",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-03",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "金钱复盘",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80r8ck2",
+          "seriesId": "mwim8u80fk1m2",
+          "seriesRule": {
+            "date_from": "2026-12-01",
+            "date_to": "2026-12-14",
+            "weekdays": [
+              2
+            ]
+          },
+          "title": "清洁书架",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80w455b",
+          "seriesId": "mwim8u80fk1m2",
+          "seriesRule": {
+            "date_from": "2026-12-01",
+            "date_to": "2026-12-14",
+            "weekdays": [
+              2
+            ]
+          },
+          "title": "清洁书架",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-01",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手批量创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-regression",
+      "id": "A14",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A14",
+        "partition": "stability",
+        "turns": [
+          "帮我创建多个日程：\n6098项目上交日期 12月1号\n7215项目pre 12月3日\n7215项目递交时间 12月7日\n7508智能系统安全期末考 12月8号\n7215编程与应用期末考 12月10号\n7224深度学习期末考 12月11号\nTCL参观 12月15号",
+          {
+            "confirm": 2
+          },
+          "全都是晚上7点。",
+          "6098在A楼，7215项目pre在B楼，帮我备注上去。",
+          "6098在A楼，7211在B楼。",
+          "所有7215的事项都备注B楼。",
+          {
+            "confirm": "all"
+          },
+          "6098再加一条备注：带电脑，其他不变。"
+        ],
+        "tasks": 7,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:00",
+        "allExact": true,
+        "noteChecks": [
+          [
+            "6098",
+            "A楼",
+            "带电脑"
+          ],
+          [
+            "7215项目pre",
+            "B楼"
+          ],
+          [
+            "7215项目递交时间",
+            "B楼"
+          ],
+          [
+            "7215编程",
+            "B楼"
+          ]
+        ],
+        "originalId": "seven-partial-lifecycle",
+        "batch": "D-regression",
+        "route": "custom"
+      },
+      "turns": [
+        {
+          "input": "帮我创建多个日程：\n6098项目上交日期 12月1号\n7215项目pre 12月3日\n7215项目递交时间 12月7日\n7508智能系统安全期末考 12月8号\n7215编程与应用期末考 12月10号\n7224深度学习期末考 12月11号\nTCL参观 12月15号",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对以下7个日程，日期均为2026年，全天事项\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"6098项目上交日期\",\"exec_date\":\"2026-12-01\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7215项目pre\",\"exec_date\":\"2026-12-03\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7215项目递交时间\",\"exec_date\":\"2026-12-07\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7508智能系统安全期末考\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":8}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7215编程与应用期末考\",\"exec_date\":\"2026-12-10\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":8}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7224深度学习期末考\",\"exec_date\":\"2026-12-11\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":8}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"TCL参观\",\"exec_date\":\"2026-12-15\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":4}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对以下7个日程，日期均为2026年，全天事项",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "6098项目上交日期",
+                    "exec_date": "2026-12-01",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7215项目pre",
+                    "exec_date": "2026-12-03",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7215项目递交时间",
+                    "exec_date": "2026-12-07",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7508智能系统安全期末考",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 8
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7215编程与应用期末考",
+                    "exec_date": "2026-12-10",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 8
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7224深度学习期末考",
+                    "exec_date": "2026-12-11",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 8
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "TCL参观",
+                    "exec_date": "2026-12-15",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 4
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80r2ji1",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "exec_date": "2026-12-01",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80gxnxa",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目pre",
+                  "exec_date": "2026-12-03",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u8032kdt",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80j4q9q",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 8
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808njhs",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 8
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808xk56",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 8
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80416xe",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 4
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "全都是晚上7点。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"all\"},\"uniform\":{\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"},\"keep_duration\":true},\"reply\":\"将全部7项改为晚上7点开始，时长按原有时长（默认1小时）计算，请核对。\"}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "all"
+            },
+            "uniform": {
+              "patch": {
+                "time_type": "exact",
+                "start_time": "19:00"
+              },
+              "keep_duration": true
+            },
+            "reply": "将全部7项改为晚上7点开始，时长按原有时长（默认1小时）计算，请核对。"
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80r2ji1",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u80aaop5",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "note": "",
+                  "exec_date": "2026-12-01",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80gxnxa",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u8013hdh",
+                "item": {
+                  "title": "7215项目pre",
+                  "note": "",
+                  "exec_date": "2026-12-03",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u8032kdt",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80j4q9q",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808njhs",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808xk56",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80416xe",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 4,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "6098在A楼，7215项目pre在B楼，帮我备注上去。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"为6098项目上交日期备注A楼、7215项目pre备注B楼，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80r2ji1\",\"version\":2,\"append_note\":\"地点：A楼\"},{\"card_id\":\"mwim8u80gxnxa\",\"version\":2,\"append_note\":\"地点：B楼\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "为6098项目上交日期备注A楼、7215项目pre备注B楼，请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80r2ji1",
+                "version": 2,
+                "patch": {},
+                "append_note": "地点：A楼"
+              },
+              {
+                "card_id": "mwim8u80gxnxa",
+                "version": 2,
+                "patch": {},
+                "append_note": "地点：B楼"
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80r2ji1",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u80aaop5",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "note": "地点：A楼",
+                  "exec_date": "2026-12-01",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80gxnxa",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u8013hdh",
+                "item": {
+                  "title": "7215项目pre",
+                  "note": "地点：B楼",
+                  "exec_date": "2026-12-03",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u8032kdt",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80j4q9q",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808njhs",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808xk56",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80416xe",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 4,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "6098在A楼，7211在B楼。",
+          "model_raw": "{\"type\":\"clarify\",\"reply\":\"当前候选里没有编号7211的事项，只有7215相关事项。你是想给7215项目pre备注B楼，还是另有7211事项需要处理？\"}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "当前候选里没有编号7211的事项，只有7215相关事项。你是想给7215项目pre备注B楼，还是另有7211事项需要处理？",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80r2ji1",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u80aaop5",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "note": "地点：A楼",
+                  "exec_date": "2026-12-01",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80gxnxa",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u8013hdh",
+                "item": {
+                  "title": "7215项目pre",
+                  "note": "地点：B楼",
+                  "exec_date": "2026-12-03",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u8032kdt",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80j4q9q",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808njhs",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808xk56",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80416xe",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 4,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "所有7215的事项都备注B楼。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"7215\"},\"reply\":\"匹配到3项标题含7215的事项（7215项目pre、7215项目递交时间、7215编程与应用期末考），统一备注“地点：B楼”，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80gxnxa\",\"version\":3,\"append_note\":\"地点：B楼\"},{\"card_id\":\"mwim8u8032kdt\",\"version\":2,\"append_note\":\"地点：B楼\"},{\"card_id\":\"mwim8u808njhs\",\"version\":2,\"append_note\":\"地点：B楼\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "7215"
+            },
+            "reply": "匹配到3项标题含7215的事项（7215项目pre、7215项目递交时间、7215编程与应用期末考），统一备注“地点：B楼”，请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80gxnxa",
+                "version": 3,
+                "patch": {},
+                "append_note": "地点：B楼"
+              },
+              {
+                "card_id": "mwim8u8032kdt",
+                "version": 2,
+                "patch": {},
+                "append_note": "地点：B楼"
+              },
+              {
+                "card_id": "mwim8u808njhs",
+                "version": 2,
+                "patch": {},
+                "append_note": "地点：B楼"
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80r2ji1",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u80aaop5",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "note": "地点：A楼",
+                  "exec_date": "2026-12-01",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80gxnxa",
+              "version": 4,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u8013hdh",
+                "item": {
+                  "title": "7215项目pre",
+                  "note": "地点：B楼",
+                  "exec_date": "2026-12-03",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u8032kdt",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0,
+                  "note": "地点：B楼"
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80j4q9q",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808njhs",
+              "version": 3,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0,
+                  "note": "地点：B楼"
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808xk56",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80416xe",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 4,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "6098再加一条备注：带电脑，其他不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"为“6098项目上交日期”追加备注“带电脑”，其他不变，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80r2ji1\",\"version\":3,\"append_note\":\"带电脑\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "为“6098项目上交日期”追加备注“带电脑”，其他不变，请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80r2ji1",
+                "version": 3,
+                "patch": {},
+                "append_note": "带电脑"
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80r2ji1",
+              "version": 4,
+              "status": "pending",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u80aaop5",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "note": "地点：A楼\n带电脑",
+                  "exec_date": "2026-12-01",
+                  "time_type": "exact",
+                  "slot": "dusk",
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80gxnxa",
+              "version": 4,
+              "status": "done",
+              "action": {
+                "kind": "update_schedule",
+                "target_id": "mwim8u8013hdh",
+                "item": {
+                  "title": "7215项目pre",
+                  "note": "地点：B楼",
+                  "exec_date": "2026-12-03",
+                  "time_type": "exact",
+                  "slot": null,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u8032kdt",
+              "version": 3,
+              "status": "done",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0,
+                  "note": "地点：B楼"
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80j4q9q",
+              "version": 2,
+              "status": "done",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808njhs",
+              "version": 3,
+              "status": "done",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0,
+                  "note": "地点：B楼"
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u808xk56",
+              "version": 2,
+              "status": "done",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 8,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80416xe",
+              "version": 2,
+              "status": "done",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "exact",
+                  "category": "学业事务",
+                  "base_score": 4,
+                  "start_time": "19:00",
+                  "end_time": "20:00",
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u8013hdh",
+          "title": "7215项目pre",
+          "note": "地点：B楼",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-03",
+          "timeType": "exact",
+          "slot": "dusk",
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u8097zan",
+          "title": "7215编程与应用期末考",
+          "note": "地点：B楼",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-10",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 8,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80aaop5",
+          "title": "6098项目上交日期",
+          "note": "地点：A楼\n带电脑",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-01",
+          "timeType": "exact",
+          "slot": "dusk",
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80cs14i",
+          "title": "7215项目递交时间",
+          "note": "地点：B楼",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-07",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80e32y2",
+          "title": "TCL参观",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-15",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 4,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80id0p0",
+          "title": "7508智能系统安全期末考",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 8,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80tka9q",
+          "title": "7224深度学习期末考",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-11",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:00",
+          "category": "学业事务",
+          "baseScore": 8,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 10
+    },
+    {
+      "phase": "D-regression",
+      "id": "A24",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A24",
+        "batch": "D-regression",
+        "route": "custom",
+        "turns": [
+          "请创建12月2日资料整理和12月3日资料核查。",
+          "都是全天。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "allDay": true
+      },
+      "turns": [
+        {
+          "input": "请创建12月2日资料整理和12月3日资料核查。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项日程：12月2日资料整理、12月3日资料核查，均为全天。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"资料整理\",\"exec_date\":\"2026-12-02\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":5}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"资料核查\",\"exec_date\":\"2026-12-03\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项日程：12月2日资料整理、12月3日资料核查，均为全天。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "资料整理",
+                    "exec_date": "2026-12-02",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 5
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "资料核查",
+                    "exec_date": "2026-12-03",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u808w0pw",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "资料整理",
+                  "exec_date": "2026-12-02",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 5
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u802qvd8",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "资料核查",
+                  "exec_date": "2026-12-03",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 5
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "都是全天。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"两项候选已保持为全天：12月2日资料整理、12月3日资料核查，无需改动。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "两项候选已保持为全天：12月2日资料整理、12月3日资料核查，无需改动。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u808w0pw",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "资料整理",
+                  "exec_date": "2026-12-02",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 5
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u802qvd8",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "资料核查",
+                  "exec_date": "2026-12-03",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 5
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u806mz1y",
+          "title": "资料整理",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-02",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 5,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80by5gm",
+          "title": "资料核查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-03",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 5,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-regression",
+      "id": "C16",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C16",
+        "batch": "D-regression",
+        "route": "custom",
+        "turns": [
+          "先帮我理清：12月6日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "turns": [
+        {
+          "input": "先帮我理清：12月6日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，只帮你理清，不创建也不保存：12月6日有一项“模型研读”，目前没有具体时刻，可先按全天理解；等你确认要创建时再处理。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，只帮你理清，不创建也不保存：12月6日有一项“模型研读”，目前没有具体时刻，可先按全天理解；等你确认要创建时再处理。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": []
+        }
+      ],
+      "tasks": [],
+      "todos": [],
+      "operations": 0
+    },
+    {
+      "phase": "D-regression",
+      "id": "C26",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C26",
+        "batch": "D-regression",
+        "route": "custom",
+        "turns": [
+          "先帮我理清：12月16日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "turns": [
+        {
+          "input": "先帮我理清：12月16日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，只做梳理，不创建也不保存：12月16日安排“模型研读”，目前仅作为待理清事项，未写入日程。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，只做梳理，不创建也不保存：12月16日安排“模型研读”，目前仅作为待理清事项，未写入日程。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": []
+        }
+      ],
+      "tasks": [],
+      "todos": [],
+      "operations": 0
+    },
+    {
+      "phase": "D-regression",
+      "id": "C30",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C30",
+        "batch": "D-regression",
+        "route": "custom",
+        "turns": [
+          "请建12月20日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "turns": [
+        {
+          "input": "请建12月20日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月20日14:00-16:00 核对引文\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-20\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月20日14:00-16:00 核对引文",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-20",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80u95og",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "核对引文",
+                  "exec_date": "2026-12-20",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "16:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"修改「核对引文」开始时间为19:00，保留原2小时时长，结束20:00，请核对\",\"entries\":[{\"card_id\":\"mwim8u80u95og\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "修改「核对引文」开始时间为19:00，保留原2小时时长，结束20:00，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80u95og",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80u95og",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "核对引文",
+                  "exec_date": "2026-12-20",
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "21:00",
+                  "category": "学业事务",
+                  "base_score": 7,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80ljagm",
+          "title": "核对引文",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-20",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "21:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-review",
+      "id": "A01",
+      "route": "hosted",
+      "runtime_sha256": "257992f45b1c72b47ccb38074e304e7bdea4b0ec7b46e9759647a65d16b97e12",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A01",
+        "partition": "regression",
+        "date": "2026-11-15",
+        "turns": [
+          "分别创建两条日程：明天09:00到10:00复习线性代数，备注带演示讲义；后天14:00到15:00开项目例会，备注带演示周报。不要合并。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "dates": [
+          "2026-11-16",
+          "2026-11-17"
+        ],
+        "notes": [
+          "演示讲义",
+          "演示周报"
+        ],
+        "originalId": "AST05",
+        "batch": "D-review",
+        "route": "hosted"
+      },
+      "turns": [
+        {
+          "input": "分别创建两条日程：明天09:00到10:00复习线性代数，备注带演示讲义；后天14:00到15:00开项目例会，备注带演示周报。不要合并。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两条日程：明天（2026-11-16）09:00-10:00 复习线性代数，备注带演示讲义；后天（2026-11-17）14:00-15:00 项目例会，备注带演示周报。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复习线性代数\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"start_time\":\"09:00\",\"end_time\":\"10:00\",\"note\":\"带演示讲义\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"项目例会\",\"exec_date\":\"2026-11-17\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"15:00\",\"note\":\"带演示周报\",\"category\":\"职场工作\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两条日程：明天（2026-11-16）09:00-10:00 复习线性代数，备注带演示讲义；后天（2026-11-17）14:00-15:00 项目例会，备注带演示周报。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复习线性代数",
+                    "exec_date": "2026-11-16",
+                    "time_type": "exact",
+                    "start_time": "09:00",
+                    "end_time": "10:00",
+                    "note": "带演示讲义",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "项目例会",
+                    "exec_date": "2026-11-17",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "15:00",
+                    "note": "带演示周报",
+                    "category": "职场工作",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0zil9t",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复习线性代数",
+                  "exec_date": "2026-11-16",
+                  "time_type": "exact",
+                  "start_time": "09:00",
+                  "end_time": "10:00",
+                  "note": "带演示讲义",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "note": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwh6szk0iqoji",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "项目例会",
+                  "exec_date": "2026-11-17",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "15:00",
+                  "note": "带演示周报",
+                  "category": "职场工作",
+                  "base_score": 5
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "note": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwh6szk062zcv",
+          "title": "项目例会",
+          "note": "带演示周报",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-17",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "category": "职场工作",
+          "baseScore": 5,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk0cx5sw",
+          "title": "复习线性代数",
+          "note": "带演示讲义",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-16",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "09:00",
+          "endTime": "10:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-review",
+      "id": "C05",
+      "route": "hosted",
+      "runtime_sha256": "257992f45b1c72b47ccb38074e304e7bdea4b0ec7b46e9759647a65d16b97e12",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C05",
+        "batch": "D-review",
+        "route": "hosted",
+        "turns": [
+          "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "复查加备注带清单。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "turns": [
+        {
+          "input": "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两个“复查”日程：12月6日与12月8日，均为全天\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两个“复查”日程：12月6日与12月8日，均为全天",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u805vtsy",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-06",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80yp4cc",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "复查加备注带清单。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"复查\"},\"reply\":\"为两个“复查”日程（12月6日、12月8日）补充备注“带清单”，请核对\",\"entries\":[{\"card_id\":\"mwim8u805vtsy\",\"version\":1,\"append_note\":\"带清单\"},{\"card_id\":\"mwim8u80yp4cc\",\"version\":1,\"append_note\":\"带清单\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u805vtsy",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-06",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80yp4cc",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80701bp",
+          "title": "复查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80cue91",
+          "title": "复查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-06",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-review",
+      "id": "D11",
+      "route": "hosted",
+      "runtime_sha256": "257992f45b1c72b47ccb38074e304e7bdea4b0ec7b46e9759647a65d16b97e12",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "D11",
+        "batch": "D-review",
+        "route": "hosted",
+        "turns": [
+          "请创建12月2日23:10到次日00:20的日程“夜间任务1”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "23:10",
+        "end": "00:20"
+      },
+      "turns": [
+        {
+          "input": "请创建12月2日23:10到次日00:20的日程“夜间任务1”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对新建日程：12月2日23:10至次日00:20，标题“夜间任务1”。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务1\",\"exec_date\":\"2026-12-02\",\"end_day_offset\":1,\"time_type\":\"exact\",\"start_time\":\"23:10\",\"end_time\":\"00:20\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月2日23:10至次日00:20，标题“夜间任务1”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务1",
+                    "exec_date": "2026-12-02",
+                    "end_day_offset": 1,
+                    "time_type": "exact",
+                    "start_time": "23:10",
+                    "end_time": "00:20",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80occea",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "夜间任务1",
+                  "exec_date": "2026-12-02",
+                  "end_day_offset": 1,
+                  "time_type": "exact",
+                  "start_time": "23:10",
+                  "end_time": "00:20",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "end_day_offset": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80a20ry",
+          "title": "夜间任务1",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-02",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "23:10",
+          "endTime": "00:20",
+          "endDayOffset": 1,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-review",
+      "id": "D31",
+      "route": "hosted",
+      "runtime_sha256": "257992f45b1c72b47ccb38074e304e7bdea4b0ec7b46e9759647a65d16b97e12",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "D31",
+        "batch": "D-review",
+        "route": "hosted",
+        "turns": [
+          "创建12月8日14:15至15:45审查照片的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:30"
+      },
+      "turns": [
+        {
+          "input": "创建12月8日14:15至15:45审查照片的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程：12月8日14:15至15:45审查照片\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"审查照片\",\"exec_date\":\"2026-12-08\",\"time_type\":\"exact\",\"start_time\":\"14:15\",\"end_time\":\"15:45\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程：12月8日14:15至15:45审查照片",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "审查照片",
+                    "exec_date": "2026-12-08",
+                    "time_type": "exact",
+                    "start_time": "14:15",
+                    "end_time": "15:45",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80bsjnv",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "审查照片",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "start_time": "14:15",
+                  "end_time": "15:45",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“审查照片”改为19:00开始，保留原时长1小时30分钟，结束20:30，请核对\",\"entries\":[{\"card_id\":\"mwim8u80bsjnv\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“审查照片”改为19:00开始，保留原时长1小时30分钟，结束20:30，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80bsjnv",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80bsjnv",
+              "version": 2,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "审查照片",
+                  "exec_date": "2026-12-08",
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:30",
+                  "category": "日常生活",
+                  "base_score": 2,
+                  "end_day_offset": 0
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user",
+                "end_day_offset": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u80b2vn2",
+          "title": "审查照片",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "19:00",
+          "endTime": "20:30",
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 1
+    },
+    {
+      "phase": "D-review",
+      "id": "A02",
+      "route": "custom",
+      "runtime_sha256": "257992f45b1c72b47ccb38074e304e7bdea4b0ec7b46e9759647a65d16b97e12",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A02",
+        "partition": "regression",
+        "date": "2026-11-15",
+        "turns": [
+          "安排两件事：09:00到10:00复习线性代数，14:00到15:00开项目例会；两件的日期稍后告诉你。",
+          "复习放明天，例会放后天。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "dates": [
+          "2026-11-16",
+          "2026-11-17"
+        ],
+        "originalId": "AST06",
+        "batch": "D-review",
+        "route": "custom"
+      },
+      "turns": [
+        {
+          "input": "安排两件事：09:00到10:00复习线性代数，14:00到15:00开项目例会；两件的日期稍后告诉你。",
+          "model_raw": "{\"type\":\"clarify\",\"reply\":\"这两件事分别安排在哪一天？请提供日期。\"}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "这两件事分别安排在哪一天？请提供日期。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": []
+        },
+        {
+          "input": "复习放明天，例会放后天。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两件事的日期：复习线性代数安排在明天（2026-11-16）09:00-10:00，项目例会安排在后天（2026-11-17）14:00-15:00。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复习线性代数\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"start_time\":\"09:00\",\"end_time\":\"10:00\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"开项目例会\",\"exec_date\":\"2026-11-17\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"15:00\",\"category\":\"职场工作\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两件事的日期：复习线性代数安排在明天（2026-11-16）09:00-10:00，项目例会安排在后天（2026-11-17）14:00-15:00。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复习线性代数",
+                    "exec_date": "2026-11-16",
+                    "time_type": "exact",
+                    "start_time": "09:00",
+                    "end_time": "10:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "开项目例会",
+                    "exec_date": "2026-11-17",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "15:00",
+                    "category": "职场工作",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0uzde7",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复习线性代数",
+                  "exec_date": "2026-11-16",
+                  "time_type": "exact",
+                  "start_time": "09:00",
+                  "end_time": "10:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwh6szk0hsqqj",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "开项目例会",
+                  "exec_date": "2026-11-17",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "15:00",
+                  "category": "职场工作",
+                  "base_score": 5
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwh6szk04n1vw",
+          "title": "复习线性代数",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-16",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "09:00",
+          "endTime": "10:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk0g2q2k",
+          "title": "开项目例会",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-17",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "category": "职场工作",
+          "baseScore": 5,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "D-review",
+      "id": "B01",
+      "route": "custom",
+      "runtime_sha256": "257992f45b1c72b47ccb38074e304e7bdea4b0ec7b46e9759647a65d16b97e12",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "B01",
+        "partition": "regression",
+        "date": "2026-11-15",
+        "turns": [
+          "分别建立两条日程：明天09:00到10:00复习线性代数，备注带演示讲义；后天14:00到15:00开课题例会，备注带演示周报。不要合并。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "dates": [
+          "2026-11-16",
+          "2026-11-17"
+        ],
+        "notes": [
+          "演示讲义",
+          "演示周报"
+        ],
+        "originalId": "AST05",
+        "batch": "D-review",
+        "route": "custom",
+        "variationOf": "A01"
+      },
+      "turns": [
+        {
+          "input": "分别建立两条日程：明天09:00到10:00复习线性代数，备注带演示讲义；后天14:00到15:00开课题例会，备注带演示周报。不要合并。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将分别建立两条日程，请核对：明天09:00-10:00复习线性代数（备注：带演示讲义）；后天14:00-15:00开课题例会（备注：带演示周报）。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复习线性代数\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"start_time\":\"09:00\",\"end_time\":\"10:00\",\"note\":\"带演示讲义\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"开课题例会\",\"exec_date\":\"2026-11-17\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"15:00\",\"note\":\"带演示周报\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将分别建立两条日程，请核对：明天09:00-10:00复习线性代数（备注：带演示讲义）；后天14:00-15:00开课题例会（备注：带演示周报）。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复习线性代数",
+                    "exec_date": "2026-11-16",
+                    "time_type": "exact",
+                    "start_time": "09:00",
+                    "end_time": "10:00",
+                    "note": "带演示讲义",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "开课题例会",
+                    "exec_date": "2026-11-17",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "15:00",
+                    "note": "带演示周报",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0iq7fa",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复习线性代数",
+                  "exec_date": "2026-11-16",
+                  "time_type": "exact",
+                  "start_time": "09:00",
+                  "end_time": "10:00",
+                  "note": "带演示讲义",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "note": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwh6szk0435b5",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "开课题例会",
+                  "exec_date": "2026-11-17",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "15:00",
+                  "note": "带演示周报",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "note": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwh6szk02a7n4",
+          "title": "复习线性代数",
+          "note": "带演示讲义",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-16",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "09:00",
+          "endTime": "10:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk0evok1",
+          "title": "开课题例会",
+          "note": "带演示周报",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-17",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "Final-review",
+      "id": "A13",
+      "route": "hosted",
+      "runtime_sha256": "3c95d4b442d84baacbbcfc6db8b8b0164a988af0cb954d7df98a90feb667344d",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A13",
+        "partition": "stability",
+        "turns": [
+          "帮我创建多个日程：\n6098项目上交日期 12月1号\n7215项目pre 12月3日\n7215项目递交时间 12月7日\n7508智能系统安全期末考 12月8号\n7215编程与应用期末考 12月10号\n7224深度学习期末考 12月11号\nTCL参观 12月15号"
+        ],
+        "tasks": 7,
+        "todos": 0,
+        "dates": [
+          "2026-12-01",
+          "2026-12-03",
+          "2026-12-07",
+          "2026-12-08",
+          "2026-12-10",
+          "2026-12-11",
+          "2026-12-15"
+        ],
+        "titles": [
+          "6098项目上交日期",
+          "7215项目pre",
+          "7215项目递交时间",
+          "7508智能系统安全期末考",
+          "7215编程与应用期末考",
+          "7224深度学习期末考",
+          "TCL参观"
+        ],
+        "allDay": true,
+        "originalId": "seven-all-day",
+        "batch": "Final-review",
+        "route": "hosted"
+      },
+      "turns": [
+        {
+          "input": "帮我创建多个日程：\n6098项目上交日期 12月1号\n7215项目pre 12月3日\n7215项目递交时间 12月7日\n7508智能系统安全期末考 12月8号\n7215编程与应用期末考 12月10号\n7224深度学习期末考 12月11号\nTCL参观 12月15号",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对以下7个日程，日期均为2026年，全天事项\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"6098项目上交日期\",\"exec_date\":\"2026-12-01\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7215项目pre\",\"exec_date\":\"2026-12-03\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7215项目递交时间\",\"exec_date\":\"2026-12-07\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7508智能系统安全期末考\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":8}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7215编程与应用期末考\",\"exec_date\":\"2026-12-10\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":8}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"7224深度学习期末考\",\"exec_date\":\"2026-12-11\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":8}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"TCL参观\",\"exec_date\":\"2026-12-15\",\"time_type\":\"allday\",\"category\":\"旅行出行\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对以下7个日程，日期均为2026年，全天事项",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "6098项目上交日期",
+                    "exec_date": "2026-12-01",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7215项目pre",
+                    "exec_date": "2026-12-03",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7215项目递交时间",
+                    "exec_date": "2026-12-07",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7508智能系统安全期末考",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 8
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7215编程与应用期末考",
+                    "exec_date": "2026-12-10",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 8
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "7224深度学习期末考",
+                    "exec_date": "2026-12-11",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 8
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "TCL参观",
+                    "exec_date": "2026-12-15",
+                    "time_type": "allday",
+                    "category": "旅行出行",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80un43b",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "6098项目上交日期",
+                  "exec_date": "2026-12-01",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80xjus0",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目pre",
+                  "exec_date": "2026-12-03",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80scg8c",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215项目递交时间",
+                  "exec_date": "2026-12-07",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80k9za0",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7508智能系统安全期末考",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 8
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80q9h76",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7215编程与应用期末考",
+                  "exec_date": "2026-12-10",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 8
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80xza4n",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "7224深度学习期末考",
+                  "exec_date": "2026-12-11",
+                  "time_type": "allday",
+                  "category": "学业事务",
+                  "base_score": 8
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80s42a3",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "TCL参观",
+                  "exec_date": "2026-12-15",
+                  "time_type": "allday",
+                  "category": "旅行出行",
+                  "base_score": 3
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u8015tfn",
+          "title": "7215项目递交时间",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-07",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u801xc22",
+          "title": "7215编程与应用期末考",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-10",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 8,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u8064p3y",
+          "title": "7508智能系统安全期末考",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 8,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u806eplw",
+          "title": "6098项目上交日期",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-01",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u808zxnw",
+          "title": "7215项目pre",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-03",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80nbfer",
+          "title": "7224深度学习期末考",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-11",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "学业事务",
+          "baseScore": 8,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80q26a9",
+          "title": "TCL参观",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-15",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "旅行出行",
+          "baseScore": 3,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 7
+    },
+    {
+      "phase": "Final-review",
+      "id": "C05",
+      "route": "hosted",
+      "runtime_sha256": "3c95d4b442d84baacbbcfc6db8b8b0164a988af0cb954d7df98a90feb667344d",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "C05",
+        "batch": "Final-review",
+        "route": "hosted",
+        "turns": [
+          "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "复查加备注带清单。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "turns": [
+        {
+          "input": "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对两个“复查”日程：12月6日与12月8日，均为全天。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两个“复查”日程：12月6日与12月8日，均为全天。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80awk9p",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-06",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80kcv7o",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        },
+        {
+          "input": "复查加备注带清单。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"复查\"},\"reply\":\"为两个“复查”日程（12月6日、12月8日）补充备注“带清单”，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80awk9p\",\"version\":1,\"append_note\":\"带清单\"},{\"card_id\":\"mwim8u80kcv7o\",\"version\":1,\"append_note\":\"带清单\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwim8u80awk9p",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-06",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwim8u80kcv7o",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复查",
+                  "exec_date": "2026-12-08",
+                  "time_type": "allday",
+                  "category": "日常生活",
+                  "base_score": 2
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwim8u800o3ba",
+          "title": "复查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-06",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwim8u80yamua",
+          "title": "复查",
+          "note": "",
+          "createdAt": 1794794400000,
+          "execDate": "2026-12-08",
+          "timeType": "allday",
+          "slot": null,
+          "startTime": null,
+          "endTime": null,
+          "category": "日常生活",
+          "baseScore": 2,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    },
+    {
+      "phase": "Final-review",
+      "id": "A02",
+      "route": "custom",
+      "runtime_sha256": "3c95d4b442d84baacbbcfc6db8b8b0164a988af0cb954d7df98a90feb667344d",
+      "passed": true,
+      "failure": null,
+      "expected": {
+        "id": "A02",
+        "partition": "regression",
+        "date": "2026-11-15",
+        "turns": [
+          "安排两件事：09:00到10:00复习线性代数，14:00到15:00开项目例会；两件的日期稍后告诉你。",
+          "复习放明天，例会放后天。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "dates": [
+          "2026-11-16",
+          "2026-11-17"
+        ],
+        "originalId": "AST06",
+        "batch": "Final-review",
+        "route": "custom"
+      },
+      "turns": [
+        {
+          "input": "安排两件事：09:00到10:00复习线性代数，14:00到15:00开项目例会；两件的日期稍后告诉你。",
+          "model_raw": "{\"type\":\"clarify\",\"reply\":\"这两件事的日期是哪天？请告诉我具体日期，我再为你安排。\"}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "这两件事的日期是哪天？请告诉我具体日期，我再为你安排。",
+            "used_evidence": []
+          },
+          "error": null,
+          "cards": []
+        },
+        {
+          "input": "复习放明天，例会放后天。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对两件事的日期与时间：复习线性代数安排在明天（2026-11-16）09:00–10:00，项目例会安排在后天（2026-11-17）14:00–15:00。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复习线性代数\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"start_time\":\"09:00\",\"end_time\":\"10:00\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"开项目例会\",\"exec_date\":\"2026-11-17\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"15:00\",\"category\":\"职场工作\",\"base_score\":6}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两件事的日期与时间：复习线性代数安排在明天（2026-11-16）09:00–10:00，项目例会安排在后天（2026-11-17）14:00–15:00。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复习线性代数",
+                    "exec_date": "2026-11-16",
+                    "time_type": "exact",
+                    "start_time": "09:00",
+                    "end_time": "10:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "开项目例会",
+                    "exec_date": "2026-11-17",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "15:00",
+                    "category": "职场工作",
+                    "base_score": 6
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "cards": [
+            {
+              "card_id": "mwh6szk0pyzxf",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "复习线性代数",
+                  "exec_date": "2026-11-16",
+                  "time_type": "exact",
+                  "start_time": "09:00",
+                  "end_time": "10:00",
+                  "category": "学业事务",
+                  "base_score": 7
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            },
+            {
+              "card_id": "mwh6szk01h6vb",
+              "version": 1,
+              "status": "pending",
+              "action": {
+                "kind": "create_schedule",
+                "item": {
+                  "title": "开项目例会",
+                  "exec_date": "2026-11-17",
+                  "time_type": "exact",
+                  "start_time": "14:00",
+                  "end_time": "15:00",
+                  "category": "职场工作",
+                  "base_score": 6
+                }
+              },
+              "selected": false,
+              "sources": {
+                "title": "user",
+                "exec_date": "user",
+                "time_type": "user",
+                "start_time": "user",
+                "end_time": "user",
+                "category": "user",
+                "base_score": "user"
+              }
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mwh6szk04xlem",
+          "title": "开项目例会",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-17",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "category": "职场工作",
+          "baseScore": 6,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        },
+        {
+          "id": "mwh6szk0u64yy",
+          "title": "复习线性代数",
+          "note": "",
+          "createdAt": 1794708000000,
+          "execDate": "2026-11-16",
+          "timeType": "exact",
+          "slot": null,
+          "startTime": "09:00",
+          "endTime": "10:00",
+          "category": "学业事务",
+          "baseScore": 7,
+          "aiReason": "由卷卷助手创建",
+          "aiAdvice": "",
+          "aiSource": "agent",
+          "isBackfill": false,
+          "status": null,
+          "statusAt": null,
+          "statusEditCount": 0,
+          "finalScore": 0,
+          "parts": null,
+          "timeChangeMul": null,
+          "timeChangeLabel": null,
+          "timeChangeWhy": null
+        }
+      ],
+      "todos": [],
+      "operations": 2
+    }
+  ]
+}

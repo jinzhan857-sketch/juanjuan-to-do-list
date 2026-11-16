@@ -3025,7 +3025,7 @@ const UI = {
       if(pending.length){box.insertAdjacentHTML('beforeend', '<div class="agent-card"><div>当前待确认 '+pending.length+' 项卡片，重复组按日期明细展开；全部提交，失败整批回滚。</div><button id="assistant-confirm-selected">确认所选</button><button id="assistant-confirm-all">确认全部待创建或修改项（'+pending.length+'）</button></div>');$('#assistant-confirm-all').onclick=()=>this.confirmAssistantBatch();$('#assistant-confirm-selected').onclick=()=>this.confirmAssistantBatch(true);}
       box.querySelectorAll('[data-agent-edit]').forEach(button=>button.onclick=()=>this.openAgentActionEditor(button.dataset.agentEdit));
       box.querySelectorAll('[data-agent-confirm]').forEach(button=>button.onclick=()=>this.confirmAgentAction(button.dataset.agentConfirm));
-      box.querySelectorAll('[data-agent-cancel]').forEach(button=>button.onclick=()=>this.cancelAgentAction(button.dataset.agentCancel));
+      box.querySelectorAll('[data-agent-cancel]').forEach(button=>button.onclick=async()=>{try{await this.cancelAgentAction(button.dataset.agentCancel);}catch(error){toast('取消未保存：'+error.message);}});
       box.querySelectorAll('[data-agent-undo]').forEach(button=>button.onclick=()=>this.undoAgentOperation(button.dataset.agentUndo));
       box.querySelectorAll('[data-agent-retry]').forEach(button=>button.onclick=()=>this.retryAgentMessage(button.dataset.agentRetry));
       box.querySelectorAll('[data-agent-recommend]').forEach(button=>button.onclick=()=>this.prepareAgentRecommendation(button.dataset.agentRecommend,Number(button.dataset.agentRecommendationIndex)));
@@ -3549,6 +3549,11 @@ const UI = {
 
   async cancelAgentAction(messageId){
     const message=S.messages.find(x=>x.id===messageId && x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(messageId)) return;
+    if(message.meta.workflow){
+      const w=message.meta.workflow;
+      await this.applyAssistantWorkflow({type:'workflow',intent:'cancel',entries:[{card_id:w.cardId,version:w.version}]},message.chatId,'取消',[{card_id:w.cardId,version:w.version,status:message.meta.status,action:message.meta.action,selected:false}]);
+      this.renderAgent();toast('已取消');return;
+    }
     message.meta.status='cancelled'; await saveMessage(message); this.renderAgent(); toast('已取消');
   },
 
