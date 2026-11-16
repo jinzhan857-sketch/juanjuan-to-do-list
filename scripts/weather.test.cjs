@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 function load(options={}){
   const calls=[], timers=[];
-  const app=vm.createContext({console,URL,URLSearchParams,AbortController,DOMException,structuredClone,
+  const app=vm.createContext({JuanjuanWorkflow:require('../src/assistant/workflow.js'),console,URL,URLSearchParams,AbortController,DOMException,structuredClone,
     setTimeout:fn=>{timers.push(fn);return timers.length;},clearTimeout:()=>{},
     fetch:async(url,init)=>{calls.push({url:new URL(url),signal:init.signal});if(options.fetch)return options.fetch(url,init);return response(String(url).includes('/search')?{results:[{name:'合成城市',latitude:1.3,longitude:103.8}]}:forecast());}});
   const html=fs.readFileSync(path.join(process.env.ISSUE7_SOURCE_ROOT||path.join(__dirname,'..'),'index.html'),'utf8');

@@ -124,9 +124,9 @@ export async function runChecks(api,{dom=false,failAt=null}={}){
     check('34', batchNormalizeOk, `[自测] 批量模型结果校验: ${batchNormalizeOk?'✓':'✗'}`);
     const savedRole=UI.agentSelectedRole;
     UI.agentSelectedRole='auto';
-    const routingOk=UI.resolveAgentRole('建立多个日程，每周五晚上上课')==='task'&&UI.resolveAgentRole('我想减肥，帮我规划并排进日历')==='planning'&&UI.resolveAgentRole('给我讲个笑话')==='chat';
+    const routingOk=UI.resolveAgentRole('建立多个日程，每周五晚上上课')==='auto'&&UI.resolveAgentRole('我想减肥，帮我规划并排进日历')==='auto'&&UI.resolveAgentRole('给我讲个笑话')==='auto'&&['chat','planning','task'].every(hint=>{UI.agentSelectedRole=hint;return UI.resolveAgentRole('不，是16点到17点')===hint});
     UI.agentSelectedRole=savedRole;
-    check('35', routingOk, `[自测] 三角色自动分流: ${routingOk?'✓':'✗'}`);
+    check('35', routingOk, `[自测] 意图提示不按关键词分流: ${routingOk?'✓':'✗'}`);
     const roleTestText='9-11月每个周五晚上19.00-21.30，都设置日程叫：IDAT7224工程技术中的深度学习，KK201教室 教授Dr. C.K. Chan';
     const taskRoleResult=AIService._localAgent(roleTestText,{tasks:[],todos:[]},'task');
     const planningRoleResult=AIService._localAgent(roleTestText,{tasks:[],todos:[]},'planning');

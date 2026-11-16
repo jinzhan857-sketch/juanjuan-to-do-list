@@ -1,0 +1,12 @@
+{
+  "batch":"A", "version":1,"mode":"visible_browser_real_model","cases":[
+    {"id":"A01","family":"七项独立日程","inputs":["帮我创建以下日程，都是2026年12月的全天事项：1日6098项目上交日期；3日7215项目pre；7日7215项目递交时间；8日7508智能系统安全期末考；10日7215编程与应用期末考；11日7224深度学习期末考；15日TCL参观。先列出来给我核对。"],"confirm":"all","expected":{"tasks":7,"todos":0,"titles":["6098项目上交日期","7215项目pre","7215项目递交时间","7508智能系统安全期末考","7215编程与应用期末考","7224深度学习期末考","TCL参观"]}},
+    {"id":"A02","family":"日程待办混合","inputs":["帮我创建2026年12月29日全天参加读书会，再建一个没有固定日期的待办，整理书单。"],"confirm":"all","expected":{"tasks":1,"todos":1,"titles":["参加读书会"],"todo_titles":["整理书单"]}},
+    {"id":"A03","family":"两组重复日程","inputs":["2026年12月1日到14日，每周二19点到20点阅读论文，每周四18点到19点整理资料，帮我分别建成两组日程。"],"confirm":"all","expected":{"tasks":4,"todos":0,"groups":2}},
+    {"id":"A04","family":"统一补时间","inputs":["帮我创建2026年12月21日全天检查仪器、12月23日全天整理实验记录。","全都是晚上7点。"],"confirm":"all","expected":{"tasks":2,"todos":0,"times":[["19:00","20:00"],["19:00","20:00"]]}},
+    {"id":"A05","family":"分别补充备注","inputs":["帮我创建2026年12月18日全天领取材料、12月19日全天打印海报。","领取材料在A楼，打印海报在B楼，帮我分别备注上去，其他不变。"],"confirm":"all","expected":{"tasks":2,"todos":0,"notes":["A楼","B楼"]}},
+    {"id":"A06","family":"部分与全部确认","inputs":["帮我创建2026年12月16日全天读书、17日全天写作、18日全天绘画、19日全天练琴，分成四条。"],"confirm":"partial-selected-all","expected":{"tasks":4,"todos":0}},
+    {"id":"A07","family":"创建后修改原记录","inputs":["帮我创建2026年12月30日15点到16点检查投影仪。","地点在C楼，补充到备注，其他不变。"],"confirm_before_step":1,"confirm":"all","expected":{"tasks":1,"todos":0,"notes":["C楼"],"preserve_ids":true,"operations":2}},
+    {"id":"A08","family":"自然改口纠正时间","inputs":["帮我创建2026年12月26日15点到16点复习。","不，是16点到17点。"],"confirm":"all","expected":{"tasks":1,"todos":0,"times":[["16:00","17:00"]],"superseded":1}}
+  ]
+}
