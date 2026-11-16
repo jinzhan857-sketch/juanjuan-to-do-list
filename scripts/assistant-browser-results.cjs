@@ -8,8 +8,11 @@ const normalize=text=>String(text).replace(/\s+/g,'');
 for(const test of batch.cases){
  const r={id:test.id,family:test.family,passed:false};results.push(r);
  try{
-  const first=latest.messages.find(m=>m.role==='user'&&m.content===test.inputs[0]);assert.ok(first,'No actual user message');r.chat_id=first.chatId;
-  const initialCards=new Set(latest.messages.filter(m=>m.chatId===first.chatId&&m.meta?.workflow?.requestId===first.id).map(m=>m.meta.workflow.cardId));
+  // Retests can use a separate synthetic profile. Select the latest explicitly
+  // repeated input, preserving every original failed snapshot and assertion.
+  const first=snapshots.flatMap(e=>e.snapshot.messages).findLast(m=>m.role==='user'&&m.content===test.inputs[0]);assert.ok(first,'No actual user message');r.chat_id=first.chatId;
+  const caseLatest=snapshots.findLast(e=>e.snapshot.messages.some(m=>m.id===first.id)).snapshot;
+  const initialCards=new Set(caseLatest.messages.filter(m=>m.chatId===first.chatId&&m.meta?.workflow?.requestId===first.id).map(m=>m.meta.workflow.cardId));
   const expectedOperations=test.expected.operations||initialCards.size;
   // Each case is assessed at its own first completed confirmation, so a later
   // authorized retest in another chat cannot be mistaken for unrelated damage.

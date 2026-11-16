@@ -1,0 +1,174 @@
+{
+  "at": "2026-11-16T16:25:02.258Z",
+  "mode": "real-cloud-browser-with-isolated-synthetic-profiles",
+  "tested_application_commit": "b952c64ee75f0543db690b1bbb7572b7705114a6",
+  "case_results": [
+    {
+      "batch": "A",
+      "passed": 8,
+      "total": 8,
+      "cases": [
+        {
+          "id": "A01",
+          "passed": true,
+          "chat_id": "mwje6m1mqginv",
+          "tasks": 7,
+          "todos": 0,
+          "operations": 7
+        },
+        {
+          "id": "A02",
+          "passed": true,
+          "chat_id": "mwje8yamghfbm",
+          "tasks": 1,
+          "todos": 1,
+          "operations": 2
+        },
+        {
+          "id": "A03",
+          "passed": true,
+          "chat_id": "mwje9fttcsl6r",
+          "tasks": 4,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "A04",
+          "passed": true,
+          "chat_id": "mwje9rvcs1xvf",
+          "tasks": 2,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "A05",
+          "passed": true,
+          "chat_id": "mwjeafm462lw2",
+          "tasks": 2,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "A06",
+          "passed": true,
+          "chat_id": "mwjeh35uibeo4",
+          "tasks": 4,
+          "todos": 0,
+          "operations": 4
+        },
+        {
+          "id": "A07",
+          "passed": true,
+          "chat_id": "mwjg88hg3a3pf",
+          "tasks": 1,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "A08",
+          "passed": true,
+          "chat_id": "mwjg9feum2wq0",
+          "tasks": 1,
+          "todos": 0,
+          "operations": 1
+        }
+      ]
+    },
+    {
+      "batch": "B",
+      "passed": 8,
+      "total": 8,
+      "cases": [
+        {
+          "id": "B01",
+          "passed": true,
+          "chat_id": "mwjezqxch94m2",
+          "tasks": 7,
+          "todos": 0,
+          "operations": 7
+        },
+        {
+          "id": "B02",
+          "passed": true,
+          "chat_id": "mwjf0w3vf8olw",
+          "tasks": 1,
+          "todos": 3,
+          "operations": 4
+        },
+        {
+          "id": "B03",
+          "passed": true,
+          "chat_id": "mwjf6u82nxdgb",
+          "tasks": 4,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "B04",
+          "passed": true,
+          "chat_id": "mwjf88f852enq",
+          "tasks": 2,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "B05",
+          "passed": true,
+          "chat_id": "mwjf9slj6kcch",
+          "tasks": 3,
+          "todos": 0,
+          "operations": 3
+        },
+        {
+          "id": "B06",
+          "passed": true,
+          "chat_id": "mwjfbgnnk1flz",
+          "tasks": 2,
+          "todos": 2,
+          "operations": 4
+        },
+        {
+          "id": "B07",
+          "passed": true,
+          "chat_id": "mwjgaf5ylf167",
+          "tasks": 2,
+          "todos": 0,
+          "operations": 2
+        },
+        {
+          "id": "B08",
+          "passed": true,
+          "chat_id": "mwjg4uloonecs",
+          "tasks": 2,
+          "todos": 0,
+          "operations": 2
+        }
+      ]
+    }
+  ],
+  "memory": {
+    "proposed": 6,
+    "saved": 5,
+    "edited": true,
+    "removed_before_save": 1,
+    "unrelated_tasks_todos_kv_unchanged": true,
+    "confirmed_cross_chat_recall": true
+  },
+  "score": {
+    "source": "ai",
+    "baseScore": 6.5,
+    "date": "2026-11-18",
+    "start": "09:00",
+    "end": "10:00",
+    "saved_after_confirmation": true
+  },
+  "raw_evidence": {
+    "local_file": ".reports/v27/browser-events-checkpoint.json",
+    "sha256": "29e9d7afb188011a446548c117fa587e5c0aa8a72249896a4b38a3eddef48c97"
+  },
+  "limitations": [
+    "A/B ran cumulatively across revisions; A07, A08 and B07 were rerun in a separate synthetic profile without weakening assertions.",
+    "Original intermittent 503 failures lack stage logs and remain unexplained.",
+    "Real mobile device and official Pages release are pending."
+  ]
+}

@@ -2,9 +2,8 @@ function workflowContract(){return require('../src/assistant/workflow.js');}
 const crypto = require('node:crypto');
 
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
-const DEVICE_LIMIT = 20;
-const IP_LIMIT = 50;
-const GLOBAL_LIMIT = 100;
+const DEVICE_LIMIT = 300;
+const GLOBAL_LIMIT = 1000;
 
 const SYSTEM_PROMPT = `你是一个严格的任务价值评分助手。依据「任务本身的结构与属性价值」评定基础价值分，范围 0 到 10 分，保留 1 位小数；完全不考虑用户最终完成质量好坏。
 
@@ -37,6 +36,7 @@ task 和 note 由你负责。没有地点、材料、链接、限制条件、提
 function quotaDay() {
   return new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
+function quotaWeek(day){const d=new Date(day+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
 
 function json(res, code, body) {
   res.status(code).json(body);
@@ -55,19 +55,8 @@ function safeEqual(left, right) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-function requestIp(req) {
-  const forwarded = String(req.headers['x-forwarded-for'] || '');
-  return forwarded.split(',')[0].trim() || String(req.socket?.remoteAddress || 'unknown');
-}
-
-function ipDigest(ip, date) {
-  return crypto
-    .createHash('sha256')
-    .update(`${required('RATE_LIMIT_SALT')}:${date}:${ip}`)
-    .digest('hex');
-}
-
 async function requestJSON(url, options={}, timeoutMs=20000){
+  const {transport = fetch, ...requestOptions} = options;
   const controller=new AbortController(), external=options.signal;
   let timer, stop;
   try{
@@ -78,11 +67,12 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await transport(url,{...requestOptions,signal:controller.signal});if(!response.ok){const error=new Error(response.status===429?'公共次数已用完':'服务请求失败');error.status=response.status;throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
 async function redis(command) {
+  try {
   const {response,data:payload} = await requestJSON(required('KV_REST_API_URL'), {
     method: 'POST',
     headers: {
@@ -93,6 +83,7 @@ async function redis(command) {
   },3000);
   if (!response.ok) throw new Error('统计服务暂不可用');
   return payload.result;
+  } catch(error) {error.service='redis';throw error;}
 }
 
 async function increaseDaily(key) {
@@ -137,8 +128,8 @@ function parseJsonContent(content) {
   const text = String(content || '').replace(/```json|```/g, '').trim();
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
-  if (start < 0 || end < start) throw new Error('模型没有返回有效结果');
-  return JSON.parse(text.slice(start, end + 1));
+  if (start < 0 || end < start) {const error=Error('模型没有返回有效结果');error.code='invalid_model_reply';throw error;}
+  try{return JSON.parse(text.slice(start,end+1));}catch(_){const error=Error('模型返回结构不完整');error.code='invalid_model_reply';throw error;}
 }
 
 function shortText(value, max = 300) {
@@ -213,13 +204,14 @@ function sanitizeBatchUpdateRule(input = {}) {
 
 function parseAgentResult(content, context, input) {
   const data = parseJsonContent(content);
+  if(data.type==='memory_import')return workflowContract().parseMemoryImport(data);
   if(input!==undefined&&['workflow','proposal','batch_proposal'].includes(data.type)){const guarded=workflowContract().guard(data,context,input);if(data.type==='workflow'||guarded.type!==data.type)return guarded;}
   if(data.type==='workflow')return workflowContract().parse(data);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
   const fields = type === 'batch_proposal' && !['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action?.rule : data.action?.item;
   if (['proposal', 'batch_proposal'].includes(type) && fields?.title !== undefined && String(fields.title ?? '').trim().length > 300) return {type: 'clarify', reply: '任务定义超过300字，请缩短后再确认，内容未截断保存。'};
   if (['proposal', 'batch_proposal'].includes(type) && fields?.note !== undefined && String(fields.note ?? '').trim().length > 500) return {type: 'clarify', reply: '模型备注超过500字，请缩短后重试，或在发布表单中核对完整备注；内容未截断保存。'};
-  const reply = shortText(data.reply, 600) || '我需要再确认一下你的意思。';
+  const reply = String(data.reply||'').trim() || '我需要再确认一下你的意思。';
   const usedEvidence = (Array.isArray(data.used_evidence) ? data.used_evidence : []).slice(0, 5).map(item => ({
     kind: ['schedule', 'todo', 'memory', 'insight'].includes(item?.kind) ? item.kind : '',
     id: shortText(item?.id, 120),
@@ -290,6 +282,7 @@ function compactAgentContext(context = {}) {
   const examples = value => Array.isArray(value) ? value.slice(0, 3).map(item => shortText(item, 160)).filter(Boolean) : [];
   return {
     candidate_cards: context.candidate_cards===undefined?[]:workflowContract().contextCards(context.candidate_cards),
+    memory_groups: (Array.isArray(context.memory_groups)?context.memory_groups:[]).slice(0,40).map(name=>shortText(name,40)).filter(Boolean),
     tasks: tasks.map(item => ({
       id: shortText(item.id, 80), series_id: validSeriesId(item.series_id) ? item.series_id : null, title: shortText(item.title, 120), note: shortText(item.note, 160),
       exec_date: validDate(item.exec_date), time_type: shortText(item.time_type, 20), slot: shortText(item.slot, 20),
@@ -345,9 +338,17 @@ async function stats(req, res, quotaDate) {
 }
 
 module.exports = async function handler(req, res) {
+  const cloud = process.env.VERCEL === '1';
+  if (cloud && require('./cloud.cjs').prepare(req, res, process.env)) return;
   const quotaDate = quotaDay();
   const quota = require('./quota.cjs').createQuota(redis);
   let receipt = null;
+  let stage = 'quota';
+  let reportedModels=0,modelReplyShape=null;
+  const started = Date.now();
+  const controller = new AbortController();
+  const deadline = setTimeout(() => controller.abort(), 45000);
+  const usage = {model_requests: 0, search_requests: 0, fetch_requests: 0, prompt_tokens: 0, completion_tokens: 0, complete: true};
   try {
     if (req.method === 'GET' && req.query?.stats === '1') return await stats(req, res, quotaDate);
     if (req.method !== 'POST') return json(res, 405, { error: '请求方式不支持' });
@@ -359,22 +360,46 @@ module.exports = async function handler(req, res) {
     if (!/^[A-Za-z0-9]{24,64}$/.test(String(deviceId || ''))) {
       return json(res, 400, { error: '设备编号不合法' });
     }
+    if(body.mode==='experience'){
+      if(!['redeem','status'].includes(body.operation))return json(res,400,{error:'体验码操作不合法'});
+      const grant=await require('./experience.cjs').experience(redis,body.experience_code,deviceId,body.operation==='redeem'?'redeem':'check');
+      if(!grant.ok)return json(res,403,grant);
+      return json(res,200,{active:true,total_credits:grant.total,remaining_credits:grant.remaining,expires_at:grant.expires});
+    }
     if (typeof requestId !== 'string' || !/^[a-f0-9]{32}$/.test(requestId)) return json(res, 400, { error: '请求编号不合法' });
     if (body.mode === 'cancel') {
       await quota.finish(deviceId, requestId, 'cancelled', Date.now());
       return json(res, 200, { released: true });
     }
     const input = String(agentMode ? body.message : body.title || '').trim();
-    if (!input || input.length > (agentMode ? 10000 : 300)) return json(res, 400, { error: agentMode ? '消息内容不合法' : '任务内容不合法' });
+    if (!input || input.length > (agentMode ? 5000 : 300)) return json(res, 400, { error: agentMode ? '消息内容为空或超过5000字，请分段发送' : '任务内容不合法' });
+    if (body.context?.selected_images?.length || body.images?.length) return json(res, 400, {error: '云端AI暂不支持图片，请发送文字或公开网页链接', code: 'images_unsupported'});
+
+    let pool,credit;
+    if(body.experience_code){
+      const grant=await require('./experience.cjs').experience(redis,body.experience_code,deviceId);
+      if(!grant.ok)return json(res,403,grant);
+      credit={id:grant.id,total:grant.total,hash:grant.hash};
+    }else{
+      const epoch=String(await redis(['GET',`quota-public-epoch:${quotaWeek(quotaDate)}`])||'0');
+      if(!/^[a-f0-9]{1,32}$/.test(epoch))throw Error('额度周期配置无效');
+      pool='public-'+epoch;
+    }
 
     const modelDate = validDate(body.client_date) || quotaDate;
     // Record identity before admission: a lost Redis response may already have reserved quota.
     receipt = { deviceId, requestId };
     const admission = await quota.reserve({device:deviceId, id:requestId, day:quotaDate,
-      ip:ipDigest(requestIp(req), quotaDate), deviceLimit:DEVICE_LIMIT, ipLimit:IP_LIMIT, globalLimit:GLOBAL_LIMIT, now:Date.now()});
-    if (['device','ip','global'].includes(admission)) {
+      dailyLimit:DEVICE_LIMIT,deviceLimit:DEVICE_LIMIT,globalLimit:GLOBAL_LIMIT,pool,credit,now:Date.now()});
+    if(admission.startsWith('experience_')){
+      receipt=null;const kind=admission.slice(11);
+      return json(res,403,{error:require('./experience.cjs').errors[kind],code:admission});
+    }
+    if(admission==='credit'){receipt=null;return json(res,429,{error:'体验卡余额已用完，可联系提供者补充额度，或在大模型配置中切回公共额度。',code:'experience_exhausted'});}
+    if (['device','device_week','global'].includes(admission)) {
       receipt = null;
-      return json(res, 429, { error: '今日免费AI次数已达上限。', limit_scope: admission });
+      const scope=admission==='device_week'?'device':admission,period=admission==='device'?'day':'week';
+      return json(res,429,{error:period==='day'?'今日个人免费AI次数已达上限。':scope==='device'?'本周个人免费AI次数已达上限。':'本周公共免费AI次数已达上限。',limit_scope:scope,limit_period:period});
     }
     if (admission !== 'reserved') {
       receipt = null;
@@ -384,7 +409,8 @@ module.exports = async function handler(req, res) {
     await redis(['EXPIRE', `active:${quotaDate}`, '2678400']);
     const context = agentMode ? compactAgentContext(body.context) : null;
     const agentRole = ['auto','chat','planning','task'].includes(body.agent_role) ? body.agent_role : 'auto';
-    const agentPrompt = agentMode ? workflowContract().assistantPrompt(agentRole) : '';
+    const materials = agentMode ? require('../src/assistant/materials.js') : null;
+    const agentPrompt = agentMode ? materials.researchPrompt(workflowContract().assistantPrompt(agentRole)) : '';
     const messages = agentMode ? [
       { role: 'system', content: agentPrompt + '\n上下文只含按问题选择的有限资料，selection.partial始终为true，不能声称查过完整数据库。查询返回query条件由程序核对；资料不足或目标不唯一时追问。' },
       { role: 'user', content: `今天是${modelDate}。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${input}` },
@@ -392,6 +418,18 @@ module.exports = async function handler(req, res) {
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: `今天是${modelDate}。待办任务：${input}` },
     ];
+    const provider = async (url, options) => {
+      stage = url === DEEPSEEK_URL ? 'model' : url.endsWith('/search') ? 'search' : 'fetch';
+      if (controller.signal.aborted) throw new Error('请求已过期');
+      if (cloud && await redis(['HGET', `quota-request:${deviceId}:${requestId}`, 'state']) !== 'pending') throw new Error('请求已取消');
+      if (controller.signal.aborted) throw new Error('请求已过期');
+      if (url === DEEPSEEK_URL) {usage.model_requests++;usage.complete=false;}
+      else if (url === 'https://api.deepseek.com/v1/tools/search') usage.search_requests++;
+      else if (url === 'https://api.deepseek.com/v1/tools/fetch') usage.fetch_requests++;
+      else throw new Error('不支持的服务地址');
+      return fetch(url, {...options, signal: options.signal || controller.signal, redirect: 'error'});
+    };
+    const ask = async () => {
     const {response,data:output} = await requestJSON(DEEPSEEK_URL, {
       method: 'POST',
       headers: {
@@ -399,7 +437,7 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'deepseek-v4-flash',
+        model: 'deepseek-flash',
         messages,
         temperature: 0.1,
         max_tokens: agentMode ? 6000 : 300,
@@ -407,22 +445,61 @@ module.exports = async function handler(req, res) {
         response_format: { type: 'json_object' },
         stream: false,
       }),
+      signal: controller.signal,
+      transport: provider,
     });
+    const choice=output.choices?.[0],content=choice?.message?.content;
+    modelReplyShape={content_type:Array.isArray(content)?'array':typeof content,content_length:typeof content==='string'?content.length:0,has_object:typeof content==='string'&&content.includes('{'),refusal:!!choice?.message?.refusal,finish_reason:['stop','length','content_filter','tool_calls'].includes(choice?.finish_reason)?choice.finish_reason:'other'};
+    if(Number.isSafeInteger(output.usage?.prompt_tokens)&&output.usage.prompt_tokens>=0&&Number.isSafeInteger(output.usage?.completion_tokens)&&output.usage.completion_tokens>=0){usage.prompt_tokens+=output.usage.prompt_tokens;usage.completion_tokens+=output.usage.completion_tokens;reportedModels++;usage.complete=reportedModels===usage.model_requests;}
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
-    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context, input) : parseModelResult(output.choices?.[0]?.message?.content);
+    if(output.choices?.[0]?.finish_reason==='length'){const error=Error('回答超过本次长度上限，请缩小问题或要求分段回答。');error.code='output_limit';throw error;}
+    if (output.error || cloud && output.choices?.[0]?.finish_reason !== 'stop') {const error=new Error('模型回答未完整返回');error.code='incomplete_model_reply';throw error;}
+    return output.choices?.[0]?.message?.content;
+    };
+    let external = null;
+    let result;
+    if (agentMode) {
+      const config = {endpoint: DEEPSEEK_URL, model: 'deepseek-flash', key: required('DEEPSEEK_API_KEY')};
+      if (materials.links(input).length) external = await materials.collect({text: input}, config, controller.signal, provider);
+      else external = materials.selectPrevious(input, materials.previous(body.context?.previous_materials));
+      const append = () => { if (external) messages.push({role: 'user', content: materials.externalText(external)}); };
+      append();
+      let raw = await ask();
+      stage = 'model_parse';
+      const first = parseJsonContent(raw);
+      if (first.type === 'research') {
+        const searched = await materials.collect({text: '', query: first.query}, config, controller.signal, provider);
+        external = external ? materials.combine(external, searched) : searched;
+        if (messages.length === 3) messages.pop();
+        append(); raw = await ask();
+        if (parseJsonContent(raw).type === 'research') throw new Error('搜索未形成完整回答');
+      }
+      stage = 'result_validation';
+      result = {...parseAgentResult(raw, context, input), ...(external ? {materials: external} : {})};
+    } else {
+      result = parseModelResult(await ask());
+    }
     const completed = await quota.finish(deviceId, requestId, 'success', Date.now());
     if (completed !== 'success') {
       receipt = null;
       return json(res, 409, { error: '请求已取消或已过期，请重新尝试。' });
     }
-    const sent = json(res, 200, result);
+    const sent = json(res, 200, {...result, provider_usage: usage});
     receipt = null;
     return sent;
   } catch (error) {
+    if(cloud)console.error(JSON.stringify({event:'ai_request_failed',stage:error.service==='redis'?'redis':stage,
+      category:['request_timeout','incomplete_model_reply','output_limit','invalid_model_reply'].includes(error.code)?error.code:error.message==='搜索词过长或为空，请缩小问题范围'?'invalid_research_request':error.name==='SyntaxError'?'invalid_json':error.status?'upstream_http':'request_failed',
+      upstream_status:Number.isInteger(error.status)?error.status:null,duration_ms:Date.now()-started,
+      model_requests:usage.model_requests,search_requests:usage.search_requests,fetch_requests:usage.fetch_requests,model_reply:modelReplyShape}));
     try {
       if (receipt) await quota.finish(receipt.deviceId, receipt.requestId, 'failed', Date.now());
       else await increaseMetric('failures', quotaDate);
     } catch (_) { /* Client keeps the receipt until release is confirmed. Pending leases also expire. */ }
-    return json(res, 503, { error: 'AI 服务暂时不可用，请稍后再试' });
+    if(error.code==='output_limit')return json(res,422,{error:'回答超过本次长度上限，未保存不完整内容。请缩小问题或要求分段回答。',code:'output_limit',provider_usage:usage});
+    if(error.code==='invalid_model_reply')return json(res,503,{error:'AI本次返回的回答格式不完整，资料未改动，请重新尝试。',code:'invalid_model_reply',provider_usage:usage});
+    return json(res, 503, { error: 'AI 服务暂时不可用，请稍后再试',provider_usage:usage });
+  } finally {
+    clearTimeout(deadline); controller.abort();
   }
 };

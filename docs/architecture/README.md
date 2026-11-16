@@ -14,7 +14,7 @@ flowchart TD
     UI --> Score[ScoreEngine 与 PetSystem]
     UI --> DB[DB 与 IndexedDB]
     UI --> AI[AIService]
-    AI --> Hosted[同源 api/ai 托管接口]
+    AI --> Hosted[Vercel云端 api/ai 接口]
     AI --> Custom[用户配置的模型接口]
     Hosted --> Model[模型服务]
     Hosted --> Counter[Redis 限额与计数]
@@ -22,7 +22,7 @@ flowchart TD
     UI --> Backup[用户导入导出的 JSON 文件]
 ```
 
-图表示代码中的调用关系。`api/ai.js` 在当前线上 Sites 是否已接入，没有充分验证；它不是浏览器业务数据库。
+图表示V2.7分支的调用关系。固定Vercel接口已在云端试用站验证，Pages正式发布来源以#82记录为准；它不是浏览器业务数据库，见[V2.7说明](../development/V27_RELEASE.md)。
 
 ## 模块地图
 

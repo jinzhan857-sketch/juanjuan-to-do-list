@@ -2,12 +2,13 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 function fixture(){
  const html=fs.readFileSync(process.env.NOTICE_SOURCE||path.join(__dirname,'../index.html'),'utf8');
- const area={set innerHTML(value){this.children=[];},children:[],appendChild(n){this.children.push(n);}};
- const ctx=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout,structuredClone,document:{querySelector:()=>area,createElement:()=>({style:{},querySelector:()=>({})})}});
+ const storage=new Map();
+ const area={focus(){},classList:{toggle(){}},set innerHTML(value){this.children=[];},children:[],appendChild(n){this.children.push(n);}};
+ const ctx=vm.createContext({console,URL,AbortController,setTimeout,clearTimeout,structuredClone,localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},document:{querySelector:()=>area,createElement:()=>({style:{},setAttribute(){},querySelector:()=>({})})}});
  vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),ctx);
  const run=code=>vm.runInContext(code,ctx);
  run("S.pet=defaultPet();S.pet.alive=true;S.pet.sick=false;S.pet.fridge=[];S.tasks=[];S.dayStats={};DB.put=()=>{throw Error('unexpected write')};DB.batch=()=>{throw Error('unexpected write')}");
- return {run,area};
+ return {run,area,storage};
 }
 for(const count of [0,1,10,100])test('pending reminder count '+count+' keeps number inside one text body without state changes',()=>{
  const a=fixture();a.run(`S.tasks=Array.from({length:${count}},(_,i)=>({id:String(i),execDate:'2020-01-01',timeType:'allday',baseScore:5}));before=JSON.stringify(S);UI.renderNotices()`);
@@ -28,13 +29,26 @@ test('all settled statuses remain excluded while missing and null statuses remai
  assert.equal(a.area.children.length,1);assert.match(a.area.children[0].innerHTML,/<b>2<\/b>/);
 });
 test('sick and hungry notices coexist with pending reminder and keep feeding action',()=>{
- const a=fixture();a.run("S.pet.sick=true;S.pet.todayIntake=0;S.pet.fridge=[{}];S.tasks=[{execDate:'2020-01-01',timeType:'allday'}];before=JSON.stringify(S);UI.renderNotices()");
+ const a=fixture();a.run("S.pet.sick=true;S.pet.satietyTask=1;S.pet.todayIntake=0;S.pet.fridge=[{}];S.tasks=[{execDate:'2020-01-01',timeType:'allday'}];before=JSON.stringify(S);UI.renderNotices()");
  assert.equal(a.area.children.length,3);
  assert.match(a.area.children[0].innerHTML,/卷卷生病了/);
  assert.match(a.area.children[1].innerHTML,/冰箱里有 1 份存粮/);
  assert.equal(typeof a.area.children[1].onclick,'function');
  assert.match(a.area.children[2].innerHTML,/<b>1<\/b>/);
  assert.equal(a.run('JSON.stringify(S)===before'),true);
+});
+
+test('opening reminders marks current items read and new tasks become unread after refresh',()=>{
+ const a=fixture();a.run("S.tasks=[{id:'one',execDate:'2020-01-01',timeType:'allday'}];UI.renderNotices()");assert.equal(a.area.textContent,1);a.run('UI.openNotices()');assert.equal(a.area.textContent,0);assert.equal(a.area.children.length,1);
+ a.run("S.tasks.push({id:'two',execDate:'2020-01-01',timeType:'allday'});UI.renderNotices()");assert.equal(a.area.textContent,1);
+ a.run('UI.noticeReadKeys=[];UI.loadNoticeReads();UI.renderNotices()');assert.equal(a.area.textContent,1);a.run('UI.openNotices()');assert.equal(a.area.textContent,0);
+ a.run('UI.noticeReadKeys=[];UI.loadNoticeReads();UI.renderNotices()');assert.equal(a.area.textContent,0);a.run('S.tasks=[];UI.renderNotices()');assert.equal(a.area.children.length,0);assert.equal(a.area.hidden,false);
+});
+
+test('home replaces the streak card with reminders and moves notice content into its dialog',()=>{
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8'),home=html.slice(html.indexOf('<div class="page active" id="page-home">'),html.indexOf('<div class="page" id="page-plan">'));
+ assert.match(home,/id="st-notices"/);assert.match(home,/未读提醒/);assert.doesNotMatch(home,/st-streak|连续打卡|id="notice-area"/);assert.match(html,/<div class="mask" id="mask-notices">[\s\S]*?id="notice-area"/);
+ assert.doesNotMatch(html,/id="agent-mode"|id="agent-role-picker"/);assert.match(html,/id="agent-add-image"[^>]*>[\s\S]*?<svg/);
 });
 test('pet departure retains original precedence over pending reminder',()=>{
  const a=fixture();a.run("S.pet.alive=false;S.tasks=[{execDate:'2020-01-01',timeType:'allday'}];UI.renderNotices()");
