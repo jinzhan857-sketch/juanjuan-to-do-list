@@ -96,7 +96,7 @@ test('repeated research is bounded and never triggers a tool loop',async()=>{
 });
 test('truncated cloud answers refund quota rather than presenting partial success',async()=>{
   const a=hosted(async()=>json({choices:[{finish_reason:'length',message:{content:'{"type":"chat","reply":"partial"}'}}]}));
-  assert.equal((await a.send({mode:'agent',message:'测试',context:{}})).code,503);
+  assert.equal((await a.send({mode:'agent',message:'测试',context:{}})).code,422);
 });
 test('actual hosted proposal still requires confirmation and supports undo',async t=>{
   const a=await fixture(t),api=hosted(async()=>model({type:'workflow',intent:'propose',reply:'请核对',entries:[{action:{kind:'create_todo',item:{title:'云端合成待办',base_score:3}}}]}));
@@ -114,4 +114,13 @@ test('cloud image selection shows a message without reading files or erasing dra
 test('cloud failure remains an error and cannot invoke the local agent fallback',async t=>{
   const a=await fixture(t);a.run("AIService.hostedRequest=async()=>{throw Error('暂时关闭')};AIService._localAgent=()=>{throw Error('must not fabricate success')};AIService.setDegraded=()=>{}");
   const r=await a.run("AIService.agent('你好',{},'chat')");assert.equal(r.type,'error');assert.match(r.reply,/关闭/);
+});
+
+test('cloud chat preserves a complete 2400-character answer including its ending',async()=>{
+ const reply='完整内容'.repeat(600)+'结束标记。';const a=hosted(async()=>model({type:'chat',reply}));
+ const r=await a.send({mode:'agent',message:'写一篇长文',context:{}});assert.equal(r.code,200);assert.equal(r.body.reply,reply);assert.ok(r.body.reply.endsWith('结束标记。'));
+});
+test('custom chat preserves the same full answer',async t=>{
+ const a=await fixture(t);a.ctx.longReply='完整内容'.repeat(600)+'结束标记。';
+ const result=a.run("AIService.normalizeAgent({type:'chat',reply:longReply},{},'长文')");assert.equal(result.reply,a.ctx.longReply);
 });

@@ -209,7 +209,7 @@ function parseAgentResult(content, context, input) {
   const fields = type === 'batch_proposal' && !['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action?.rule : data.action?.item;
   if (['proposal', 'batch_proposal'].includes(type) && fields?.title !== undefined && String(fields.title ?? '').trim().length > 300) return {type: 'clarify', reply: '任务定义超过300字，请缩短后再确认，内容未截断保存。'};
   if (['proposal', 'batch_proposal'].includes(type) && fields?.note !== undefined && String(fields.note ?? '').trim().length > 500) return {type: 'clarify', reply: '模型备注超过500字，请缩短后重试，或在发布表单中核对完整备注；内容未截断保存。'};
-  const reply = shortText(data.reply, 600) || '我需要再确认一下你的意思。';
+  const reply = String(data.reply||'').trim() || '我需要再确认一下你的意思。';
   const usedEvidence = (Array.isArray(data.used_evidence) ? data.used_evidence : []).slice(0, 5).map(item => ({
     kind: ['schedule', 'todo', 'memory', 'insight'].includes(item?.kind) ? item.kind : '',
     id: shortText(item?.id, 120),
@@ -422,6 +422,7 @@ module.exports = async function handler(req, res) {
       transport: provider,
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
+    if(output.choices?.[0]?.finish_reason==='length'){const error=Error('回答超过本次长度上限，请缩小问题或要求分段回答。');error.code='output_limit';throw error;}
     if (output.error || cloud && output.choices?.[0]?.finish_reason !== 'stop') {const error=new Error('模型回答未完整返回');error.code='incomplete_model_reply';throw error;}
     if (Number.isSafeInteger(output.usage?.prompt_tokens) && output.usage.prompt_tokens >= 0 && Number.isSafeInteger(output.usage?.completion_tokens) && output.usage.completion_tokens >= 0) {
       usage.prompt_tokens += output.usage.prompt_tokens; usage.completion_tokens += output.usage.completion_tokens;
@@ -461,13 +462,14 @@ module.exports = async function handler(req, res) {
     return sent;
   } catch (error) {
     if(cloud)console.error(JSON.stringify({event:'ai_request_failed',stage:error.service==='redis'?'redis':stage,
-      category:['request_timeout','incomplete_model_reply'].includes(error.code)?error.code:error.name==='SyntaxError'?'invalid_json':error.status?'upstream_http':'request_failed',
+      category:['request_timeout','incomplete_model_reply','output_limit'].includes(error.code)?error.code:error.name==='SyntaxError'?'invalid_json':error.status?'upstream_http':'request_failed',
       upstream_status:Number.isInteger(error.status)?error.status:null,duration_ms:Date.now()-started,
       model_requests:usage.model_requests,search_requests:usage.search_requests,fetch_requests:usage.fetch_requests}));
     try {
       if (receipt) await quota.finish(receipt.deviceId, receipt.requestId, 'failed', Date.now());
       else await increaseMetric('failures', quotaDate);
     } catch (_) { /* Client keeps the receipt until release is confirmed. Pending leases also expire. */ }
+    if(error.code==='output_limit')return json(res,422,{error:'回答超过本次长度上限，未保存不完整内容。请缩小问题或要求分段回答。',code:'output_limit'});
     return json(res, 503, { error: 'AI 服务暂时不可用，请稍后再试' });
   } finally {
     clearTimeout(deadline); controller.abort();

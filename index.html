@@ -1828,7 +1828,7 @@ async function requestJSON(url, options={}, timeoutMs=20000){
       timer=setTimeout(()=>{controller.abort();const error=new Error('请求超时，请稍后重试');error.code='request_timeout';reject(error);},timeoutMs);
     });
     if(external?.aborted)return await aborted;
-    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url===AIService.hostedEndpoint){try{const body=await response.json();if(response.status===429&&['device','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;if(['service_disabled','images_unsupported','payload_too_large','origin_denied'].includes(body?.code))error.message=body.error;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
+    return await Promise.race([aborted,(async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){const error=new Error('服务请求失败');error.status=response.status;if(url===AIService.hostedEndpoint){try{const body=await response.json();if(response.status===429&&['device','global'].includes(body?.limit_scope))error.limit_scope=body.limit_scope;if(['service_disabled','images_unsupported','payload_too_large','origin_denied','output_limit'].includes(body?.code))error.message=body.error;}catch(_){}}throw error;}const data=await response.json();return {response,data};})()]);
   }finally{clearTimeout(timer);external?.removeEventListener('abort',stop);controller.abort();}
 }
 
@@ -1938,7 +1938,7 @@ const AIService = {
     if(!this.validEndpoint(c.endpoint)||!c.model||!c.key) throw new Error('请先完成自定义 API 配置');
     const {response:resp,data}=await requestJSON(c.endpoint,{method:'POST',headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.model,messages,temperature:.1,max_tokens:maxTokens,...(c.endpoint==='https://api.deepseek.com/chat/completions'?{thinking:{type:'disabled'}}:{}),response_format:{type:'json_object'},stream:false}),signal:options.signal},timeoutMs);
     if(!resp.ok){const error=new Error(`模型服务返回 ${resp.status}`);error.status=resp.status;throw error;}
-    if(options.requireComplete&&(data.error||data.choices?.[0]?.finish_reason!=='stop'))throw Error('模型回答未完整返回，请重试。');
+    if(options.requireComplete&&(data.error||data.choices?.[0]?.finish_reason!=='stop'))throw Error(data.choices?.[0]?.finish_reason==='length'?'回答超过本次长度上限，未完整返回，请缩小问题或要求分段回答。':'模型回答未完整返回，请重试。');
     return this.parseJson(data.choices?.[0]?.message?.content);
   },
   taskWorkflowResult(message,context={}){
@@ -2050,7 +2050,7 @@ const AIService = {
   },
   normalizeAgent(data,context={},text){
     if(data?.type==='workflow')return text===undefined?globalThis.JuanjuanWorkflow.parse(data):globalThis.JuanjuanWorkflow.guard(data,context,text);
-    const type=['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data?.type)?data.type:'clarify'; const reply=String(data?.reply||'我需要再确认一下你的意思。').slice(0,600);
+    const type=['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data?.type)?data.type:'clarify'; const reply=String(data?.reply||'我需要再确认一下你的意思。');
     const fields=type==='batch_proposal'&&!['update_schedule_batch','delete_schedule_batch'].includes(data?.action?.kind)?data?.action?.rule:data?.action?.item;
     const contentError=agentContentLimitError(fields,500);
     if(['proposal','batch_proposal'].includes(type)&&contentError)return {type:'clarify',reply:contentError};
