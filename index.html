@@ -1251,7 +1251,7 @@ function recognizePublishTime(text){
     }
     let start,end;
     const nightMidnight=/^(?:晚上|夜里)$/.test(clocks[0][1]||'')&&[0,12].includes(+clocks[0][2]);
-    if(values.length===2){if(values[0]===1440&&!nightMidnight)return invalid;if(!/(?:到|至|~|～|—|–|-)/.test(line.slice(clocks[0].index+clocks[0][0].length,clocks[1].index)))return uncertain;[start,end]=values;if(end<start)end+=1440;if(end===start)return invalid;}
+    if(values.length===2){if(values[0]===1440&&!nightMidnight)return invalid;const between=line.slice(clocks[0].index+clocks[0][0].length,clocks[1].index),tail=line.slice(clocks[1].index+clocks[1][0].length);const split=/开始/.test(between)&&/^\s*结束/.test(tail);if(!/(?:到|至|~|～|—|–|-)/.test(between)&&!split)return uncertain;[start,end]=values;if(/次日|第二天|翌日/.test(between))end+=1440;else if(end<start){if(split)return invalid;end+=1440;}if(end===start)return invalid;}
     else {const m=clocks[0],before=line.slice(0,m.index),after=line.slice(m.index+m[0].length);if(/截[止至][^，,。；;]*$/.test(before)||/^\s*(?:结束|截止|之前|前)/.test(after)){end=values[0];start=end-60;}else{start=values[0];if(start===1440&&!nightMidnight)return invalid;end=start+60;}}
     const fmt=value=>`${pad(Math.floor(((value%1440)+1440)%1440/60))}:${pad(((value%60)+60)%60)}`;
     return {kind:'exact',start:fmt(start),end:fmt(end),startOffset:Math.floor(start/1440),endOffset:Math.floor(end/1440)};
@@ -2036,6 +2036,7 @@ const AIService = {
   cleanAgentItem(input={}){
     const categories=CONFIG.TAGS, timeTypes=['allday','slot','exact']; const score=Number(input.base_score); const item={};
     if(input.title!==undefined)item.title=String(input.title||'').trim().slice(0,300);
+    if(input.append_note!==undefined)item.append_note=input.append_note;
     if(input.note!==undefined)item.note=String(input.note||'').trim().slice(0,500);
     if(input.exec_date!==undefined)item.exec_date=validDateStr(input.exec_date)?input.exec_date:null;
     if(input.time_type!==undefined)item.time_type=timeTypes.includes(input.time_type)?input.time_type:'allday';
@@ -2152,18 +2153,23 @@ const AIService = {
   },
 
   scheduleRequestScope(message,tasks){
-    const text=String(message||'').split(/[，,。；;\n]/).map(clause=>clause.split(/改成|改为|备注(?:为|[:：])/)[0]).join('，');
+    const text=String(message||'').split(/[，,。；;\n]/).filter(clause=>!/(?:不要动|不要删|不修改|不删除|保持不变|保留)/.test(clause)||/\d+月|\d+日|今天|明天|后天|今晚|明晚|星期|周[一二三四五六日天]/.test(clause)).map(clause=>clause.split(/改到|移到|改成|改为|备注(?:追加|为|[:：])/)[0]).join('，');
+    const range=text.match(/(\d{1,2})月(\d{1,2})日?(?:至|到|~|～)(?:(\d{1,2})月)?(\d{1,2})日/);
+    const from=range?parseNaturalDate(`${range[1]}月${range[2]}日`):null,to=range?parseNaturalDate(`${range[3]||range[1]}月${range[4]}日`):null;
     // Resolve every date constraint before selecting a target. Never let the first
     // date silently win over a later exclusion, correction or alternative.
     const dates=new Set([...text.matchAll(/20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}日?|\d{1,2}月\d{1,2}日?|大后天|后天|明天|今天|今晚|明晚|(?:下周|周|星期)[一二三四五六日天]/g)].map(match=>parseNaturalDate(match[0])).filter(Boolean));
-    if(dates.size>1)return {error:'原话涉及多个日期，请只说明这次要修改或删除的日期，再重新确认。'};
+    if(dates.size>1&&!range)return {error:'原话涉及多个日期，请只说明这次要修改或删除的日期，再重新确认。'};
     const code=(text.match(/\b[A-Z]{2,}\d{3,}\b/i)||[])[0];
     let targets=tasks.filter(task=>code?String(task.title).toUpperCase().includes(code.toUpperCase()):task.title&&text.includes(task.title));
-    const group=/(全部|所有|整组|每(?:个)?(?:周|星期))/.test(text);
+    const group=/(全部|所有|整组|那(?:一)?组|这(?:一)?组|每(?:个)?(?:周|星期))/.test(text);
     const concrete=/(20\d{2}[年\/-]\d{1,2}[月\/-]\d{1,2}|\d{1,2}月\d{1,2}|今天|明天|后天|今晚|明晚|下周)/.test(text);
     const date=group&&!concrete?null:parseNaturalDate(text);
-    if(group&&concrete) return {error:'请确认是只改指定日期，还是修改整组日程。'};
-    if(date) targets=targets.filter(task=>task.exec_date===date);
+    if(group&&concrete&&!range) return {error:'请确认是只改指定日期，还是修改整组日程。'};
+    if(range){if(!from||!to||from>to)return {error:'日期范围无效，请核对。'};targets=targets.filter(task=>task.exec_date>=from&&task.exec_date<=to);}else if(date) targets=targets.filter(task=>task.exec_date===date);
+    const time=recognizePublishTime(text);
+    if(time.kind==='exact')targets=targets.filter(task=>task.start_time===time.start&&task.end_time===time.end);
+    else if(time.kind==='slot')targets=targets.filter(task=>task.start_time&&slotForTime(task.start_time).key===time.slot);
     const months=text.match(/(\d{1,2})\s*月?\s*(?:到|至|-|—|～|~)\s*(\d{1,2})\s*月/);
     if(group&&months){const from=`${todayStr().slice(0,4)}-${pad(months[1])}-01`, to=fmtDate(new Date(Number(todayStr().slice(0,4)),Number(months[2]),0));targets=targets.filter(task=>task.exec_date>=from&&task.exec_date<=to);}
     const weekday=text.match(/每(?:个)?(?:周|星期)([一二三四五六日天])/);
@@ -2912,7 +2918,16 @@ const UI = {
     return {kind:store==='tasks'?'update_schedule':'update_todo',target_id:target.id,item:store==='tasks'?{title:target.title,note:target.note||'',exec_date:target.execDate,time_type:target.timeType,slot:target.slot,start_time:target.startTime,end_time:target.endTime,category:target.category,base_score:target.baseScore}:{title:target.title,note:target.note||'',category:target.category,base_score:target.baseScore}};
   },
   async applyAssistantWorkflow(raw,chatId,content,seen,requestId){
-    const wf=await this.loadAssistantWorkflow();let result=wf.guard(raw,{candidate_cards:seen||this.assistantCandidateContext(chatId)},content);if(result.type!=='workflow')return result;const current=this.assistantCurrentCards(chatId);
+    const wf=await this.loadAssistantWorkflow(),known=seen||this.assistantCandidateContext(chatId);let result=wf.guard(raw,{candidate_cards:known},content);if(result.type!=='workflow')return result;
+    // A correction must reference a candidate version. Never treat an unbound
+    // model answer as a second independent creation or leave its old card executable.
+    if(result.intent==='propose'&&result.entries?.some(e=>!e.card_id)&&known.length&&/^(?:不[，,、。]?\s*是|不是|不对|改口|更正|纠正)/.test(String(content).trim())){
+      const selected=known.filter(c=>c.selected),scope=selected.length?selected:known.length===1?known:[];
+      const stale=this.assistantCurrentCards(chatId).filter(m=>scope.some(c=>c.card_id===m.meta.workflow.cardId&&c.version===m.meta.workflow.version)&&m.meta.status==='pending');
+      if(stale.length)await commitDataChanges(stale.map(m=>({store:'messages',value:{...copyData(m),meta:{...copyData(m.meta),status:'superseded'}}})),agentWriteExpectation());
+      return {type:'clarify',reply:'这次更正没有引用准确的候选版本，尚未创建。请核对目标后重新说明。'};
+    }
+    const current=this.assistantCurrentCards(chatId);
     const context=seen||this.assistantCandidateContext(chatId),selected=context.filter(x=>x.selected),available=new Map((selected.length?selected:context).map(x=>[x.card_id,x]));
     result=wf.expandUniform(result,context,content,{minutes:minOf,format:m=>pad(Math.floor(m/60))+':'+pad(m%60)});
     wf.assertScope(result,context,content);
@@ -3143,7 +3158,7 @@ const UI = {
       const conflicts=meta.status==='done'?[]:this.findAgentScheduleConflicts(meta.action);
       const conflictNotice=conflicts.length?`<div class="hint" style="margin-top:8px;color:var(--red)">⚠️ 有 ${conflicts.length} 条时间与现有日程重叠，请核对后再执行。</div>`:'';
       const state=meta.status||'pending';
-      const actions=state==='pending'?`<div class="agent-card-actions"><button class="primary" data-agent-confirm="${esc(message.id)}">${meta.action.kind.startsWith('update')?'确认修改':'确认创建'}</button><button class="secondary" data-agent-edit="${esc(message.id)}">编辑内容</button><button class="quiet" data-agent-cancel="${esc(message.id)}">取消</button></div>`:`<div class="agent-result-state cancelled">${state==='cancelled'?'已取消':state==='superseded'?'旧版本已失效':state==='done'?'已保存':'正在处理'}</div>`;
+      const actions=state==='pending'?`<div class="agent-card-actions"><button class="primary" data-agent-confirm="${esc(message.id)}">${meta.action.kind.startsWith('update')?'确认修改':'确认创建'}</button><button class="secondary" data-agent-edit="${esc(message.id)}">编辑内容</button><button class="quiet" data-agent-cancel="${esc(message.id)}">取消</button></div>`:`<div class="agent-result-state cancelled">${state==='cancelled'?'已取消':state==='superseded'?'旧版本已失效':state==='done'?'已保存':state==='undone'?'已撤销':'正在处理'}</div>`;
       extra=`<div class="agent-card"><div class="agent-card-title">${esc(this.agentActionTitle(meta.action.kind))}</div>${rows}${dates}${conflictNotice}${actions}${meta.workflow?`<div class="assistant-card-tools">${state==='pending'?`<label class="assistant-card-select"><input type="checkbox" data-assistant-select="${esc(message.id)}" ${this.assistantSelected?.has(message.id)?'checked':''}><span>加入批量</span></label>`:''}${['pending','done'].includes(state)?`<button class="secondary" data-assistant-talk="${esc(message.id)}">继续沟通</button>`:''}${state==='done'&&meta.operationId?`<button class="secondary" data-agent-undo="${esc(message.id)}">撤销操作</button>`:''}${state==='done'?`<button class="secondary" data-assistant-edit="${esc(message.id)}">编辑原记录</button>`:''}</div>`:''}</div>`;
     }
     if(message.type==='query' && Array.isArray(meta.results)){
@@ -3185,6 +3200,7 @@ const UI = {
       if(action.kind==='delete_schedule_batch') return rows;
       if(item.title!==undefined) rows.push(['新标题',item.title]);
       if(item.note!==undefined) rows.push(['新备注',item.note||'清空备注']);
+      if(item.append_note!==undefined)rows.push(['追加备注',item.append_note]);
       if(item.time_type==='exact') rows.push(['新时间',`${item.start_time} 至 ${item.end_day_offset===1?'次日 ':''}${item.end_time}`]);
       if(item.category) rows.push(['新标签',item.category]);
       return rows;
@@ -3403,6 +3419,7 @@ const UI = {
     const tasks=S.tasks.map(task=>({id:task.id,title:task.title,exec_date:task.execDate,series_id:task.seriesId,start_time:task.startTime,end_time:task.endTime}));
     const scope=AIService.scheduleRequestScope(content,tasks);
     if(scope.error) return {ok:false,error:scope.error};
+    if(action.kind==='update_schedule_batch'&&/备注.*追加|追加.*备注/.test(content)&&action.item?.append_note===undefined)return {ok:false,error:'追加备注需要仅提供追加内容，不能覆盖各条原备注。'};
     const ids=values=>JSON.stringify(values.map(task=>task.id).sort());
     if(scope.group!==['update_schedule_batch','delete_schedule_batch'].includes(action.kind)||ids(scope.targets)!==ids(targets)) return {ok:false,error:'建议的操作范围与原话不一致，请明确日期和单条或整组范围。'};
     return this.validateAgentAction(action);
@@ -3411,6 +3428,7 @@ const UI = {
     if(!action || !['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'].includes(action.kind)) return {ok:false,error:'这个操作暂时不支持'};
     const item=action.item||{};
     const fields=action.kind==='create_schedule_batch'?(action.rule||{}):item;
+    if(item.append_note!==undefined&&(action.kind!=='update_schedule_batch'||typeof item.append_note!=='string'||!item.append_note.trim()||item.append_note.length>1500||item.note!==undefined))return {ok:false,error:'追加备注字段无效，不能同时覆盖原备注'};
     const contentError=agentContentLimitError(fields,1500);
     if(contentError)return {ok:false,error:contentError};
     if(fields.title!==undefined && (typeof fields.title!=='string'||!fields.title.trim())) return {ok:false,error:'标题不能为空'};
@@ -3451,7 +3469,9 @@ const UI = {
       if(new Set(targets.map(task=>task.seriesId||JSON.stringify([task.title,task.startTime,task.endTime]))).size!==1) return {ok:false,error:'范围包含不同组日程，请明确要操作哪一组。'};
       if(action.kind==='update_schedule_batch'){
         for(const target of targets){
-          const checked=this.validateAgentAction({kind:'update_schedule',target_id:target.id,item});
+          const {append_note,...patch}=item;
+          if(append_note!==undefined)patch.note=[target.note,append_note].filter(Boolean).join('\n');
+          const checked=this.validateAgentAction({kind:'update_schedule',target_id:target.id,item:patch});
           if(!checked.ok)return checked;
         }
       }
@@ -3794,6 +3814,7 @@ const UI = {
         if(!task.seriesId){task.seriesId=adoptedSeriesId;task.seriesRule={date_from:action.rule.date_from,date_to:action.rule.date_to,weekdays:action.rule.weekdays.slice()};}
         if(item.title!==undefined) task.title=item.title;
         if(item.note!==undefined) task.note=item.note;
+        if(item.append_note!==undefined)task.note=[task.note,item.append_note].filter(Boolean).join('\n');
         if(item.exec_date) task.execDate=item.exec_date;
         if(item.time_type){ task.timeType=item.time_type; task.slot=item.time_type==='slot'?(item.slot||task.slot):null; task.startTime=item.time_type==='exact'?(item.start_time||task.startTime):null; task.endTime=item.time_type==='exact'?(item.end_time||task.endTime):null; }
         else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
@@ -4771,7 +4792,7 @@ const UI = {
     this.resetCreate('todo');
     if(t){
       this.todoEditingId=t.id;
-      this.cState={...this.cState,userFields:{...this.cState.userFields,title:true,note:true},recognized:true,rawText:publishEditText(t),resultTitle:t.title,resultNote:t.note||'',images:(t.images||[]).map(x=>({...x})),tag:mapTag(t.category),ai:{base_score:t.baseScore,reason:t.aiReason,advice:t.aiAdvice,category:mapTag(t.category),source:t.aiSource},aiTitle:publishEditText(t),modelRaw:t.aiModelRaw||null,reviewedResult:t.aiReviewedResult||null};
+      this.cState={...this.cState,period:t.period,userFields:{...this.cState.userFields,title:true,note:true},recognized:true,rawText:publishEditText(t),resultTitle:t.title,resultNote:t.note||'',images:(t.images||[]).map(x=>({...x})),tag:mapTag(t.category),ai:{base_score:t.baseScore,reason:t.aiReason,advice:t.aiAdvice,category:mapTag(t.category),source:t.aiSource},aiTitle:publishEditText(t),modelRaw:t.aiModelRaw||null,reviewedResult:t.aiReviewedResult||null};
     }
     $('#c-title').value=this.cState.rawText;
     this.switchPage('create');

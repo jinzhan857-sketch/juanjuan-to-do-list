@@ -1,5 +1,7 @@
 # 测试与验收
 
+快速上线必要修复专项为 `node --test scripts/quick-release.test.cjs`，已并入统一检查。原生存储入口为 `node scripts/quick-release-browser.cjs`，4261来源仅使用每次页面独立的合成库。原案例、失败与证据层次见[修复交付](../audit/2026-11-16/quick-release-fixes.md)。
+
 PR #129复查另增加20条实际入口回归，统一检查1560条通过。草稿、重试、图片并发、来源续问和预算修复，以及隔离网页与手机待验边界，见[复查报告](../audit/2026-11-16/pr129-review.md)。
 
 
