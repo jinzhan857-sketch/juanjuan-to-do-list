@@ -1,13 +1,13 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const {openBudget}=require('./helpers/v27-budget.cjs');
+const {openBudget,limits}=require('./helpers/v27-budget.cjs');
 function setup(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'v27-budget-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));return dir;}
-test('unknown billing retains reservation across restart and cannot exceed one yuan',t=>{const dir=setup(t);let b=openBudget(dir);while(b.totals().microCny<500000)b.reserve({mode:'agent',message:'合成'});assert.throws(()=>b.reserve({mode:'agent',message:'再次'}),/exhausted/);const amount=b.totals();b.close();b=openBudget(dir);assert.deepEqual(b.totals(),amount);assert.throws(()=>b.reserve({mode:'agent',message:'再次'}),/exhausted/);b.close();});
+test('unknown billing retains reservation across restart and cannot exceed two yuan',t=>{const dir=setup(t);let b=openBudget(dir);while(b.totals().microCny+500000<limits.microCny)b.reserve({mode:'agent',message:'合成'});assert.throws(()=>b.reserve({mode:'agent',message:'再次'}),/exhausted/);const amount=b.totals();b.close();b=openBudget(dir);assert.deepEqual(b.totals(),amount);assert.throws(()=>b.reserve({mode:'agent',message:'再次'}),/exhausted/);b.close();});
 test('confirmed provider usage accounts model and tools separately before the next request',t=>{const b=openBudget(setup(t));const id=b.reserve({message:'合成'});b.finish(id,{complete:true,model_requests:2,search_requests:1,fetch_requests:0,prompt_tokens:1000,completion_tokens:100});assert.deepEqual(b.totals(),{requests:3,microCny:7800});b.reserve({message:'合成续问'});b.close();});
 test('cumulative provider requests cannot exceed 200 even with cheap replies',t=>{const b=openBudget(setup(t));for(let i=0;i<196;i++){const id=b.reserve({message:'合成'});b.finish(id,{complete:true,model_requests:1,search_requests:0,fetch_requests:0,prompt_tokens:1,completion_tokens:1});}assert.throws(()=>b.reserve({message:'超限'}),/exhausted/);assert.equal(b.totals().requests,196);b.close();});
 test('damaged ledgers and oversized input stop before dispatch',t=>{const dir=setup(t),b=openBudget(dir);assert.throws(()=>b.reserve({message:'a'.repeat(33000)}),/boundary/);assert.equal(b.totals().requests,0);b.close();fs.writeFileSync(path.join(dir,'budget.json'),'{}');assert.throws(()=>openBudget(dir),/Invalid/);});
 
 test('previous pages are bounded once as external model input while the money cap still applies',t=>{
  const b=openBudget(setup(t));const id=b.reserve({message:'刚才那个网页',context:{previous_materials:[{content:'a'.repeat(65536)},{content:'b'.repeat(65536)}]}});
- assert.ok(b.state.entries[0].reservedMicroCny>400000);assert.equal(b.state.entries[0].maxRequests,5);b.reserve({message:'另一个请求'});assert.throws(()=>b.reserve({message:'再次'}),/exhausted/);b.close();
+ assert.ok(b.state.entries[0].reservedMicroCny>400000);assert.equal(b.state.entries[0].maxRequests,5);while(b.totals().microCny+500000<limits.microCny)b.reserve({message:'另一个请求'});assert.throws(()=>b.reserve({message:'再次'}),/exhausted/);b.close();
 });

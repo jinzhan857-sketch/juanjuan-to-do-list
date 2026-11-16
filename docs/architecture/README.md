@@ -22,7 +22,7 @@ flowchart TD
     UI --> Backup[用户导入导出的 JSON 文件]
 ```
 
-图表示V2.7分支的调用关系。固定Vercel接口已在云端试用站验证，Pages正式切换仍待展验收；它不是浏览器业务数据库，见[V2.7说明](../development/V27_RELEASE.md)。
+图表示V2.7分支的调用关系。固定Vercel接口已在云端试用站验证，Pages正式发布来源以#82记录为准；它不是浏览器业务数据库，见[V2.7说明](../development/V27_RELEASE.md)。
 
 ## 模块地图
 

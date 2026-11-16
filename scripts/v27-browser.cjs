@@ -39,5 +39,5 @@ const server=http.createServer(async(req,res)=>{
  }
  res.writeHead(404).end();
 });
-server.listen(4297,'127.0.0.1',()=>console.log('Real cloud acceptance at http://127.0.0.1:4297/; isolated synthetic database; budget 200 requests / 1 CNY'));
+server.listen(4297,'127.0.0.1',()=>console.log('Real cloud acceptance at http://127.0.0.1:4297/; isolated synthetic database; budget 200 requests / 2 CNY'));
 const stop=()=>server.close(()=>{budget.close();process.exit();});process.once('SIGINT',stop);process.once('SIGTERM',stop);

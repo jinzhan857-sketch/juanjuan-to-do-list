@@ -1,6 +1,6 @@
 # V2.7 云端 AI 试用与发布
 
-本分支界面和工程版本为2.7.0。展已确认长回复实测满意，随后追加记忆导入与首次引导。本轮仍先交展测试这两项，正式Pages保持V2.6，未发布V2.7。验收证据与保留失败见[本轮记录](../audit/2026-11-16/v27-cloud-preparation.md)，任务为[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)，实施PR为[#146](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/146)。总计划未修改。
+本分支界面和工程版本为2.7.0。展已授权独立验收通过后合并并正式发布，无需再次询问。独立验收见[发布复核](../audit/2026-11-17/v27-independent-release.md)，实际正式来源、部署与线上核对结果以#82发布记录为准。验收证据与保留失败见[本轮记录](../audit/2026-11-16/v27-cloud-preparation.md)，任务为[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)，实施PR为[#146](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/146)。总计划未修改。
 
 ## 使用入口
 
@@ -26,11 +26,11 @@
 
 ## 构建与部署
 
-使用干净的已提交任务分支，先运行 `npm run check`、`npm run check:archive`，检查CI。真实模型验收必须继续使用本轮累计账本，不能新开默认额度或重置；本轮上限200次、1元，两项同时生效。配置检查 `npm run ai:live-check` 不调用模型。
+使用干净的已提交任务分支，先运行 `npm run check`、`npm run check:archive`，检查CI。真实模型验收必须继续使用本轮累计账本，不能新开默认额度或重置；本轮最新授权为累计200次、2元，两项同时生效，原消耗保留。配置检查 `npm run ai:live-check` 不调用模型。
 
 运行 `npm run build` 后执行 `node scripts/v27-package.cjs`，只生成15个白名单部署文件，不上传仓库根目录、私有资料或环境文件。然后用官方Vercel CLI部署 `.reports/v27/deploy`，并将 `AI_SOURCE_COMMIT` 设置为同一完整提交。核对公开健康接口、build-info、页面及模块哈希，不仅看控制台显示部署成功。
 
-展完成新增功能验收后，按[发布流程](RELEASE.md)合入并手动运行main的Pages工作流。正式入口仍为 [原Pages网址](https://jinzhan857-sketch.github.io/juanjuan-to-do-list/)，无需搬动该来源的浏览器资料。发布后还需核对正式来源、版本与跨域真实链路，不能以试用站代替正式发布证据。
+独立验收通过后，按展授权及[发布流程](RELEASE.md)合入并手动运行main的Pages工作流。正式入口仍为 [原Pages网址](https://jinzhan857-sketch.github.io/juanjuan-to-do-list/)，无需搬动该来源的浏览器资料。发布后还需核对正式来源、版本与跨域真实链路，不能以试用站代替正式发布证据。
 
 ## 停用与恢复
 
