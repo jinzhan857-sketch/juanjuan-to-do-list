@@ -9,7 +9,7 @@ async function withBudget(work){
  const lock=ledger+'.lock',fd=fs.openSync(lock,'wx');
  try{
   const state=JSON.parse(fs.readFileSync(ledger,'utf8'));
-  if(state.session!=='issue115-assistant-workflow'||state.limits.calls!==500||state.limits.budget_cny!==15)throw Error('Ledger mismatch');
+  if(state.session!=='issue115-assistant-workflow'||![500,599,800,1000].includes(state.limits.calls)||state.limits.budget_cny!==15)throw Error('Ledger mismatch');
   const save=()=>{const tmp=ledger+'.tmp';fs.writeFileSync(tmp,JSON.stringify(state,null,2));fs.renameSync(tmp,ledger);};
   const source=crypto.createHash('sha256').update(fs.readFileSync('index.html')).update(fs.readFileSync('api/ai.js')).update(fs.readFileSync('src/assistant/workflow.js')).digest('hex');
   async function request(url,options){
@@ -18,8 +18,11 @@ async function withBudget(work){
    if(!Number.isInteger(body.max_tokens)||body.max_tokens>6000||Buffer.byteLength(JSON.stringify(body.messages))>100000)throw Error('Request exceeds reviewed reservation limits');
    const reserve=(Buffer.byteLength(JSON.stringify(body.messages))*2.4+body.max_tokens*9.6+10000)/1e6;
    const committed=state.attempts.reduce((n,a)=>n+(a.estimated_cny_at_peak??a.reserved_cny),0);
-   if(state.attempts.length>=500||committed+reserve>15)throw Error('Budget exhausted');
-   const attempt={number:state.attempts.length+1,status:'reserved',reserved_cny:reserve,source,started_at:new Date().toISOString()};state.attempts.push(attempt);state.reserved_cny=committed+reserve;save();
+   const phase=state.phases?.find(p=>p.id===state.active_phase);
+   if(state.limits.calls===599&&(!phase||phase.start_attempts!==499||phase.limits.calls!==100||phase.limits.budget_cny!==5))throw Error('Unreviewed browser phase');
+   if(phase&&(state.attempts.length-phase.start_attempts>=phase.limits.calls||committed-phase.start_cost_cny+reserve>phase.limits.budget_cny))throw Error('Browser phase budget exhausted');
+   if(state.attempts.length>=state.limits.calls||committed+reserve>state.limits.budget_cny)throw Error('Budget exhausted');
+   const attempt={number:state.attempts.length+1,status:'reserved',phase:state.active_phase||'implementation',reserved_cny:reserve,source,started_at:new Date().toISOString()};state.attempts.push(attempt);state.reserved_cny=committed+reserve;save();
    try{
     const response=await fetch(endpoint,{...options,body:JSON.stringify(body),redirect:'error',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(60000)]):AbortSignal.timeout(60000)});
     const payload=await response.clone().json();if(JSON.stringify(payload).includes(key))throw Error('Sensitive output');

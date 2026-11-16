@@ -1,0 +1,12 @@
+{
+  "batch":"B","version":1,"mode":"visible_browser_real_model","cases":[
+    {"id":"B01","family":"七项独立日程","hint":"chat","inputs":["把这些2027年1月的事情各记一条全天日程，顺序按我说的来：5日预约体检，8日整理照片，6日阅读报告，10日准备分享，12日更新简历，15日检查材料，18日参观展览。"],"confirm":"all","expected":{"tasks":7,"todos":0,"titles":["预约体检","整理照片","阅读报告","准备分享","更新简历","检查材料","参观展览"]}},
+    {"id":"B02","family":"日程待办混合","hint":"planning","inputs":["麻烦一起记一下：没有固定日期的待办有取快递、整理发票和更新通讯录；2027年1月20日下午4点到5点去办理学生证，单独作为日程。"],"confirm":"all","expected":{"tasks":1,"todos":3,"todo_titles":["取快递","整理发票","更新通讯录"],"times":[["16:00","17:00"]]}},
+    {"id":"B03","family":"两组重复日程","hint":"chat","inputs":["2027年1月4日到17日，周一早上9点到11点练习素描，周五下午2点到3点整理作品集。请建两组，不要合并。"],"confirm":"all","expected":{"tasks":4,"todos":0,"groups":2}},
+    {"id":"B04","family":"统一补时间并保留时长","inputs":["帮我创建2027年1月21日14点到16点学习建模，以及1月22日全天整理素材。","全部晚上七点开始，原来有时长的保留时长。"],"confirm":"all","expected":{"tasks":2,"todos":0,"times":[["19:00","21:00"],["19:00","20:00"]]}},
+    {"id":"B05","family":"定向备注保留未指定项","inputs":["帮我创建2027年1月23日全天借书、24日全天归还设备、25日全天整理桌面，分成三项。","借书带学生证，归还设备带充电器，分别补充备注，整理桌面保持原样。"],"confirm":"all","expected":{"tasks":3,"todos":0,"notes":["学生证","充电器","" ]}},
+    {"id":"B06","family":"混合部分与全部确认","inputs":["请各建一项：2027年1月26日全天校对报告、27日全天检查图表，另外两个没有固定日期的待办，整理云盘和备份资料。"],"confirm":"partial-selected-all","expected":{"tasks":2,"todos":2}},
+    {"id":"B07","family":"创建后修改原组","inputs":["2027年1月5日到18日，每周二下午3点到4点复盘项目，帮我建这组日程。","这组地点都在D楼，补充备注，其他不改。"],"confirm_before_step":1,"confirm":"all","expected":{"tasks":2,"todos":0,"notes":["D楼","D楼"],"preserve_ids":true,"groups":1,"operations":2}},
+    {"id":"B08","family":"第二项改口","hint":"chat","inputs":["请创建2027年1月28日10点到11点讨论设计，以及1月29日15点到16点检查样机。","第二项不对，是16点到17点，第一项不变。"],"confirm":"all","expected":{"tasks":2,"todos":0,"times":[["10:00","11:00"],["16:00","17:00"]],"superseded":1}}
+  ]
+}

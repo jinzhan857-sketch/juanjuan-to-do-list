@@ -1,0 +1,106 @@
+[
+  {
+    "theme": "暖色陪伴",
+    "controls": [
+      {
+        "height": 60,
+        "right": 222.0000114440918,
+        "selector": "#agent-input",
+        "x": 30.666667938232425
+      },
+      {
+        "height": 38,
+        "right": 302,
+        "selector": "#agent-mode",
+        "x": 230
+      },
+      {
+        "height": 38,
+        "right": 348,
+        "selector": "#btn-agent-send",
+        "x": 310
+      }
+    ],
+    "draft": "先保留这份草稿\n第二行还没有发送。",
+    "mode": "planning",
+    "width": 390
+  },
+  {
+    "theme": "白蓝专注",
+    "controls": [
+      {
+        "height": 60,
+        "right": 222.0000114440918,
+        "selector": "#agent-input",
+        "x": 30.666667938232425
+      },
+      {
+        "height": 38,
+        "right": 302,
+        "selector": "#agent-mode",
+        "x": 230
+      },
+      {
+        "height": 38,
+        "right": 348,
+        "selector": "#btn-agent-send",
+        "x": 310
+      }
+    ],
+    "draft": "先保留这份草稿\n第二行还没有发送。",
+    "mode": "planning",
+    "width": 390
+  },
+  {
+    "theme": "暗色陪伴",
+    "controls": [
+      {
+        "height": 60,
+        "right": 222.0000114440918,
+        "selector": "#agent-input",
+        "x": 30.666667938232425
+      },
+      {
+        "height": 38,
+        "right": 302,
+        "selector": "#agent-mode",
+        "x": 230
+      },
+      {
+        "height": 38,
+        "right": 348,
+        "selector": "#btn-agent-send",
+        "x": 310
+      }
+    ],
+    "draft": "先保留这份草稿\n第二行还没有发送。",
+    "mode": "planning",
+    "width": 390
+  },
+  {
+    "theme": "纯黑专注",
+    "controls": [
+      {
+        "height": 60,
+        "right": 222.0000114440918,
+        "selector": "#agent-input",
+        "x": 30.666667938232425
+      },
+      {
+        "height": 38,
+        "right": 302,
+        "selector": "#agent-mode",
+        "x": 230
+      },
+      {
+        "height": 38,
+        "right": 348,
+        "selector": "#btn-agent-send",
+        "x": 310
+      }
+    ],
+    "draft": "先保留这份草稿\n第二行还没有发送。",
+    "mode": "planning",
+    "width": 390
+  }
+]

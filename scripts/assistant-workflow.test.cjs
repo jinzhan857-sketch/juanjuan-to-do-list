@@ -38,6 +38,9 @@ test('strict contract rejects truncation, excess count, duplicate identities and
  assert.equal(wf.explicitConfirmation('好'),false);assert.equal(wf.explicitConfirmation('不要确认全部'),false);assert.equal(wf.explicitConfirmation('确认全部'),true);
 });
 module.exports={seven};
+test('saved group context reports actual record count without exposing persistence identifiers',async t=>{
+ const a=await fixture(t);await a.apply({type:'workflow',intent:'propose',entries:[{action:{kind:'create_schedule_batch',rule:{title:'复盘项目',date_from:'2027-01-05',date_to:'2027-01-18',weekdays:[2],time_type:'exact',start_time:'15:00',end_time:'16:00',base_score:7}}}]});await a.confirm();const c=a.cards()[0];assert.equal(c.record_count,2);assert.equal(wf.contextCards([c])[0].record_count,2);assert.equal(c.action.target_id,undefined);assert.throws(()=>wf.contextCards([{...c,record_count:-1}]));
+});
 
 test('two all-day repeat groups expand to four records, with independent group identity',async t=>{
  const a=await fixture(t);await a.apply({type:'workflow',intent:'propose',entries:[2,4].map((day,i)=>({action:{kind:'create_schedule_batch',rule:{title:i?'发票':'书架',date_from:'2026-12-01',date_to:'2026-12-14',weekdays:[day],time_type:'allday',base_score:2}}}))});await a.confirm();assert.equal(a.json('S.tasks.length'),4);assert.equal(a.json('new Set(S.tasks.map(t=>t.seriesId)).size'),2);assert.ok(a.json("S.tasks.every(t=>t.timeType==='allday')"));
