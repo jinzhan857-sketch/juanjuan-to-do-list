@@ -507,16 +507,16 @@ body.agent-keyboard-open .agent-composer{bottom:calc(10px + env(safe-area-inset-
 .agent-empty .pet{font-size:46px}.agent-empty b{display:block;color:var(--text);margin:8px 0 4px}
 .agent-suggestions{display:flex;flex-direction:column;gap:8px;margin-top:18px}
 .agent-suggestions button{padding:10px 12px;border-radius:13px;background:var(--card);border:1px solid var(--line);color:var(--text2);font-size:12px;text-align:left;box-shadow:var(--shadow)}
-.agent-message{display:flex;gap:7px;margin:10px 0;align-items:flex-end}
-.agent-message.user{justify-content:flex-end}.agent-avatar{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--pink-soft);font-size:14px;flex:0 0 auto}
-.agent-bubble{max-width:92%;border-radius:16px 16px 16px 5px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);padding:10px 12px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word;user-select:text}
-.agent-message.user .agent-bubble{background:var(--pink);color:#fff;border-color:transparent;border-radius:16px 16px 5px 16px;box-shadow:none}
-.agent-message-time{font-size:9px;color:var(--text3);margin-top:4px;text-align:right}
+.agent-message{display:grid;grid-template-columns:27px minmax(0,1fr);column-gap:7px;align-items:stretch;margin:10px 0}.agent-avatar{grid-column:1;grid-row:1;align-self:end;width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--pink-soft);font-size:14px}
+.agent-message.user{display:flex;flex-direction:column;align-items:flex-end}
+.agent-bubble{grid-column:2;grid-row:1;width:100%;max-width:100%;border-radius:16px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);padding:10px 12px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word;user-select:text}
+.agent-message.user .agent-bubble{width:fit-content;max-width:85%;background:var(--pink);color:#fff;border-color:transparent;border-radius:16px 16px 5px 16px;box-shadow:none}
+.agent-message-time{grid-column:2;grid-row:2;justify-self:end;align-self:flex-end;font-size:9px;color:var(--text3);margin:4px 4px 0;text-align:right}
 .agent-composer{position:absolute;left:16px;right:16px;bottom:calc(81px + env(safe-area-inset-bottom));z-index:2;display:flex;align-items:flex-end;gap:8px;padding:8px 10px 8px 14px;background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:none;margin-bottom:4px}
 .agent-composer textarea{flex:1;min-width:0;width:auto;border:none;background:transparent;padding:8px 0;resize:none;min-height:38px;max-height:100px;line-height:1.45}
 .agent-send{width:38px;height:38px;border-radius:50%;background:var(--pink);color:#fff;font-size:18px;flex:0 0 auto}
 .agent-send.is-stop{border-radius:11px;background:var(--red);font-size:15px}
-.agent-role-picker{position:relative;flex:0 0 auto;margin:0;color:var(--text2)}.agent-mode-trigger{display:flex;align-items:center;justify-content:center;gap:7px;min-width:64px;height:38px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--text2);font:inherit;font-size:12px;cursor:pointer}.agent-mode-chevron{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}.agent-mode-trigger[aria-expanded="true"] .agent-mode-chevron{transform:translateY(2px) rotate(225deg)}.agent-mode-menu{position:absolute;right:0;bottom:calc(100% + 10px);z-index:50;display:grid;gap:3px;width:176px;padding:8px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px rgba(0,0,0,.12)}.agent-mode-menu[hidden]{display:none}.agent-mode-option{display:flex;align-items:center;justify-content:space-between;min-height:40px;padding:9px 12px;border-radius:11px;text-align:left;font:inherit;font-size:13px;color:var(--text)}.agent-mode-option:hover,.agent-mode-option:focus-visible{background:var(--card2)}.agent-mode-option[aria-checked="true"]{background:var(--pink-soft);color:var(--text);font-weight:600}.agent-mode-option:focus-visible{outline:2px solid var(--pink);outline-offset:-2px}.agent-route:empty{display:none}.agent-role-badge{font-size:10px;font-weight:700;color:var(--text2);margin-bottom:5px}
+.agent-role-picker{position:relative;flex:0 0 auto;margin:0;color:var(--text2)}.agent-mode-trigger{display:flex;align-items:center;justify-content:center;gap:7px;min-width:64px;height:38px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--text2);font:inherit;font-size:12px;cursor:pointer}.agent-mode-chevron{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}.agent-mode-trigger[aria-expanded="true"] .agent-mode-chevron{transform:translateY(2px) rotate(225deg)}.agent-mode-menu{position:absolute;right:0;bottom:calc(100% + 10px);z-index:50;display:grid;gap:3px;width:176px;padding:8px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px rgba(0,0,0,.12)}.agent-mode-menu[hidden]{display:none}.agent-mode-option{display:flex;align-items:center;justify-content:space-between;min-height:40px;padding:9px 12px;border-radius:11px;text-align:left;font:inherit;font-size:13px;color:var(--text)}.agent-mode-option:hover,.agent-mode-option:focus-visible{background:var(--card2)}.agent-mode-option[aria-checked="true"]{background:var(--pink-soft);color:var(--text);font-weight:600}.agent-mode-option:focus-visible{outline:2px solid var(--pink);outline-offset:-2px}.agent-route:empty{display:none}
 body.agent-page-active{--assistant-bg:#fff;--card2:#F7F7F8;--line:#E8E8EA;--text:#29292D;--text2:#626269;--text3:#8A8A93;background:var(--assistant-bg);background-image:none}
 [data-active-theme="soft"] body.agent-page-active{--assistant-bg:#1D1D1F;--card:#262628;--card2:#2D2D30;--line:#3B3B40;--text:#F2F2F4;--text2:#B7B7BE;--text3:#8D8D97}
 [data-active-theme="black"] body.agent-page-active{--assistant-bg:#000;--card:#0B0C0E;--card2:#121417;--line:#24282D;--text:#F3F6F9;--text2:#AAB4BF;--text3:#737E89}
@@ -3020,8 +3020,7 @@ const UI = {
       box.innerHTML=`<div class="agent-empty"><div class="pet">🐱</div><b>今天想和卷卷聊什么？</b><div class="hint">聊天记录会保存在当前设备</div><div class="agent-suggestions"><button data-prompt="帮我整理一下今天要做的事情">帮我整理一下今天要做的事情</button><button data-prompt="我这周有哪些安排需要注意？">我这周有哪些安排需要注意？</button><button data-prompt="帮我记住一个重要习惯">帮我记住一个重要习惯</button></div></div>`;
       box.querySelectorAll('[data-prompt]').forEach(b=>b.onclick=()=>{ $('#agent-input').value=b.dataset.prompt; this.resizeAgentInput(); $('#agent-input').focus(); });
     }else{
-      const thinkingRole=this.agentRole(this.agentThinkingRole);
-      box.innerHTML=messages.map(message=>this.agentMessageHtml(message)).join('')+(this.agentThinking?`<div class="agent-message"><div class="agent-avatar">${thinkingRole.icon}</div><div class="agent-bubble agent-thinking">${thinkingRole.name}正在理解<i></i><i></i><i></i></div></div>`:'');
+      box.innerHTML=messages.map(message=>this.agentMessageHtml(message)).join('')+(this.agentThinking?`<div class="agent-message"><div class="agent-avatar">🐱</div><div class="agent-bubble agent-thinking">正在理解<i></i><i></i><i></i></div></div>`:'');
       box.querySelectorAll('[data-assistant-select]').forEach(b=>b.onchange=()=>{this.assistantSelected??=new Set();b.checked?this.assistantSelected.add(b.dataset.assistantSelect):this.assistantSelected.delete(b.dataset.assistantSelect);this.renderAssistantSelection();});
       box.querySelectorAll('[data-assistant-talk]').forEach(b=>b.onclick=()=>this.reconnectAssistantCard(b.dataset.assistantTalk));
       box.querySelectorAll('[data-assistant-edit]').forEach(b=>b.onclick=async()=>{const m=S.messages.find(m=>m.id===b.dataset.assistantEdit);try{await this.reviseAssistantCard(m,{});this.renderAgent();const next=this.assistantCurrentCards().find(x=>x.meta.workflow.cardId===m.meta.workflow.cardId);this.openAgentActionEditor(next.id);}catch(e){toast(e.message);}});
@@ -3056,9 +3055,8 @@ const UI = {
 
   agentMessageHtml(message){
     const time=new Date(message.createdAt).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
-    if(message.role==='user') return `<div class="agent-message user"><div class="agent-bubble">${esc(message.content)}<div class="agent-message-time" style="color:rgba(255,255,255,.72)">${time}</div></div></div>`;
+    if(message.role==='user') return `<div class="agent-message user"><div class="agent-bubble">${esc(message.content)}</div><div class="agent-message-time">${time}</div></div>`;
     const meta=message.meta||{};
-    const role=this.agentRole('auto');
     let extra='';
     if(Array.isArray(meta.planningEvidence)&&meta.planningEvidence.length){
       extra+=`<div class="agentplanbasis"><div class="agentplanhead">本次实际用到的信息</div>${meta.planningEvidence.map(line=>`<div class="agentplanline">${esc(line)}</div>`).join('')}</div>`;
@@ -3091,7 +3089,7 @@ const UI = {
     if(meta.planningMemory&&meta.planningMemoryStatus==='saved') extra+=`<div class="agentplanbasis"><div class="agentplanline">已记住这条规划信息。</div></div>`;
     const errorClass=message.type==='error'?' agent-error':'';
     if(message.type==='error') extra+=`<div class="agent-card-actions"><button class="secondary" data-agent-retry="${esc(message.id)}">重新尝试</button></div>`;
-    return `<div class="agent-message"><div class="agent-avatar">${role.icon}</div><div class="agent-bubble${errorClass}"><div class="agent-role-badge">${role.icon} ${esc(role.name)}</div>${esc(message.content)}${extra}<div class="agent-message-time">${time}</div></div></div>`;
+    return `<div class="agent-message"><div class="agent-avatar">${this.agentRole('auto').icon}</div><div class="agent-bubble${errorClass}">${esc(message.content)}${extra}</div><div class="agent-message-time">${time}</div></div>`;
   },
 
   agentActionTitle(kind){
