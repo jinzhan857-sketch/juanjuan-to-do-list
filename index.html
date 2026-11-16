@@ -5121,8 +5121,8 @@ const UI = {
     box.querySelectorAll('[data-memory-import-input]').forEach(input=>input.oninput=()=>{const card=cards.find(item=>item.id===input.dataset.memoryImportInput);if(card)card.content=input.value.slice(0,4000);});
     box.querySelectorAll('[data-memory-import-category]').forEach(select=>select.onchange=()=>{const card=cards.find(item=>item.id===select.dataset.memoryImportCategory);if(card)card.category=select.value;});
     box.querySelectorAll('[data-memory-import-delete]').forEach(button=>button.onclick=()=>{void this.commitMemoryImport([],(this.memoryImportCards||[]).filter(card=>card.id!==button.dataset.memoryImportDelete)).catch(error=>toast('删除未保存：'+error.message));});
-    box.querySelectorAll('[data-memory-import-save]').forEach(button=>button.onclick=()=>this.saveMemoryImportCard(button.dataset.memoryImportSave));
-    box.querySelector('[data-memory-save-all]').onclick=()=>this.saveAllMemoryImportCards();
+    box.querySelectorAll('[data-memory-import-save]').forEach(button=>button.onclick=()=>this.saveMemoryImportCard(button.dataset.memoryImportSave).catch(error=>toast('保存未成功：'+error.message)));
+    box.querySelector('[data-memory-save-all]').onclick=()=>this.saveAllMemoryImportCards().catch(error=>toast('保存未成功：'+error.message));
   },
 
   async saveMemoryImportCard(id){

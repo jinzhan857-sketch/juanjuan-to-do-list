@@ -1,5 +1,9 @@
 # 测试与验收
 
+V2.7新增 `scripts/v27-cloud.test.cjs`、`scripts/v27-budget.test.cjs`，已并入统一检查，覆盖云端边界、资料、长回复、记忆导入与首次初始化。真实Redis专项为 `node scripts/v27-redis-check.cjs --live`，只操作唯一合成前缀并清理自己创建的键，不调用模型。真实网页入口为 `node scripts/v27-browser.cjs --live`，4297来源使用专用合成库和本轮累计100次、1元账本，模型、Search、Fetch、失败及重试分别计账。不得清账本或另加默认预算。
+
+原A8/B8题目与断言沿用；`scripts/assistant-browser-results.cjs`按各题完成确认时的实际数据库核对编号、范围、无关资料与kv。明确复测可在独立合成库使用最新同题对话，原失败不删除；断言不放宽。页面、费用、原失败与最终来源见[V2.7验收记录](../audit/2026-11-16/v27-cloud-preparation.md)。试用站验收不能代替正式Pages发布后的验证。
+
 快速上线必要修复专项为 `node --test scripts/quick-release.test.cjs`，已并入统一检查。原生存储入口为 `node scripts/quick-release-browser.cjs`，4261来源仅使用每次页面独立的合成库。原案例、失败与证据层次见[修复交付](../audit/2026-11-16/quick-release-fixes.md)。
 
 PR #129复查另增加20条实际入口回归，统一检查1560条通过。草稿、重试、图片并发、来源续问和预算修复，以及隔离网页与手机待验边界，见[复查报告](../audit/2026-11-16/pr129-review.md)。

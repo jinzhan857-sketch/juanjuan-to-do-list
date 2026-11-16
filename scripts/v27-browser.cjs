@@ -9,14 +9,14 @@ const directFetch=window.fetch.bind(window);
 window.fetch=async(url,options={})=>{
  if(String(url)!==${JSON.stringify(endpoint)}||options.method!=='POST')return directFetch(url,options);
  const payload=JSON.parse(options.body);if(payload.mode==='cancel')return directFetch(url,options);
- const reserved=await directFetch('/__reserve',{method:'POST',body:JSON.stringify(payload)});if(!reserved.ok)throw Error('本轮真实测试预算已到上限');const receipt=await reserved.json();
+ const reserved=await directFetch('/__reserve',{method:'POST',body:JSON.stringify(payload)});if(!reserved.ok){const failure=await reserved.json();throw Error(failure.error||'本轮真实测试预算已到上限');}const receipt=await reserved.json();
  const response=await directFetch(url,options);const result=await response.clone().json();
  if(response.ok&&result.provider_usage)await directFetch('/__result',{method:'POST',body:JSON.stringify({id:receipt.id,usage:result.provider_usage})});
  return response;
 };
 App.init().then(async()=>{UI.switchPage('agent');if(!UI.currentAgentChat())await UI.createAgentChat(false);const panel=document.createElement('div');panel.style='position:fixed;right:8px;top:58px;z-index:20000;padding:6px;background:var(--card);font-size:12px';panel.innerHTML='<button id="v27-audit">核对实际记录</button><span id="v27-audit-result"></span>';document.body.append(panel);document.getElementById('v27-audit').onclick=async()=>{const snapshot=await DB.snapshot([...DATA_STORES,'kv']);await directFetch('/__evidence',{method:'POST',body:JSON.stringify(snapshot)});document.getElementById('v27-audit-result').textContent='已记录 '+snapshot.tasks.length+'日程 '+snapshot.todos.length+'待办';};});`;
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace("indexedDB.open('juanjuan-pet', 3)","indexedDB.open('juanjuan-v27-synthetic', 3)").replace('\nApp.init();','\n'+bootstrap);
-const firstUseHtml=html.replace("indexedDB.open('juanjuan-v27-synthetic', 3)","indexedDB.open('juanjuan-v27-onboarding', 3)").replace("App.init().then(async()=>{UI.switchPage('agent');","App.init().then(async()=>{UI.switchPage('home');");
+const firstUseHtml=html.replace("indexedDB.open('juanjuan-v27-synthetic', 3)","indexedDB.open('juanjuan-v27-onboarding-final', 3)").replace("App.init().then(async()=>{UI.switchPage('agent');","App.init().then(async()=>{UI.switchPage('home');");
 const retestHtml=html.replace("indexedDB.open('juanjuan-v27-synthetic', 3)","indexedDB.open('juanjuan-v27-retest', 3)");
 const assets={'/quick-score.mjs':'src/rules/quick-score.mjs','/assistant-workflow.js':'src/assistant/workflow.js','/assistant-materials.js':'src/assistant/materials.js'};
 const server=http.createServer(async(req,res)=>{
@@ -33,7 +33,7 @@ const server=http.createServer(async(req,res)=>{
    if(req.url==='/__evidence'){events.push({kind:'database',at:new Date().toISOString(),snapshot:body});persist();res.end('{}');return;}
    if(req.url==='/__reserve')res.end(JSON.stringify({id:budget.reserve(body)}));
    else {budget.finish(body.id,body.usage);events.push({kind:'usage',at:new Date().toISOString(),usage:body.usage});persist();res.end('{}');}
-  }catch{res.writeHead(409).end('{}');}return;
+  }catch(error){res.writeHead(409).end(JSON.stringify({error:error.message==='Live synthetic input exceeds budget boundary'?'合成测试输入超过安全边界，本次未调用云端AI':'本轮真实测试预算已到上限'}));}return;
  }
  res.writeHead(404).end();
 });
