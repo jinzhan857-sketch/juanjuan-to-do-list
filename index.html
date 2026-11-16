@@ -501,7 +501,7 @@ body.agent-page-active{min-height:0}
 body.agent-keyboard-open{background-image:none}
 body.agent-keyboard-open #page-agent.active{padding-bottom:calc(10px + env(safe-area-inset-bottom));overflow-y:auto}
 body.agent-keyboard-open .agent-composer{bottom:calc(10px + env(safe-area-inset-bottom));box-shadow:none;flex-shrink:0}
-#agent-messages{flex:1;min-height:0;overflow-y:auto;padding:5px 2px 96px;scrollbar-width:none}
+#agent-messages{flex:1;min-height:0;overflow-y:auto;padding:5px 2px 81px;scrollbar-width:none}
 #agent-messages::-webkit-scrollbar{display:none}
 .agent-empty{text-align:center;padding:55px 22px 20px;color:var(--text2)}
 .agent-empty .pet{font-size:46px}.agent-empty b{display:block;color:var(--text);margin:8px 0 4px}
@@ -512,7 +512,7 @@ body.agent-keyboard-open .agent-composer{bottom:calc(10px + env(safe-area-inset-
 .agent-bubble{max-width:92%;border-radius:16px 16px 16px 5px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);padding:10px 12px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word;user-select:text}
 .agent-message.user .agent-bubble{background:var(--pink);color:#fff;border-color:transparent;border-radius:16px 16px 5px 16px;box-shadow:none}
 .agent-message-time{font-size:9px;color:var(--text3);margin-top:4px;text-align:right}
-.agent-composer{position:absolute;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:2;display:flex;align-items:flex-end;gap:8px;padding:8px 10px 8px 14px;background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:none;margin-bottom:4px}
+.agent-composer{position:absolute;left:16px;right:16px;bottom:calc(81px + env(safe-area-inset-bottom));z-index:2;display:flex;align-items:flex-end;gap:8px;padding:8px 10px 8px 14px;background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:none;margin-bottom:4px}
 .agent-composer textarea{flex:1;min-width:0;width:auto;border:none;background:transparent;padding:8px 0;resize:none;min-height:38px;max-height:100px;line-height:1.45}
 .agent-send{width:38px;height:38px;border-radius:50%;background:var(--pink);color:#fff;font-size:18px;flex:0 0 auto}
 .agent-send.is-stop{border-radius:11px;background:var(--red);font-size:15px}
@@ -3420,7 +3420,7 @@ const UI = {
 
   resizeAgentInput(){
     const input=$('#agent-input'); input.style.height='auto'; input.style.height=Math.min(100,input.scrollHeight)+'px';
-    $('#agent-messages').style.paddingBottom=(Math.min(100,input.scrollHeight)+56)+'px';
+    $('#agent-messages').style.paddingBottom=(Math.min(100,input.scrollHeight)+41)+'px';
   },
 
   setAgentKeyboard(open){
