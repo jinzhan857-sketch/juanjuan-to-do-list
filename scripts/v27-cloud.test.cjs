@@ -157,6 +157,12 @@ test('custom memory proposals share validation and retain complete content',asyn
  a.ctx.memoryReply.cards[0].content='长'.repeat(1001);assert.throws(()=>a.run('AIService.normalizeAgent(memoryReply)'),/长度不完整/);
 });
 
+test('enabled memory includes work and interests in a separate chat and remains absent when disabled',async t=>{
+ const a=await fixture(t);a.run("S.messages=[];S.memories=[{id:'work',category:'学业与工作',content:'我学习材料工程。'},{id:'interest',category:'兴趣与交流偏好',content:'我喜欢摄影，回答先说重点。'}];S.pet.memoryEnabled=true");
+ const context=a.json("UI.agentContext('new-chat','我的专业和兴趣是什么')");assert.deepEqual(context.memories.map(m=>m.id),['work','interest']);
+ a.run('S.pet.memoryEnabled=false');assert.deepEqual(a.json("UI.agentContext('new-chat','我的专业和兴趣是什么').memories"),[]);
+});
+
 test('first use atomically seeds two ordinary schedules and three todos exactly once',async t=>{
  const a=await fixture(t);await a.run("Promise.all([...DATA_STORES,'kv'].map(store=>DB.clear(store)))");
  const results=await a.run('Promise.all([App.initializeFirstUse(),App.initializeFirstUse()])');assert.equal(results.filter(Boolean).length,1);

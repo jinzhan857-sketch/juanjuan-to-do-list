@@ -729,7 +729,7 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
   </div>
 </div>
 
-<div class="page" id="page-memory"><div class="sec-title">🧠 个人统计与记忆</div><div class="card"><div class="form-label">允许助手使用个人记忆 <label class="switch"><input id="memory-page-toggle" type="checkbox"><span></span></label></div><div class="hint">仅在你开启后，助手才会参考相关内容。</div></div><div class="card"><div class="form-label">新增或导入个人记忆</div><textarea id="memory-page-input" rows="10" maxlength="4000" placeholder="可粘贴个人资料或其他 AI 的记忆总结，卷卷会先整理为可确认的记忆卡。"></textarea><button class="btn sm" id="btn-memory-page-preview" style="width:100%;margin-top:10px">整理导入预览</button></div><div id="memory-page-preview"></div><div class="sec-title">建议保存</div><div id="memory-page-suggestions"></div><div class="sec-title">已保存的个人记忆</div><div id="memory-page-list"></div></div>
+<div class="page" id="page-memory"><div class="sec-title">🧠 个人统计与记忆</div><div class="card"><div class="form-label">允许助手使用个人记忆 <label class="switch"><input id="memory-page-toggle" type="checkbox"><span></span></label></div><div class="hint">仅在你开启后，助手才会参考相关内容。</div></div><div id="memory-page-preview"></div><div class="card"><div class="form-label">新增或导入个人记忆</div><textarea id="memory-page-input" rows="10" maxlength="4000" placeholder="可粘贴个人资料或其他 AI 的记忆总结，卷卷会先整理为可确认的记忆卡。"></textarea><button class="btn sm" id="btn-memory-page-preview" style="width:100%;margin-top:10px">整理导入预览</button></div><div class="sec-title">建议保存</div><div id="memory-page-suggestions"></div><div class="sec-title">已保存的个人记忆</div><div id="memory-page-list"></div></div>
 
 <!-- ==================== 卷卷信息页 ==================== -->
 <div class="page" id="page-pet">
@@ -3239,7 +3239,7 @@ const UI = {
 
   planningMemoryItems(question=''){
     const travel=/旅行|酒店|景点|出行|机票|火车/.test(question);
-    const categories=travel?['旅行偏好','地点信息','固定安排','限制与提醒']:['个人基本信息','固定安排','作息习惯','事务偏好','地点信息','目标和优先事项','限制与提醒'];
+    const categories=travel?['旅行偏好','地点信息','固定安排','限制与提醒']:['个人基本信息','固定安排','作息习惯','事务偏好','地点信息','目标和优先事项','限制与提醒','学业与工作','兴趣与交流偏好'];
     const keywords=(String(question).match(/[\u4e00-\u9fa5]{2,}/g)||[]).filter(word=>!['帮我','一下','一个','怎么','什么','可以','需要','规划','安排'].includes(word));
     let size=0;
     return S.memories.slice().sort((left,right)=>{
@@ -4041,7 +4041,7 @@ const UI = {
   renderHomeTasks(){
     const box = $('#home-tasks');
     const list = S.tasks.filter(t=>taskOnDay(t,S.homeDate))
-      .sort((a,b)=> (a.status?1:0)-(b.status?1:0) || taskDeadline(a)-taskDeadline(b));
+      .sort((a,b)=> (a.status?1:0)-(b.status?1:0) || taskDeadline(a)-taskDeadline(b) || a.createdAt-b.createdAt);
     if(!list.length){
       box.innerHTML = `<div class="empty"><div class="big">🐾</div>这一天还没有任务哦<br>点击右下角 ＋ 创建，提前规划积分更高！</div>`;
       return;
@@ -5045,7 +5045,7 @@ const UI = {
   },
   async openMemoryImportGuide(){
     const chat=this.currentAgentChat()||await this.createAgentChat(false),now=Date.now();
-    await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:'memory_guide',content:'让卷卷更懂你\n\n去你常用的 ChatGPT、豆包等 AI，发送下面这段整理提示词，再把得到的总结粘贴回这个聊天框。卷卷会分类整理，等你核对后再保存。\n\n'+this.memoryTransferPrompt()+'\n\n粘贴时加一句“请帮我整理成个人记忆”。保存后，可在“我的，个人统计与记忆”中管理，并选择是否允许助手使用。',createdAt:now,meta:{}});
+    await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:'memory_guide',content:'让卷卷更懂你\n\n去你常用的 ChatGPT、豆包等 AI，发送下面这段整理提示词，再把得到的总结粘贴回这个聊天框。卷卷会分类整理，等你核对后再保存。\n\n'+this.memoryTransferPrompt()+'\n\n粘贴时加一句“请帮我整理成个人记忆”。保存后，可在“我的”里的“个人统计与记忆”中管理，并选择是否允许助手使用。',createdAt:now,meta:{}});
     chat.title='带入其他 AI 记忆';chat.updatedAt=now;await saveChat(chat);this.renderAgent();
   },
   async reviewChatMemories(id){
@@ -5117,7 +5117,7 @@ const UI = {
     const box=$('#memory-page-preview'); if(!box)return;
     const cards=this.memoryImportCards||[];
     if(!cards.length){box.innerHTML='';return;}
-    box.innerHTML=`<div class="memory-import-head"><b>卷卷整理出的记忆卡片</b><button class="btn ghost sm" data-memory-save-all>全部确认保存</button></div><div class="hint" style="margin:0 2px 10px">已合并重复内容并过滤指令文本。请逐张核对、修改资料框或删除后保存。</div>${cards.map(card=>`<div class="memory-import-card" data-memory-import-card="${esc(card.id)}"><div class="form-label"><select data-memory-import-category="${esc(card.id)}">${this.memoryGroupOptions(card.category)}</select><span class="opt">待确认</span></div><textarea rows="4" maxlength="4000" data-memory-import-input="${esc(card.id)}">${esc(card.content)}</textarea><div class="row" style="margin-top:8px"><button class="btn sm" data-memory-import-save="${esc(card.id)}">确认保存</button><button class="btn ghost sm" data-memory-import-delete="${esc(card.id)}">删除</button></div></div>`).join('')}`;
+    box.innerHTML=`<div class="memory-import-head"><b>卷卷整理出的记忆卡片</b><button class="btn ghost sm" data-memory-save-all>全部确认保存</button></div><div class="hint" style="margin:0 2px 10px">请逐张核对、修改分类或删除后保存，重复内容会在保存时合并。</div>${cards.map(card=>`<div class="memory-import-card" data-memory-import-card="${esc(card.id)}"><div class="form-label"><select data-memory-import-category="${esc(card.id)}">${this.memoryGroupOptions(card.category)}</select><span class="opt">待确认</span></div><textarea rows="4" maxlength="4000" data-memory-import-input="${esc(card.id)}">${esc(card.content)}</textarea><div class="row" style="margin-top:8px"><button class="btn sm" data-memory-import-save="${esc(card.id)}">确认保存</button><button class="btn ghost sm" data-memory-import-delete="${esc(card.id)}">删除</button></div></div>`).join('')}`;
     box.querySelectorAll('[data-memory-import-input]').forEach(input=>input.oninput=()=>{const card=cards.find(item=>item.id===input.dataset.memoryImportInput);if(card)card.content=input.value.slice(0,4000);});
     box.querySelectorAll('[data-memory-import-category]').forEach(select=>select.onchange=()=>{const card=cards.find(item=>item.id===select.dataset.memoryImportCategory);if(card)card.category=select.value;});
     box.querySelectorAll('[data-memory-import-delete]').forEach(button=>button.onclick=()=>{void this.commitMemoryImport([],(this.memoryImportCards||[]).filter(card=>card.id!==button.dataset.memoryImportDelete)).catch(error=>toast('删除未保存：'+error.message));});
@@ -5321,8 +5321,9 @@ const App = {
     const now=Date.now(),date=todayStr(),common={createdAt:now,note:'',category:'日常生活',baseScore:1,aiSource:'local',aiReason:'首次使用引导',aiAdvice:'',links:[],images:[]};
     const schedule=(title,note,time={})=>({...common,id:uid(),title,note,execDate:date,timeType:'allday',slot:null,startTime:null,endTime:null,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,isBackfill:false,...time});
     const todo=title=>({...common,id:uid(),title,done:false,finalScore:0,completedAt:null,sourceTaskId:null});
-    const tasks=[schedule('欢迎使用卷卷！','你的AI日程助手，和卷卷一起，把生活安排明白'),schedule('今晚早睡哦！','睡不着可以找卷卷聊天呀！',{timeType:'exact',startTime:'23:00',endTime:'00:00',endDayOffset:1,baseScore:2})];
+    const tasks=[schedule('欢迎使用卷卷！','你的AI日程助手，和卷卷一起，把生活安排明白'),schedule('今晚早睡哦！','睡不着可以找卷卷聊天呀！',{timeType:'exact',startTime:'23:00',endTime:'00:00',endDayOffset:1,baseScore:2,createdAt:now+1})];
     const todos=[todo('去试试卷卷助手，对话创建任务吧！'),todo('去其他AI取得个人基础、学业工作、日常休闲、聊天话题的信息，再发给卷卷收录到个人记忆，让卷卷更懂你吧。'),todo('完成自己设定的任务，能给卷卷小猫食物哦！')];
+    todos.forEach((t,i)=>{t.createdAt=now-i;});
     tasks.forEach(t=>validateStoredRecord(t,true));todos.forEach(t=>validateStoredRecord(t,false));
     return DB.initializeEmptyProfile([...tasks.map(value=>({store:'tasks',value})),...todos.map(value=>({store:'todos',value})),{store:'kv',key:'pet',value:defaultPet()}]);
   },
