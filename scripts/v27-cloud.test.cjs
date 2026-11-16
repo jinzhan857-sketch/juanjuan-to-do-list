@@ -171,6 +171,14 @@ test('first use atomically seeds two ordinary schedules and three todos exactly 
  await a.run("DB.clear('tasks');DB.clear('todos')");assert.equal(await a.run('App.initializeFirstUse()'),false);assert.equal((await a.snapshot()).tasks.length,0);assert.equal((await a.snapshot()).todos.length,0);
 });
 
+test('first use defaults to P and fixed blue even when the system is dark, without resetting later choices',async t=>{
+ const a=await fixture(t);await a.run("Promise.all([...DATA_STORES,'kv'].map(store=>DB.clear(store)))");
+ a.run("App.themeMedia={matches:true}");assert.equal(await a.run('App.initializeFirstUse()'),true);
+ assert.equal((await a.run("DB.get('kv','pet')")).personType,'P');assert.equal(a.run('App.followsSystem()'),false);assert.equal(a.run('App.activeAppearance()'),'blue');
+ assert.equal(a.run("localStorage.getItem('juanjuan_light_theme')"),'blue');
+ a.run("localStorage.setItem('juanjuan_follow_system','1');localStorage.setItem('juanjuan_light_theme','warm');localStorage.setItem('juanjuan_fixed_theme','black')");
+ assert.equal(await a.run('App.initializeFirstUse()'),false);assert.equal(a.run('App.followsSystem()'),true);assert.equal(a.run("localStorage.getItem('juanjuan_light_theme')"),'warm');assert.equal(a.run("localStorage.getItem('juanjuan_fixed_theme')"),'black');
+});
 test('any existing use or restored profile prevents onboarding from adding records',async t=>{
  const a=await fixture(t);const before=await a.snapshot();assert.equal(await a.run('App.initializeFirstUse()'),false);assert.deepEqual(await a.snapshot(),before);
  await a.run("DB.clear('kv');DB.put('chats',{id:'used',title:'已有聊天'})");assert.equal(await a.run('App.initializeFirstUse()'),false);assert.equal((await a.snapshot()).tasks.length,0);

@@ -18,12 +18,14 @@ App.init().then(async()=>{UI.switchPage('agent');if(!UI.currentAgentChat())await
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace("indexedDB.open('juanjuan-pet', 3)","indexedDB.open('juanjuan-v27-synthetic', 3)").replace('\nApp.init();','\n'+bootstrap);
 const firstUseHtml=html.replace("indexedDB.open('juanjuan-v27-synthetic', 3)","indexedDB.open('juanjuan-v27-onboarding-final-v2', 3)").replace("App.init().then(async()=>{UI.switchPage('agent');","App.init().then(async()=>{UI.switchPage('home');");
 const retestHtml=html.replace("indexedDB.open('juanjuan-v27-synthetic', 3)","indexedDB.open('juanjuan-v27-retest', 3)");
+const firstLookHtml=firstUseHtml.replace('juanjuan-v27-onboarding-final-v2','juanjuan-v27-first-look-20261117').replaceAll('juanjuan_','juanjuan_v27_first_');
 const assets={'/quick-score.mjs':'src/rules/quick-score.mjs','/assistant-workflow.js':'src/assistant/workflow.js','/assistant-materials.js':'src/assistant/materials.js'};
 const server=http.createServer(async(req,res)=>{
  res.setHeader('Cache-Control','no-store');const authority='127.0.0.1:4297';
  if(req.headers.host!==authority||req.headers.origin&&req.headers.origin!=='http://'+authority){res.writeHead(403).end();return;}
  if(req.method==='GET'&&req.url==='/'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(html);return;}
  if(req.method==='GET'&&req.url==='/first-use'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(firstUseHtml);return;}
+ if(req.method==='GET'&&req.url==='/first-look'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(firstLookHtml);return;}
  if(req.method==='GET'&&req.url==='/retest'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(retestHtml);return;}
  if(req.method==='GET'&&assets[req.url]){res.setHeader('Content-Type','text/javascript');res.end(fs.readFileSync(path.join(root,assets[req.url])));return;}
  if(req.method==='GET'&&req.url==='/__budget'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(budget.totals()));return;}

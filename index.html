@@ -153,12 +153,13 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 /* ---------- 顶部信息条 ---------- */
 #home-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
 #home-stats .stat{
-  min-width:0;min-height:68px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--card);border-radius:var(--r-md);padding:10px 6px;text-align:center;box-shadow:var(--shadow);
+  min-width:0;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border-radius:var(--r-md);padding:8px 6px;text-align:center;box-shadow:var(--shadow);
 }
-#home-stats .num{max-width:100%;font-size:22px;line-height:1.15;font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:color-mix(in srgb,var(--pink) 55%,var(--text))}
+#home-stats .num{min-width:0;font-size:18px;line-height:1.15;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;color:color-mix(in srgb,var(--pink) 55%,var(--text))}
 #home-stats .stat:nth-child(2) .num{color:color-mix(in srgb,var(--mint) 55%,var(--text))}
 #home-stats .stat:nth-child(3) .num{color:color-mix(in srgb,var(--peach) 55%,var(--text))}
-#home-stats .lbl{font-size:12px;line-height:1.4;color:color-mix(in srgb,var(--text2) 65%,var(--text))}
+#home-stats .lbl{flex:none;font-size:12px;line-height:1.4;white-space:nowrap;color:color-mix(in srgb,var(--text2) 65%,var(--text))}
+@media(max-width:360px){#home-stats{gap:6px}#home-stats .stat{gap:4px;padding-inline:2px}#home-stats .lbl{font-size:11px}#home-stats .num{font-size:14px}}
 
 /* ---------- 宠物区 ---------- */
 #pet-card{position:relative;overflow:hidden;background:linear-gradient(165deg,var(--card) 55%,var(--pink-soft));padding:14px 14px 16px;border:1.5px solid var(--line)}
@@ -580,9 +581,9 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
 <!-- ==================== 首页 ==================== -->
 <div class="page active" id="page-home">
   <div id="home-stats">
-    <div class="stat"><div class="num" id="st-today-score">0</div><div class="lbl">今日积分</div></div>
-    <div class="stat"><div class="num" id="st-today-done">0</div><div class="lbl">今日完成</div></div>
-    <button class="stat" id="st-notices" type="button"><span class="num" id="st-unread">0</span><span class="lbl">未读提醒</span></button>
+    <div class="stat"><span class="lbl">今日积分</span><span class="num" id="st-today-score">0</span></div>
+    <div class="stat"><span class="lbl">今日完成</span><span class="num" id="st-today-done">0</span></div>
+    <button class="stat" id="st-notices" type="button"><span class="lbl">未读提醒</span><span class="num" id="st-unread">0</span></button>
   </div>
 
 
@@ -874,12 +875,13 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
 <style>
 #llm-hosted-fields .hint,#llm-hosted-fields .form-label,#llm-hosted-fields .opt{color:color-mix(in srgb,var(--text) 85%,var(--card))}
 #btn-experience-redeem{background:var(--text);color:var(--card)}
+#btn-experience-redeem,#btn-experience-copy-device{height:34px;box-sizing:border-box;padding-block:0}
 #btn-experience-remove.hidden{display:none}
 #hosted-quota-note{margin:0;line-height:1.8}
 .llm-section-divider{border:0;border-top:1px solid var(--line);margin:16px 0}
-.experience-purchase{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
-.experience-purchase p{margin:6px 0;line-height:1.8;font-size:12px;color:var(--text)}
-.experience-binding-row{display:flex;align-items:center;gap:12px;margin-top:16px}
+.experience-purchase{margin-top:12px}
+.experience-purchase p{margin:0;line-height:1.8;font-size:12px;color:var(--text)}
+.experience-binding-row{display:flex;align-items:center;gap:12px}
 .experience-binding-row p{flex:1;min-width:0;margin:0;font-size:12px;line-height:1.8;color:var(--text)}
 .experience-binding-row .btn{flex:none;white-space:nowrap;padding:8px 12px}
 </style>
@@ -898,12 +900,12 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
       <div class="form-block">
         <label class="form-label" for="experience-code">专属体验卡 <span class="opt">选填</span></label>
         <input id="experience-code" type="password" maxlength="60" autocomplete="off" spellcheck="false" aria-describedby="experience-help experience-status" placeholder="粘贴提供者发给你的兑换码">
-        <div class="hint" id="experience-help" style="margin-top:8px">首次兑换后绑定当前浏览器，按累计余额使用，不占公共额度，也不受公共日限额和周限额影响。</div>
       </div>
       <div class="row" style="gap:9px"><button class="btn sm grow" id="btn-experience-redeem">兑换体验卡</button><button class="btn ghost sm hidden" id="btn-experience-remove">切回公共额度</button></div>
-      <section class="experience-purchase" aria-label="体验卡购买说明">
-        <p>体验卡购买说明：100次1元，1000次5元。具体价格与优惠咨询开发者微信： jinzhanjz</p>
+      <section class="experience-purchase" aria-label="体验卡说明">
+        <p id="experience-help">体验卡说明：价格为每100次1元，每1000次5元。具体价格与优惠咨询开发者微信：jinzhanjz。首次兑换后绑定当前浏览器，按累计余额使用，不占用公共日额度与周额度。</p>
       </section>
+      <hr class="llm-section-divider">
       <div class="experience-binding-row">
         <p>如有问题，点击右侧获取编码后添加开发者微信咨询</p>
         <button class="btn ghost sm" id="btn-experience-copy-device">复制设备编号</button>
@@ -5363,7 +5365,11 @@ const App = {
     const todos=[todo('去试试卷卷助手，对话创建任务吧！'),todo('去其他AI取得个人基础、学业工作、日常休闲、聊天话题的信息，再发给卷卷收录到个人记忆，让卷卷更懂你吧。'),todo('完成自己设定的任务，能给卷卷小猫食物哦！')];
     todos.forEach((t,i)=>{t.createdAt=now-i;});
     tasks.forEach(t=>validateStoredRecord(t,true));todos.forEach(t=>validateStoredRecord(t,false));
-    return DB.initializeEmptyProfile([...tasks.map(value=>({store:'tasks',value})),...todos.map(value=>({store:'todos',value})),{store:'kv',key:'pet',value:defaultPet()}]);
+    const created=await DB.initializeEmptyProfile([...tasks.map(value=>({store:'tasks',value})),...todos.map(value=>({store:'todos',value})),{store:'kv',key:'pet',value:defaultPet()}]);
+    if(created)for(const [key,value] of [['juanjuan_follow_system','0'],['juanjuan_light_theme','blue'],['juanjuan_fixed_theme','blue']]){
+      if(localStorage.getItem(key)===null)localStorage.setItem(key,value);
+    }
+    return created;
   },
   async init(){
     this.themeMedia = matchMedia('(prefers-color-scheme: dark)');
@@ -5372,6 +5378,7 @@ const App = {
     UI.loadNoticeReads();
     await DB.open();
     await this.initializeFirstUse();
+    this.syncAppearance();
     S.tasks = await DB.all('tasks');
     S.todos = await DB.all('todos');
     S.chats = await DB.all('chats');
