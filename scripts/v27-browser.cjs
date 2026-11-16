@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {openBudget}=require('./helpers/v27-budget.cjs');
 if(!process.argv.includes('--live'))throw Error('Use --live for the budgeted real cloud browser');
-const events=[];const persist=()=>{fs.mkdirSync('.reports/v27',{recursive:true});fs.writeFileSync('.reports/v27/browser-events.json',JSON.stringify({mode:'real-cloud-visible-browser',events},null,2));};
+const events=fs.existsSync('.reports/v27/browser-events.json')?JSON.parse(fs.readFileSync('.reports/v27/browser-events.json','utf8')).events:[];const persist=()=>{fs.mkdirSync('.reports/v27',{recursive:true});fs.writeFileSync('.reports/v27/browser-events.json',JSON.stringify({mode:'real-cloud-visible-browser',events},null,2));};
 const root=path.join(__dirname,'..'),budget=openBudget(),endpoint='https://juanjuan-v27-ai.vercel.app/api/ai';
 const bootstrap=`
 const directFetch=window.fetch.bind(window);

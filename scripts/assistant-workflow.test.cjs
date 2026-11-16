@@ -81,6 +81,14 @@ test('created repeat-group editing updates original group records',async t=>{
  const a=await fixture(t);await a.apply({type:'workflow',intent:'propose',entries:[{action:{kind:'create_schedule_batch',rule:{title:'反思',date_from:'2026-12-01',date_to:'2026-12-14',weekdays:[2],time_type:'allday',base_score:3}}}]});await a.confirm();const ids=a.json('S.tasks.map(t=>t.id)'),c=a.cards()[0];await a.apply({type:'workflow',intent:'propose',entries:[{card_id:c.card_id,version:1,append_note:'带纸笔'}]});await a.confirm();assert.deepEqual(a.json('S.tasks.map(t=>t.id)'),ids);assert.ok(a.json("S.tasks.every(t=>t.note==='带纸笔')"));
 });
 
+test('referential group notes use the supplied card scope without inventing a title quote',async t=>{
+ const a=await fixture(t);await a.apply({type:'workflow',intent:'propose',entries:[{action:{kind:'create_schedule_batch',rule:{title:'复盘项目',date_from:'2027-01-05',date_to:'2027-01-18',weekdays:[2],time_type:'exact',start_time:'15:00',end_time:'16:00',base_score:5}}}]});await a.confirm();
+ const ids=a.json('S.tasks.map(t=>t.id)'),c=a.cards()[0],text='这组地点都在D楼，补充备注，其他不改。';
+ const input={type:'workflow',intent:'propose',scope:{kind:'title_contains',text:'复盘项目'},entries:[{card_id:c.card_id,version:c.version,append_note:'地点：D楼'}]};
+ const before=JSON.stringify(await a.snapshot());await assert.rejects(a.apply(input,text),/范围关键词不在用户原话中/);assert.equal(JSON.stringify(await a.snapshot()),before);
+ await a.apply({...input,scope:{kind:'all'}},text);await a.confirm();assert.deepEqual(a.json('S.tasks.map(t=>t.id)'),ids);assert.ok(a.json("S.tasks.every(t=>t.note==='地点：D楼'&&t.startTime==='15:00'&&t.endTime==='16:00')"));
+});
+
 test('uniform title selector expands every match and preserves unrelated cards',()=>{
  const context=seven().entries.map((e,i)=>({card_id:'c'+i,version:1,status:'pending',action:e.action}));
  const result=wf.parse({type:'workflow',intent:'propose',scope:{kind:'title_contains',text:'7215'},uniform:{append_note:'地点：B楼'}});

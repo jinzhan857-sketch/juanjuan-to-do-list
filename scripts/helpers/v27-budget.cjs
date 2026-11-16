@@ -13,7 +13,7 @@ function openBudget(directory=path.join(os.homedir(),'.config/juanjuan/v27')){
  const totals=()=>state.entries.reduce((s,e)=>({requests:s.requests+(e.state==='complete'?e.requests:e.maxRequests),microCny:s.microCny+(e.state==='complete'?e.estimatedMicroCny:e.reservedMicroCny)}),{requests:0,microCny:0});
  return {state,totals,reserve(body){
   const bytes=Buffer.byteLength(JSON.stringify(body));
-  if(bytes>12000||body.context?.selected_images?.length)throw Error('Live synthetic input exceeds budget boundary');
+  if(bytes>32768||body.context?.selected_images?.length)throw Error('Live synthetic input exceeds budget boundary');
   // Two model calls, at most two Fetch and one Search. External text is capped at
   // 65536 UTF8 bytes. Model tokens cannot exceed UTF8 bytes plus framing reserve.
   // 2/8 CNY per million tokens and 0.005 CNY/tool are conservative price ceilings.
