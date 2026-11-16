@@ -5271,6 +5271,11 @@ const App = {
     $$('#theme-choices [data-theme]').forEach(b=>b.classList.toggle('on', follow ? selected[b.dataset.mode]===b.dataset.theme : fixed===b.dataset.theme));
   },
 
+  async loadPet(){
+    const stored=await DB.get('kv','pet');
+    S.pet=migratePet(stored||defaultPet());
+    if(stored===undefined)await savePet();
+  },
   async init(){
     this.themeMedia = matchMedia('(prefers-color-scheme: dark)');
     this.themeMedia.addEventListener('change', ()=>this.syncAppearance());
@@ -5282,7 +5287,7 @@ const App = {
     S.messages = await DB.all('messages');
     S.memories = await DB.all('memories');
     S.operations = await DB.all('operations');
-    S.pet = migratePet((await DB.get('kv','pet')) || defaultPet());
+    await this.loadPet();
     S.dayStats = (await DB.get('kv','dayStats')) || {};
     S.customTags = (await DB.get('kv','customTags')) || [];
     S.memoryGroups = UI.normalizeMemoryGroups((await DB.get('kv','memoryGroups')) || []);

@@ -124,3 +124,11 @@ test('custom chat preserves the same full answer',async t=>{
  const a=await fixture(t);a.ctx.longReply='完整内容'.repeat(600)+'结束标记。';
  const result=a.run("AIService.normalizeAgent({type:'chat',reply:longReply},{},'长文')");assert.equal(result.reply,a.ctx.longReply);
 });
+
+test('first profile persists its default pet before editing a newly saved schedule',async t=>{
+ const a=await fixture(t);await a.run("DB.del('kv','pet');App.loadPet()");
+ assert.deepEqual(JSON.parse(JSON.stringify(await a.run("DB.get('kv','pet')"))),a.json('S.pet'));
+ await a.run('UI.onSave()');const id=a.run('S.tasks[0].id');a.ctx.savedId=id;
+ await a.run("settlementExpectation('tasks')");assert.equal(a.run('S.tasks[0].id'),id);
+ const before=a.json('S.pet');await a.run('App.loadPet()');assert.deepEqual(a.json('S.pet'),before);
+});
