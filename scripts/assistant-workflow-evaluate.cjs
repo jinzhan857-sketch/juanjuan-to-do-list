@@ -9,13 +9,15 @@ async function run(){
  const partition=process.argv.find(x=>x.startsWith('--partition='))?.split('=')[1]||'regression';
  const repeat=Number(process.argv.find(x=>x.startsWith('--repeat='))?.split('=')[1]||1);
  const addendum=process.argv.includes('--c-addendum');
- const caseFile=addendum?'docs/audit/2026-11-16/issue115/c-addendum-v1.json':batch?'docs/audit/2026-11-16/issue115/batches-v1.json':'docs/audit/2026-11-16/issue115/cases.json';
+ const dMode=['D','D-regression','D-review'].includes(batch);
+ const caseFile=dMode?'docs/audit/2026-11-16/issue115/'+(batch==='D'?'d-v1.json':batch==='D-review'?'d-review-v1.json':'d-regression-v1.json'):addendum?'docs/audit/2026-11-16/issue115/c-addendum-v1.json':batch?'docs/audit/2026-11-16/issue115/batches-v1.json':'docs/audit/2026-11-16/issue115/cases.json';
  const bytes=fs.readFileSync(caseFile),caseHash=crypto.createHash('sha256').update(bytes).digest('hex');
  const parsedCases=JSON.parse(bytes.toString().replace(/^\uFEFF/,''));
  const scenarios=(batch?parsedCases.cases:parsedCases).filter(s=>addendum?true:batch?s.batch===batch:s.partition===partition);
  if(!scenarios.length||!Number.isInteger(repeat)||repeat>5)throw Error('Unknown fixed suite');
  await withBudget(async({key,source,request,state,save,endpoint})=>{
-  if(batch&&batch!=='A'){const previous=batch==='B'?'A':'B';if(!state.cases.some(r=>r.batch===previous&&r.source===source&&r.passed===40&&r.total===40&&(addendum||r.caseHash===caseHash)))throw Error('Previous batch has not passed on this runtime and frozen set');}
+  if(dMode){if(batch==='D'&&!state.cases.some(r=>r.batch==='D-regression'&&r.source===source&&r.passed===14&&r.total===14))throw Error('D regression gate not passed');}
+  else if(batch&&batch!=='A'){const previous=batch==='B'?'A':'B';if(!state.cases.some(r=>r.batch===previous&&r.source===source&&r.passed===40&&r.total===40&&(addendum||r.caseHash===caseHash)))throw Error('Previous batch has not passed on this runtime and frozen set');}
   const report={source,batch,caseHash,partition,model:'deepseek-flash',pricing_source:'https://api-docs.deepseek.com/quick_start/pricing/',price_cny_per_million:{input:2.4,output:9.6},fx_conservative_cny_per_usd:8,cases:[]};
   const output='.reports/issue115/eval-'+(addendum?'C-addendum':batch||partition)+'-'+Date.now()+'.json';
   try{

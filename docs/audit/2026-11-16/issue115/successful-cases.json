@@ -13754,6 +13754,3692 @@
         "source_report": "eval-C-addendum-1794808778791.json"
       },
       "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D01",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请分析12月2日的设备巡检安排是否合理，先别创建候选。"
+      ],
+      "expected": {
+        "id": "D01",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请分析12月2日的设备巡检安排是否合理，先别创建候选。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "请分析12月2日的设备巡检安排是否合理，先别创建候选。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"当前设备中没有12月2日的设备巡检安排，也没有相关候选卡片，因此暂时无法分析是否合理。你可以先告诉我巡检的具体时间、频次或要求，我再帮你对照分析；按你的要求，先不创建候选。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "当前设备中没有12月2日的设备巡检安排，也没有相关候选卡片，因此暂时无法分析是否合理。你可以先告诉我巡检的具体时间、频次或要求，我再帮你对照分析；按你的要求，先不创建候选。",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D03",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "我不需要保存任何日程，只分析12月6日参加观摩的利弊。"
+      ],
+      "expected": {
+        "id": "D03",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "我不需要保存任何日程，只分析12月6日参加观摩的利弊。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "我不需要保存任何日程，只分析12月6日参加观摩的利弊。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，不保存任何日程。关于12月6日参加观摩的利弊分析：\\n\\n**利：**\\n1. 现场观摩能直观了解流程、标准与细节，比纸面资料更易形成判断。\\n2. 可接触相关人员，便于后续请教与建立联系。\\n3. 提前发现自身准备中的盲点，留出调整时间。\\n4. 12月6日为周日，通常不影响工作日安排。\\n\\n**弊：**\\n1. 占用周末休息时间，可能影响恢复与其他安排。\\n2. 若观摩内容与自身方向关联不强，收益有限。\\n3. 往返通勤与等待可能耗费半天以上。\\n4. 若准备不足，现场只能看热闹，收获打折。\\n\\n**建议：** 先确认观摩的具体内容与自身目标是否匹配；若匹配，提前列出想重点观察的3至5个问题，并确认时间地点与交通，收益会明显提高。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，不保存任何日程。关于12月6日参加观摩的利弊分析：\n\n**利：**\n1. 现场观摩能直观了解流程、标准与细节，比纸面资料更易形成判断。\n2. 可接触相关人员，便于后续请教与建立联系。\n3. 提前发现自身准备中的盲点，留出调整时间。\n4. 12月6日为周日，通常不影响工作日安排。\n\n**弊：**\n1. 占用周末休息时间，可能影响恢复与其他安排。\n2. 若观摩内容与自身方向关联不强，收益有限。\n3. 往返通勤与等待可能耗费半天以上。\n4. 若准备不足，现场只能看热闹，收获打折。\n\n**建议：** 先确认观摩的具体内容与自身目标是否匹配；若匹配，提前列出想重点观察的3至5个问题，并确认时间地点与交通，收益会明显提高。",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D05",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请仅讨论12月10日的问卷审查，不生成事务候选。"
+      ],
+      "expected": {
+        "id": "D05",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请仅讨论12月10日的问卷审查，不生成事务候选。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "请仅讨论12月10日的问卷审查，不生成事务候选。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，仅讨论12月10日的问卷审查，不生成任何事务候选。你想讨论审查范围、流程，还是时间安排？\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，仅讨论12月10日的问卷审查，不生成任何事务候选。你想讨论审查范围、流程，还是时间安排？",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D07",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "12月14日讨论会先只分析，不要生成候选卡。"
+      ],
+      "expected": {
+        "id": "D07",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "12月14日讨论会先只分析，不要生成候选卡。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "12月14日讨论会先只分析，不要生成候选卡。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，12月14日讨论会先只做分析，不生成候选卡，也不写入任何日程。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，12月14日讨论会先只做分析，不生成候选卡，也不写入任何日程。",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D09",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "不要创建12月18日的查验日程，只帮我讨论步骤。"
+      ],
+      "expected": {
+        "id": "D09",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "不要创建12月18日的查验日程，只帮我讨论步骤。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "不要创建12月18日的查验日程，只帮我讨论步骤。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，不创建12月18日的查验日程。我们可以先讨论步骤：你打算查验什么事项？目前有哪些已知环节或先后顺序？\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，不创建12月18日的查验日程。我们可以先讨论步骤：你打算查验什么事项？目前有哪些已知环节或先后顺序？",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D11",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月2日23:10到次日00:20的日程“夜间任务1”。"
+      ],
+      "expected": {
+        "id": "D11",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月2日23:10到次日00:20的日程“夜间任务1”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "23:10",
+        "end": "00:20"
+      },
+      "answers": [
+        {
+          "input": "请创建12月2日23:10到次日00:20的日程“夜间任务1”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月2日23:10至次日00:20，标题“夜间任务1”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务1\",\"exec_date\":\"2026-12-02\",\"end_day_offset\":1,\"time_type\":\"exact\",\"start_time\":\"23:10\",\"end_time\":\"00:20\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月2日23:10至次日00:20，标题“夜间任务1”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务1",
+                    "exec_date": "2026-12-02",
+                    "end_day_offset": 1,
+                    "time_type": "exact",
+                    "start_time": "23:10",
+                    "end_time": "00:20",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u806cexl",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80ijerr",
+            "title": "夜间任务1",
+            "date": "2026-12-02",
+            "timeType": "exact",
+            "start": "23:10",
+            "end": "00:20",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D13",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月4日23:40到次日00:50的日程“夜间任务3”。"
+      ],
+      "expected": {
+        "id": "D13",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月4日23:40到次日00:50的日程“夜间任务3”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "23:40",
+        "end": "00:50"
+      },
+      "answers": [
+        {
+          "input": "请创建12月4日23:40到次日00:50的日程“夜间任务3”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月4日23:40至次日00:50，标题“夜间任务3”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务3\",\"exec_date\":\"2026-12-04\",\"end_day_offset\":1,\"time_type\":\"exact\",\"start_time\":\"23:40\",\"end_time\":\"00:50\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月4日23:40至次日00:50，标题“夜间任务3”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务3",
+                    "exec_date": "2026-12-04",
+                    "end_day_offset": 1,
+                    "time_type": "exact",
+                    "start_time": "23:40",
+                    "end_time": "00:50",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80uc0x8",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80o7xpu",
+            "title": "夜间任务3",
+            "date": "2026-12-04",
+            "timeType": "exact",
+            "start": "23:40",
+            "end": "00:50",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D15",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月6日23:15到次日00:45的日程“夜间任务5”。"
+      ],
+      "expected": {
+        "id": "D15",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月6日23:15到次日00:45的日程“夜间任务5”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "23:15",
+        "end": "00:45"
+      },
+      "answers": [
+        {
+          "input": "请创建12月6日23:15到次日00:45的日程“夜间任务5”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月6日23:15至次日00:45，标题“夜间任务5”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务5\",\"exec_date\":\"2026-12-06\",\"time_type\":\"exact\",\"start_time\":\"23:15\",\"end_time\":\"00:45\",\"end_day_offset\":1,\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月6日23:15至次日00:45，标题“夜间任务5”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务5",
+                    "exec_date": "2026-12-06",
+                    "time_type": "exact",
+                    "start_time": "23:15",
+                    "end_time": "00:45",
+                    "end_day_offset": 1,
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80x9tgw",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80uugvk",
+            "title": "夜间任务5",
+            "date": "2026-12-06",
+            "timeType": "exact",
+            "start": "23:15",
+            "end": "00:45",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D17",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月8日23:55到次日00:25的日程“夜间任务7”。"
+      ],
+      "expected": {
+        "id": "D17",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月8日23:55到次日00:25的日程“夜间任务7”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "23:55",
+        "end": "00:25"
+      },
+      "answers": [
+        {
+          "input": "请创建12月8日23:55到次日00:25的日程“夜间任务7”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月8日23:55至次日00:25，标题“夜间任务7”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务7\",\"exec_date\":\"2026-12-08\",\"time_type\":\"exact\",\"start_time\":\"23:55\",\"end_time\":\"00:25\",\"end_day_offset\":1,\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月8日23:55至次日00:25，标题“夜间任务7”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务7",
+                    "exec_date": "2026-12-08",
+                    "time_type": "exact",
+                    "start_time": "23:55",
+                    "end_time": "00:25",
+                    "end_day_offset": 1,
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80q46ne",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u807wiyz",
+            "title": "夜间任务7",
+            "date": "2026-12-08",
+            "timeType": "exact",
+            "start": "23:55",
+            "end": "00:25",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D19",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月10日23:05到次日00:35的日程“夜间任务9”。"
+      ],
+      "expected": {
+        "id": "D19",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月10日23:05到次日00:35的日程“夜间任务9”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "23:05",
+        "end": "00:35"
+      },
+      "answers": [
+        {
+          "input": "请创建12月10日23:05到次日00:35的日程“夜间任务9”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月10日23:05至次日00:35，标题“夜间任务9”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务9\",\"exec_date\":\"2026-12-10\",\"end_day_offset\":1,\"time_type\":\"exact\",\"start_time\":\"23:05\",\"end_time\":\"00:35\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月10日23:05至次日00:35，标题“夜间任务9”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务9",
+                    "exec_date": "2026-12-10",
+                    "end_day_offset": 1,
+                    "time_type": "exact",
+                    "start_time": "23:05",
+                    "end_time": "00:35",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80dw8od",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u805dsh3",
+            "title": "夜间任务9",
+            "date": "2026-12-10",
+            "timeType": "exact",
+            "start": "23:05",
+            "end": "00:35",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D21",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月1日全天“核验”和12月12日全天“核验”。",
+        "核验加备注带资料夹。"
+      ],
+      "expected": {
+        "id": "D21",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月1日全天“核验”和12月12日全天“核验”。",
+          "核验加备注带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "answers": [
+        {
+          "input": "请创建12月1日全天“核验”和12月12日全天“核验”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天日程：12月1日“核验”、12月12日“核验”\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核验\",\"exec_date\":\"2026-12-01\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核验\",\"exec_date\":\"2026-12-12\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月1日“核验”、12月12日“核验”",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核验",
+                    "exec_date": "2026-12-01",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核验",
+                    "exec_date": "2026-12-12",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80szbzl",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80rel4c",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "核验加备注带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"核验\"},\"reply\":\"为两项“核验”日程补充备注“带资料夹”，请核对\",\"entries\":[{\"card_id\":\"mwim8u80szbzl\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80rel4c\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80szbzl",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80rel4c",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80r0jdj",
+            "title": "核验",
+            "date": "2026-12-01",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          },
+          {
+            "id": "mwim8u80rg1lg",
+            "title": "核验",
+            "date": "2026-12-12",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D23",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月3日全天“器材交接”和12月14日全天“器材交接”。",
+        "器材交接加备注带资料夹。"
+      ],
+      "expected": {
+        "id": "D23",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月3日全天“器材交接”和12月14日全天“器材交接”。",
+          "器材交接加备注带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "answers": [
+        {
+          "input": "请创建12月3日全天“器材交接”和12月14日全天“器材交接”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天日程：12月3日与12月14日各一项“器材交接”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"器材交接\",\"exec_date\":\"2026-12-03\",\"time_type\":\"allday\",\"category\":\"职场工作\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"器材交接\",\"exec_date\":\"2026-12-14\",\"time_type\":\"allday\",\"category\":\"职场工作\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月3日与12月14日各一项“器材交接”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "器材交接",
+                    "exec_date": "2026-12-03",
+                    "time_type": "allday",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "器材交接",
+                    "exec_date": "2026-12-14",
+                    "time_type": "allday",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80qh7wg",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80uhrt9",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "器材交接加备注带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"器材交接\"},\"reply\":\"为两项“器材交接”日程补充备注“带资料夹”，请核对\",\"entries\":[{\"card_id\":\"mwim8u80qh7wg\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80uhrt9\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80qh7wg",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80uhrt9",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u800ynz5",
+            "title": "器材交接",
+            "date": "2026-12-14",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "职场工作",
+            "baseScore": 3
+          },
+          {
+            "id": "mwim8u805hcig",
+            "title": "器材交接",
+            "date": "2026-12-03",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "职场工作",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D25",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月5日全天“联系导师”和12月16日全天“联系导师”。",
+        "联系导师加备注带资料夹。"
+      ],
+      "expected": {
+        "id": "D25",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月5日全天“联系导师”和12月16日全天“联系导师”。",
+          "联系导师加备注带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "answers": [
+        {
+          "input": "请创建12月5日全天“联系导师”和12月16日全天“联系导师”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天日程：12月5日与12月16日各一项“联系导师”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"联系导师\",\"exec_date\":\"2026-12-05\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":5}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"联系导师\",\"exec_date\":\"2026-12-16\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月5日与12月16日各一项“联系导师”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "联系导师",
+                    "exec_date": "2026-12-05",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 5
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "联系导师",
+                    "exec_date": "2026-12-16",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u800a6ep",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80co33j",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "联系导师加备注带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"为两项“联系导师”补充备注“带资料夹”，请核对\",\"entries\":[{\"card_id\":\"mwim8u800a6ep\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80co33j\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u800a6ep",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80co33j",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80tzx47",
+            "title": "联系导师",
+            "date": "2026-12-05",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 5
+          },
+          {
+            "id": "mwim8u80wjpv4",
+            "title": "联系导师",
+            "date": "2026-12-16",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 5
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D27",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月7日全天“确认报名”和12月18日全天“确认报名”。",
+        "确认报名加备注带资料夹。"
+      ],
+      "expected": {
+        "id": "D27",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月7日全天“确认报名”和12月18日全天“确认报名”。",
+          "确认报名加备注带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "answers": [
+        {
+          "input": "请创建12月7日全天“确认报名”和12月18日全天“确认报名”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天事项：12月7日与12月18日各一项“确认报名”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"确认报名\",\"exec_date\":\"2026-12-07\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"确认报名\",\"exec_date\":\"2026-12-18\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天事项：12月7日与12月18日各一项“确认报名”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "确认报名",
+                    "exec_date": "2026-12-07",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "确认报名",
+                    "exec_date": "2026-12-18",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80ko1j4",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80ibohc",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "确认报名加备注带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"确认报名\"},\"reply\":\"为两项“确认报名”补充备注“带资料夹”，请核对\",\"entries\":[{\"card_id\":\"mwim8u80ko1j4\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80ibohc\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80ko1j4",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80ibohc",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80e0slw",
+            "title": "确认报名",
+            "date": "2026-12-18",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 3
+          },
+          {
+            "id": "mwim8u80uf03b",
+            "title": "确认报名",
+            "date": "2026-12-07",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D29",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月9日全天“整理表格”和12月20日全天“整理表格”。",
+        "整理表格加备注带资料夹。"
+      ],
+      "expected": {
+        "id": "D29",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "请创建12月9日全天“整理表格”和12月20日全天“整理表格”。",
+          "整理表格加备注带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "answers": [
+        {
+          "input": "请创建12月9日全天“整理表格”和12月20日全天“整理表格”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两条全天日程：12月9日与12月20日各一条“整理表格”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"整理表格\",\"exec_date\":\"2026-12-09\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"整理表格\",\"exec_date\":\"2026-12-20\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两条全天日程：12月9日与12月20日各一条“整理表格”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "整理表格",
+                    "exec_date": "2026-12-09",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "整理表格",
+                    "exec_date": "2026-12-20",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80jb3nh",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80wspf9",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "整理表格加备注带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"整理表格\"},\"reply\":\"为两条“整理表格”日程补充备注“带资料夹”，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80jb3nh\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80wspf9\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "clarify",
+            "reply": "匹配到多项，请指定日期，或明确要修改全部匹配事项。"
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80jb3nh",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80wspf9",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80cxd1i",
+            "title": "整理表格",
+            "date": "2026-12-20",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          },
+          {
+            "id": "mwim8u80e44zp",
+            "title": "整理表格",
+            "date": "2026-12-09",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D31",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月8日14:15至15:45审查照片的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D31",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "创建12月8日14:15至15:45审查照片的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:30"
+      },
+      "answers": [
+        {
+          "input": "创建12月8日14:15至15:45审查照片的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程：12月8日14:15至15:45审查照片\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"审查照片\",\"exec_date\":\"2026-12-08\",\"time_type\":\"exact\",\"start_time\":\"14:15\",\"end_time\":\"15:45\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程：12月8日14:15至15:45审查照片",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "审查照片",
+                    "exec_date": "2026-12-08",
+                    "time_type": "exact",
+                    "start_time": "14:15",
+                    "end_time": "15:45",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80wh67o",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“审查照片”改为19:00开始，保留原时长1小时30分钟，结束20:30，请核对\",\"entries\":[{\"card_id\":\"mwim8u80wh67o\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:30\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“审查照片”改为19:00开始，保留原时长1小时30分钟，结束20:30，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80wh67o",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:30"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80wh67o",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80zzh5q",
+            "title": "审查照片",
+            "date": "2026-12-08",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "20:30",
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D33",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月10日14:15至15:45复查图表的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D33",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "创建12月10日14:15至15:45复查图表的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:30"
+      },
+      "answers": [
+        {
+          "input": "创建12月10日14:15至15:45复查图表的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程：12月10日14:15至15:45复查图表\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查图表\",\"exec_date\":\"2026-12-10\",\"time_type\":\"exact\",\"start_time\":\"14:15\",\"end_time\":\"15:45\",\"category\":\"学业事务\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程：12月10日14:15至15:45复查图表",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查图表",
+                    "exec_date": "2026-12-10",
+                    "time_type": "exact",
+                    "start_time": "14:15",
+                    "end_time": "15:45",
+                    "category": "学业事务",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80z6rmb",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“复查图表”改为19:00开始，保留原90分钟时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u80z6rmb\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“复查图表”改为19:00开始，保留原90分钟时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80z6rmb",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80z6rmb",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u809jfe3",
+            "title": "复查图表",
+            "date": "2026-12-10",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "20:30",
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 5
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D35",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月12日14:15至15:45安排采访的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D35",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "创建12月12日14:15至15:45安排采访的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:30"
+      },
+      "answers": [
+        {
+          "input": "创建12月12日14:15至15:45安排采访的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对这条日程：12月12日14:15至15:45安排采访\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"安排采访\",\"exec_date\":\"2026-12-12\",\"time_type\":\"exact\",\"start_time\":\"14:15\",\"end_time\":\"15:45\",\"category\":\"职场工作\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对这条日程：12月12日14:15至15:45安排采访",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "安排采访",
+                    "exec_date": "2026-12-12",
+                    "time_type": "exact",
+                    "start_time": "14:15",
+                    "end_time": "15:45",
+                    "category": "职场工作",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80oh0z2",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“安排采访”改为19:00开始，保留原1小时30分钟时长，结束时间由程序计算。请核对。\",\"entries\":[{\"card_id\":\"mwim8u80oh0z2\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“安排采访”改为19:00开始，保留原1小时30分钟时长，结束时间由程序计算。请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80oh0z2",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80oh0z2",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80m3ky5",
+            "title": "安排采访",
+            "date": "2026-12-12",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "20:30",
+            "note": "",
+            "category": "职场工作",
+            "baseScore": 5
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D37",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月14日14:15至15:45撰写总结的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D37",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "创建12月14日14:15至15:45撰写总结的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:30"
+      },
+      "answers": [
+        {
+          "input": "创建12月14日14:15至15:45撰写总结的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对：12月14日14:15至15:45创建“撰写总结”日程。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"撰写总结\",\"exec_date\":\"2026-12-14\",\"time_type\":\"exact\",\"start_time\":\"14:15\",\"end_time\":\"15:45\",\"category\":\"职场工作\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对：12月14日14:15至15:45创建“撰写总结”日程。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "撰写总结",
+                    "exec_date": "2026-12-14",
+                    "time_type": "exact",
+                    "start_time": "14:15",
+                    "end_time": "15:45",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80bsj5o",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“撰写总结”改为19:00开始，保留原1小时30分钟时长，结束时间为20:30，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80bsj5o\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:30\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“撰写总结”改为19:00开始，保留原1小时30分钟时长，结束时间为20:30，请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80bsj5o",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:30"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80bsj5o",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80b849s",
+            "title": "撰写总结",
+            "date": "2026-12-14",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "20:30",
+            "note": "",
+            "category": "职场工作",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D39",
+      "batch": "D",
+      "route": "hosted",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月16日14:15至15:45修改提纲的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D39",
+        "batch": "D",
+        "route": "hosted",
+        "turns": [
+          "创建12月16日14:15至15:45修改提纲的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "20:30"
+      },
+      "answers": [
+        {
+          "input": "创建12月16日14:15至15:45修改提纲的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月16日14:15至15:45修改提纲\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"修改提纲\",\"exec_date\":\"2026-12-16\",\"time_type\":\"exact\",\"start_time\":\"14:15\",\"end_time\":\"15:45\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月16日14:15至15:45修改提纲",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "修改提纲",
+                    "exec_date": "2026-12-16",
+                    "time_type": "exact",
+                    "start_time": "14:15",
+                    "end_time": "15:45",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u8008x7u",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“修改提纲”改为19:00开始，保留原时长1小时30分钟，结束20:30，请核对\",\"entries\":[{\"card_id\":\"mwim8u8008x7u\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:30\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“修改提纲”改为19:00开始，保留原时长1小时30分钟，结束20:30，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u8008x7u",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:30"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u8008x7u",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80rcic9",
+            "title": "修改提纲",
+            "date": "2026-12-16",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "20:30",
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 7
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D02",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "只讨论12月4日研究交流的安排，不要建立日程。"
+      ],
+      "expected": {
+        "id": "D02",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "只讨论12月4日研究交流的安排，不要建立日程。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "只讨论12月4日研究交流的安排，不要建立日程。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，只讨论12月4日研究交流的安排，不建立日程。你想聊哪方面，比如时间、地点还是准备事项？\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，只讨论12月4日研究交流的安排，不建立日程。你想聊哪方面，比如时间、地点还是准备事项？",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D04",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "同伴说“创建12月8日资料收集”，这里只分析这句话，不要创建。"
+      ],
+      "expected": {
+        "id": "D04",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "同伴说“创建12月8日资料收集”，这里只分析这句话，不要创建。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "同伴说“创建12月8日资料收集”，这里只分析这句话，不要创建。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"这句话是在转述同伴的创建请求，并明确要求只分析、不创建，因此不生成任何日程或待办候选。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "这句话是在转述同伴的创建请求，并明确要求只分析、不创建，因此不生成任何日程或待办候选。",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D06",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "先不要新建12月12日的采访安排，解释一下准备事项。"
+      ],
+      "expected": {
+        "id": "D06",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "先不要新建12月12日的采访安排，解释一下准备事项。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "先不要新建12月12日的采访安排，解释一下准备事项。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，不新建12月12日的采访安排。采访准备事项一般包括：1）确认采访对象、时间、地点和联系方式；2）明确采访主题与提纲，提前发给对方确认；3）准备录音/录像设备、备用电池和存储空间；4）整理背景资料和必问问题清单；5）约定拍摄或录音授权、隐私与稿件确认方式；6）安排交通与到场时间，预留缓冲；7）采访后及时备份素材并整理纪要。需要我帮你把这些准备事项整理成待办清单吗？\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，不新建12月12日的采访安排。采访准备事项一般包括：1）确认采访对象、时间、地点和联系方式；2）明确采访主题与提纲，提前发给对方确认；3）准备录音/录像设备、备用电池和存储空间；4）整理背景资料和必问问题清单；5）约定拍摄或录音授权、隐私与稿件确认方式；6）安排交通与到场时间，预留缓冲；7）采访后及时备份素材并整理纪要。需要我帮你把这些准备事项整理成待办清单吗？",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D08",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "我想了解12月16日的观测计划，先别建立任务。"
+      ],
+      "expected": {
+        "id": "D08",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "我想了解12月16日的观测计划，先别建立任务。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "我想了解12月16日的观测计划，先别建立任务。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，先不建立任务。12月16日的观测计划目前没有可查询的已有记录；你可以告诉我具体想了解哪方面，比如时间安排、地点或观测内容。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，先不建立任务。12月16日的观测计划目前没有可查询的已有记录；你可以告诉我具体想了解哪方面，比如时间安排、地点或观测内容。",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D10",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "仅分析12月20日的研读时间，不创建或改动事项。"
+      ],
+      "expected": {
+        "id": "D10",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "仅分析12月20日的研读时间，不创建或改动事项。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "answers": [
+        {
+          "input": "仅分析12月20日的研读时间，不创建或改动事项。",
+          "model_raw": "{\"type\":\"chat\",\"reply\":\"好的，仅分析不创建或改动。当前设备中没有可用的日程候选卡片，因此无法分析12月20日的研读时间安排。如需分析，请先提供或查询该日期的相关日程。\"}",
+          "parsed": {
+            "type": "chat",
+            "reply": "好的，仅分析不创建或改动。当前设备中没有可用的日程候选卡片，因此无法分析12月20日的研读时间安排。如需分析，请先提供或查询该日期的相关日程。",
+            "used_evidence": []
+          },
+          "error": null,
+          "card_versions": []
+        }
+      ],
+      "proof": {
+        "tasks": [],
+        "todos": [],
+        "operation_count": 0,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D12",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月3日22:20到次日01:10的日程“夜间任务2”。"
+      ],
+      "expected": {
+        "id": "D12",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月3日22:20到次日01:10的日程“夜间任务2”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "22:20",
+        "end": "01:10"
+      },
+      "answers": [
+        {
+          "input": "请创建12月3日22:20到次日01:10的日程“夜间任务2”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对新建日程：12月3日22:20至次日01:10，标题“夜间任务2”。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务2\",\"exec_date\":\"2026-12-03\",\"time_type\":\"exact\",\"start_time\":\"22:20\",\"end_time\":\"01:10\",\"end_day_offset\":1,\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月3日22:20至次日01:10，标题“夜间任务2”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务2",
+                    "exec_date": "2026-12-03",
+                    "time_type": "exact",
+                    "start_time": "22:20",
+                    "end_time": "01:10",
+                    "end_day_offset": 1,
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80wv0va",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u807b9u8",
+            "title": "夜间任务2",
+            "date": "2026-12-03",
+            "timeType": "exact",
+            "start": "22:20",
+            "end": "01:10",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D14",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月5日21:30到次日00:10的日程“夜间任务4”。"
+      ],
+      "expected": {
+        "id": "D14",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月5日21:30到次日00:10的日程“夜间任务4”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "21:30",
+        "end": "00:10"
+      },
+      "answers": [
+        {
+          "input": "请创建12月5日21:30到次日00:10的日程“夜间任务4”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对新建日程：12月5日21:30至次日00:10，标题“夜间任务4”。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务4\",\"exec_date\":\"2026-12-05\",\"time_type\":\"exact\",\"start_time\":\"21:30\",\"end_time\":\"00:10\",\"end_day_offset\":1,\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月5日21:30至次日00:10，标题“夜间任务4”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务4",
+                    "exec_date": "2026-12-05",
+                    "time_type": "exact",
+                    "start_time": "21:30",
+                    "end_time": "00:10",
+                    "end_day_offset": 1,
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u804v2av",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80wtpq8",
+            "title": "夜间任务4",
+            "date": "2026-12-05",
+            "timeType": "exact",
+            "start": "21:30",
+            "end": "00:10",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D16",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月7日22:45到次日01:15的日程“夜间任务6”。"
+      ],
+      "expected": {
+        "id": "D16",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月7日22:45到次日01:15的日程“夜间任务6”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "22:45",
+        "end": "01:15"
+      },
+      "answers": [
+        {
+          "input": "请创建12月7日22:45到次日01:15的日程“夜间任务6”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对新建日程：12月7日22:45至次日01:15，标题“夜间任务6”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务6\",\"exec_date\":\"2026-12-07\",\"time_type\":\"exact\",\"start_time\":\"22:45\",\"end_time\":\"01:15\",\"end_day_offset\":1,\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月7日22:45至次日01:15，标题“夜间任务6”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务6",
+                    "exec_date": "2026-12-07",
+                    "time_type": "exact",
+                    "start_time": "22:45",
+                    "end_time": "01:15",
+                    "end_day_offset": 1,
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80an02r",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80gwyol",
+            "title": "夜间任务6",
+            "date": "2026-12-07",
+            "timeType": "exact",
+            "start": "22:45",
+            "end": "01:15",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D18",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月9日20:50到次日00:30的日程“夜间任务8”。"
+      ],
+      "expected": {
+        "id": "D18",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月9日20:50到次日00:30的日程“夜间任务8”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "20:50",
+        "end": "00:30"
+      },
+      "answers": [
+        {
+          "input": "请创建12月9日20:50到次日00:30的日程“夜间任务8”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对创建跨日日程“夜间任务8”\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务8\",\"exec_date\":\"2026-12-09\",\"end_day_offset\":1,\"time_type\":\"exact\",\"start_time\":\"20:50\",\"end_time\":\"00:30\",\"category\":\"日常生活\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对创建跨日日程“夜间任务8”",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务8",
+                    "exec_date": "2026-12-09",
+                    "end_day_offset": 1,
+                    "time_type": "exact",
+                    "start_time": "20:50",
+                    "end_time": "00:30",
+                    "category": "日常生活",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80caa6e",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80s6u8q",
+            "title": "夜间任务8",
+            "date": "2026-12-09",
+            "timeType": "exact",
+            "start": "20:50",
+            "end": "00:30",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D20",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月11日22:35到次日01:05的日程“夜间任务10”。"
+      ],
+      "expected": {
+        "id": "D20",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月11日22:35到次日01:05的日程“夜间任务10”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "overnight": true,
+        "start": "22:35",
+        "end": "01:05"
+      },
+      "answers": [
+        {
+          "input": "请创建12月11日22:35到次日01:05的日程“夜间任务10”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对新建日程：12月11日22:35至次日01:05，标题“夜间任务10”。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间任务10\",\"exec_date\":\"2026-12-11\",\"time_type\":\"exact\",\"start_time\":\"22:35\",\"end_time\":\"01:05\",\"end_day_offset\":1,\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对新建日程：12月11日22:35至次日01:05，标题“夜间任务10”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间任务10",
+                    "exec_date": "2026-12-11",
+                    "time_type": "exact",
+                    "start_time": "22:35",
+                    "end_time": "01:05",
+                    "end_day_offset": 1,
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80ew4dc",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u805lf7j",
+            "title": "夜间任务10",
+            "date": "2026-12-11",
+            "timeType": "exact",
+            "start": "22:35",
+            "end": "01:05",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D22",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月2日全天“材料核对”和12月13日全天“材料核对”。",
+        "所有材料核对事项都补充备注：带资料夹。"
+      ],
+      "expected": {
+        "id": "D22",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月2日全天“材料核对”和12月13日全天“材料核对”。",
+          "所有材料核对事项都补充备注：带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "fieldChecks": [
+          {
+            "index": 0,
+            "field": "note",
+            "includes": "资料夹"
+          },
+          {
+            "index": 1,
+            "field": "note",
+            "includes": "资料夹"
+          }
+        ]
+      },
+      "answers": [
+        {
+          "input": "请创建12月2日全天“材料核对”和12月13日全天“材料核对”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两个“材料核对”全天事项的日期\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"材料核对\",\"exec_date\":\"2026-12-02\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"材料核对\",\"exec_date\":\"2026-12-13\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两个“材料核对”全天事项的日期",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "材料核对",
+                    "exec_date": "2026-12-02",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "材料核对",
+                    "exec_date": "2026-12-13",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80e20ye",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80bz8jh",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "所有材料核对事项都补充备注：带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"材料核对\"},\"reply\":\"为全部2个“材料核对”事项补充备注：带资料夹，请核对\",\"entries\":[{\"card_id\":\"mwim8u80e20ye\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80bz8jh\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "材料核对"
+            },
+            "reply": "为全部2个“材料核对”事项补充备注：带资料夹，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80e20ye",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              },
+              {
+                "card_id": "mwim8u80bz8jh",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80e20ye",
+              "version": 2,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80bz8jh",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80wdk8m",
+            "title": "材料核对",
+            "date": "2026-12-13",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "学业事务",
+            "baseScore": 3
+          },
+          {
+            "id": "mwim8u80zt8dr",
+            "title": "材料核对",
+            "date": "2026-12-02",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "学业事务",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D24",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月4日全天“文稿审阅”和12月15日全天“文稿审阅”。",
+        "所有文稿审阅事项都补充备注：带资料夹。"
+      ],
+      "expected": {
+        "id": "D24",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月4日全天“文稿审阅”和12月15日全天“文稿审阅”。",
+          "所有文稿审阅事项都补充备注：带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "fieldChecks": [
+          {
+            "index": 0,
+            "field": "note",
+            "includes": "资料夹"
+          },
+          {
+            "index": 1,
+            "field": "note",
+            "includes": "资料夹"
+          }
+        ]
+      },
+      "answers": [
+        {
+          "input": "请创建12月4日全天“文稿审阅”和12月15日全天“文稿审阅”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天日程：12月4日与12月15日的“文稿审阅”\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"文稿审阅\",\"exec_date\":\"2026-12-04\",\"time_type\":\"allday\",\"category\":\"职场工作\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"文稿审阅\",\"exec_date\":\"2026-12-15\",\"time_type\":\"allday\",\"category\":\"职场工作\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月4日与12月15日的“文稿审阅”",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "文稿审阅",
+                    "exec_date": "2026-12-04",
+                    "time_type": "allday",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "文稿审阅",
+                    "exec_date": "2026-12-15",
+                    "time_type": "allday",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80gnn7f",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80me64m",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "所有文稿审阅事项都补充备注：带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"文稿审阅\"},\"reply\":\"为所有标题含“文稿审阅”的2项补充备注：带资料夹，请核对\",\"entries\":[{\"card_id\":\"mwim8u80gnn7f\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80me64m\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "文稿审阅"
+            },
+            "reply": "为所有标题含“文稿审阅”的2项补充备注：带资料夹，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80gnn7f",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              },
+              {
+                "card_id": "mwim8u80me64m",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80gnn7f",
+              "version": 2,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80me64m",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u804pxob",
+            "title": "文稿审阅",
+            "date": "2026-12-15",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "职场工作",
+            "baseScore": 3
+          },
+          {
+            "id": "mwim8u80mmr1s",
+            "title": "文稿审阅",
+            "date": "2026-12-04",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "职场工作",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D26",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月6日全天“清理档案”和12月17日全天“清理档案”。",
+        "所有清理档案事项都补充备注：带资料夹。"
+      ],
+      "expected": {
+        "id": "D26",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月6日全天“清理档案”和12月17日全天“清理档案”。",
+          "所有清理档案事项都补充备注：带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "fieldChecks": [
+          {
+            "index": 0,
+            "field": "note",
+            "includes": "资料夹"
+          },
+          {
+            "index": 1,
+            "field": "note",
+            "includes": "资料夹"
+          }
+        ]
+      },
+      "answers": [
+        {
+          "input": "请创建12月6日全天“清理档案”和12月17日全天“清理档案”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天事项：12月6日与12月17日各创建一项“清理档案”。\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"清理档案\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"清理档案\",\"exec_date\":\"2026-12-17\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天事项：12月6日与12月17日各创建一项“清理档案”。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "清理档案",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "清理档案",
+                    "exec_date": "2026-12-17",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80yi2ha",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u806dc3c",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "所有清理档案事项都补充备注：带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"清理档案\"},\"reply\":\"为所有标题包含“清理档案”的2项事项补充备注：带资料夹，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80yi2ha\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u806dc3c\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "清理档案"
+            },
+            "reply": "为所有标题包含“清理档案”的2项事项补充备注：带资料夹，请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80yi2ha",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              },
+              {
+                "card_id": "mwim8u806dc3c",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80yi2ha",
+              "version": 2,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u806dc3c",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u8074mlg",
+            "title": "清理档案",
+            "date": "2026-12-06",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "日常生活",
+            "baseScore": 2
+          },
+          {
+            "id": "mwim8u8092ow9",
+            "title": "清理档案",
+            "date": "2026-12-17",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "日常生活",
+            "baseScore": 2
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D28",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月8日全天“核对排期”和12月19日全天“核对排期”。",
+        "所有核对排期事项都补充备注：带资料夹。"
+      ],
+      "expected": {
+        "id": "D28",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月8日全天“核对排期”和12月19日全天“核对排期”。",
+          "所有核对排期事项都补充备注：带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "fieldChecks": [
+          {
+            "index": 0,
+            "field": "note",
+            "includes": "资料夹"
+          },
+          {
+            "index": 1,
+            "field": "note",
+            "includes": "资料夹"
+          }
+        ]
+      },
+      "answers": [
+        {
+          "input": "请创建12月8日全天“核对排期”和12月19日全天“核对排期”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天日程：12月8日与12月19日“核对排期”\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对排期\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"职场工作\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对排期\",\"exec_date\":\"2026-12-19\",\"time_type\":\"allday\",\"category\":\"职场工作\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月8日与12月19日“核对排期”",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对排期",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对排期",
+                    "exec_date": "2026-12-19",
+                    "time_type": "allday",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80q3i7u",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u800v270",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "所有核对排期事项都补充备注：带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"核对排期\"},\"reply\":\"为所有标题包含“核对排期”的2项日程补充备注：带资料夹，请核对\",\"entries\":[{\"card_id\":\"mwim8u80q3i7u\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u800v270\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "核对排期"
+            },
+            "reply": "为所有标题包含“核对排期”的2项日程补充备注：带资料夹，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80q3i7u",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              },
+              {
+                "card_id": "mwim8u800v270",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80q3i7u",
+              "version": 2,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u800v270",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u8063d4h",
+            "title": "核对排期",
+            "date": "2026-12-19",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "职场工作",
+            "baseScore": 3
+          },
+          {
+            "id": "mwim8u80yejvd",
+            "title": "核对排期",
+            "date": "2026-12-08",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "职场工作",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D30",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "请创建12月10日全天“访谈预约”和12月21日全天“访谈预约”。",
+        "所有访谈预约事项都补充备注：带资料夹。"
+      ],
+      "expected": {
+        "id": "D30",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "请创建12月10日全天“访谈预约”和12月21日全天“访谈预约”。",
+          "所有访谈预约事项都补充备注：带资料夹。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "fieldChecks": [
+          {
+            "index": 0,
+            "field": "note",
+            "includes": "资料夹"
+          },
+          {
+            "index": 1,
+            "field": "note",
+            "includes": "资料夹"
+          }
+        ]
+      },
+      "answers": [
+        {
+          "input": "请创建12月10日全天“访谈预约”和12月21日全天“访谈预约”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对两项全天日程：12月10日与12月21日的“访谈预约”\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"访谈预约\",\"exec_date\":\"2026-12-10\",\"time_type\":\"allday\",\"category\":\"社交约定\",\"base_score\":3}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"访谈预约\",\"exec_date\":\"2026-12-21\",\"time_type\":\"allday\",\"category\":\"社交约定\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月10日与12月21日的“访谈预约”",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "访谈预约",
+                    "exec_date": "2026-12-10",
+                    "time_type": "allday",
+                    "category": "社交约定",
+                    "base_score": 3
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "访谈预约",
+                    "exec_date": "2026-12-21",
+                    "time_type": "allday",
+                    "category": "社交约定",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u802zufk",
+              "version": 1,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80wtrk9",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "所有访谈预约事项都补充备注：带资料夹。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"访谈预约\"},\"reply\":\"为所有标题含“访谈预约”的2项补充备注：带资料夹，请核对\",\"entries\":[{\"card_id\":\"mwim8u802zufk\",\"version\":1,\"append_note\":\"带资料夹\"},{\"card_id\":\"mwim8u80wtrk9\",\"version\":1,\"append_note\":\"带资料夹\"}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "访谈预约"
+            },
+            "reply": "为所有标题含“访谈预约”的2项补充备注：带资料夹，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u802zufk",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              },
+              {
+                "card_id": "mwim8u80wtrk9",
+                "version": 1,
+                "patch": {},
+                "append_note": "带资料夹"
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u802zufk",
+              "version": 2,
+              "status": "pending"
+            },
+            {
+              "id": "mwim8u80wtrk9",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u804nvok",
+            "title": "访谈预约",
+            "date": "2026-12-21",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "社交约定",
+            "baseScore": 3
+          },
+          {
+            "id": "mwim8u80z8clv",
+            "title": "访谈预约",
+            "date": "2026-12-10",
+            "timeType": "allday",
+            "start": null,
+            "end": null,
+            "note": "带资料夹",
+            "category": "社交约定",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 2,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D32",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月9日13:00至15:00练习演示的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D32",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "创建12月9日13:00至15:00练习演示的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "answers": [
+        {
+          "input": "创建12月9日13:00至15:00练习演示的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程信息\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"练习演示\",\"exec_date\":\"2026-12-09\",\"time_type\":\"exact\",\"start_time\":\"13:00\",\"end_time\":\"15:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程信息",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "练习演示",
+                    "exec_date": "2026-12-09",
+                    "time_type": "exact",
+                    "start_time": "13:00",
+                    "end_time": "15:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u806cv75",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“练习演示”改为19:00开始，保留原2小时时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u806cv75\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“练习演示”改为19:00开始，保留原2小时时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u806cv75",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u806cv75",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80hsaxk",
+            "title": "练习演示",
+            "date": "2026-12-09",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "21:00",
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 7
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D34",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月11日13:00至15:00制作索引的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D34",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "创建12月11日13:00至15:00制作索引的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "answers": [
+        {
+          "input": "创建12月11日13:00至15:00制作索引的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程信息\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"制作索引\",\"exec_date\":\"2026-12-11\",\"time_type\":\"exact\",\"start_time\":\"13:00\",\"end_time\":\"15:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程信息",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "制作索引",
+                    "exec_date": "2026-12-11",
+                    "time_type": "exact",
+                    "start_time": "13:00",
+                    "end_time": "15:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80meplh",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“制作索引”改为19:00开始，保留原2小时时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u80meplh\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“制作索引”改为19:00开始，保留原2小时时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80meplh",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80meplh",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80wwayt",
+            "title": "制作索引",
+            "date": "2026-12-11",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "21:00",
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 7
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D36",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月13日13:00至15:00准备答辩的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D36",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "创建12月13日13:00至15:00准备答辩的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "answers": [
+        {
+          "input": "创建12月13日13:00至15:00准备答辩的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程信息\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"准备答辩\",\"exec_date\":\"2026-12-13\",\"time_type\":\"exact\",\"start_time\":\"13:00\",\"end_time\":\"15:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程信息",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "准备答辩",
+                    "exec_date": "2026-12-13",
+                    "time_type": "exact",
+                    "start_time": "13:00",
+                    "end_time": "15:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80888k1",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“准备答辩”改为19:00开始，保留原2小时时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u80888k1\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“准备答辩”改为19:00开始，保留原2小时时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80888k1",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80888k1",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80hhyvn",
+            "title": "准备答辩",
+            "date": "2026-12-13",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "21:00",
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 7
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D38",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月15日13:00至15:00整理素材的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D38",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "创建12月15日13:00至15:00整理素材的日程。",
+          "改为晚上七点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "answers": [
+        {
+          "input": "创建12月15日13:00至15:00整理素材的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对日程：12月15日13:00至15:00整理素材\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"整理素材\",\"exec_date\":\"2026-12-15\",\"time_type\":\"exact\",\"start_time\":\"13:00\",\"end_time\":\"15:00\",\"category\":\"职场工作\",\"base_score\":3}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程：12月15日13:00至15:00整理素材",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "整理素材",
+                    "exec_date": "2026-12-15",
+                    "time_type": "exact",
+                    "start_time": "13:00",
+                    "end_time": "15:00",
+                    "category": "职场工作",
+                    "base_score": 3
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80sdgd7",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上七点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“整理素材”改为19:00开始，保留原2小时时长，请核对\",\"entries\":[{\"card_id\":\"mwim8u80sdgd7\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“整理素材”改为19:00开始，保留原2小时时长，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80sdgd7",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80sdgd7",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u8047z06",
+            "title": "整理素材",
+            "date": "2026-12-15",
+            "timeType": "exact",
+            "start": "19:00",
+            "end": "21:00",
+            "note": "",
+            "category": "职场工作",
+            "baseScore": 3
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
+    },
+    {
+      "id": "D40",
+      "batch": "D",
+      "route": "custom",
+      "runtime_sha256": "8f82531909b5266bfba304c99513d76a4c18cad24bf632de7bd269dd19a38b72",
+      "case_set_sha256": "5695622c4bcb192fecc82e94793f8eac36183463758b30ac782bd6676a5fb325",
+      "model": "deepseek-flash",
+      "input": [
+        "创建12月17日13:00至15:00阅读规范的日程。",
+        "改为晚上十一点开始，原时长保持不变。"
+      ],
+      "expected": {
+        "id": "D40",
+        "batch": "D",
+        "route": "custom",
+        "turns": [
+          "创建12月17日13:00至15:00阅读规范的日程。",
+          "改为晚上十一点开始，原时长保持不变。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "23:00",
+        "end": "01:00",
+        "overnight": true
+      },
+      "answers": [
+        {
+          "input": "创建12月17日13:00至15:00阅读规范的日程。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"核对日程：12月17日13:00至15:00阅读规范\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"阅读规范\",\"exec_date\":\"2026-12-17\",\"time_type\":\"exact\",\"start_time\":\"13:00\",\"end_time\":\"15:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对日程：12月17日13:00至15:00阅读规范",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "阅读规范",
+                    "exec_date": "2026-12-17",
+                    "time_type": "exact",
+                    "start_time": "13:00",
+                    "end_time": "15:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80uhy5e",
+              "version": 1,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "input": "改为晚上十一点开始，原时长保持不变。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“阅读规范”改为23:00开始，保留原2小时时长，结束时间为次日01:00，请核对\",\"entries\":[{\"card_id\":\"mwim8u80uhy5e\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"23:00\",\"end_time\":\"01:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“阅读规范”改为23:00开始，保留原2小时时长，结束时间为次日01:00，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80uhy5e",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "23:00",
+                  "end_time": "01:00"
+                }
+              }
+            ]
+          },
+          "error": null,
+          "card_versions": [
+            {
+              "id": "mwim8u80uhy5e",
+              "version": 2,
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "proof": {
+        "tasks": [
+          {
+            "id": "mwim8u80qpdsh",
+            "title": "阅读规范",
+            "date": "2026-12-17",
+            "timeType": "exact",
+            "start": "23:00",
+            "end": "01:00",
+            "endDayOffset": 1,
+            "note": "",
+            "category": "学业事务",
+            "baseScore": 7
+          }
+        ],
+        "todos": [],
+        "operation_count": 1,
+        "source_report": "eval-D-1794809709439.json"
+      },
+      "status": "passed_software_evaluation_not_training"
     }
   ]
 }

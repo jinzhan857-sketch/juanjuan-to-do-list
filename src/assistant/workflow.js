@@ -2,9 +2,9 @@
 (function(root){
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x));
-const fields=new Set(['title','note','exec_date','time_type','slot','start_time','end_time','category','base_score','date_from','date_to','weekdays']);
+const fields=new Set(['title','note','exec_date','time_type','slot','start_time','end_time','end_day_offset','category','base_score','date_from','date_to','weekdays']);
 const kinds=new Set(['create_schedule','create_schedule_batch','create_todo']);
-const prompt=`严格只返回完整 JSON 对象，禁止 Markdown。批量统一修改必须使用uniform合同，不要枚举entries，避免漏项：{"type":"workflow","intent":"propose","scope":{"kind":"title_contains","text":"原话中的编号"},"uniform":{"append_note":"地点：B楼"},"reply":"核对匹配范围"}。全部统一改开始时间用{"type":"workflow","intent":"propose","scope":{"kind":"all"},"uniform":{"patch":{"time_type":"exact","start_time":"19:00"},"keep_duration":true},"reply":"核对时间"}。程序会按每张卡已有时长计算结束时间，没有时长默认一小时。uniform与entries二选一，不要同时返回。最高优先合同：凡用户说全都、全部、所有，返回JSON顶层必须有scope字段，不能只写在reply。全体scope为{"kind":"all"}；所有含某词或编号为{"kind":"title_contains","text":"该词或编号"}。程序会验证，不含scope的批量修改整个拒绝。新候选entries严格按原话列举的先后顺序输出，不自行按日期排序。字段补充不等于执行同意；“都是全天”“晚上七点”“第二个下午三点”等短续答只能propose，禁止confirm。所有卡片本来已满足该补充，也只返回chat说明已保持，不得自行确认保存。你是卷卷事务，理解用户原话和候选上下文，只提出待核对方案，不能声称已写入。标题忠实保留用户的事项定义，不能擅自删去“上交日期”“递交时间”等标题词。category只能取日常生活、学业事务、职场工作、技能学习、金钱复盘、休闲娱乐、社交约定、旅行出行。基础价值0至10，普通生活1至3，课程约7，高强度长期成果8至10，不能全部统一3分。日程有执行日期；待办没有固定执行日期。多事项候选合同优先于前文单动作例子。创建或补充候选时只返回 {"type":"workflow","reply":"核对说明","intent":"propose","entries":[{"action":{"kind":"create_schedule","item":{"title":"完整标题","exec_date":"YYYY-MM-DD","time_type":"allday","category":"学业事务","base_score":7}}}]}。多个不同事项必须全部放入entries，每个独立事项一项，重复组每组一项create_schedule_batch与rule。不能漏项、合并或截断。缺信息也保留entries里所有已知字段，日程缺日期才问日期，待办没有固定执行日期。只有日期即可全天，不问时刻或评分背景。自主英语学习归技能学习，学校课程归学业事务。上下文candidate_cards是当前明确候选集合，不是全库。
+const prompt=`严格只返回完整 JSON 对象，禁止 Markdown。只是讨论、否定创建或引用他人指令时返回chat，不生成workflow。相同标题有多项时，除非用户明确全部或选择范围，否则clarify问日期。跨日新建必须返回end_day_offset:1，exec_date为开始日；同日为0或不填。单项只改开始时间也必须保留原时长，不由模型心算结束时间；返回patch只给start_time和time_type，程序计算结束时间。批量统一修改必须使用uniform合同，不要枚举entries，避免漏项：{"type":"workflow","intent":"propose","scope":{"kind":"title_contains","text":"原话中的编号"},"uniform":{"append_note":"地点：B楼"},"reply":"核对匹配范围"}。全部统一改开始时间用{"type":"workflow","intent":"propose","scope":{"kind":"all"},"uniform":{"patch":{"time_type":"exact","start_time":"19:00"},"keep_duration":true},"reply":"核对时间"}。程序会按每张卡已有时长计算结束时间，没有时长默认一小时。uniform与entries二选一，不要同时返回。最高优先合同：凡用户说全都、全部、所有，返回JSON顶层必须有scope字段，不能只写在reply。全体scope为{"kind":"all"}；所有含某词或编号为{"kind":"title_contains","text":"该词或编号"}。程序会验证，不含scope的批量修改整个拒绝。新候选entries严格按原话列举的先后顺序输出，不自行按日期排序。字段补充不等于执行同意；“都是全天”“晚上七点”“第二个下午三点”等短续答只能propose，禁止confirm。所有卡片本来已满足该补充，也只返回chat说明已保持，不得自行确认保存。你是卷卷事务，理解用户原话和候选上下文，只提出待核对方案，不能声称已写入。标题忠实保留用户的事项定义，不能擅自删去“上交日期”“递交时间”等标题词。category只能取日常生活、学业事务、职场工作、技能学习、金钱复盘、休闲娱乐、社交约定、旅行出行。基础价值0至10，普通生活1至3，课程约7，高强度长期成果8至10，不能全部统一3分。日程有执行日期；待办没有固定执行日期。多事项候选合同优先于前文单动作例子。创建或补充候选时只返回 {"type":"workflow","reply":"核对说明","intent":"propose","entries":[{"action":{"kind":"create_schedule","item":{"title":"完整标题","exec_date":"YYYY-MM-DD","time_type":"allday","category":"学业事务","base_score":7}}}]}。多个不同事项必须全部放入entries，每个独立事项一项，重复组每组一项create_schedule_batch与rule。不能漏项、合并或截断。缺信息也保留entries里所有已知字段，日程缺日期才问日期，待办没有固定执行日期。只有日期即可全天，不问时刻或评分背景。自主英语学习归技能学习，学校课程归学业事务。上下文candidate_cards是当前明确候选集合，不是全库。
 批量范围必须显式返回scope：全体为{"kind":"all"}，所有标题包含某文字或编号的事项为{"kind":"title_contains","text":"用户原话中的文字或编号"}。逐张扫描candidate_cards的完整标题，用包含匹配找齐，不按事项类别或标题长短排除。例如所有同编号事项包括项目、考试等任何标题包含该编号的卡片。entries必须覆盖scope的全部匹配卡，包括已经有该备注的卡，程序核对完整集合。明确分别补充两项可以只列两项，不用scope。全体改时间示例：{"type":"workflow","intent":"propose","scope":{"kind":"all"},"reply":"修改所有匹配项，请核对","entries":[{"card_id":"上下文真实id","version":1,"patch":{"time_type":"exact","start_time":"19:00","end_time":"20:00"},"append_note":"地点：A楼"}]}。append_note必须在entry顶层，不能放在patch内部，引用旧卡时禁止再用action。只给19点的续答不得追问结束时间，默认结束20点；已有明确时长则保留。补充、更正、定向备注时返回同一workflow结构，每个entry使用card_id和version精确引用上下文卡片，patch只包含改动字段，重复组也使用patch。不返回全部旧字段，不改未指定事项。备注补充用append_note，不覆盖原备注。未知编号或目标歧义返回 {"type":"clarify","reply":"必要范围问题"}，禁止同时返回任何entries或局部修改，不能纠错到相似编号。全部只作用于candidate_cards或selected为true的集合，回复说明匹配数量。统一改时保留已知时长，全天默认一小时，标准24小时开始结束时间与exact一并返回。不要更改手改字段，除非用户明确要求修改该字段。
 明确同意返回 {"type":"workflow","intent":"confirm","entries":[{"card_id":"实际id","version":1}],"reply":"确认范围"}；这只是理解，程序独立核对原话与当前版本。否定、引用、假设、一般讨论、含糊的好不算确认或创建。明确取消用intent cancel与同样引用。新事项与更正旧事项必须区别，改口必须引用原card_id。重复组创建的rule包含date_from、date_to、weekdays（1至7代表周一至周日）及title、note、time_type、start_time、end_time、category、base_score；缺少起止日期时保留已知rule并追问，不擅自补范围。更正重复组范围时patch可用date_from、date_to、weekdays。查询现有记录返回 {"type":"query","query":{"entity":"schedule","date_from":"YYYY-MM-DD","date_to":"YYYY-MM-DD","status":"all","keyword":""},"reply":"查询条件"}。修改或删除数据库中的已有记录使用proposal或batch_proposal，action.kind可用update_schedule、update_schedule_batch、update_todo、delete_schedule、delete_schedule_batch、delete_todo、convert_schedule_to_todo；target_id必须来自上下文实际记录，整组身份必须原样保留rule.series_id，不透明编号不得猜测，同名多组先问。旧记录的增量item仅含改动字段。跨日已有记录的时间修改交给发布表单。候选未完成时可返回已知action并用reply问一个真正必要问题。保留标题、日期、时间、备注、图片和链接，不能编造或清空。创建成功后默认修改原记录，只有明确再创建一份才创建新候选。`;
 function parse(data){
@@ -38,6 +38,54 @@ function parse(data){
  });
  let scope;if(data.scope!==undefined){if(!['all','title_contains'].includes(data.scope?.kind)||data.scope.kind==='title_contains'&&(typeof data.scope.text!=='string'||!data.scope.text.trim()||data.scope.text.length>300))throw Error('候选范围无效');scope=copy(data.scope);}
  return {type:'workflow',intent:data.intent,...(scope?{scope}:{}),reply:String(data.reply||'请核对候选范围。').slice(0,1500),entries};
+}
+// Guard user authority independently of model prose and action structures.
+function directText(text){return String(text||'').replace(/[“「『"][^”」』"]*[”」』"]/g,'');}
+function discussionOnly(text){
+ const t=directText(text);
+ return /只(?:讨论|分析|解释)|仅(?:讨论|分析)|(?:不要|先不|先别|(?:^|[，。；！？!?\s]|但|请)别)(?:生成[^，。；]{0,8}候选|创建|新建|建立|修改|改动)/.test(t);
+}
+function guard(data,context={},text=''){
+ const actionable=['workflow','proposal','batch_proposal','multi_proposal'].includes(data?.type);
+ if(actionable&&discussionOnly(text))return {type:'chat',reply:'仅讨论，当前候选和记录保持不变。'};
+ if(data?.type!=='workflow')return data;
+ const r=parse(data),cards=context.candidate_cards||[];
+ if(r.intent==='confirm'&&!explicitConfirmation(text)){if(/全天|日期|标题|备注|时间|点/.test(text))return {type:'chat',reply:'已保留当前草稿，尚未确认保存。'};throw Error('请明确确认当前卡片范围，尚未保存');}
+ if(r.intent!=='propose')return r;
+ const t=directText(text),explicitRange=/(?:全部|所有|全都|都是|每一[项个]|两[项个]|这[几些]项)/.test(t),selected=cards.filter(c=>c.selected);
+ const identityEvidence=/第[一二三四五六七八九十\d]+[个项]|\d{1,2}月\d{1,2}[日号]|20\d{2}-\d{2}-\d{2}|今天|明天|后天/.test(t);
+ if(!explicitRange&&!selected.length&&!identityEvidence){
+  const referenced=r.uniform?cards.filter(c=>r.scope.kind==='all'||String((c.action.item||c.action.rule)?.title||'').includes(r.scope.text)):cards.filter(c=>r.entries.some(e=>e.card_id===c.card_id));
+  if(referenced.some(c=>cards.filter(other=>(other.action.item||other.action.rule)?.title===(c.action.item||c.action.rule)?.title).length>1)||r.uniform&&referenced.length>1)return {type:'clarify',reply:'匹配到多项，请指定日期，或明确要修改全部匹配事项。'};
+ }
+ return r;
+}
+function normalizeTimes(result,context,text,{recognize,minutes,format}){
+ const recognized=recognize(text),hasRange=/(?:到|至|~|～)[^，。；]{0,16}(?:点|[:：])/.test(text);
+ for(const e of result.entries){
+  if(!e.card_id){
+   const item=e.action.kind==='create_schedule_batch'?e.action.rule:e.action.item;
+   if(item.time_type==='exact'&&recognized.kind==='exact'&&recognized.endOffset===1)item.end_day_offset=1;
+   continue;
+  }
+  const patch=e.patch||{},card=context.find(c=>c.card_id===e.card_id),old=card&&(card.action.kind==='create_schedule_batch'?card.action.rule:card.action.item);
+  if(!old||!patch.start_time||recognized.kind!=='exact'||hasRange)continue;
+  if(/(?:时长|持续).*(?:改为|改成|缩短|延长)/.test(text))continue;
+  const duration=old.time_type==='exact'&&old.start_time&&old.end_time?minutes(old.end_time)+1440*(old.end_day_offset===1?1:0)-minutes(old.start_time):60;
+  const end=minutes(patch.start_time)+duration;if(duration<=0||end>=2880)throw Error('结束日期范围需要明确核对');
+  Object.assign(patch,{time_type:'exact',end_time:format(end%1440),end_day_offset:Math.floor(end/1440)});
+ }
+ return result;
+}
+function clarificationQuestion(action,reply,error){
+ const value=action.kind==='create_schedule_batch'?action.rule||{}:action.item||{},title=value.title?('“'+value.title+'”'):'这件事';
+ if(/[？?]|哪一天|什么时候|几点|哪一项/.test(reply||'')&&!/评分|分数|分类|主题背景/.test(reply))return String(reply).match(/^[\s\S]*?[？?]/)?.[0]||reply;
+ if(!value.title)return '这件事具体要做什么？';
+ if(action.kind==='create_schedule'&&!value.exec_date)return title+'想安排在哪一天？';
+ if(action.kind==='create_schedule_batch'&&!value.date_to)return title+'这组安排准备持续到哪一天？';
+ if(/日期/.test(error))return title+'的日期需要核对，想安排在哪一天？';
+ if(/时间/.test(error))return title+'想几点开始，几点结束？';
+ return title+'还有一处需要核对：'+error+'。可以补充一下吗？';
 }
 function contextCards(value){
  if(value===undefined)return [];
@@ -133,6 +181,6 @@ async function confirmSelection(selection,chatId,{getMessages,expectation,prepar
     return results;
 
 }
-const api={prompt,parse,current,assertCurrent,revise,explicitConfirmation,assertScope,expandUniform,confirmSelection,contextCards};
+const api={prompt,parse,current,assertCurrent,revise,explicitConfirmation,assertScope,expandUniform,confirmSelection,contextCards,guard,discussionOnly,normalizeTimes,clarificationQuestion};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.JuanjuanWorkflow=api;
 })(globalThis);

@@ -2036,8 +2036,8 @@ const AIService = {
     if(input.base_score!==undefined)item.base_score=Number.isFinite(score)?Math.max(0,Math.min(10,r1(score))):3;
     return item;
   },
-  normalizeAgent(data){
-    if(data?.type==='workflow')return globalThis.JuanjuanWorkflow.parse(data);
+  normalizeAgent(data,context={},text){
+    if(data?.type==='workflow')return text===undefined?globalThis.JuanjuanWorkflow.parse(data):globalThis.JuanjuanWorkflow.guard(data,context,text);
     const type=['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data?.type)?data.type:'clarify'; const reply=String(data?.reply||'我需要再确认一下你的意思。').slice(0,600);
     const fields=type==='batch_proposal'&&!['update_schedule_batch','delete_schedule_batch'].includes(data?.action?.kind)?data?.action?.rule:data?.action?.item;
     const contentError=agentContentLimitError(fields,500);
@@ -2109,7 +2109,7 @@ const AIService = {
         const prompt=role==='task'?globalThis.JuanjuanWorkflow.prompt:role==='planning'?CUSTOM_PLANNING_PROMPT:CUSTOM_CHAT_PROMPT;
         const data=await this.customRequest([{role:'system',content:prompt},{role:'user',content:`今天是${todayStr()}。以下是当前设备中的相关资料和最近对话，仅用于理解请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${message}`}],6000,null,{timeoutMs:30000,retries:0,signal:controller.signal});
         if(controller.signal.aborted)return {type:'cancelled',reply:''};
-        this.setDegraded(false); return this.normalizeAgent(data);
+        this.setDegraded(false); return this.normalizeAgent(data,context,message);
       }
       const timer=setTimeout(()=>controller.abort(),9000);
       try{
@@ -2893,10 +2893,11 @@ const UI = {
     return {kind:store==='tasks'?'update_schedule':'update_todo',target_id:target.id,item:store==='tasks'?{title:target.title,note:target.note||'',exec_date:target.execDate,time_type:target.timeType,slot:target.slot,start_time:target.startTime,end_time:target.endTime,category:target.category,base_score:target.baseScore}:{title:target.title,note:target.note||'',category:target.category,base_score:target.baseScore}};
   },
   async applyAssistantWorkflow(raw,chatId,content,seen,requestId){
-    const wf=await this.loadAssistantWorkflow();let result=wf.parse(raw);const current=this.assistantCurrentCards(chatId);
+    const wf=await this.loadAssistantWorkflow();let result=wf.guard(raw,{candidate_cards:seen||this.assistantCandidateContext(chatId)},content);if(result.type!=='workflow')return result;const current=this.assistantCurrentCards(chatId);
     const context=seen||this.assistantCandidateContext(chatId),selected=context.filter(x=>x.selected),available=new Map((selected.length?selected:context).map(x=>[x.card_id,x]));
     result=wf.expandUniform(result,context,content,{minutes:minOf,format:m=>pad(Math.floor(m/60))+':'+pad(m%60)});
     wf.assertScope(result,context,content);
+    wf.normalizeTimes(result,context,content,{recognize:recognizePublishTime,minutes:minOf,format:m=>pad(Math.floor(m/60))+':'+pad(m%60)});
     const targets=result.entries.filter(e=>e.card_id).map(e=>{
       const known=available.get(e.card_id),m=current.find(m=>m.meta.workflow.cardId===e.card_id);
       if(!known||known.version!==e.version||!m||m.meta.workflow.version!==e.version||m.meta.status==='cancelled')throw Error('候选范围或版本已变化，请核对最新卡片');
@@ -2926,7 +2927,7 @@ const UI = {
       }
       const checked=this.validateAgentAction(m.meta.action);
       m.meta.workflow.requestId=requestId||m.meta.workflow.requestId;
-      m.content=checked.ok?result.reply:checked.error;
+      m.content=checked.ok?result.reply:wf.clarificationQuestion(m.meta.action,result.reply,checked.error);
       m.meta.workflow.missing=checked.ok?null:checked.error;
       this.captureAgentScope(m.meta.action);
       changes.push({store:'messages',value:m});
@@ -3091,7 +3092,7 @@ const UI = {
     if(action.kind==='create_schedule_batch'){
       const rule=action.rule||{}, items=this.expandBatchSchedule(action), duplicateCount=items.filter(item=>this.isDuplicateSchedule(item)).length;
       const weekNames=(rule.weekdays||[]).map(day=>['','周一','周二','周三','周四','周五','周六','周日'][day]).join('、');
-      const time=rule.time_type==='exact'?`${rule.start_time} 至 ${rule.end_time}`:rule.time_type==='slot'?(slotByKey(rule.slot)?.name||'时段'):'全天';
+      const time=rule.time_type==='exact'?`${rule.start_time} 至 ${rule.end_day_offset===1?'次日 ':''}${rule.end_time}`:rule.time_type==='slot'?(slotByKey(rule.slot)?.name||'时段'):'全天';
       return [['日程定义',rule.title||''],['范围',`${rule.date_from||''} 至 ${rule.date_to||''}`],['重复',weekNames],['时间',time],['数量',`${items.length} 条${duplicateCount?`，其中 ${duplicateCount} 条已存在，将跳过`:''}`],['标签',rule.category||'日常生活'],['价值',`${rule.base_score??3} 分`],...(rule.note?[['备注',rule.note]]:[])];
     }
     if(action.kind==='update_schedule_batch'||action.kind==='delete_schedule_batch'){
@@ -3101,7 +3102,7 @@ const UI = {
       if(action.kind==='delete_schedule_batch') return rows;
       if(item.title!==undefined) rows.push(['新标题',item.title]);
       if(item.note!==undefined) rows.push(['新备注',item.note||'清空备注']);
-      if(item.time_type==='exact') rows.push(['新时间',`${item.start_time} 至 ${item.end_time}`]);
+      if(item.time_type==='exact') rows.push(['新时间',`${item.start_time} 至 ${item.end_day_offset===1?'次日 ':''}${item.end_time}`]);
       if(item.category) rows.push(['新标签',item.category]);
       return rows;
     }
@@ -3111,7 +3112,7 @@ const UI = {
     if(target) rows.push(['对象',target.title]);
     if(item.title) rows.push(['日程定义',item.title]);
     if(item.exec_date) rows.push(['日期',item.exec_date]);
-    if(item.time_type==='exact') rows.push(['时间',`${item.start_time} 至 ${item.end_time}`]);
+    if(item.time_type==='exact') rows.push(['时间',`${item.start_time} 至 ${item.end_day_offset===1?'次日 ':''}${item.end_time}`]);
     else if(item.time_type==='slot') rows.push(['时段',slotByKey(item.slot)?.name||item.slot]);
     else if(item.time_type==='allday') rows.push(['时间','全天']);
     if(item.category) rows.push(['标签',item.category]);
@@ -3237,7 +3238,7 @@ const UI = {
     const days=new Set(rule.weekdays), items=[]; let cursor=rule.date_from, guard=0;
     while(cursor<=rule.date_to&&guard<732){
       const date=parseDate(cursor), weekday=date.getDay()===0?7:date.getDay();
-      if(days.has(weekday))items.push({title:rule.title,note:rule.note||'',exec_date:cursor,time_type:rule.time_type||'allday',slot:rule.slot||null,start_time:rule.start_time||null,end_time:rule.end_time||null,category:rule.category||'日常生活',base_score:Number(rule.base_score??3)});
+      if(days.has(weekday))items.push({title:rule.title,note:rule.note||'',exec_date:cursor,...(rule.end_day_offset===1?{end_day_offset:1}:{}),time_type:rule.time_type||'allday',slot:rule.slot||null,start_time:rule.start_time||null,end_time:rule.end_time||null,category:rule.category||'日常生活',base_score:Number(rule.base_score??3)});
       cursor=addDays(cursor,1); guard++;
     }
     return items;
@@ -3333,6 +3334,8 @@ const UI = {
     if(fields.time_type!==undefined && !['allday','slot','exact'].includes(fields.time_type)) return {ok:false,error:'日程时间类型需要再确认'};
     if(fields.slot!=null && !slotByKey(fields.slot)) return {ok:false,error:'日程时段需要再确认'};
     for(const key of ['start_time','end_time'])if(fields[key]!=null&&!validTimeStr(fields[key])) return {ok:false,error:'具体开始和结束时间需要再确认'};
+    if(fields.end_day_offset!==undefined&&![0,1].includes(fields.end_day_offset))return {ok:false,error:'结束日期需要确认'};
+    if(fields.end_day_offset===1&&fields.time_type!=='exact')return {ok:false,error:'跨日必须使用具体时间'};
     const task=S.tasks.find(x=>x.id===action.target_id);
     const todo=S.todos.find(x=>x.id===action.target_id);
     if(action.kind==='create_schedule_batch'){
@@ -3341,7 +3344,7 @@ const UI = {
       if(!Array.isArray(rule.weekdays)||!rule.weekdays.length||rule.weekdays.some(day=>!Number.isInteger(day)||day<1||day>7)) return {ok:false,error:'重复星期需要再确认'};
       if(!['allday','exact','slot'].includes(rule.time_type))return {ok:false,error:'重复日程时间类型需要确认'};
       if(rule.time_type==='slot'&&!slotByKey(rule.slot))return {ok:false,error:'重复日程时段需要确认'};
-      if(rule.time_type==='exact'&&(!validTimeStr(rule.start_time)||!validTimeStr(rule.end_time)||minOf(rule.end_time)<=minOf(rule.start_time))) return {ok:false,error:'批量日程的具体开始和结束时间需要再确认'};
+      if(rule.time_type==='exact'&&(!validTimeStr(rule.start_time)||!validTimeStr(rule.end_time)||minOf(rule.end_time)+1440*(rule.end_day_offset===1?1:0)<=minOf(rule.start_time))) return {ok:false,error:'批量日程的具体开始和结束时间需要再确认'};
       const expanded=this.expandBatchSchedule(action);
       if(!expanded.length) return {ok:false,error:'这个日期范围内没有符合条件的日期'};
       if(expanded.length>120) return {ok:false,error:'一次最多创建 120 条日程，请缩短日期范围'};
@@ -3371,7 +3374,7 @@ const UI = {
     }
     if(action.kind==='create_schedule'){
       if(!item.title || !validDateStr(item.exec_date)) return {ok:false,error:'新建日程还缺少标题或日期'};
-      if(item.time_type==='exact' && (!validTimeStr(item.start_time) || !validTimeStr(item.end_time) || minOf(item.end_time)<=minOf(item.start_time))) return {ok:false,error:'具体开始和结束时间需要再确认'};
+      if(item.time_type==='exact' && (!validTimeStr(item.start_time) || !validTimeStr(item.end_time) || minOf(item.end_time)+1440*(item.end_day_offset===1?1:0)<=minOf(item.start_time))) return {ok:false,error:'具体开始和结束时间需要再确认'};
       if(item.time_type==='slot' && !slotByKey(item.slot)) return {ok:false,error:'日程时段需要再确认'};
     }
     if(action.kind==='create_todo' && !item.title) return {ok:false,error:'新建待办还缺少标题'};
@@ -3483,7 +3486,7 @@ const UI = {
     this.agentThinking=false;
     if(result.type==='cancelled'){this.renderAgent();return;}
     if(result.type==='workflow'){
-      try{await this.applyAssistantWorkflow(result,chat.id,content,context.candidate_cards,userMessageId);}catch(error){await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:'clarify',content:error.message,createdAt:Date.now(),meta:{agentRole:'task'}});}
+      try{const outcome=await this.applyAssistantWorkflow(result,chat.id,content,context.candidate_cards,userMessageId);if(outcome?.type)await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:outcome.type,content:outcome.reply,createdAt:Date.now(),meta:{agentRole:'task'}});}catch(error){await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:'clarify',content:error.message,createdAt:Date.now(),meta:{agentRole:'task'}});}
       this.renderAgent();return;
     }
     if(result.type==='multi_proposal'&&Array.isArray(result.actions)){
@@ -3671,7 +3674,7 @@ const UI = {
       const expanded=this.expandBatchSchedule(action);
       if(message.meta?.workflow&&!message.meta.workflow.allowCopy&&expanded.some(value=>this.isDuplicateSchedule(value)))throw Error('整组中已有相同日程，请核对，整组未保存');
       for(const entry of (message.meta?.workflow?expanded:expanded.filter(value=>!this.isDuplicateSchedule(value)))){
-        const task={id:uid(),seriesId,seriesRule:{date_from:action.rule.date_from,date_to:action.rule.date_to,weekdays:action.rule.weekdays.slice()},title:entry.title,note:entry.note||'',createdAt:now,execDate:entry.exec_date,timeType:entry.time_type||'allday',slot:entry.time_type==='slot'?entry.slot:null,startTime:entry.time_type==='exact'?entry.start_time:null,endTime:entry.time_type==='exact'?entry.end_time:null,category:entry.category||'日常生活',baseScore:Number(entry.base_score??3),aiReason:'由卷卷助手批量创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(entry.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
+        const task={id:uid(),seriesId,seriesRule:{date_from:action.rule.date_from,date_to:action.rule.date_to,weekdays:action.rule.weekdays.slice()},title:entry.title,note:entry.note||'',createdAt:now,execDate:entry.exec_date,timeType:entry.time_type||'allday',slot:entry.time_type==='slot'?entry.slot:null,startTime:entry.time_type==='exact'?entry.start_time:null,endTime:entry.time_type==='exact'?entry.end_time:null,...(entry.end_day_offset===1?{endDayOffset:1}:{}),category:entry.category||'日常生活',baseScore:Number(entry.base_score??3),aiReason:'由卷卷助手批量创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(entry.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
         changes.push({store:'tasks',value:task}); created.push(clone(task));
       }
       operation.after=created; operation.summary=`已为你创建 ${created.length} 条日程。`;
@@ -3686,7 +3689,8 @@ const UI = {
         if(item.exec_date) task.execDate=item.exec_date;
         if(item.time_type){ task.timeType=item.time_type; task.slot=item.time_type==='slot'?(item.slot||task.slot):null; task.startTime=item.time_type==='exact'?(item.start_time||task.startTime):null; task.endTime=item.time_type==='exact'?(item.end_time||task.endTime):null; }
         else{ if(item.slot!==undefined) task.slot=item.slot; if(item.start_time!==undefined) task.startTime=item.start_time; if(item.end_time!==undefined) task.endTime=item.end_time; }
-        if(item.category) task.category=item.category;
+        if(item.end_day_offset===1)task.endDayOffset=1;else if(item.end_day_offset===0)delete task.endDayOffset;
+      if(item.category) task.category=item.category;
         if(item.base_score!==undefined) task.baseScore=Number(item.base_score);
         task.slot=task.timeType==='exact'?slotForTime(task.startTime).key:task.timeType==='slot'?task.slot:null;
         if(task.timeType!=='exact'){task.startTime=null;task.endTime=null;delete task.endDayOffset;}
@@ -3699,7 +3703,7 @@ const UI = {
       for(const task of targets) changes.push({store:'tasks',type:'delete',key:task.id});
       operation.after=[]; operation.summary=`已删除 ${targets.length} 条整组日程。`;
     }else if(action.kind==='create_schedule'){
-      const task={id:uid(),title:item.title,note:item.note||'',createdAt:now,execDate:item.exec_date,timeType:item.time_type||'allday',slot:item.time_type==='slot'?item.slot:null,startTime:item.time_type==='exact'?item.start_time:null,endTime:item.time_type==='exact'?item.end_time:null,category:item.category||'日常生活',baseScore:Number(item.base_score??3),aiReason:'由卷卷助手创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(item.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
+      const task={id:uid(),title:item.title,note:item.note||'',createdAt:now,execDate:item.exec_date,timeType:item.time_type||'allday',slot:item.time_type==='slot'?item.slot:null,startTime:item.time_type==='exact'?item.start_time:null,endTime:item.time_type==='exact'?item.end_time:null,...(item.end_day_offset===1?{endDayOffset:1}:{}),category:item.category||'日常生活',baseScore:Number(item.base_score??3),aiReason:'由卷卷助手创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(item.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
       changes.push({store:'tasks',value:task}); operation.after=clone(task); operation.summary=`已为你创建日程「${task.title}」。`;
     }else if(action.kind==='create_todo'){
       const todo={id:uid(),title:item.title,note:item.note||'',category:item.category||'日常生活',baseScore:Number(item.base_score??3),aiReason:'由卷卷助手创建',aiAdvice:'',aiSource:'agent',links:[],images:[],done:false,finalScore:0,createdAt:now,completedAt:null,sourceTaskId:null};

@@ -207,7 +207,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C05",
@@ -289,7 +289,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C11",
@@ -340,7 +340,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C15",
@@ -417,7 +417,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C21",
@@ -468,7 +468,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C25",
@@ -545,7 +545,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C31",
@@ -596,7 +596,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": true,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C35",
@@ -673,7 +673,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": true,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C16",
@@ -724,7 +724,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C26",
@@ -775,7 +775,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C30",
@@ -852,7 +852,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": false,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     },
     {
       "id": "C36",
@@ -903,7 +903,7 @@
       ],
       "source_report": "eval-C-1794808609589.json",
       "repeated_duplicate": true,
-      "status": "awaiting_user_decision"
+      "status": "original_failure_retained_after_D_root_cause_retest"
     }
   ]
 }

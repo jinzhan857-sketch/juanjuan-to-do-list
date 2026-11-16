@@ -1,0 +1,106 @@
+{
+  "version": "d-review-v1",
+  "frozenAt": "2026-11-16T06:17:13.281Z",
+  "purpose": "Final-code review of corrected negative boundary, natural clarification, scope, overnight and duration; not unseen D cases.",
+  "cases": [
+    {
+      "id": "A01",
+      "partition": "regression",
+      "date": "2026-11-15",
+      "turns": [
+        "分别创建两条日程：明天09:00到10:00复习线性代数，备注带演示讲义；后天14:00到15:00开项目例会，备注带演示周报。不要合并。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "dates": [
+        "2026-11-16",
+        "2026-11-17"
+      ],
+      "notes": [
+        "演示讲义",
+        "演示周报"
+      ],
+      "originalId": "AST05",
+      "batch": "D-review",
+      "route": "hosted"
+    },
+    {
+      "id": "A02",
+      "partition": "regression",
+      "date": "2026-11-15",
+      "turns": [
+        "安排两件事：09:00到10:00复习线性代数，14:00到15:00开项目例会；两件的日期稍后告诉你。",
+        "复习放明天，例会放后天。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "dates": [
+        "2026-11-16",
+        "2026-11-17"
+      ],
+      "originalId": "AST06",
+      "batch": "D-review",
+      "route": "custom"
+    },
+    {
+      "id": "B01",
+      "partition": "regression",
+      "date": "2026-11-15",
+      "turns": [
+        "分别建立两条日程：明天09:00到10:00复习线性代数，备注带演示讲义；后天14:00到15:00开课题例会，备注带演示周报。不要合并。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "dates": [
+        "2026-11-16",
+        "2026-11-17"
+      ],
+      "notes": [
+        "演示讲义",
+        "演示周报"
+      ],
+      "originalId": "AST05",
+      "batch": "D-review",
+      "route": "custom",
+      "variationOf": "A01"
+    },
+    {
+      "id": "C05",
+      "batch": "D-review",
+      "route": "hosted",
+      "turns": [
+        "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+        "复查加备注带清单。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    },
+    {
+      "id": "D11",
+      "batch": "D-review",
+      "route": "hosted",
+      "turns": [
+        "请创建12月2日23:10到次日00:20的日程“夜间任务1”。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "overnight": true,
+      "start": "23:10",
+      "end": "00:20"
+    },
+    {
+      "id": "D31",
+      "batch": "D-review",
+      "route": "hosted",
+      "turns": [
+        "创建12月8日14:15至15:45审查照片的日程。",
+        "改为晚上七点开始，原时长保持不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "20:30"
+    }
+  ]
+}

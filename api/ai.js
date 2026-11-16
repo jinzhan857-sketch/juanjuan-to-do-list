@@ -247,8 +247,9 @@ function sanitizeBatchUpdateRule(input = {}) {
   };
 }
 
-function parseAgentResult(content, context) {
+function parseAgentResult(content, context, input) {
   const data = parseJsonContent(content);
+  if(input!==undefined&&['workflow','proposal','batch_proposal'].includes(data.type)){const guarded=workflowContract().guard(data,context,input);if(data.type==='workflow'||guarded.type!==data.type)return guarded;}
   if(data.type==='workflow')return workflowContract().parse(data);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
   const fields = type === 'batch_proposal' && !['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action?.rule : data.action?.item;
@@ -444,7 +445,7 @@ module.exports = async function handler(req, res) {
       }),
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
-    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
+    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context, input) : parseModelResult(output.choices?.[0]?.message?.content);
     const completed = await quota.finish(deviceId, requestId, 'success', Date.now());
     if (completed !== 'success') {
       receipt = null;
