@@ -3,7 +3,14 @@
   "baseline": "13bd591d0cfc8dfa7bd06fd87eeaf6f8df501ff9",
   "status": "prepared_not_executed",
   "shared_owner": "issue115",
-  "budget": {"all_supplier_attempts": 100, "cny": 10, "used": 0},
+  "budget": {
+    "all_supplier_attempts": 100, "cny": 10, "used": 0,
+    "ledger_scope": "machine_current_user_repository_issue119",
+    "proposed_live_ledger": "C:/Users/25470/.config/juanjuan/issue119/budget.json",
+    "proposed_live_lock": "C:/Users/25470/.config/juanjuan/issue119/budget.lock",
+    "offline_test_root": "temporary_synthetic_machine_directory_only",
+    "live_ledger_created": false
+  },
   "database": "juanjuan-issue119-synthetic",
   "image_truth": [
     {"path":"a/notice.png","course":"ALPHA","date":"2030-04-08","time":"09:00","value":17,"sha256":"17b161c7a6b836db278140e5fec6fd9589b8db79f9e92ec0e649f119b3115b72"},
@@ -31,6 +38,10 @@
     {"id":"G01","fixture":"seven-store synthetic snapshot including pet, points, links and images","expect":"unrelated state unchanged"},
     {"id":"G02","fixture":"hosted, official DeepSeek custom, arbitrary custom","expect":"separate evidence, CORS checked live, no implicit compatibility"},
     {"id":"G03","fixture":"budget count/money cap, unknown usage, failure and restart","expect":"pre-reserve, no automatic retries, fail closed on uncertain spend"},
-    {"id":"G04","fixture":"source build, dist, archive, desktop and real phone","expect":"separate results; untested stays untested"}
+    {"id":"G04","fixture":"source build, dist, archive, desktop and real phone","expect":"separate results; untested stays untested"},
+    {"id":"G05","fixture":"two synthetic workspaces and one synthetic machine root","steps":["workspace A reserves hosted model attempt and unknown cost","workspace B reserves custom Search and Fetch attempts","restart runner from clean synthetic copy"],"expect":"one shared ledger; total attempts three; earlier unknown reserve retained; no workspace-local reset"},
+    {"id":"G06","fixture":"two processes contend at attempt or money cap","steps":["seed shared synthetic ledger with one remaining attempt","start hosted and custom contenders concurrently","inspect persisted ledger and fake transport count"],"expect":"only one additional supplier attempt; loser sends zero requests; combined caps respected"},
+    {"id":"G07","fixture":"crash after persistent reservation with unknown supplier outcome","steps":["persist attempt and cost reserve then terminate before result","restart in other workspace","report result twice for original attempt"],"expect":"reservation survives; residual lock blocks until checked; no free retry; final result accounted once"},
+    {"id":"G08","fixture":"missing, corrupt or unwritable ledger and stale lock","steps":["simulate prior history then remove synthetic ledger","try fresh workspace and alternate ledger argument","simulate unreadable ledger and residual lock"],"expect":"all stop before fake transport; no automatic ledger initialization, alternate path, reserve release or lock deletion"}
   ]
 }
