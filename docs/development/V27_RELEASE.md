@@ -2,6 +2,8 @@
 
 本分支界面和工程版本为2.7.0。展已授权独立验收通过后合并并正式发布，无需再次询问。独立验收见[发布复核](../audit/2026-11-17/v27-independent-release.md)，实际正式来源、部署与线上核对结果以#82发布记录为准。验收证据与保留失败见[本轮记录](../audit/2026-11-16/v27-cloud-preparation.md)，任务为[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)，实施PR为[#146](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/146)。总计划未修改。
 
+最新状态：独立聊天已于2026年11月17日正式发布，来源582aac4，#82已关闭，[正式交付](../audit/2026-11-17/v27-release-delivery.md)记录Vercel部署、Pages运行、正式Chrome真实事务、模块哈希与费用。之后展另行委托本聊天同步总计划，实施汇总见#147、发布里程碑见#148；本段“总计划未修改”指原独立发布批次，不代表后续总计划仍未同步。
+
 ## 使用入口
 
 [V2.7云端试用](https://juanjuan-v27-ai.vercel.app/)无需填写模型Key，也不依赖本机服务。免费公共次数为每设备每天300次、每周300次，全站公共池每周1000次；日额度在北京时间零点恢复，周额度在周一零点恢复，不按IP限制。失败与取消退业务次数，供应商可能已发生的费用不会因此退回。所有访客均可用，模型和联网工具会收费，Vercel与Upstash使用免费档。
