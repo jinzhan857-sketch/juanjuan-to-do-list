@@ -33,6 +33,31 @@ test('card actions share styles and clearly distinguish selection, confirmation 
  const a=await setup(t);a.run("m={id:'card',role:'assistant',type:'proposal',content:'请核对',createdAt:1,meta:{agentRole:'task',status:'pending',action:{kind:'create_todo',item:{title:'合成待办',base_score:2}},workflow:{cardId:'c',version:1}}};");const html=a.run('UI.agentMessageHtml(m)');
  assert.match(html,/assistant-card-tools/);assert.match(html,/assistant-card-select/);assert.match(html,/继续沟通/);assert.doesNotMatch(html,/重新沟通|卷卷事务/);assert.match(html,/class="secondary" data-assistant-talk/);
 });
+test('message timestamps follow the last displayed minute across both speakers',async t=>{
+ const a=await setup(t);
+ a.run("timeline=[40,40,41,42,43,44].map((minute,i)=>({id:String(i),role:i%2?'assistant':'user',content:'合成消息'+i,createdAt:new Date(2027,0,1,16,minute,i===3?0:59).getTime()}))");
+ const html=a.run('UI.agentMessagesHtml(timeline)');
+ assert.deepEqual([...html.matchAll(/class="agent-message-time">(.*?)<\/div>/g)].map(m=>m[1]),['16:40','16:42','16:44']);
+ assert.equal((html.match(/class="agent-bubble"/g)||[]).length,6);
+ assert.equal(a.run('UI.agentMessagesHtml(timeline)'),html);
+ assert.match(a.run('UI.agentMessagesHtml(timeline.slice(2,3))'),/agent-message-time">16:41/);
+});
+test('timestamps restart on a new calendar day even within two minutes',async t=>{
+ const a=await setup(t);
+ a.run("timeline=[new Date(2027,0,1,23,59),new Date(2027,0,2,0,0),new Date(2027,0,2,0,1),new Date(2027,0,2,0,2)].map((date,i)=>({role:'assistant',content:'合成消息'+i,createdAt:date.getTime()}))");
+ const html=a.run('UI.agentMessagesHtml(timeline)');
+ assert.deepEqual([...html.matchAll(/class="agent-message-time">(.*?)<\/div>/g)].map(m=>m[1]),['23:59','00:00','00:02']);
+});
+test('plain replies stay compact while candidate cards retain their layout after confirmation',async t=>{
+ const a=await setup(t);
+ a.run("m={id:'card',role:'assistant',type:'proposal',content:'请核对',createdAt:1,meta:{status:'pending',action:{kind:'create_todo',item:{title:'合成待办',base_score:2}},workflow:{cardId:'c',version:1}}}");
+ assert.match(a.run('UI.agentMessageHtml(m)'),/class="agent-bubble has-details"/);
+ a.run("m.type='action_result';m.meta.status='done'");
+ assert.match(a.run('UI.agentMessageHtml(m)'),/class="agent-bubble has-details"/);
+ const html=a.run("UI.agentMessageHtml({role:'assistant',type:'chat',content:'好的。',createdAt:1},false)");
+ assert.match(html,/class="agent-avatar"/);assert.match(html,/class="agent-bubble">好的。/);
+ assert.doesNotMatch(html,/has-details|agent-message-time|卷卷/);
+});
 test('saved candidates expose one authoritative identity amid unrelated records',async t=>{
  const a=await setup(t);a.run("S.tasks=Array.from({length:23},(_,i)=>({id:'background'+i,title:'其他事项'+i,execDate:'2026-12-10',timeType:'allday',baseScore:3}));");await a.run("DB.batch(S.tasks.map(value=>({store:'tasks',value})))");
  a.ctx.answer={type:'workflow',intent:'propose',entries:[{action:{kind:'create_schedule',item:{title:'检查投影仪',exec_date:'2026-12-30',time_type:'exact',start_time:'15:00',end_time:'16:00',base_score:3}}},{action:{kind:'create_todo',item:{title:'归档发票',base_score:3}}}]};
