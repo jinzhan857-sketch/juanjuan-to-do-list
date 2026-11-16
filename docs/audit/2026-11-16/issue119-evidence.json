@@ -347,7 +347,7 @@
   },
   "offline": {
     "original": 1504,
-    "added": 34,
+    "added": 35,
     "prepared_matrix": 26,
     "matrix_all_completed": false
   },
@@ -364,5 +364,5 @@
     "src/assistant/materials.js": "81765fb325417d50a9802d5f4982504567ce4eddef35125c09c0b5c9feac3527",
     "src/assistant/workflow.js": "b4e181c1d6b17d3a19e427c6938b6ad2cdd181f6cdc790d0aa7164968eb8e933"
   },
-  "final_guard_note": "Strict finish_reason/error rejection was added after live calls; offline HTTP 200 fault regression covers it; all successful observed live model events returned finish_reason stop."
+  "final_guard_note": "Strict finish_reason/error rejection was added after live calls; offline HTTP 200 fault regression covers it; all successful observed live model events returned finish_reason stop. Selected material and explicit online intent also bypass the existing weather shortcut; an actual send-entry offline regression covers weather words in an image request."
 }

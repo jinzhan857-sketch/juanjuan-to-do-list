@@ -2107,7 +2107,7 @@ const AIService = {
   async agent(message, context, role='auto'){
     if(context.selected_images?.length&&this.source()!=='custom')return {type:'error',reply:'请先配置自配DeepSeek，再发送图片。'};
     if(/https?:\/\//.test(message)&&this.source()!=='custom')return {type:'error',reply:'阅读网页需要先配置自配DeepSeek，本次未读取链接。'};
-    if(this.isWeatherRequest(message)||this.isWeatherFollowup(message,context)) return this.weatherReply(message,context);
+    if(!context.selected_images?.length&&!/https?:\/\/|联网|搜索|官网/.test(message)&&(this.isWeatherRequest(message)||this.isWeatherFollowup(message,context))) return this.weatherReply(message,context);
     await UI.loadAssistantWorkflow();
     const controller=new AbortController();
     const materialDeadline=setTimeout(()=>controller.abort(),45000);
