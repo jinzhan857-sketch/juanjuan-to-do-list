@@ -203,6 +203,7 @@ function sanitizeBatchUpdateRule(input = {}) {
 
 function parseAgentResult(content, context, input) {
   const data = parseJsonContent(content);
+  if(data.type==='memory_import')return workflowContract().parseMemoryImport(data);
   if(input!==undefined&&['workflow','proposal','batch_proposal'].includes(data.type)){const guarded=workflowContract().guard(data,context,input);if(data.type==='workflow'||guarded.type!==data.type)return guarded;}
   if(data.type==='workflow')return workflowContract().parse(data);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
@@ -280,6 +281,7 @@ function compactAgentContext(context = {}) {
   const examples = value => Array.isArray(value) ? value.slice(0, 3).map(item => shortText(item, 160)).filter(Boolean) : [];
   return {
     candidate_cards: context.candidate_cards===undefined?[]:workflowContract().contextCards(context.candidate_cards),
+    memory_groups: (Array.isArray(context.memory_groups)?context.memory_groups:[]).slice(0,40).map(name=>shortText(name,40)).filter(Boolean),
     tasks: tasks.map(item => ({
       id: shortText(item.id, 80), series_id: validSeriesId(item.series_id) ? item.series_id : null, title: shortText(item.title, 120), note: shortText(item.note, 160),
       exec_date: validDate(item.exec_date), time_type: shortText(item.time_type, 20), slot: shortText(item.slot, 20),

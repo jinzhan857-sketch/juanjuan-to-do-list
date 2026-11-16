@@ -89,6 +89,12 @@ test('referential group notes use the supplied card scope without inventing a ti
  await a.apply({...input,scope:{kind:'all'}},text);await a.confirm();assert.deepEqual(a.json('S.tasks.map(t=>t.id)'),ids);assert.ok(a.json("S.tasks.every(t=>t.note==='地点：D楼'&&t.startTime==='15:00'&&t.endTime==='16:00')"));
 });
 
+test('pet animation cannot invalidate a confirmed-record edit',async t=>{
+ const a=await fixture(t);await a.apply(seven());await a.confirm();const pet=a.json('S.pet'),c=a.cards()[0];
+ a.run("PetView.render=()=>{};PetView.bubble=()=>{};PetView._resetBehaviorTimer=()=>{};PetView.triggerBehavior('walk')");assert.equal(a.run('PetView.behavior'),'walk');assert.deepEqual(a.json('S.pet'),pet);
+ await a.apply({type:'workflow',intent:'propose',entries:[{card_id:c.card_id,version:c.version,append_note:'动画后仍可修改'}]});await a.confirm();assert.ok(a.json("S.tasks.some(t=>t.note==='动画后仍可修改')"));assert.deepEqual(a.json('S.pet'),pet);
+});
+
 test('uniform title selector expands every match and preserves unrelated cards',()=>{
  const context=seven().entries.map((e,i)=>({card_id:'c'+i,version:1,status:'pending',action:e.action}));
  const result=wf.parse({type:'workflow',intent:'propose',scope:{kind:'title_contains',text:'7215'},uniform:{append_note:'地点：B楼'}});

@@ -132,3 +132,27 @@ test('first profile persists its default pet before editing a newly saved schedu
  await a.run("settlementExpectation('tasks')");assert.equal(a.run('S.tasks[0].id'),id);
  const before=a.json('S.pet');await a.run('App.loadPet()');assert.deepEqual(a.json('S.pet'),before);
 });
+
+test('real hosted memory result is only a proposal until the existing review saves it',async t=>{
+ const a=await fixture(t),api=hosted(async()=>model({type:'memory_import',reply:'请核对两条个人记忆。',cards:[{category:'学业与工作',content:'我在学习合成材料工程。'},{category:'兴趣与交流偏好',content:'我喜欢摄影，回答时希望先说重点。'}]}));
+ a.run("S.chats=[{id:'memory-chat',title:'新聊天'}];S.messages=[];S.memories=[];UI.agentChatId='memory-chat';UI.renderAgent=()=>{};UI.resizeAgentInput=()=>{};UI.renderMemoryPage=()=>{};AIService.setDegraded=()=>{};");await a.run("DB.put('chats',S.chats[0])");
+ a.ctx.fetch=async(url,options)=>{const r=await api.send(JSON.parse(options.body));return{ok:r.code===200,status:r.code,json:async()=>r.body};};
+ const before=await a.snapshot();a.element('#agent-input').value='请把下面的个人资料整理成记忆：我在学习合成材料工程，喜欢摄影，交流时先说重点。';await a.run('UI.sendAgentMessage()');
+ assert.equal((await a.run("DB.all('memories')")).length,0);assert.equal(a.run('S.messages.at(-1).meta.memoryImportCards.length'),2);
+ a.run("UI.switchPage=name=>{reviewedPage=name}");await a.run('UI.reviewChatMemories(S.messages.at(-1).id)');assert.equal(a.run('reviewedPage'),'memory');assert.equal(a.run('UI.memoryImportCards.length'),2);
+ a.run("UI.memoryImportCards[0].content='我在学习材料工程，资料已核对。'");await a.run('UI.saveAllMemoryImportCards()');
+ assert.equal((await a.run("DB.all('memories')")).length,2);assert.equal(a.run('S.messages.at(-1).meta.memoryImportCards.length'),0);assert.equal(a.run('S.memories[0].content'),'我在学习材料工程，资料已核对。');
+ assert.deepEqual((await a.snapshot()).kv,before.kv);assert.equal(a.run('S.pet.memoryEnabled'),undefined);
+});
+
+test('memory confirmation is atomic and retry deduplicates instead of silently overwriting',async t=>{
+ const a=await fixture(t);a.run("S.memories=[];S.messages=[];UI.renderMemoryPage=()=>{};UI.memoryImportCards=[{id:'one',category:'个人基本信息',content:'我学习合成材料工程。'}];originalBatch=DB.batch;DB.batch=async()=>{throw Error('synthetic failure')}");
+ await assert.rejects(a.run('UI.saveAllMemoryImportCards()'),/synthetic failure/);assert.equal(a.run('S.memories.length'),0);assert.equal(a.run('UI.memoryImportCards.length'),1);
+ a.run('DB.batch=originalBatch');await a.run('UI.saveAllMemoryImportCards()');a.run("UI.memoryImportCards=[{id:'two',category:'个人基本信息',content:'我学习合成材料工程。'}]");await a.run('UI.saveAllMemoryImportCards()');assert.equal(a.run('S.memories.length'),1);assert.equal((await a.run("DB.all('memories')")).length,1);
+});
+
+test('custom memory proposals share validation and retain complete content',async t=>{
+ const a=await fixture(t);a.ctx.memoryReply={type:'memory_import',cards:[{category:'兴趣与交流偏好',content:'我喜欢摄影，希望回答先说重点。'}]};
+ const r=a.run('AIService.normalizeAgent(memoryReply)');assert.equal(r.cards[0].content,a.ctx.memoryReply.cards[0].content);
+ a.ctx.memoryReply.cards[0].content='长'.repeat(1001);assert.throws(()=>a.run('AIService.normalizeAgent(memoryReply)'),/长度不完整/);
+});

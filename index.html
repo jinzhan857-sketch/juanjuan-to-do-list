@@ -1072,7 +1072,7 @@ const PET_LINES = {
 function affinityTier(){ const a=S.pet.affinity; return a>=8?'high':a>=4?'mid':'low'; }
 function pickLine(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 function behaviorLine(){
-  const b = S.pet.behavior || 'idle';
+  const b = PetView.behavior || 'idle';
   return pickLine((PET_LINES.behavior[b]||PET_LINES.behavior.idle)[affinityTier()]);
 }
 function feedLine(){ return pickLine(PET_LINES.feed[affinityTier()]); }
@@ -2049,6 +2049,7 @@ const AIService = {
     return item;
   },
   normalizeAgent(data,context={},text){
+    if(data?.type==='memory_import')return globalThis.JuanjuanWorkflow.parseMemoryImport(data);
     if(data?.type==='workflow')return text===undefined?globalThis.JuanjuanWorkflow.parse(data):globalThis.JuanjuanWorkflow.guard(data,context,text);
     const type=['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data?.type)?data.type:'clarify'; const reply=String(data?.reply||'我需要再确认一下你的意思。');
     const fields=type==='batch_proposal'&&!['update_schedule_batch','delete_schedule_batch'].includes(data?.action?.kind)?data?.action?.rule:data?.action?.item;
@@ -2132,8 +2133,8 @@ const AIService = {
       const timer=setTimeout(()=>controller.abort(),50000);
       try{
         const data=await this.hostedRequest({mode:'agent',message,context,agent_role:role,client_date:todayStr()},{signal:controller.signal,timeoutMs:50000,accept:data=>{
-          if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation','workflow'].includes(data.type))throw new Error('模型返回结果不合法');
-          return data;
+          if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation','workflow','memory_import'].includes(data.type))throw new Error('模型返回结果不合法');
+          return data.type==='memory_import'?globalThis.JuanjuanWorkflow.parseMemoryImport(data):data;
         }});
         if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');
         this.setDegraded(false);
@@ -2524,6 +2525,7 @@ const PetSystem = {
    PetView — SVG 小猫卷卷（正常/开心/饥饿/生病/死亡）+ 动画音效
 ============================================================ */
 const PetView = {
+  behavior:'idle',
   posture:'sit', _pos:50,
   faceMarkup(mood){
     let eyes, mouth, extra='', cheekOp=.6;
@@ -2640,7 +2642,7 @@ const PetView = {
     inner.innerHTML = this.catSVG(mood, this.posture || 'sit');
     const wrap = $('#cat-wrap');
     // 行为动画类 + 情绪底色类（行为优先级低于情绪，但始终展示）
-    const beh = {idle:'cat-idle', walk:'cat-behavior-walk', drink:'cat-behavior-drink', yarn:'cat-behavior-yarn'}[S.pet.behavior] || 'cat-idle';
+    const beh = {idle:'cat-idle', walk:'cat-behavior-walk', drink:'cat-behavior-drink', yarn:'cat-behavior-yarn'}[this.behavior] || 'cat-idle';
     wrap.className = beh + (mood==='dead' ? '' : (mood==='hungry'||mood==='sick') ? ' cat-sad' : '');
     const pos = $('#cat-pos'); if(pos) pos.style.left = (this._pos!=null ? this._pos : 50) + '%';
     // 状态标签
@@ -2677,7 +2679,7 @@ const PetView = {
   // 触发一次行为（场景互动）：切换行为并冒一句台词，重置随机倒计时
   triggerBehavior(b){
     if(!S.pet.alive) return;
-    S.pet.behavior = b;
+    this.behavior = b;
     this.bubble(behaviorLine());
     this.render();
     this._resetBehaviorTimer();
@@ -2693,7 +2695,7 @@ const PetView = {
     this._behTm = setTimeout(()=>{
       if(S.pet.alive){
         const beh = ['idle','walk','drink','yarn'];
-        S.pet.behavior = beh[Math.floor(Math.random()*beh.length)];
+        this.behavior = beh[Math.floor(Math.random()*beh.length)];
         this.render(); this.bubble(behaviorLine());
       }
       this._resetBehaviorTimer();
@@ -3095,7 +3097,8 @@ const UI = {
     const messages=S.messages.filter(x=>x.chatId===chat.id).sort((a,b)=>a.createdAt-b.createdAt);
     const box=$('#agent-messages');
     if(!messages.length){
-      box.innerHTML=`<div class="agent-empty"><div class="pet">🐱</div><b>今天想和卷卷聊什么？</b><div class="hint">聊天记录会保存在当前设备</div><div class="agent-suggestions"><button data-prompt="帮我整理一下今天要做的事情">帮我整理一下今天要做的事情</button><button data-prompt="我这周有哪些安排需要注意？">我这周有哪些安排需要注意？</button><button data-prompt="帮我记住一个重要习惯">帮我记住一个重要习惯</button></div></div>`;
+      box.innerHTML=`<div class="agent-empty"><div class="pet">🐱</div><b>今天想和卷卷聊什么？</b><div class="hint">聊天记录会保存在当前设备</div><div class="agent-suggestions"><button data-prompt="帮我整理一下今天要做的事情">帮我整理一下今天要做的事情</button><button data-prompt="我这周有哪些安排需要注意？">我这周有哪些安排需要注意？</button><button data-memory-guide>把其他 AI 的记忆带给卷卷</button></div></div>`;
+      box.querySelector('[data-memory-guide]').onclick=()=>this.openMemoryImportGuide();
       box.querySelectorAll('[data-prompt]').forEach(b=>b.onclick=()=>{ $('#agent-input').value=b.dataset.prompt; this.resizeAgentInput(); $('#agent-input').focus(); });
     }else{
       box.innerHTML=this.agentMessagesHtml(messages)+(this.agentThinking?`<div class="agent-message"><div class="agent-avatar">🐱</div><div class="agent-bubble agent-thinking">正在理解<i></i><i></i><i></i></div></div>`:'');
@@ -3108,6 +3111,8 @@ const UI = {
       box.querySelectorAll('[data-agent-confirm]').forEach(button=>button.onclick=()=>this.confirmAgentAction(button.dataset.agentConfirm));
       box.querySelectorAll('[data-agent-cancel]').forEach(button=>button.onclick=async()=>{try{await this.cancelAgentAction(button.dataset.agentCancel);}catch(error){toast('取消未保存：'+error.message);}});
       box.querySelectorAll('[data-agent-undo]').forEach(button=>button.onclick=()=>this.undoAgentOperation(button.dataset.agentUndo));
+      box.querySelectorAll('[data-memory-review]').forEach(b=>b.onclick=()=>this.reviewChatMemories(b.dataset.memoryReview));
+      box.querySelectorAll('[data-memory-copy]').forEach(b=>b.onclick=()=>navigator.clipboard.writeText(this.memoryTransferPrompt()).then(()=>toast('整理提示词已复制')).catch(()=>toast('复制未完成，请选中聊天中的提示词复制')));
       box.querySelectorAll('[data-agent-retry]').forEach(button=>button.onclick=()=>this.retryAgentMessage(button.dataset.agentRetry));
       box.querySelectorAll('[data-agent-recommend]').forEach(button=>button.onclick=()=>this.prepareAgentRecommendation(button.dataset.agentRecommend,Number(button.dataset.agentRecommendationIndex)));
       box.querySelectorAll('[data-agent-ignore]').forEach(button=>button.onclick=()=>this.dismissAgentRecommendation(button.dataset.agentIgnore));
@@ -3147,6 +3152,8 @@ const UI = {
     if(message.role==='user') return `<div class="agent-message user"><div class="agent-bubble">${esc(message.content)}${(message.meta?.images||[]).map(img=>`<a href="${img.data}" target="_blank" rel="noopener"><img src="${img.data}" alt="${esc(img.name)}" style="display:block;max-width:180px;max-height:180px"></a>`).join('')}</div>${timeHtml}</div>`;
     const meta=message.meta||{};
     let extra='';
+    if(message.type==='memory_guide')extra+=`<div class="agent-card-actions"><button class="secondary" data-memory-copy>复制整理提示词</button></div>`;
+    if(Array.isArray(meta.memoryImportCards)){const n=meta.memoryImportCards.length;extra+=n?`<div class="agentplanbasis"><b>待核对的个人记忆</b>${meta.memoryImportCards.map(c=>`<div class="agentplanline">${esc(c.category)}：${esc(c.content)}</div>`).join('')}<div class="agent-card-actions"><button class="primary" data-memory-review="${esc(message.id)}">核对记忆（${n}条）</button></div><div class="hint">确认后才会保存，可修改分类或删除条目。</div></div>`:'<div class="hint">这批记忆已处理，可在个人统计与记忆中查看。</div>'; }
     if(meta.materials?.evidence)extra+=`<div class="hint">${meta.materials.evidence.map(e=>e.url&&/^https?:\/\//.test(e.url)?`<a href="${esc(e.url)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a>（${e.reused?'此前读取':e.kind==='search'?'搜索来源':'已读网页'}）`:`图片：${esc(e.title)}`).join('<br>')}</div>`;
     if(Array.isArray(meta.planningEvidence)&&meta.planningEvidence.length){
       extra+=`<div class="agentplanbasis"><div class="agentplanhead">本次实际用到的信息</div>${meta.planningEvidence.map(line=>`<div class="agentplanline">${esc(line)}</div>`).join('')}</div>`;
@@ -3322,6 +3329,7 @@ const UI = {
     const memories=planning?planning.memories:(useMemories&&S.pet.memoryEnabled?this.planningMemoryItems(question):[]);
     return {
       candidate_cards:candidateCards,
+      memory_groups:this.memoryGroups().map(group=>group.name),
       tasks:useTasks?tasks.map(t=>({id:short(t.id,80),series_id:validSeriesId(t.seriesId)?t.seriesId:null,title:short(t.title,120),note:short(t.note,160),exec_date:t.execDate,time_type:t.timeType,slot:t.slot,start_time:t.startTime,end_time:t.endTime,end_day_offset:t.endDayOffset===1?1:0,category:short(t.category,20),status:t.status||''})):[],
       todos:useTasks?todos.map(t=>({id:short(t.id,80),title:short(t.title,120),note:short(t.note,160),category:short(t.category,20),done:!!t.done})):[],
       selection:{tasks_total:useTasks?S.tasks.length:0,todos_total:useTasks?S.todos.length:0,tasks_selected:useTasks?tasks.length:0,todos_selected:useTasks?todos.length:0,partial:true},
@@ -3617,6 +3625,7 @@ const UI = {
       chat.updatedAt=Date.now(); await saveChat(chat); this.renderAgent(); return;
     }
     const message={id:uid(),chatId:chat.id,role:'assistant',content:result.reply||'我需要再确认一下。',type:result.type||'error',createdAt:Date.now(),meta:{agentRole:role}};
+    if(result.type==='memory_import')message.meta.memoryImportCards=result.cards.map(card=>({...card,id:uid()}));
     if(result.weather)message.meta.weather=result.weather;
     if(result.type==='proposal'||result.type==='batch_proposal'){
       message.type='proposal';
@@ -5021,6 +5030,27 @@ const UI = {
     $$('[data-memory-delete]').forEach(b=>b.onclick=async()=>{await DB.del('memories',b.dataset.memoryDelete);S.memories=S.memories.filter(m=>m.id!==b.dataset.memoryDelete);this.renderMemories();this.renderMe();});
   },
 
+  memoryTransferPrompt(){
+    return '请根据你已经了解的我的信息，整理一份供个人事务助手使用的资料，分为个人基本情况、学业与工作、固定安排、生活习惯、目标与限制、兴趣爱好与交流偏好。只写我明确提供或确认的信息，不猜测；不确定或过期的内容标注待核对。不要包含密码、验证码、证件号、财务账号或他人隐私。用第一人称简明列点，控制在2000字以内。';
+  },
+  async openMemoryImportGuide(){
+    const chat=this.currentAgentChat()||await this.createAgentChat(false),now=Date.now();
+    await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:'memory_guide',content:'让卷卷更懂你\n\n去你常用的 ChatGPT、豆包等 AI，发送下面这段整理提示词，再把得到的总结粘贴回这个聊天框。卷卷会分类整理，等你核对后再保存。\n\n'+this.memoryTransferPrompt()+'\n\n粘贴时加一句“请帮我整理成个人记忆”。保存后，可在“我的，个人统计与记忆”中管理，并选择是否允许助手使用。',createdAt:now,meta:{}});
+    chat.title='带入其他 AI 记忆';chat.updatedAt=now;await saveChat(chat);this.renderAgent();
+  },
+  async reviewChatMemories(id){
+    const source=S.messages.find(m=>m.id===id&&m.chatId===this.agentChatId);if(!source?.meta?.memoryImportCards?.length)return;
+    try{const result=globalThis.JuanjuanWorkflow.parseMemoryImport({type:'memory_import',cards:source.meta.memoryImportCards});
+      this.memoryImportCards=result.cards.map((c,i)=>({...c,id:source.meta.memoryImportCards[i].id,category:this.memoryGroups().some(g=>g.name===c.category)?c.category:'未分类'}));
+      this.memoryImportSourceMessageId=id;this.switchPage('memory');
+    }catch(error){toast(error.message);}
+  },
+  async commitMemoryImport(changes,remaining){
+    const source=S.messages.find(m=>m.id===this.memoryImportSourceMessageId),expected=copyData({memories:S.memories});
+    if(source){expected.messages=copyData(S.messages);changes=[...changes,{store:'messages',value:{...copyData(source),meta:{...copyData(source.meta),memoryImportCards:copyData(remaining)}}}];}
+    if(changes.length)await commitDataChanges(changes,expected);
+    this.memoryImportCards=remaining;this.renderMemoryPage();
+  },
   defaultMemoryGroups(){
     return [
       {id:'memory_basic',name:'个人基本信息',description:'称呼、城市、学校、专业和当前阶段',preset:true},
@@ -5031,6 +5061,8 @@ const UI = {
       {id:'memory_travel',name:'旅行偏好',description:'节奏、预算、早起和酒店偏好',preset:true},
       {id:'memory_goal',name:'目标和优先事项',description:'课程、求职、健身和旅行目标',preset:true},
       {id:'memory_limit',name:'限制与提醒',description:'避开时间、不可参加日期和限制',preset:true},
+      {id:'memory_work',name:'学业与工作',description:'专业、课程背景、项目和工作情况',preset:true},
+      {id:'memory_interest',name:'兴趣与交流偏好',description:'兴趣爱好、常聊话题和交流方式',preset:true},
       {id:'memory_uncategorized',name:'未分类',description:'暂未放入其他资料框的内容',preset:true},
     ];
   },
@@ -5078,7 +5110,7 @@ const UI = {
     box.innerHTML=`<div class="memory-import-head"><b>卷卷整理出的记忆卡片</b><button class="btn ghost sm" data-memory-save-all>全部确认保存</button></div><div class="hint" style="margin:0 2px 10px">已合并重复内容并过滤指令文本。请逐张核对、修改资料框或删除后保存。</div>${cards.map(card=>`<div class="memory-import-card" data-memory-import-card="${esc(card.id)}"><div class="form-label"><select data-memory-import-category="${esc(card.id)}">${this.memoryGroupOptions(card.category)}</select><span class="opt">待确认</span></div><textarea rows="4" maxlength="4000" data-memory-import-input="${esc(card.id)}">${esc(card.content)}</textarea><div class="row" style="margin-top:8px"><button class="btn sm" data-memory-import-save="${esc(card.id)}">确认保存</button><button class="btn ghost sm" data-memory-import-delete="${esc(card.id)}">删除</button></div></div>`).join('')}`;
     box.querySelectorAll('[data-memory-import-input]').forEach(input=>input.oninput=()=>{const card=cards.find(item=>item.id===input.dataset.memoryImportInput);if(card)card.content=input.value.slice(0,4000);});
     box.querySelectorAll('[data-memory-import-category]').forEach(select=>select.onchange=()=>{const card=cards.find(item=>item.id===select.dataset.memoryImportCategory);if(card)card.category=select.value;});
-    box.querySelectorAll('[data-memory-import-delete]').forEach(button=>button.onclick=()=>{this.memoryImportCards=(this.memoryImportCards||[]).filter(card=>card.id!==button.dataset.memoryImportDelete);this.renderMemoryImportPreview();});
+    box.querySelectorAll('[data-memory-import-delete]').forEach(button=>button.onclick=()=>{void this.commitMemoryImport([],(this.memoryImportCards||[]).filter(card=>card.id!==button.dataset.memoryImportDelete)).catch(error=>toast('删除未保存：'+error.message));});
     box.querySelectorAll('[data-memory-import-save]').forEach(button=>button.onclick=()=>this.saveMemoryImportCard(button.dataset.memoryImportSave));
     box.querySelector('[data-memory-save-all]').onclick=()=>this.saveAllMemoryImportCards();
   },
@@ -5086,10 +5118,10 @@ const UI = {
   async saveMemoryImportCard(id){
     const card=(this.memoryImportCards||[]).find(item=>item.id===id);if(!card)return;
     const content=card.content.trim();if(content.length<3){toast('记忆内容至少需要三个字');return;}
-    if(S.memories.some(item=>this.memoryKey(item.content)===this.memoryKey(content))){this.memoryImportCards=this.memoryImportCards.filter(item=>item.id!==id);this.renderMemoryImportPreview();toast('这条记忆已合并');return;}
+    if(S.memories.some(item=>this.memoryKey(item.content)===this.memoryKey(content))){await this.commitMemoryImport([],this.memoryImportCards.filter(item=>item.id!==id));toast('这条记忆已合并');return;}
     const group=this.memoryGroups().find(value=>value.name===card.category);
     const item={id:uid(),content:content.slice(0,4000),category:group?group.name:this.memoryCategory(content),createdAt:Date.now(),source:'user_import'};
-    await DB.put('memories',item);S.memories.unshift(item);this.memoryImportCards=this.memoryImportCards.filter(item=>item.id!==id);this.renderMemoryPage();toast('已保存一张记忆卡');
+    await this.commitMemoryImport([{store:'memories',value:item}],this.memoryImportCards.filter(item=>item.id!==id));toast('已保存一张记忆卡');
   },
 
   async saveAllMemoryImportCards(){
@@ -5100,8 +5132,7 @@ const UI = {
       const group=this.memoryGroups().find(value=>value.name===card.category);
       changes.push({store:'memories',value:{id:uid(),content:content.slice(0,4000),category:group?group.name:this.memoryCategory(content),createdAt:Date.now(),source:'user_import'}});
     }
-    if(changes.length)await commitDataChanges(changes,copyData({memories:S.memories}));
-    this.memoryImportCards=[];this.renderMemoryPage();toast('全部记忆卡已处理');
+    await this.commitMemoryImport(changes,[]);toast('全部记忆卡已处理');
   },
   renderMemoryPage(){
     $('#memory-page-toggle').checked=!!S.pet.memoryEnabled;
@@ -5288,6 +5319,7 @@ const App = {
     S.memories = await DB.all('memories');
     S.operations = await DB.all('operations');
     await this.loadPet();
+    PetView.behavior=S.pet.behavior;
     S.dayStats = (await DB.get('kv','dayStats')) || {};
     S.customTags = (await DB.get('kv','customTags')) || [];
     S.memoryGroups = UI.normalizeMemoryGroups((await DB.get('kv','memoryGroups')) || []);
@@ -5416,6 +5448,7 @@ const App = {
     $('#memory-page-toggle').onchange=async e=>{S.pet.memoryEnabled=e.target.checked;await savePet();};
     $('#btn-memory-page-preview').onclick=()=>{
       const text=$('#memory-page-input').value.trim(); if(!text){toast('先粘贴需要整理的内容');return;}
+      UI.memoryImportSourceMessageId=null;
       UI.memoryImportCards=UI.buildMemoryImportCards(text);
       if(!UI.memoryImportCards.length){$('#memory-page-preview').innerHTML='<div class="hint" style="margin:10px 2px">没有可导入的新记忆。重复内容、系统提示、对话指令和无关短句不会生成记忆卡。</div>';return;}
       UI.renderMemoryImportPreview();
