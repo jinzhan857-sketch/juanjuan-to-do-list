@@ -1,0 +1,64 @@
+{
+  "before": {
+    "avatarCount": 0,
+    "borderRadius": "16px",
+    "left": 18,
+    "timeBelow": true,
+    "timestampOutside": true,
+    "width": 338.66668701171875
+  },
+  "after": {
+    "avatarCount": 0,
+    "borderRadius": "16px",
+    "left": 18,
+    "timeBelow": true,
+    "timestampOutside": true,
+    "width": 338.66668701171875
+  },
+  "short": {
+    "avatarCount": 0,
+    "borderRadius": "16px",
+    "left": 18,
+    "timeBelow": true,
+    "timestampOutside": true,
+    "width": 338.66668701171875
+  },
+  "themes": [
+    {
+      "theme": "暖色陪伴",
+      "avatarCount": 0,
+      "borderRadius": "16px",
+      "left": 18,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 338.66668701171875
+    },
+    {
+      "theme": "白蓝专注",
+      "avatarCount": 0,
+      "borderRadius": "16px",
+      "left": 18,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 338.66668701171875
+    },
+    {
+      "theme": "暗色陪伴",
+      "avatarCount": 0,
+      "borderRadius": "16px",
+      "left": 18,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 338.66668701171875
+    },
+    {
+      "theme": "纯黑专注",
+      "avatarCount": 0,
+      "borderRadius": "16px",
+      "left": 18,
+      "timeBelow": true,
+      "timestampOutside": true,
+      "width": 338.66668701171875
+    }
+  ]
+}
