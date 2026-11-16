@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..'),built=process.argv.includes('--dist');
 const source=fs.readFileSync(process.env.STARTUP_SOURCE||path.join(root,built?'dist/index.html':'index.html'),'utf8');
 if(!/^[a-z0-9-]+$/.test(process.env.STARTUP_EVIDENCE||'source'))throw Error('Invalid evidence name');
 const hash=crypto.createHash('sha256').update(source).digest('hex');
-const resources=new Map([['/checks.mjs',fs.readFileSync(path.join(root,'scripts/helpers/startup-selftest-checks.mjs'))],['/browser.mjs',fs.readFileSync(path.join(root,'scripts/helpers/startup-selftest-browser.mjs'))],['/quick-score.mjs',fs.readFileSync(path.join(root,built?'dist/quick-score.mjs':'src/rules/quick-score.mjs'))]]);
+const resources=new Map([['/assistant-workflow.js',fs.readFileSync(path.join(root,built?'dist/assistant-workflow.js':'src/assistant/workflow.js'))],['/checks.mjs',fs.readFileSync(path.join(root,'scripts/helpers/startup-selftest-checks.mjs'))],['/browser.mjs',fs.readFileSync(path.join(root,'scripts/helpers/startup-selftest-browser.mjs'))],['/quick-score.mjs',fs.readFileSync(path.join(root,built?'dist/quick-score.mjs':'src/rules/quick-score.mjs'))]]);
 const testBuild=crypto.createHash('sha256').update(source).update(Buffer.concat([...resources.values()])).digest('hex');
 const names='ScoreEngine,UI,S,AIService,DB,App,Date,todayStr,addDays,parseDate,taskDeadline,foodForScore,todoScore,normalizeTodoLinks,recognizePublishTime,parseNaturalDate,mapTag,$,document,getComputedStyle,AbortController,defaultPet,savePet,saveMemoryGroups,DATA_STORES,DATA_KV,localStorage';
 if(source.split("indexedDB.open('juanjuan-pet', 3)").length!==2||source.split('\nApp.init();').length!==2)throw Error('Application boundary changed');

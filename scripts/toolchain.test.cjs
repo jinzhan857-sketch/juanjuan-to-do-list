@@ -14,7 +14,7 @@ function fixture(t, beforeCleanup = async () => {}) {
     assert.ok(path.resolve(dir).startsWith(path.resolve(os.tmpdir()) + path.sep + 'juanjuan-toolchain-'));
     fs.rmSync(dir, {recursive: true, force: true});
   });
-  for (const file of ['src/rules/quick-score.mjs', 'scripts/build.cjs', 'scripts/serve.cjs', 'index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version']) {
+  for (const file of ['src/assistant/workflow.js', 'src/rules/quick-score.mjs', 'scripts/build.cjs', 'scripts/serve.cjs', 'index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version']) {
     fs.mkdirSync(path.dirname(path.join(dir, file)), {recursive: true});
     fs.copyFileSync(path.join(root, file), path.join(dir, file));
   }
@@ -32,7 +32,7 @@ test('build preserves bytes, records archive provenance, and repeats determinist
   assert.match(JSON.parse(first).inputs['api/quota.cjs'], /^[a-f0-9]{64}$/);
   assert.equal(build(dir).status, 0);
   assert.equal(fs.readFileSync(path.join(dir, 'dist/build-info.json'), 'utf8'), first);
-  assert.deepEqual(fs.readdirSync(path.join(dir, 'dist')).sort(), ['build-info.json', 'index.html', 'quick-score.mjs']);
+  assert.deepEqual(fs.readdirSync(path.join(dir, 'dist')).sort(), ['assistant-workflow.js', 'build-info.json', 'index.html', 'quick-score.mjs']);
 });
 test('syntax failure returns nonzero and preserves previous output', t => {
   const dir = fixture(t);

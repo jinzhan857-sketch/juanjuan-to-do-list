@@ -1,0 +1,909 @@
+{
+  "purpose": "Original failures remain visible across revisions.",
+  "cases": [
+    {
+      "id": "A21",
+      "batch": "A",
+      "route": "hosted",
+      "runtime_sha256": "fb6f31fe238864c39de7f6d955174459686c7acdfe33738284b2398fc8552eba",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请安排两项全天日程，先说后一个：12月19日阅读会；前一个12月17日走访。"
+      ],
+      "expected": {
+        "id": "A21",
+        "batch": "A",
+        "route": "hosted",
+        "turns": [
+          "请安排两项全天日程，先说后一个：12月19日阅读会；前一个12月17日走访。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "dates": [
+          "2026-12-19",
+          "2026-12-17"
+        ]
+      },
+      "failure": "Exact dates\n+ actual - expected\n\n  [\n+   '2026-12-17',\n    '2026-12-19',\n-   '2026-12-17'\n  ]\n",
+      "answers": [
+        {
+          "input": "请安排两项全天日程，先说后一个：12月19日阅读会；前一个12月17日走访。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"核对两项全天日程：12月17日走访、12月19日阅读会\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"走访\",\"exec_date\":\"2026-12-17\",\"time_type\":\"allday\",\"category\":\"社交约定\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"阅读会\",\"exec_date\":\"2026-12-19\",\"time_type\":\"allday\",\"category\":\"休闲娱乐\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "核对两项全天日程：12月17日走访、12月19日阅读会",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "走访",
+                    "exec_date": "2026-12-17",
+                    "time_type": "allday",
+                    "category": "社交约定",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "阅读会",
+                    "exec_date": "2026-12-19",
+                    "time_type": "allday",
+                    "category": "休闲娱乐",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-A-1794808279530.json",
+      "repeated_duplicate": false,
+      "status": "retained_original_failure"
+    },
+    {
+      "id": "A24",
+      "batch": "A",
+      "route": "custom",
+      "runtime_sha256": "fb6f31fe238864c39de7f6d955174459686c7acdfe33738284b2398fc8552eba",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请创建12月2日资料整理和12月3日资料核查。",
+        "都是全天。"
+      ],
+      "expected": {
+        "id": "A24",
+        "batch": "A",
+        "route": "custom",
+        "turns": [
+          "请创建12月2日资料整理和12月3日资料核查。",
+          "都是全天。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "allDay": true
+      },
+      "failure": "请明确确认当前卡片范围，尚未保存",
+      "answers": [
+        {
+          "input": "请创建12月2日资料整理和12月3日资料核查。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将创建两个日程：12月2日资料整理、12月3日资料核查，均为全天，请核对。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"资料整理\",\"exec_date\":\"2026-12-02\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"资料核查\",\"exec_date\":\"2026-12-03\",\"time_type\":\"allday\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将创建两个日程：12月2日资料整理、12月3日资料核查，均为全天，请核对。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "资料整理",
+                    "exec_date": "2026-12-02",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "资料核查",
+                    "exec_date": "2026-12-03",
+                    "time_type": "allday",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        },
+        {
+          "input": "都是全天。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"confirm\",\"entries\":[{\"card_id\":\"mwim8u80wy0qv\",\"version\":1},{\"card_id\":\"mwim8u8070t4c\",\"version\":1}],\"reply\":\"确认两个日程均为全天\"}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "confirm",
+            "reply": "确认两个日程均为全天",
+            "entries": [
+              {
+                "card_id": "mwim8u80wy0qv",
+                "version": 1,
+                "patch": {}
+              },
+              {
+                "card_id": "mwim8u8070t4c",
+                "version": 1,
+                "patch": {}
+              }
+            ]
+          },
+          "error": "请明确确认当前卡片范围，尚未保存"
+        }
+      ],
+      "source_report": "eval-A-1794808279530.json",
+      "repeated_duplicate": false,
+      "status": "retained_original_failure"
+    },
+    {
+      "id": "C03",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请创建12月9日23点30分到次日0点30分的日程“夜间观测”。"
+      ],
+      "expected": {
+        "id": "C03",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "请创建12月9日23点30分到次日0点30分的日程“夜间观测”。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "23:30",
+        "end": "00:30",
+        "overnight": true
+      },
+      "failure": "具体开始和结束时间需要再确认",
+      "answers": [
+        {
+          "input": "请创建12月9日23点30分到次日0点30分的日程“夜间观测”。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"请核对新建日程：夜间观测，2026-12-09 23:30 至 2026-12-10 00:30。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"夜间观测\",\"exec_date\":\"2026-12-09\",\"time_type\":\"exact\",\"start_time\":\"23:30\",\"end_time\":\"00:30\",\"category\":\"休闲娱乐\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "请核对新建日程：夜间观测，2026-12-09 23:30 至 2026-12-10 00:30。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "夜间观测",
+                    "exec_date": "2026-12-09",
+                    "time_type": "exact",
+                    "start_time": "23:30",
+                    "end_time": "00:30",
+                    "category": "休闲娱乐",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C05",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+        "复查加备注带清单。"
+      ],
+      "expected": {
+        "id": "C05",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "复查加备注带清单。"
+        ],
+        "tasks": 2,
+        "todos": 0,
+        "clarifyLast": true
+      },
+      "failure": "Unknown target must ask\n+ actual - expected\n\n+ 'workflow'\n- 'clarify'\n",
+      "answers": [
+        {
+          "input": "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+          "model_raw": "{\"type\":\"workflow\",\"reply\":\"将创建两个“复查”日程，请核对\",\"intent\":\"propose\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}},{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"复查\",\"exec_date\":\"2026-12-08\",\"time_type\":\"allday\",\"category\":\"日常生活\",\"base_score\":2}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将创建两个“复查”日程，请核对",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              },
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "复查",
+                    "exec_date": "2026-12-08",
+                    "time_type": "allday",
+                    "category": "日常生活",
+                    "base_score": 2
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        },
+        {
+          "input": "复查加备注带清单。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"scope\":{\"kind\":\"title_contains\",\"text\":\"复查\"},\"uniform\":{\"append_note\":\"带清单\"},\"reply\":\"将为两个“复查”日程统一追加备注“带清单”，请核对\"}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "scope": {
+              "kind": "title_contains",
+              "text": "复查"
+            },
+            "uniform": {
+              "append_note": "带清单"
+            },
+            "reply": "将为两个“复查”日程统一追加备注“带清单”，请核对"
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C11",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "先帮我理清：12月1日模型研读，但不要创建或保存。"
+      ],
+      "expected": {
+        "id": "C11",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "先帮我理清：12月1日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "failure": "Discussion cannot create cards\n\n1 !== 0\n",
+      "answers": [
+        {
+          "input": "先帮我理清：12月1日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"先理清：12月1日「模型研读」为全天日程，暂不创建或保存，请核对。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"模型研读\",\"exec_date\":\"2026-12-01\",\"time_type\":\"allday\",\"category\":\"技能学习\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "先理清：12月1日「模型研读」为全天日程，暂不创建或保存，请核对。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "模型研读",
+                    "exec_date": "2026-12-01",
+                    "time_type": "allday",
+                    "category": "技能学习",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C15",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请建12月5日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "expected": {
+        "id": "C15",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "请建12月5日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "failure": "Expected values to be strictly equal:\n\n'20:00' !== '21:00'\n",
+      "answers": [
+        {
+          "input": "请建12月5日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"已生成待核对日程：12月5日14:00-16:00 核对引文。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-05\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "已生成待核对日程：12月5日14:00-16:00 核对引文。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-05",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对\",\"entries\":[{\"card_id\":\"mwim8u807f9ei\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u807f9ei",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:00"
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C21",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "先帮我理清：12月11日模型研读，但不要创建或保存。"
+      ],
+      "expected": {
+        "id": "C21",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "先帮我理清：12月11日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "failure": "Discussion cannot create cards\n\n1 !== 0\n",
+      "answers": [
+        {
+          "input": "先帮我理清：12月11日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"先理清，不创建不保存：12月11日「模型研读」，全天安排，归技能学习。请核对；需要具体时间或备注可再补充。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"模型研读\",\"exec_date\":\"2026-12-11\",\"time_type\":\"allday\",\"category\":\"技能学习\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "先理清，不创建不保存：12月11日「模型研读」，全天安排，归技能学习。请核对；需要具体时间或备注可再补充。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "模型研读",
+                    "exec_date": "2026-12-11",
+                    "time_type": "allday",
+                    "category": "技能学习",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C25",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请建12月15日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "expected": {
+        "id": "C25",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "请建12月15日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "failure": "Expected values to be strictly equal:\n\n'20:00' !== '21:00'\n",
+      "answers": [
+        {
+          "input": "请建12月15日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"已生成待核对方案：12月15日14:00-16:00 核对引文。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-15\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "已生成待核对方案：12月15日14:00-16:00 核对引文。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-15",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对\",\"entries\":[{\"card_id\":\"mwim8u80ia7pq\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80ia7pq",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:00"
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C31",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "先帮我理清：12月1日模型研读，但不要创建或保存。"
+      ],
+      "expected": {
+        "id": "C31",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "先帮我理清：12月1日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "failure": "Discussion cannot create cards\n\n1 !== 0\n",
+      "answers": [
+        {
+          "input": "先帮我理清：12月1日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"先理清：12月1日「模型研读」，暂不创建或保存。请核对；如需保存再告诉我。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"模型研读\",\"exec_date\":\"2026-12-01\",\"time_type\":\"allday\",\"category\":\"技能学习\",\"base_score\":6}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "先理清：12月1日「模型研读」，暂不创建或保存。请核对；如需保存再告诉我。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "模型研读",
+                    "exec_date": "2026-12-01",
+                    "time_type": "allday",
+                    "category": "技能学习",
+                    "base_score": 6
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": true,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C35",
+      "batch": "C",
+      "route": "hosted",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请建12月5日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "expected": {
+        "id": "C35",
+        "batch": "C",
+        "route": "hosted",
+        "turns": [
+          "请建12月5日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "failure": "Expected values to be strictly equal:\n\n'20:00' !== '21:00'\n",
+      "answers": [
+        {
+          "input": "请建12月5日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将创建12月5日14:00-16:00的“核对引文”日程，请核对。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-05\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将创建12月5日14:00-16:00的“核对引文”日程，请核对。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-05",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对。\",\"entries\":[{\"card_id\":\"mwim8u80li3f6\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对。",
+            "entries": [
+              {
+                "card_id": "mwim8u80li3f6",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:00"
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": true,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C16",
+      "batch": "C",
+      "route": "custom",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "先帮我理清：12月6日模型研读，但不要创建或保存。"
+      ],
+      "expected": {
+        "id": "C16",
+        "batch": "C",
+        "route": "custom",
+        "turns": [
+          "先帮我理清：12月6日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "failure": "Discussion cannot create cards\n\n1 !== 0\n",
+      "answers": [
+        {
+          "input": "先帮我理清：12月6日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"已理清：12月6日「模型研读」，全天日程，暂不创建或保存，请核对。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"模型研读\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"技能学习\",\"base_score\":5}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "已理清：12月6日「模型研读」，全天日程，暂不创建或保存，请核对。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "模型研读",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "技能学习",
+                    "base_score": 5
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C26",
+      "batch": "C",
+      "route": "custom",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "先帮我理清：12月16日模型研读，但不要创建或保存。"
+      ],
+      "expected": {
+        "id": "C26",
+        "batch": "C",
+        "route": "custom",
+        "turns": [
+          "先帮我理清：12月16日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "failure": "Discussion cannot create cards\n\n1 !== 0\n",
+      "answers": [
+        {
+          "input": "先帮我理清：12月16日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"已理清：12月16日「模型研读」，全天日程，暂不创建或保存，请核对。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"模型研读\",\"exec_date\":\"2026-12-16\",\"time_type\":\"allday\",\"category\":\"技能学习\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "已理清：12月16日「模型研读」，全天日程，暂不创建或保存，请核对。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "模型研读",
+                    "exec_date": "2026-12-16",
+                    "time_type": "allday",
+                    "category": "技能学习",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C30",
+      "batch": "C",
+      "route": "custom",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "请建12月20日14点到16点核对引文。",
+        "改成晚上七点开始，已给时长保留。"
+      ],
+      "expected": {
+        "id": "C30",
+        "batch": "C",
+        "route": "custom",
+        "turns": [
+          "请建12月20日14点到16点核对引文。",
+          "改成晚上七点开始，已给时长保留。"
+        ],
+        "tasks": 1,
+        "todos": 0,
+        "start": "19:00",
+        "end": "21:00"
+      },
+      "failure": "Expected values to be strictly equal:\n\n'20:00' !== '21:00'\n",
+      "answers": [
+        {
+          "input": "请建12月20日14点到16点核对引文。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"请核对新建日程：12月20日14:00-16:00 核对引文\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"核对引文\",\"exec_date\":\"2026-12-20\",\"time_type\":\"exact\",\"start_time\":\"14:00\",\"end_time\":\"16:00\",\"category\":\"学业事务\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "请核对新建日程：12月20日14:00-16:00 核对引文",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "核对引文",
+                    "exec_date": "2026-12-20",
+                    "time_type": "exact",
+                    "start_time": "14:00",
+                    "end_time": "16:00",
+                    "category": "学业事务",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        },
+        {
+          "input": "改成晚上七点开始，已给时长保留。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对\",\"entries\":[{\"card_id\":\"mwim8u80ufwsc\",\"version\":1,\"patch\":{\"time_type\":\"exact\",\"start_time\":\"19:00\",\"end_time\":\"20:00\"}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "将“核对引文”改为19:00开始，保留原2小时时长，结束20:00，请核对",
+            "entries": [
+              {
+                "card_id": "mwim8u80ufwsc",
+                "version": 1,
+                "patch": {
+                  "time_type": "exact",
+                  "start_time": "19:00",
+                  "end_time": "20:00"
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": false,
+      "status": "awaiting_user_decision"
+    },
+    {
+      "id": "C36",
+      "batch": "C",
+      "route": "custom",
+      "runtime_sha256": "c17e087be7704399b401b9d2922485a47631c2f50d2b1cee8c6b49115826c76c",
+      "case_set_sha256": "2dfcf652755329abb7de0a78d1cbda978df869911f2c92343f8029ad4625d966",
+      "input": [
+        "先帮我理清：12月6日模型研读，但不要创建或保存。"
+      ],
+      "expected": {
+        "id": "C36",
+        "batch": "C",
+        "route": "custom",
+        "turns": [
+          "先帮我理清：12月6日模型研读，但不要创建或保存。"
+        ],
+        "tasks": 0,
+        "todos": 0,
+        "noCards": true
+      },
+      "failure": "Discussion cannot create cards\n\n1 !== 0\n",
+      "answers": [
+        {
+          "input": "先帮我理清：12月6日模型研读，但不要创建或保存。",
+          "model_raw": "{\"type\":\"workflow\",\"intent\":\"propose\",\"reply\":\"已整理为待核对方案：12月6日“模型研读”，全天，暂不创建或保存。\",\"entries\":[{\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"模型研读\",\"exec_date\":\"2026-12-06\",\"time_type\":\"allday\",\"category\":\"技能学习\",\"base_score\":7}}}]}",
+          "parsed": {
+            "type": "workflow",
+            "intent": "propose",
+            "reply": "已整理为待核对方案：12月6日“模型研读”，全天，暂不创建或保存。",
+            "entries": [
+              {
+                "action": {
+                  "kind": "create_schedule",
+                  "item": {
+                    "title": "模型研读",
+                    "exec_date": "2026-12-06",
+                    "time_type": "allday",
+                    "category": "技能学习",
+                    "base_score": 7
+                  }
+                }
+              }
+            ]
+          },
+          "error": null
+        }
+      ],
+      "source_report": "eval-C-1794808609589.json",
+      "repeated_duplicate": true,
+      "status": "awaiting_user_decision"
+    }
+  ]
+}

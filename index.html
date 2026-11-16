@@ -938,6 +938,7 @@ body.agent-keyboard-open .agent-composer{box-shadow:none;flex-shrink:0}
 </div>
 
 <div id="toast"></div>
+<script src="./assistant-workflow.js"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -1925,7 +1926,7 @@ const AIService = {
     const c=config||this.customConfig();
     const timeoutMs=Math.min(Math.max(Number(options.timeoutMs)||20000,1000),20000);
     if(!this.validEndpoint(c.endpoint)||!c.model||!c.key) throw new Error('请先完成自定义 API 配置');
-    const {response:resp,data}=await requestJSON(c.endpoint,{method:'POST',headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.model,messages,temperature:.1,max_tokens:maxTokens,response_format:{type:'json_object'},stream:false}),signal:options.signal},timeoutMs);
+    const {response:resp,data}=await requestJSON(c.endpoint,{method:'POST',headers:{Authorization:`Bearer ${c.key}`,'Content-Type':'application/json'},body:JSON.stringify({model:c.model,messages,temperature:.1,max_tokens:maxTokens,...(c.endpoint==='https://api.deepseek.com/chat/completions'?{thinking:{type:'disabled'}}:{}),response_format:{type:'json_object'},stream:false}),signal:options.signal},timeoutMs);
     if(!resp.ok){const error=new Error(`模型服务返回 ${resp.status}`);error.status=resp.status;throw error;}
     return this.parseJson(data.choices?.[0]?.message?.content);
   },
@@ -2036,6 +2037,7 @@ const AIService = {
     return item;
   },
   normalizeAgent(data){
+    if(data?.type==='workflow')return globalThis.JuanjuanWorkflow.parse(data);
     const type=['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data?.type)?data.type:'clarify'; const reply=String(data?.reply||'我需要再确认一下你的意思。').slice(0,600);
     const fields=type==='batch_proposal'&&!['update_schedule_batch','delete_schedule_batch'].includes(data?.action?.kind)?data?.action?.rule:data?.action?.item;
     const contentError=agentContentLimitError(fields,500);
@@ -2093,7 +2095,8 @@ const AIService = {
   },
 
   async agent(message, context, role='chat'){
-    const workflow=role==='task'?this.taskWorkflowResult(message,context):null;
+    if(role==='task')await UI.loadAssistantWorkflow();
+    const workflow=role==='task'&&!Object.hasOwn(context,'candidate_cards')?this.taskWorkflowResult(message,context):null;
     if(workflow){
       this.setDegraded(false);
       return workflow;
@@ -2103,15 +2106,15 @@ const AIService = {
     this.activeAgentController=controller;
     try{
       if(this.source()==='custom'){
-        const prompt=role==='task'?`${CUSTOM_AGENT_PROMPT}\n${TASK_EXECUTION_RULES}`:role==='planning'?CUSTOM_PLANNING_PROMPT:CUSTOM_CHAT_PROMPT;
-        const data=await this.customRequest([{role:'system',content:prompt},{role:'user',content:`今天是${todayStr()}。以下是当前设备中的相关资料和最近对话，仅用于理解请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${message}`}],900,null,{timeoutMs:9000,retries:0,signal:controller.signal});
+        const prompt=role==='task'?globalThis.JuanjuanWorkflow.prompt:role==='planning'?CUSTOM_PLANNING_PROMPT:CUSTOM_CHAT_PROMPT;
+        const data=await this.customRequest([{role:'system',content:prompt},{role:'user',content:`今天是${todayStr()}。以下是当前设备中的相关资料和最近对话，仅用于理解请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${message}`}],6000,null,{timeoutMs:30000,retries:0,signal:controller.signal});
         if(controller.signal.aborted)return {type:'cancelled',reply:''};
         this.setDegraded(false); return this.normalizeAgent(data);
       }
       const timer=setTimeout(()=>controller.abort(),9000);
       try{
         const data=await this.hostedRequest({mode:'agent',message,context,agent_role:role,client_date:todayStr()},{signal:controller.signal,timeoutMs:9000,accept:data=>{
-          if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation'].includes(data.type))throw new Error('模型返回结果不合法');
+          if(!data||typeof data!=='object'||!['chat','clarify','query','proposal','batch_proposal','recommendation','workflow'].includes(data.type))throw new Error('模型返回结果不合法');
           return data;
         }});
         if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');
@@ -2122,6 +2125,7 @@ const AIService = {
       if(controller.userCancelled) return {type:'cancelled',reply:''};
       console.warn('Agent 调用失败：',error);
       this.setDegraded(true);
+      if(context.candidate_cards)return {type:'error',reply:'理解结果不完整或服务暂时失败，候选和资料未更改，请重试。'};
       return this._localAgent(message,context,role);
     }finally{
       if(this.activeAgentController===controller) this.activeAgentController=null;
@@ -2867,6 +2871,92 @@ const UI = {
   },
 
   /* ---------- 卷卷助手 ---------- */
+  assistantCurrentCards(chatId=this.agentChatId){
+    return globalThis.JuanjuanWorkflow.current(S.messages,chatId);
+  },
+  assistantCandidateContext(chatId){
+    const cards=this.assistantCurrentCards(chatId),last=cards.at(-1)?.meta.workflow.batchId;
+    return cards.filter(m=>m.meta.workflow.batchId===last&&m.meta.status!=='cancelled').map(m=>({card_id:m.meta.workflow.cardId,version:m.meta.workflow.version,status:m.meta.status,action:{kind:m.meta.action.kind,...(m.meta.action.target_id?{target_id:m.meta.action.target_id}:{}),...(m.meta.action.item?{item:m.meta.action.item}:{}),...(m.meta.action.rule?{rule:m.meta.action.rule}:{})},selected:!!this.assistantSelected?.has(m.id),sources:m.meta.workflow.sources||{}}));
+  },
+  assistantEditAction(message){
+    const action=copyData(message.meta.action);
+    if(message.meta.status!=='done')return action;
+    const op=S.operations.find(op=>op.id===message.meta.operationId);
+    if(!op)throw Error('操作记录不存在，请重新核对');
+    if(Array.isArray(op.after)){
+      if(!op.after.length||op.after.some(saved=>JSON.stringify(S.tasks.find(t=>t.id===saved.id))!==JSON.stringify(saved)))throw Error('原日程组已改变，请重新核对');
+      const first=op.after[0],rule=action.rule;
+      return {kind:'update_schedule_batch',rule:{date_from:rule.date_from,date_to:rule.date_to,weekdays:rule.weekdays,series_id:first.seriesId,match_title:first.title},item:{title:first.title,note:first.note||'',time_type:first.timeType,start_time:first.startTime,end_time:first.endTime,slot:first.slot,category:first.category,base_score:first.baseScore}};
+    }
+    const store=action.kind.includes('todo')?'todos':'tasks',target=S[store].find(x=>x.id===op.after?.id);
+    if(!target||JSON.stringify(target)!==JSON.stringify(op.after))throw Error('原记录已在其他入口改变，请重新核对目标');
+    return {kind:store==='tasks'?'update_schedule':'update_todo',target_id:target.id,item:store==='tasks'?{title:target.title,note:target.note||'',exec_date:target.execDate,time_type:target.timeType,slot:target.slot,start_time:target.startTime,end_time:target.endTime,category:target.category,base_score:target.baseScore}:{title:target.title,note:target.note||'',category:target.category,base_score:target.baseScore}};
+  },
+  async applyAssistantWorkflow(raw,chatId,content,seen,requestId){
+    const wf=await this.loadAssistantWorkflow();let result=wf.parse(raw);const current=this.assistantCurrentCards(chatId);
+    const context=seen||this.assistantCandidateContext(chatId),selected=context.filter(x=>x.selected),available=new Map((selected.length?selected:context).map(x=>[x.card_id,x]));
+    result=wf.expandUniform(result,context,content,{minutes:minOf,format:m=>pad(Math.floor(m/60))+':'+pad(m%60)});
+    wf.assertScope(result,context,content);
+    const targets=result.entries.filter(e=>e.card_id).map(e=>{
+      const known=available.get(e.card_id),m=current.find(m=>m.meta.workflow.cardId===e.card_id);
+      if(!known||known.version!==e.version||!m||m.meta.workflow.version!==e.version||m.meta.status==='cancelled')throw Error('候选范围或版本已变化，请核对最新卡片');
+      return m;
+    });
+    if(result.intent==='confirm'){
+      if(!wf.explicitConfirmation(content))throw Error('请明确确认当前卡片范围，尚未保存');
+      const selected=context.filter(x=>x.selected),scope=selected.length?selected:context.filter(x=>x.status==='pending');
+      if(scope.length!==targets.length||scope.some(x=>!targets.some(m=>m.meta.workflow.cardId===x.card_id)))throw Error('确认范围不一致，请使用卡片选择准确范围');
+      return this.confirmAgentSelection(targets.map(m=>({id:m.id,version:m.meta.workflow.version})),chatId);
+    }
+    const expected=agentWriteExpectation(),changes=[],batchId=requestId||uid(),now=Date.now();
+    if(requestId&&S.messages.some(m=>m.chatId===chatId&&m.meta?.workflow?.requestId===requestId))throw Error('这次理解结果已处理，请勿重复提交');
+    if(result.entries.some(e=>e.card_id)&&result.entries.some(e=>!e.card_id))throw Error('请先确认本次修改范围，再单独新增事项');
+    result.entries.forEach((entry,index)=>{
+      let m;
+      if(entry.card_id){
+        const old=targets.find(m=>m.meta.workflow.cardId===entry.card_id);
+        if(result.intent==='cancel'){
+          changes.push({store:'messages',value:{...copyData(old),meta:{...copyData(old.meta),status:'cancelled'}}});return;
+        }
+        m=wf.revise(old,entry,{id:uid(),now:now+index,action:this.assistantEditAction(old)});
+        if(content==='手动修改')m.meta.workflow.sources={...m.meta.workflow.sources,...Object.fromEntries(Object.keys(entry.patch||{}).map(k=>[k,'manual']))};
+        changes.push({store:'messages',value:{...copyData(old),meta:{...copyData(old.meta),status:'superseded'}}});
+      }else{
+        m={id:uid(),chatId,role:'assistant',content:result.reply,type:'proposal',createdAt:now+index,meta:{agentRole:'task',status:'pending',action:entry.action,workflow:{requestId,allowCopy:/再(?:创建|建).*(?:份|遍)|复制/.test(content),batchId,cardId:uid(),version:1,sources:Object.fromEntries(Object.keys(entry.action.item||entry.action.rule).map(k=>[k,'user']))}}};
+      }
+      const checked=this.validateAgentAction(m.meta.action);
+      m.meta.workflow.requestId=requestId||m.meta.workflow.requestId;
+      m.content=checked.ok?result.reply:checked.error;
+      m.meta.workflow.missing=checked.ok?null:checked.error;
+      this.captureAgentScope(m.meta.action);
+      changes.push({store:'messages',value:m});
+    });
+    await commitDataChanges(changes,expected);
+  },
+  async confirmAgentSelection(selection,chatId=this.agentChatId){
+    const wf=await this.loadAssistantWorkflow();
+    const result=await wf.confirmSelection(selection,chatId,{getMessages:()=>S.messages,expectation:agentWriteExpectation,prepare:(action,message)=>this.executeAgentAction(action,message,true),settlement:()=>settlementExpectation('tasks'),settlementChanges:prepareScheduleEditSettlement,commit:commitDataChanges});
+    this.assistantSelected?.clear();return result;
+  },
+  async confirmAssistantBatch(selectedOnly=false){
+    const context=this.assistantCandidateContext(this.agentChatId).filter(c=>c.status==='pending');
+    const cards=this.assistantCurrentCards().filter(m=>context.some(c=>c.card_id===m.meta.workflow.cardId)&&(!selectedOnly||this.assistantSelected?.has(m.id)));
+    try{await this.confirmAgentSelection(cards.map(m=>({id:m.id,version:m.meta.workflow.version})));this.renderAgent();toast(`已保存 ${cards.length} 项卡片`);}catch(error){toast('整批未保存：'+error.message);}
+  },
+  async reviseAssistantCard(message,entry){
+    return this.applyAssistantWorkflow({type:'workflow',intent:'propose',reply:'请核对修改后的完整内容。',entries:[{card_id:message.meta.workflow.cardId,version:message.meta.workflow.version,...entry}]},message.chatId,'手动修改');
+  },
+  async reconnectAssistantCard(messageId){
+    const message=S.messages.find(m=>m.id===messageId&&m.chatId===this.agentChatId);if(!message)return;
+    this.assistantSelected=new Set([messageId]);
+    $('#agent-input').value=`请修改「${(message.meta.action.item||message.meta.action.rule).title}」：`;
+    this.resizeAgentInput();$('#agent-input').focus();
+  },
+
+  async loadAssistantWorkflow(){
+    if(!globalThis.JuanjuanWorkflow)await import('./assistant-workflow.js');
+    return globalThis.JuanjuanWorkflow;
+  },
   currentAgentChat(){ return S.chats.find(x=>x.id===this.agentChatId) || null; },
 
   agentRole(role){ return AGENT_ROLES[role]||AGENT_ROLES.chat; },
@@ -2878,6 +2968,7 @@ const UI = {
   },
 
   resolveAgentRole(content){
+    if(/(?:现在|请|帮我).*(?:创建|新建|添加|保存到日历)/.test(content)&&!/(?:不要|别|假如|如果|假设|比如|说[“"'])/.test(content))return 'task';
     if(this.agentSelectedRole!=='auto') return this.agentSelectedRole;
     const text=String(content||'');
     const mixed=/(规划|计划|减肥|目标|优先级|复盘).*(?:日程|日历|创建|待办)|(?:日程|日历|创建|待办).*(规划|计划|减肥|目标|优先级|复盘)/;
@@ -2926,6 +3017,11 @@ const UI = {
     }else{
       const thinkingRole=this.agentRole(this.agentThinkingRole);
       box.innerHTML=messages.map(message=>this.agentMessageHtml(message)).join('')+(this.agentThinking?`<div class="agent-message"><div class="agent-avatar">${thinkingRole.icon}</div><div class="agent-bubble agent-thinking">${thinkingRole.name}正在理解<i></i><i></i><i></i></div></div>`:'');
+      box.querySelectorAll('[data-assistant-select]').forEach(b=>b.onchange=()=>{this.assistantSelected??=new Set();b.checked?this.assistantSelected.add(b.dataset.assistantSelect):this.assistantSelected.delete(b.dataset.assistantSelect);});
+      box.querySelectorAll('[data-assistant-talk]').forEach(b=>b.onclick=()=>this.reconnectAssistantCard(b.dataset.assistantTalk));
+      box.querySelectorAll('[data-assistant-edit]').forEach(b=>b.onclick=async()=>{const m=S.messages.find(m=>m.id===b.dataset.assistantEdit);try{await this.reviseAssistantCard(m,{});this.renderAgent();const next=this.assistantCurrentCards().find(x=>x.meta.workflow.cardId===m.meta.workflow.cardId);this.openAgentActionEditor(next.id);}catch(e){toast(e.message);}});
+      const pending=this.assistantCandidateContext(chat.id).filter(c=>c.status==='pending');
+      if(pending.length){box.insertAdjacentHTML('beforeend', '<div class="agent-card"><div>当前待确认 '+pending.length+' 项卡片，重复组按日期明细展开；全部提交，失败整批回滚。</div><button id="assistant-confirm-selected">确认所选</button><button id="assistant-confirm-all">确认全部待创建或修改项（'+pending.length+'）</button></div>');$('#assistant-confirm-all').onclick=()=>this.confirmAssistantBatch();$('#assistant-confirm-selected').onclick=()=>this.confirmAssistantBatch(true);}
       box.querySelectorAll('[data-agent-edit]').forEach(button=>button.onclick=()=>this.openAgentActionEditor(button.dataset.agentEdit));
       box.querySelectorAll('[data-agent-confirm]').forEach(button=>button.onclick=()=>this.confirmAgentAction(button.dataset.agentConfirm));
       box.querySelectorAll('[data-agent-cancel]').forEach(button=>button.onclick=()=>this.cancelAgentAction(button.dataset.agentCancel));
@@ -2956,15 +3052,15 @@ const UI = {
     if(Array.isArray(meta.planningEvidence)&&meta.planningEvidence.length){
       extra+=`<div class="agentplanbasis"><div class="agentplanhead">本次实际用到的信息</div>${meta.planningEvidence.map(line=>`<div class="agentplanline">${esc(line)}</div>`).join('')}</div>`;
     }
-    if(message.type==='proposal' && meta.action){
+    if((message.type==='proposal'||message.type==='action_result'&&meta.workflow) && meta.action){
       const rows=this.agentActionRows(meta.action).map(row=>`<div class="agent-card-row"><span>${esc(row[0])}</span><b>${esc(row[1])}</b></div>`).join('');
       const batchDates=meta.action.kind==='create_schedule_batch'?this.expandBatchSchedule(meta.action).map(item=>item.exec_date):['update_schedule_batch','delete_schedule_batch'].includes(meta.action.kind)?this.resolveBatchUpdateTargets(meta.action).map(item=>item.execDate):[];
       const dates=batchDates.length?`<div class="agent-date-list">${batchDates.map(date=>`<span>${esc(date)}</span>`).join('')}</div>`:'';
       const conflicts=this.findAgentScheduleConflicts(meta.action);
       const conflictNotice=conflicts.length?`<div class="hint" style="margin-top:8px;color:var(--red)">⚠️ 有 ${conflicts.length} 条时间与现有日程重叠，请核对后再执行。</div>`:'';
       const state=meta.status||'pending';
-      const actions=state==='pending'?`<div class="agent-card-actions"><button class="secondary" data-agent-edit="${esc(message.id)}">查看与编辑</button><button class="primary" data-agent-confirm="${esc(message.id)}">确认执行</button><button class="secondary" data-agent-cancel="${esc(message.id)}">取消</button></div>`:`<div class="agent-result-state cancelled">${state==='cancelled'?'已取消':'正在处理'}</div>`;
-      extra=`<div class="agent-card"><div class="agent-card-title">${esc(this.agentActionTitle(meta.action.kind))}</div>${rows}${dates}${conflictNotice}${actions}</div>`;
+      const actions=state==='pending'?`<div class="agent-card-actions"><button class="secondary" data-agent-edit="${esc(message.id)}">查看与编辑</button><button class="primary" data-agent-confirm="${esc(message.id)}">${meta.action.kind.startsWith('update')?'确认修改':'确认创建'}</button><button class="secondary" data-agent-cancel="${esc(message.id)}">取消</button></div>`:`<div class="agent-result-state cancelled">${state==='cancelled'?'已取消':state==='superseded'?'旧版本已失效':state==='done'?'已保存':'正在处理'}</div>`;
+      extra=`<div class="agent-card"><div class="agent-card-title">${esc(this.agentActionTitle(meta.action.kind))}</div>${rows}${dates}${conflictNotice}${actions}${meta.workflow?`<div class="agent-card-actions">${state==='pending'?`<label><input type="checkbox" data-assistant-select="${esc(message.id)}" ${this.assistantSelected?.has(message.id)?'checked':''}>选择此项</label>`:''}${['pending','done'].includes(state)?`<button data-assistant-talk="${esc(message.id)}">重新沟通</button>`:''}${state==='done'&&meta.operationId?`<button data-agent-undo="${esc(message.id)}">撤销这次操作</button>`:''}${state==='done'?`<button data-assistant-edit="${esc(message.id)}">编辑原记录</button>`:''}</div>`:''}</div>`;
     }
     if(message.type==='query' && Array.isArray(meta.results)){
       const items=meta.results.slice(0,30).map(item=>`<div class="agent-result-item"><div class="agent-result-name">${esc(item.title)}</div><div class="agent-result-meta">${esc(item.meta)}</div></div>`).join('');
@@ -2974,7 +3070,7 @@ const UI = {
       const cards=meta.recommendations.length?meta.recommendations.map((rec,index)=>'<div class="agent-card"><div class="agent-card-title">建议</div><div class="agent-result-meta">依据：'+esc(rec.evidence||'数据还不够')+'</div><div class="agent-card-actions"><button class="primary" data-agent-recommend="'+esc(message.id)+'" data-agent-recommendation-index="'+index+'">'+esc(meta.agentRole==='planning'?'交给卷卷事务创建':rec.label||'采纳并修改')+'</button><button class="secondary" data-agent-ignore="'+esc(message.id)+'">忽略</button></div></div>').join(''):'<div class="agent-card"><div class="hint">数据还不够，暂时没有可执行的修改建议。</div></div>';
       extra+=cards;
     }
-    if(message.type==='action_result'){
+    if(message.type==='action_result'&&!meta.workflow){
       const canUndo=meta.status==='done' && meta.operationId;
       extra=`<div class="agent-card"><div class="agent-result-state ${meta.status==='undone'?'cancelled':''}">${meta.status==='undone'?'已撤销这次操作':'操作已完成'}</div>${canUndo?`<div class="agent-card-actions"><button class="secondary" data-agent-undo="${esc(message.id)}">撤销这次操作</button></div>`:''}</div>`;
     }
@@ -3125,6 +3221,7 @@ const UI = {
     const short=(value,max)=>String(value||'').slice(0,max);
     const memories=planning?planning.memories:(useMemories&&S.pet.memoryEnabled?this.planningMemoryItems(question):[]);
     return {
+      candidate_cards:globalThis.JuanjuanWorkflow?this.assistantCandidateContext(chatId):[],
       tasks:useTasks?tasks.map(t=>({id:short(t.id,80),series_id:validSeriesId(t.seriesId)?t.seriesId:null,title:short(t.title,120),note:short(t.note,160),exec_date:t.execDate,time_type:t.timeType,slot:t.slot,start_time:t.startTime,end_time:t.endTime,end_day_offset:t.endDayOffset===1?1:0,category:short(t.category,20),status:t.status||''})):[],
       todos:useTasks?todos.map(t=>({id:short(t.id,80),title:short(t.title,120),note:short(t.note,160),category:short(t.category,20),done:!!t.done})):[],
       selection:{tasks_total:useTasks?S.tasks.length:0,todos_total:useTasks?S.todos.length:0,tasks_selected:useTasks?tasks.length:0,todos_selected:useTasks?todos.length:0,partial:true},
@@ -3224,7 +3321,7 @@ const UI = {
     if(scope.group!==['update_schedule_batch','delete_schedule_batch'].includes(action.kind)||ids(scope.targets)!==ids(targets)) return {ok:false,error:'建议的操作范围与原话不一致，请明确日期和单条或整组范围。'};
     return this.validateAgentAction(action);
   },
-  validateAgentAction(action){
+  validateAgentAction(action,options={}){
     if(!action || !['create_schedule','create_schedule_batch','create_todo','update_schedule','update_schedule_batch','delete_schedule_batch','update_todo','delete_schedule','delete_todo','convert_schedule_to_todo'].includes(action.kind)) return {ok:false,error:'这个操作暂时不支持'};
     const item=action.item||{};
     const fields=action.kind==='create_schedule_batch'?(action.rule||{}):item;
@@ -3242,12 +3339,13 @@ const UI = {
       const rule=action.rule||{};
       if(!rule.title||!validDateStr(rule.date_from)||!validDateStr(rule.date_to)||rule.date_from>rule.date_to) return {ok:false,error:'批量日程还缺少明确的标题或日期范围'};
       if(!Array.isArray(rule.weekdays)||!rule.weekdays.length||rule.weekdays.some(day=>!Number.isInteger(day)||day<1||day>7)) return {ok:false,error:'重复星期需要再确认'};
-      if(rule.time_type!=='exact') return {ok:false,error:'批量日程必须包含具体开始和结束时间'};
+      if(!['allday','exact','slot'].includes(rule.time_type))return {ok:false,error:'重复日程时间类型需要确认'};
+      if(rule.time_type==='slot'&&!slotByKey(rule.slot))return {ok:false,error:'重复日程时段需要确认'};
       if(rule.time_type==='exact'&&(!validTimeStr(rule.start_time)||!validTimeStr(rule.end_time)||minOf(rule.end_time)<=minOf(rule.start_time))) return {ok:false,error:'批量日程的具体开始和结束时间需要再确认'};
       const expanded=this.expandBatchSchedule(action);
       if(!expanded.length) return {ok:false,error:'这个日期范围内没有符合条件的日期'};
       if(expanded.length>120) return {ok:false,error:'一次最多创建 120 条日程，请缩短日期范围'};
-      if(expanded.every(entry=>this.isDuplicateSchedule(entry))) return {ok:false,error:'这些日程已经存在，不需要重复创建'};
+      if(!options.allowDuplicate&&expanded.every(entry=>this.isDuplicateSchedule(entry))) return {ok:false,error:'这些日程已经存在，不需要重复创建'};
       return {ok:true};
     }
     if(action.kind==='update_schedule_batch'||action.kind==='delete_schedule_batch'){
@@ -3361,10 +3459,13 @@ const UI = {
     const sending={};this.agentSending=sending;
     try{
     let chat=this.currentAgentChat(); if(!chat) chat=await this.createAgentChat(false);
-    const role=this.resolveAgentRole(content);
+    await this.loadAssistantWorkflow();
+    const activeCards=this.assistantCurrentCards(chat.id);
+    const role=activeCards.length&&(/^(?:确认|同意|取消)|全部|全都|第二|备注|改|在.+楼|都是全天/.test(content))?'task':this.resolveAgentRole(content);
     if(this.agentSending!==sending)return;
     const now=Date.now();
-    await saveMessage({id:uid(),chatId:chat.id,role:'user',content,type:'text',createdAt:now,meta:{agentRole:role}});
+    const userMessageId=uid();
+    await saveMessage({id:userMessageId,chatId:chat.id,role:'user',content,type:'text',createdAt:now,meta:{agentRole:role}});
     if(this.agentSending!==sending)return;
     const ownMessages=S.messages.filter(x=>x.chatId===chat.id && x.role==='user');
     if(chat.title==='新聊天' && ownMessages.length===1){
@@ -3375,10 +3476,16 @@ const UI = {
     const requestSerial=++this.agentRequestSerial;
     input.value=''; this.resizeAgentInput(); this.agentThinkingRole=role; this.agentSelectedRole='auto'; this.agentThinking=true; this.renderAgent();
     const context=this.agentContext(chat.id,content,role);
-    const result=await AIService.agent(content,context,role);
+    let result=await AIService.agent(content,context,role);
+    if(['proposal','batch_proposal'].includes(result.type)&&result.action?.kind.startsWith('create'))result={type:'workflow',intent:'propose',reply:result.reply,entries:[{action:result.action}]};
+    if(result.type==='multi_proposal')result={type:'workflow',intent:'propose',reply:result.reply,entries:result.actions.map(action=>({action}))};
     if(requestSerial!==this.agentRequestSerial) return;
     this.agentThinking=false;
     if(result.type==='cancelled'){this.renderAgent();return;}
+    if(result.type==='workflow'){
+      try{await this.applyAssistantWorkflow(result,chat.id,content,context.candidate_cards,userMessageId);}catch(error){await saveMessage({id:uid(),chatId:chat.id,role:'assistant',type:'clarify',content:error.message,createdAt:Date.now(),meta:{agentRole:'task'}});}
+      this.renderAgent();return;
+    }
     if(result.type==='multi_proposal'&&Array.isArray(result.actions)){
       for(const action of result.actions){
         const checked=this.validateAgentRequest(action,content);
@@ -3512,9 +3619,14 @@ const UI = {
 
   async saveAgentActionDetail(){
     const message=S.messages.find(x=>x.id===this.agentEditingMessageId&&x.chatId===this.agentChatId); if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(message.id))return;
-    const action=message.meta.action, title=$('#agentdetailtitle').value.trim(), note=$('#agentdetailnote')?.value.trim()||'', from=$('#agentdetailfrom').value, to=$('#agentdetailto')?.value||'', start=$('#agentdetailstart')?.value||'', end=$('#agentdetailend')?.value||'', category=$('#agentdetailcategory')?.value||'', score=Number($('#agentdetailscore')?.value);
+    const action=copyData(message.meta.action), title=$('#agentdetailtitle').value.trim(), note=$('#agentdetailnote')?.value.trim()||'', from=$('#agentdetailfrom').value, to=$('#agentdetailto')?.value||'', start=$('#agentdetailstart')?.value||'', end=$('#agentdetailend')?.value||'', category=$('#agentdetailcategory')?.value||'', score=Number($('#agentdetailscore')?.value);
+    if(message.meta.workflow){
+      const patch={title,note,category,base_score:score,...(!action.kind.includes('todo')?{exec_date:from,time_type:start||end?'exact':'allday',start_time:start||null,end_time:end||null,slot:null}:{})};
+      if(action.kind==='create_schedule_batch'){delete patch.exec_date;patch.date_from=from;patch.date_to=to;patch.weekdays=$('#agentdetaildays button.on').map(b=>Number(b.dataset.day));}
+      try{await this.reviseAssistantCard(message,{patch});this.switchPage('agent');this.renderAgent();}catch(error){toast(error.message);}return;
+    }
     if(action.kind==='create_schedule_batch'){
-      const weekdays=$$('#agentdetaildays button.on').map(button=>Number(button.dataset.day));
+      const weekdays=$('#agentdetaildays button.on').map(button=>Number(button.dataset.day));
       Object.assign(action.rule,{title,note,date_from:from,date_to:to,start_time:start,end_time:end,time_type:'exact',weekdays,category,base_score:score});
     }else if(action.kind==='update_schedule_batch'){
       const weekdays=$$('#agentdetaildays button.on').map(button=>Number(button.dataset.day));
@@ -3535,16 +3647,18 @@ const UI = {
   async confirmAgentAction(messageId){
     const message=S.messages.find(x=>x.id===messageId&&x.chatId===this.agentChatId);
     if(!message||message.meta?.status!=='pending'||this.agentActionsRunning.has(messageId))return;
+    if(message.meta?.workflow){try{await this.confirmAgentSelection([{id:message.id,version:message.meta.workflow.version}]);this.renderAgent();}catch(error){toast(error.message);}return;}
     this.agentActionsRunning.add(messageId);
     let operation;
     try{operation=await this.executeAgentAction(message.meta.action,message);this.renderAgent();toast(operation.summary);}
     catch(error){toast(operation?'操作已保存，界面刷新失败，请重新打开页面。':'操作未保存：'+error.message);}
     finally{this.agentActionsRunning.delete(messageId);}
   },
-  async executeAgentAction(action,message){
+  async executeAgentAction(action,message,prepareOnly=false){
+    if(message.meta?.workflow){globalThis.JuanjuanWorkflow.assertCurrent(message,S.messages);if(JSON.stringify(action)!==JSON.stringify(message.meta.action))throw Error('动作与核对过的卡片不一致');}
     if(S.operations.some(op=>op.messageId===message.id&&op.chatId===message.chatId)) throw new Error('这项操作已经处理，请勿重复确认。');
     const expected=agentWriteExpectation(), changes=[];
-    const checked=this.validateAgentAction(action);
+    const checked=this.validateAgentAction(action,{allowDuplicate:!!message.meta?.workflow?.allowCopy});
     if(!checked.ok) throw new Error(checked.error);
     const targets=this.agentMutationTargets(action);
     if(targets&&action.confirmed_scope!==JSON.stringify(targets.slice().sort((a,b)=>a.id.localeCompare(b.id)))) throw new Error('日程或范围已变化，请重新生成确认卡并核对后执行。');
@@ -3554,7 +3668,9 @@ const UI = {
     if(action.kind==='create_schedule_batch'){
       const created=[];
       const seriesId=uid();
-      for(const entry of this.expandBatchSchedule(action).filter(value=>!this.isDuplicateSchedule(value))){
+      const expanded=this.expandBatchSchedule(action);
+      if(message.meta?.workflow&&!message.meta.workflow.allowCopy&&expanded.some(value=>this.isDuplicateSchedule(value)))throw Error('整组中已有相同日程，请核对，整组未保存');
+      for(const entry of (message.meta?.workflow?expanded:expanded.filter(value=>!this.isDuplicateSchedule(value)))){
         const task={id:uid(),seriesId,seriesRule:{date_from:action.rule.date_from,date_to:action.rule.date_to,weekdays:action.rule.weekdays.slice()},title:entry.title,note:entry.note||'',createdAt:now,execDate:entry.exec_date,timeType:entry.time_type||'allday',slot:entry.time_type==='slot'?entry.slot:null,startTime:entry.time_type==='exact'?entry.start_time:null,endTime:entry.time_type==='exact'?entry.end_time:null,category:entry.category||'日常生活',baseScore:Number(entry.base_score??3),aiReason:'由卷卷助手批量创建',aiAdvice:'',aiSource:'agent',isBackfill:dayDiff(entry.exec_date,todayStr())<0,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,timeChangeMul:null,timeChangeLabel:null,timeChangeWhy:null};
         changes.push({store:'tasks',value:task}); created.push(clone(task));
       }
@@ -3630,6 +3746,7 @@ const UI = {
     changes.push({store:'operations',value:operation});
     const savedMessage=S.messages.find(value=>value.id===message.id);
     if(savedMessage) changes.push({store:'messages',value:{...copyData(savedMessage),type:'action_result',content:operation.summary,meta:{operationId:operation.id,status:'done'}}});
+    if(prepareOnly)return {changes,expected,operation};
     await commitDataChanges(changes,expected); return operation;
   },
 
