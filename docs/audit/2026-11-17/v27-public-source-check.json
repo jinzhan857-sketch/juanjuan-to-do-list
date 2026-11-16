@@ -1,0 +1,60 @@
+{
+  "checked_at": "2026-11-16T19:59:06.042Z",
+  "results": {
+    "pages": {
+      "version": "2.7.0",
+      "sourceCommit": "582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f",
+      "dirty": false,
+      "expected": "d3eeb07d5c91d2a16e92848724c34816e9528f6d51c460511369e5b9cadb8bd2",
+      "actual": "d3eeb07d5c91d2a16e92848724c34816e9528f6d51c460511369e5b9cadb8bd2",
+      "modules": {
+        "quick-score.mjs": {
+          "status": 200,
+          "sha256": "70ffc35f6a79c577d306b6276d3015d3ed69a6cd59c85ffadea1740909db5109"
+        },
+        "assistant-workflow.js": {
+          "status": 200,
+          "sha256": "dcbf8cd22f87ea44ddf678dddf286582a22ce6b90e1c74e443845108729d8664"
+        },
+        "assistant-materials.js": {
+          "status": 200,
+          "sha256": "2a0354f3f0a97a1e1790ba6f4ff7fe90d446444d0f746bc6006e4dd5a6b46c31"
+        }
+      }
+    },
+    "vercel": {
+      "version": "2.7.0",
+      "sourceCommit": "582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f",
+      "dirty": false,
+      "expected": "d3eeb07d5c91d2a16e92848724c34816e9528f6d51c460511369e5b9cadb8bd2",
+      "actual": "d3eeb07d5c91d2a16e92848724c34816e9528f6d51c460511369e5b9cadb8bd2",
+      "modules": {
+        "quick-score.mjs": {
+          "status": 200,
+          "sha256": "70ffc35f6a79c577d306b6276d3015d3ed69a6cd59c85ffadea1740909db5109"
+        },
+        "assistant-workflow.js": {
+          "status": 200,
+          "sha256": "dcbf8cd22f87ea44ddf678dddf286582a22ce6b90e1c74e443845108729d8664"
+        },
+        "assistant-materials.js": {
+          "status": 200,
+          "sha256": "2a0354f3f0a97a1e1790ba6f4ff7fe90d446444d0f746bc6006e4dd5a6b46c31"
+        }
+      }
+    }
+  },
+  "health": {
+    "service": "juanjuan-ai",
+    "version": "2.7.0",
+    "source_commit": "582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f",
+    "enabled": true,
+    "capabilities": [
+      "chat",
+      "score",
+      "search",
+      "link"
+    ],
+    "images": false
+  }
+}

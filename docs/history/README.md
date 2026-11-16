@@ -4,6 +4,7 @@
 
 | 文件 | 来源与阅读方式 |
 | --- | --- |
+| [V2.7里程碑同步前总计划](2026-11-17-roadmap-before-v27-milestone.md) | 逐字保存原板块、34项原队列和两张历史图；[来源与SHA256](2026-11-17-roadmap-before-v27-milestone.json)。相关#82、#123、#11、#61、#10、#16、#135更新前正文见[公开任务快照](2026-11-17-v27-related-issues-before-update.json) |
 | [Next.js规划衔接前总计划原文](2026-11-16-roadmap-before-nextjs-planning.md) | 原任务与两图调整前逐字保存；[来源与SHA256](2026-11-16-roadmap-before-nextjs-planning.json)，[本轮核对](../audit/2026-11-16/migration-roadmap-review.md)；不作为当前队列 |
 | [总计划精简前完整正文](2026-11-15-roadmap-before-compaction.md) | 2026年11月15日精简前逐字保存，含交付、复查、阶段规则与旧图；[来源与SHA256](2026-11-15-roadmap-before-compaction.json)，[整理核对记录](../audit/2026-11-15/roadmap-compaction.md)，[追加复查](../audit/2026-11-15/roadmap-compaction-review.md) |
 | [试玩复查重排前完整正文](2026-11-15-roadmap-before-playtest-review.md) | 更早一轮任务重排前快照，原文继续保留 |
