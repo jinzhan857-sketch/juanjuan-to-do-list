@@ -1,0 +1,368 @@
+{
+  "issue": 119,
+  "timezone": "Asia/Shanghai",
+  "baseline": "eba7afb1e9874f4fbbd7d8383e909c444671c363",
+  "latest_main_verified": "e5b17766b51e990db88515ec8eac5f0d60867db1",
+  "browser_origin": "http://127.0.0.1:4289/",
+  "database": "juanjuan-issue119-synthetic",
+  "transport": "browser directly to api.deepseek.com; no proxy",
+  "final_page_sources": {
+    "index.html": "3426ef819c0da79283ff9b20994c329cfe6f791be78251a29d71f4b5dc5d5309",
+    "src/assistant/materials.js": "81765fb325417d50a9802d5f4982504567ce4eddef35125c09c0b5c9feac3527",
+    "src/assistant/workflow.js": "b4e181c1d6b17d3a19e427c6938b6ad2cdd181f6cdc790d0aa7164968eb8e933"
+  },
+  "budget": {
+    "limit_attempts": 100,
+    "limit_cny": 10,
+    "attempts": 18,
+    "by_kind": {
+      "search": 2,
+      "fetch": 4,
+      "model": 12
+    },
+    "conservative_reserved_cny": 2.43,
+    "peak_estimated_cny": 0.083638,
+    "billing": "peak estimate, no supplier debit verification; failed/unknown reservations retained"
+  },
+  "attempts": [
+    {
+      "id": "7d095839-732d-449e-8e68-6cd679da0dcf",
+      "kind": "search",
+      "reservedMicroCny": 5000,
+      "status": "response",
+      "at": "2026-11-16T10:06:11.411Z",
+      "http_status": 200
+    },
+    {
+      "id": "321cc9d5-baec-45a6-99e0-833ff55de95d",
+      "kind": "fetch",
+      "reservedMicroCny": 5000,
+      "status": "response",
+      "at": "2026-11-16T10:16:16.719Z",
+      "http_status": 200
+    },
+    {
+      "id": "5878eafc-b078-4401-9387-c3c49526f4cd",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:16:17.297Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 2426,
+        "completion_tokens": 64,
+        "total_tokens": 2490,
+        "prompt_tokens_details": {
+          "cached_tokens": 1664
+        },
+        "prompt_cache_hit_tokens": 1664,
+        "prompt_cache_miss_tokens": 762
+      },
+      "actualMicroCny": 5364
+    },
+    {
+      "id": "e234f0b9-8470-4c04-b5c9-6f6268f5701d",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:17:18.391Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 2250,
+        "completion_tokens": 19,
+        "total_tokens": 2269,
+        "prompt_tokens_details": {
+          "cached_tokens": 1920
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 330
+      },
+      "actualMicroCny": 4652
+    },
+    {
+      "id": "06cef629-85f5-4f3d-8c08-a8bcee576d07",
+      "kind": "search",
+      "reservedMicroCny": 5000,
+      "status": "response",
+      "at": "2026-11-16T10:17:19.544Z",
+      "http_status": 200
+    },
+    {
+      "id": "e79438cd-7bd7-4b5e-a6c3-900728bcd1da",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:17:20.322Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 6289,
+        "completion_tokens": 308,
+        "total_tokens": 6597,
+        "prompt_tokens_details": {
+          "cached_tokens": 2176
+        },
+        "prompt_cache_hit_tokens": 2176,
+        "prompt_cache_miss_tokens": 4113
+      },
+      "actualMicroCny": 15042
+    },
+    {
+      "id": "9cf0aa42-fc7b-4574-ac23-1e6d9149850e",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:17:56.289Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 381,
+        "completion_tokens": 76,
+        "total_tokens": 457,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 381
+      },
+      "actualMicroCny": 1370
+    },
+    {
+      "id": "5a22182a-628e-434e-a7e3-9972cd3f4bd0",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:17:57.786Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 2713,
+        "completion_tokens": 93,
+        "total_tokens": 2806,
+        "prompt_tokens_details": {
+          "cached_tokens": 2176
+        },
+        "prompt_cache_hit_tokens": 2176,
+        "prompt_cache_miss_tokens": 537
+      },
+      "actualMicroCny": 6170
+    },
+    {
+      "id": "7e7cbdab-db01-42f9-a9b8-3e0b5fd49aba",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:18:41.704Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 390,
+        "completion_tokens": 42,
+        "total_tokens": 432,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 390
+      },
+      "actualMicroCny": 1116
+    },
+    {
+      "id": "ac223b2d-3129-4500-918b-6eed18f61316",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:18:43.097Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 2827,
+        "completion_tokens": 74,
+        "total_tokens": 2901,
+        "prompt_tokens_details": {
+          "cached_tokens": 2432
+        },
+        "prompt_cache_hit_tokens": 2432,
+        "prompt_cache_miss_tokens": 395
+      },
+      "actualMicroCny": 6246
+    },
+    {
+      "id": "e8ad29d5-88d7-42ef-8bb2-06faa5701288",
+      "kind": "fetch",
+      "reservedMicroCny": 5000,
+      "status": "response",
+      "at": "2026-11-16T10:20:21.859Z",
+      "http_status": 200
+    },
+    {
+      "id": "56cdc922-60d0-49cc-a21d-a35fc923fdd3",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:20:22.381Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 405,
+        "completion_tokens": 193,
+        "total_tokens": 598,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 405
+      },
+      "actualMicroCny": 2354
+    },
+    {
+      "id": "9d7650fa-5042-41ab-b769-e16c768f37aa",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:20:24.800Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 3342,
+        "completion_tokens": 124,
+        "total_tokens": 3466,
+        "prompt_tokens_details": {
+          "cached_tokens": 1920
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 1422
+      },
+      "actualMicroCny": 7676
+    },
+    {
+      "id": "4e44d03d-fb07-4d87-9b52-e58eca6da355",
+      "kind": "fetch",
+      "reservedMicroCny": 5000,
+      "status": "response",
+      "at": "2026-11-16T10:22:16.318Z",
+      "http_status": 404
+    },
+    {
+      "id": "02ea00be-f45e-46a6-9d37-5891e56a61a7",
+      "kind": "fetch",
+      "reservedMicroCny": 5000,
+      "status": "response",
+      "at": "2026-11-16T10:23:54.349Z",
+      "http_status": 404
+    },
+    {
+      "id": "ee944ec1-7b0a-4221-854c-bdde8df2bbc7",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:29:11.225Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 375,
+        "completion_tokens": 88,
+        "total_tokens": 463,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 375
+      },
+      "actualMicroCny": 1454
+    },
+    {
+      "id": "3137d34e-435d-4138-adbc-038362ebae21",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:29:12.788Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 2804,
+        "completion_tokens": 112,
+        "total_tokens": 2916,
+        "prompt_tokens_details": {
+          "cached_tokens": 1664
+        },
+        "prompt_cache_hit_tokens": 1664,
+        "prompt_cache_miss_tokens": 1140
+      },
+      "actualMicroCny": 6504
+    },
+    {
+      "id": "6d21ac17-8381-4ba9-a27c-d1b99cb6fe93",
+      "kind": "model",
+      "reservedMicroCny": 200000,
+      "status": "response",
+      "at": "2026-11-16T10:29:54.718Z",
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 2809,
+        "completion_tokens": 9,
+        "total_tokens": 2818,
+        "prompt_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 761
+      },
+      "actualMicroCny": 5690
+    }
+  ],
+  "observations": {
+    "before_confirmation": {
+      "tasks": 0,
+      "todos": 0
+    },
+    "after_confirmation": {
+      "tasks": 1,
+      "operations": 1
+    },
+    "after_undo": {
+      "tasks": 0,
+      "todos": 0
+    },
+    "image_responses": [
+      {
+        "id": "mwj418yp8cbuw",
+        "content": "这张课表可辨认的信息如下：\n\n- 课程名：SYNTHETIC COURSE ALPHA\n- 日期：2030-04-08\n- 时间：09:00\n- VALUE：17\n- 其他文字：TEST DATA ONLY（蓝色）\n\n图片中没有出现“事务”相关字段或指令。按你的要求，我没有创建任何事务。"
+      },
+      {
+        "id": "mwj427xmndone",
+        "content": "本次选中图片的信息：\n\n- 课程名：SYNTHETIC COURSE BETA\n- 日期：2030-04-09\n- 时间：14:00\n- VALUE：83\n\n图片底部另有蓝色文字 TEST DATA ONLY。按你的要求，没有创建任何事务。"
+      },
+      {
+        "id": "mwj44eh49cdqz",
+        "content": "已撤销：已为你创建日程「SYNTHETIC COURSE ALPHA」。"
+      }
+    ],
+    "live_failure": [
+      {
+        "type": "error",
+        "content": "资料服务请求失败（404）"
+      },
+      {
+        "type": "error",
+        "content": "资料服务请求失败（404）"
+      }
+    ],
+    "reopen_verified_in_browser": true,
+    "final_draft_reopen_and_remove_verified": true,
+    "final_image_only_reply": "这张图是白底，共四行文字，从上到下依次是：\n\n1. 黑色大写英文：SYNTHETIC COURSE BETA\n2. 黑色日期与时间：2030-04-09 14:00\n3. 黑色英文与数值：VALUE 83\n4. 蓝色大写英文：TEST DATA ONLY\n\n除此之外，没有发现其他可辨认的文字或图案。按你的要求，我只做说明，没有创建任何事务。",
+    "followup_reply": "83",
+    "final_sources_same_message": true
+  },
+  "offline": {
+    "original": 1504,
+    "added": 34,
+    "prepared_matrix": 26,
+    "matrix_all_completed": false
+  },
+  "untested": [
+    "real phone",
+    "soft keyboard",
+    "production website new build",
+    "hosted/shared AI",
+    "real Redis",
+    "complete real blurry/complex-chart quality matrix"
+  ],
+  "final_sources_after_strict_completion_guard": {
+    "index.html": "1a32dce20ec181de570f595a8962e949ea6e5b61c77d33f04c7d020d18b2c257",
+    "src/assistant/materials.js": "81765fb325417d50a9802d5f4982504567ce4eddef35125c09c0b5c9feac3527",
+    "src/assistant/workflow.js": "b4e181c1d6b17d3a19e427c6938b6ad2cdd181f6cdc790d0aa7164968eb8e933"
+  },
+  "final_guard_note": "Strict finish_reason/error rejection was added after live calls; offline HTTP 200 fault regression covers it; all successful observed live model events returned finish_reason stop."
+}

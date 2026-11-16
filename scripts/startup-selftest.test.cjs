@@ -31,7 +31,7 @@ test('production source and built page contain neither selfTest nor regression f
   const html=fs.readFileSync(require('node:path').join(__dirname,'..',file),'utf8');
   assert.doesNotMatch(html,/selfTest|\[自测\]|agent_query_test|agent_series_one|planning_inside_test|startup-selftest/);
  }
- assert.deepEqual(fs.readdirSync(require('node:path').join(__dirname,'../dist')).sort(),['assistant-workflow.js','build-info.json','index.html','quick-score.mjs']);
+ assert.deepEqual(fs.readdirSync(require('node:path').join(__dirname,'../dist')).sort(),['assistant-materials.js','assistant-workflow.js','build-info.json','index.html','quick-score.mjs']);
 });
 
 test('synthetic browser entry only serves explicit resources and isolates database and localStorage',async t=>{

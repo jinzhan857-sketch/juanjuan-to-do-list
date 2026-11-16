@@ -1,5 +1,7 @@
 # 测试与验收
 
+#119专项运行node --test scripts/issue119-materials.test.cjs scripts/issue119-integration.test.cjs scripts/issue119-budget.test.cjs，已加入统一检查。真实页面另运行node scripts/issue119-browser.cjs --live，必须使用本任务用户目录外置累计账本和既有授权，不能另加--initialize重置；首轮直连探测脚本保留原始入口，仅当确无历史记录时首次初始化。资料模块、浏览器直连、预算、合成库与手机未测的分层证据见[#119实施记录](../audit/2026-11-16/issue119-implementation.md)。
+
 #133新增scripts/assistant-unified.test.cjs覆盖实际发送入口的四种意图提示、自然改口、授权记忆和单一候选身份。scripts/assistant-unified-live.cjs的40项属于真实模型消息入口集成，不是原生网页；真实网页单独按A8、B8记录。scripts/assistant-browser-results.cjs只核对已记录数据库，不驱动UI。关机暂停时A8最终通过，B前6项通过，剩2项未测，见[完整交接](../audit/2026-11-16/issue133/CHECKPOINT.md)。历史断言原件保留，#115全天重复和#133关键词分流按展明确授权的新测试替代，不改写旧证据。
 
 ## #33 输入与真实键盘

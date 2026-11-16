@@ -4,7 +4,7 @@ const {IDBFactory}=require('fake-indexeddb');
 const workflow=require('../../src/assistant/workflow.js');
 async function createWorkflowFixture(date='2026-11-16'){
  class Clock extends Date{constructor(...args){super(...(args.length?args:[date+'T10:00:00+08:00']))}static now(){return new Date(date+'T10:00:00+08:00').getTime()}}
- const ctx=vm.createContext({Date:Clock,JuanjuanWorkflow:workflow,crypto:require('node:crypto').webcrypto,console,URL,AbortController,DOMException,setTimeout,clearTimeout,structuredClone,indexedDB:new IDBFactory()});
+ const ctx=vm.createContext({Date:Clock,JuanjuanMaterials:require('../../src/assistant/materials.js'),JuanjuanWorkflow:workflow,crypto:require('node:crypto').webcrypto,console,URL,AbortController,DOMException,setTimeout,clearTimeout,structuredClone,indexedDB:new IDBFactory()});
  const html=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');
  vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),ctx);
  const run=code=>vm.runInContext(code,ctx),json=expr=>JSON.parse(run('JSON.stringify('+expr+')'));

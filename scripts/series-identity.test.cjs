@@ -5,7 +5,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 function load(){
-  const app=vm.createContext({JuanjuanWorkflow:require('../src/assistant/workflow.js'),console,URL,AbortController,setTimeout,clearTimeout,structuredClone});
+  const app=vm.createContext({JuanjuanMaterials:require('../src/assistant/materials.js'),JuanjuanWorkflow:require('../src/assistant/workflow.js'),localStorage:{getItem:()=>null},console,URL,AbortController,setTimeout,clearTimeout,structuredClone});
   const html=fs.readFileSync(path.join(process.env.ISSUE5_SOURCE_ROOT||path.join(__dirname,'..'),'index.html'),'utf8');
   vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),app);
   const run=code=>vm.runInContext(code,app,{timeout:2000});

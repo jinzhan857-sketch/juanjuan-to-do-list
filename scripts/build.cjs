@@ -23,7 +23,7 @@ function build() {
   if (!/^[a-f0-9]{40}$/.test(sourceCommit || '')) throw Error('Source commit unavailable. Use a Git clone or GitHub source ZIP with .source-revision.');
   const status = hasGit ? git('status', '--porcelain=v1', '--untracked-files=normal') : null;
   if (hasGit && status === null) throw Error('Cannot inspect Git worktree');
-  const inputs = ['index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version', 'scripts/build.cjs', 'src/rules/quick-score.mjs', 'src/assistant/workflow.js'];
+  const inputs = ['index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version', 'scripts/build.cjs', 'src/rules/quick-score.mjs', 'src/assistant/workflow.js', 'src/assistant/materials.js'];
   const manifest = {
     sourceCommit, dirty: hasGit ? status !== '' : null, sourceKind: hasGit ? 'git' : 'archive',
     node: process.version,
@@ -34,7 +34,7 @@ function build() {
   if (fs.existsSync(dist)) {
     if (fs.lstatSync(dist).isSymbolicLink()) throw Error('dist must not be a symlink');
     for (const name of fs.readdirSync(dist)) {
-      if (!['index.html', 'build-info.json', 'quick-score.mjs', 'assistant-workflow.js'].includes(name)) throw Error(`Unexpected dist entry: ${name}; preserve and inspect it before building`);
+      if (!['index.html', 'build-info.json', 'quick-score.mjs', 'assistant-workflow.js', 'assistant-materials.js'].includes(name)) throw Error(`Unexpected dist entry: ${name}; preserve and inspect it before building`);
       if (!fs.lstatSync(path.join(dist, name)).isFile()) throw Error(`Output is not a regular file: ${name}`);
     }
   }
@@ -42,6 +42,8 @@ function build() {
   fs.writeFileSync(path.join(dist, 'index.html'), html);
   fs.copyFileSync(path.join(root,'src/rules/quick-score.mjs'),path.join(dist,'quick-score.mjs'));
   fs.copyFileSync(path.join(root,'src/assistant/workflow.js'),path.join(dist,'assistant-workflow.js'));
+  new vm.Script(fs.readFileSync(path.join(root,'src/assistant/materials.js'),'utf8'));
+  fs.copyFileSync(path.join(root,'src/assistant/materials.js'),path.join(dist,'assistant-materials.js'));
   fs.writeFileSync(path.join(dist, 'build-info.json'), JSON.stringify(manifest, null, 2) + '\n');
   console.log(`Built dist/index.html from ${sourceCommit}; dirty=${manifest.dirty}; sha256=${manifest.output.sha256}`);
 }
