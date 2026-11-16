@@ -2,6 +2,8 @@
 
 记录日期：2026年11月17日。本文是本次GitHub任务正文的证据底稿，记录已经实施的范围、实际案例和限制。云端服务原任务为[#82](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/82)，整合为[PR #146](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/146)。正式发布另外验收，不因本文完成而自动记作已上线。
 
+最新状态：V2.7已由独立聊天正式发布，#82已关闭，发布来源582aac4。正式A02数据库核对、Windows换行符与模块哈希修正、最终63次已知回执及最多5次未知预留，见[逐字交付](v27-release-delivery.md)与[#148](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/148)。下文按发布前各阶段保留，不将早期51次改写成最终用量。
+
 ## 起点、授权与交付来源
 
 起点为正式V2.6的5ffbce401f033ce5fd4562635ae518f1badb47ab。展授权实施云端AI、真实收费模型验收，后续追加记忆迁入、首次引导、额度卡和界面调整。先交真实可用的试用入口，再继续验收。当前合入来源为582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f，应用界面最后改动22d78fb756bebf77aa089ad38fc7c4f4c1636de3；31bcaf5补独立验收与预算工具，不新增应用能力。

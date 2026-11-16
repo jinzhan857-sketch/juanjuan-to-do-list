@@ -8,7 +8,9 @@ V2.6发布来源5ffbce401f033ce5fd4562635ae518f1badb47ab、发布运行438736987
 
 V2.7已发布至[正式入口](https://jinzhan857-sketch.github.io/juanjuan-to-do-list/)，完整来源582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f，版本2.7.0。[Pages发布43942347530](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43942347530)及[main检查43942038537](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43942038537)均success。北京时间2026年11月17日03:59只读核对正式站和Vercel：build-info均为该来源、dirty=false，页面SHA256均为d3eeb07d5c91d2a16e92848724c34816e9528f6d51c460511369e5b9cadb8bd2，三个实际模块HTTP200及哈希一致；云端公开health为enabled、支持chat/score/search/link、images=false。完整[公开来源核对JSON](v27-public-source-check.json)已保存，不调用模型、不读私人配置。
 
-新建[#147发布前实施与真实验收](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/147)，按产品变化、根因、复测、真实调用、预算和未测范围整理，包含原始A8/B8全部16题输入、预期与实际数据，底稿见[完整记录](v27-implementation-record.md)。新建[#148独立发布里程碑](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/148)，单列最终源码、部署与线上业务复核。正式发布事实已有公开来源证明，最终业务操作与费用仍引用独立发布者的#82交付，不虚构未收到的数据。
+新建[#147发布前实施与真实验收](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/147)，按产品变化、根因、复测、真实调用、预算和未测范围整理，包含原始A8/B8全部16题输入、预期与实际数据，底稿见[完整记录](v27-implementation-record.md)。新建[#148独立发布里程碑](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/148)，单列最终源码、部署与线上业务复核。已读取独立发布者[正式交付](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/146#issuecomment-6927431900)，并将[原评论逐字归档](v27-release-delivery.md)：正式Chrome无痕使用公共额度完成原A02，2日程3待办变3日程4待办，刷新导出核对两个已执行操作，宠物成长、饱度、积分不变。Vercel最终部署dpl_Et6DaC1iLk5cfB3wfghv3AoSQ5x4。
+
+发布新增问题为Windows换行符使三个模块哈希不同；发布者按正式提交原始字节重建15文件包，未修改功能或放宽断言，最终页面和模块一致。最终有计费回执63次、估算0.584184元；正式浏览器1轮未逐项采集回执，保留最多5次及0.518272元未知预留，累计保守上界68次、1.102456元。专项累计200次、2元授权继续有效，供应商实扣未核对。#82已由发布者关闭，本次不覆盖其新正文。
 
 ## 总计划改动边界
 

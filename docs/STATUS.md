@@ -1,5 +1,11 @@
 # 当前状态与接手说明
 
+## 2026年11月17日：V2.7已正式发布，版本计划同步
+
+V2.7已正式发布，来源582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f，[Pages运行43942347530](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43942347530)成功，[正式网址](https://jinzhan857-sketch.github.io/juanjuan-to-do-list/)和Vercel均为2.7.0、同一干净来源。独立发布者完成正式Chrome无痕真实A02，确认后刷新导出核对2日程3待办变3日程4待办、宠物积分保持，详见[正式交付原文](audit/2026-11-17/v27-release-delivery.md)与[#148](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/148)。#82已关闭，下方“尚未发布”段落保留为历史。
+
+展明确委托本聊天同步总计划表格、版本边界和图表，保留原板块及任务位置。V2.7发布前迭代与真实16题完整输入、失败根因、实际数据收录[#147](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/147)，后续阶段与隔离试用规则见[决策0006](decisions/0006-version-milestones-and-isolated-rollout.md)，[本次整理核对](audit/2026-11-17/v27-roadmap-update.md)。V2.8至V2.9渐进迁移仍未实施，V3.0账户、协同、桌面界面、开发者模式与主动方向尚未交付；旧真机和未测任务仍开放。本次仅文档，没有新增模型调用、迁移或再次部署。
+
 ## 2026年11月17日：V2.7云端试用与验收
 
 本轮#82已接通真实[V2.7云端试用](https://juanjuan-v27-ai.vercel.app/)，设备每日300次且每周300次、全站公共池每周1000次，取消IP限制。首页“今日完成”、完整长回复、产品身份、首次资料与动画导致的编辑误拦已修正。展追加的其他AI记忆迁入与首次2日程3待办已实现；原真实网页A8/B8累计最终通过，新增记忆整理、确认保存、刷新与新聊天参考已真实验证。展已确认长回复满意，新增部分仍待展测试，正式Pages保持V2.6，未发布V2.7。旧三次503无法从旧日志回溯；后续短年龄问题另复现模型格式阶段失败，已补强JSON输出约定和可定位提示，仍需展实际复测，不能称为彻底解决。来源、费用、原失败与后续发布见[本轮记录](audit/2026-11-16/v27-cloud-preparation.md)及[V2.7说明](development/V27_RELEASE.md)，累计设备体验卡与人工发卡、充值、重绑工具见[体验卡说明](development/V27_EXPERIENCE.md)，云端兑换、实际扣次及刷新保留余额已通过，详见[本轮验收](audit/2026-11-17/v27-cards.md)。总计划未改。
