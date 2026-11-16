@@ -17,6 +17,7 @@
 .env.*
 !.env.example
 node_modules/
+.vercel/
 *.log
 .DS_Store
 Thumbs.db

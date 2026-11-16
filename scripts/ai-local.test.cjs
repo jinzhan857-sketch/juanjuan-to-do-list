@@ -50,13 +50,13 @@ for (const body of [{...scoreBody, title: ''}, {...scoreBody, device_id: 'invali
 });
 test('existing daily device quota blocks request 21 and keeps owner stats protected', async t => {
   const a = await fixture(t);
-  for (let i = 0; i < 20; i++) { const response = await a.post(scoreBody); assert.equal(response.status, 200); await response.text(); }
+  for (let i = 0; i < 50; i++) { const response = await a.post(scoreBody); assert.equal(response.status, 200); await response.text(); }
   assert.equal((await a.post(scoreBody)).status, 429);
-  assert.equal(a.simulation.inspect().modelCalls, 20);
+  assert.equal(a.simulation.inspect().modelCalls, 50);
   assert.equal((await fetch(a.base + '/api/ai?stats=1')).status, 401);
   const response = await fetch(a.base + '/api/ai?stats=1&date=2026-11-15', {headers: {'x-owner-token': a.simulation.env.OWNER_STATS_TOKEN}});
   const body = await response.json(); assert.equal(response.status, 200);
-  assert.equal(body.calls, 20); assert.equal(body.blocked, 1); assert.equal(body.active_devices, 1);
+  assert.equal(body.calls, 50); assert.equal(body.blocked, 1); assert.equal(body.active_devices, 1);
 });
 
 test('current request IDs and cancellation contract stay explicit in local simulation', async t => {

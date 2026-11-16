@@ -24,7 +24,7 @@ function build() {
   if (!/^[a-f0-9]{40}$/.test(sourceCommit || '')) throw Error('Source commit unavailable. Use a Git clone or GitHub source ZIP with .source-revision.');
   const status = hasGit ? git('status', '--porcelain=v1', '--untracked-files=normal') : null;
   if (hasGit && status === null) throw Error('Cannot inspect Git worktree');
-  const inputs = ['index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version', 'scripts/build.cjs', 'src/rules/quick-score.mjs', 'src/assistant/workflow.js', 'src/assistant/materials.js'];
+  const inputs = ['index.html', 'api/ai.js', 'api/quota.cjs', 'api/cloud.cjs', 'vercel.json', '.vercelignore', 'package.json', 'package-lock.json', '.node-version', 'scripts/build.cjs', 'src/rules/quick-score.mjs', 'src/assistant/workflow.js', 'src/assistant/materials.js'];
   const manifest = {
     appVersion: JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version,
     sourceCommit, dirty: hasGit ? status !== '' : null, sourceKind: hasGit ? 'git' : 'archive',

@@ -62,6 +62,7 @@ function createHarness({modelFailure = false, quotaFailure = false, liveModel = 
   const context = vm.createContext({
     require(name) {
       if (name === '../src/assistant/workflow.js') return require('../src/assistant/workflow.js');
+      if (name === '../src/assistant/materials.js') return require('../src/assistant/materials.js');
       if (name === 'node:crypto') return crypto;
       if (name === './quota.cjs') return {createQuota: () => ({
         reserve(...args) {quotaCalls++; if (quotaFailure) throw Error('Synthetic quota failure'); return quota.reserve(...args);},

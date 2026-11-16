@@ -12,7 +12,7 @@ async function fixture(t,kind='schedule'){
  vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),ctx);
  const run=code=>vm.runInContext(code,ctx),json=expr=>JSON.parse(run('JSON.stringify('+expr+')'));
  ctx.scoring=await import('../src/rules/quick-score.mjs');ctx.notices=notices;
- run("toast=s=>notices.push(s);UI.loadScoring=async()=>scoring;S.pet=defaultPet();S.tasks=[];S.todos=[];S.dayStats={};actualRender=UI.renderCreate;UI.renderCreate=()=>{};UI.switchPage=()=>{};UI.renderAIResultVague=()=>{};UI.resetCreate("+JSON.stringify(kind)+");");
+ run("AIService.hostedEndpoint='/api/ai';toast=s=>notices.push(s);UI.loadScoring=async()=>scoring;S.pet=defaultPet();S.tasks=[];S.todos=[];S.dayStats={};actualRender=UI.renderCreate;UI.renderCreate=()=>{};UI.switchPage=()=>{};UI.renderAIResultVague=()=>{};UI.resetCreate("+JSON.stringify(kind)+");");
  await run("DB.open()");await run("DB.put('kv',S.pet,'pet')");t.after(()=>run('DB._db.close()'));
  element('#c-title').value='买跑步鞋 https://example.com';
  run("UI.cState.resultTitle='买跑步鞋';UI.cState.resultNote='资料 https://example.com';UI.cState.images=[{id:'pic',name:'合成',data:'data:image/png;base64,AA=='}]");

@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const {loadAIEnvironment} = require('./ai-config.cjs');
-const requiredNames = ['DEEPSEEK_API_KEY', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'RATE_LIMIT_SALT', 'OWNER_STATS_TOKEN'];
+const requiredNames = ['DEEPSEEK_API_KEY', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'OWNER_STATS_TOKEN'];
 const root = path.join(__dirname, '..');
 const maxBodyBytes = 128 * 1024;
 

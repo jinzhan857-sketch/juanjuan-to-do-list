@@ -14,7 +14,7 @@ function fixture(t, beforeCleanup = async () => {}) {
     assert.ok(path.resolve(dir).startsWith(path.resolve(os.tmpdir()) + path.sep + 'juanjuan-toolchain-'));
     fs.rmSync(dir, {recursive: true, force: true});
   });
-  for (const file of ['src/assistant/materials.js', 'src/assistant/workflow.js', 'src/rules/quick-score.mjs', 'scripts/build.cjs', 'scripts/serve.cjs', 'index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version']) {
+  for (const file of ['src/assistant/materials.js', 'src/assistant/workflow.js', 'src/rules/quick-score.mjs', 'scripts/build.cjs', 'scripts/serve.cjs', 'index.html', 'api/ai.js', 'api/quota.cjs', 'api/cloud.cjs', 'vercel.json', '.vercelignore', 'package.json', 'package-lock.json', '.node-version']) {
     fs.mkdirSync(path.dirname(path.join(dir, file)), {recursive: true});
     fs.copyFileSync(path.join(root, file), path.join(dir, file));
   }

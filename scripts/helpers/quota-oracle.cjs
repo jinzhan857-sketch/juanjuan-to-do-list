@@ -7,9 +7,9 @@ function quotaOracle({commands=[],values=new Map(),expiry=new Map(),now=Date.now
  return {
   async reserve(r){
    const rk=r.device+':'+r.id;if(receipts.has(rk))return receipts.get(rk).state;
-   const keys=[`quota:${r.day}:device:${r.device}`,`quota:${r.day}:ip:${r.ip}`,`quota:${r.day}:global`],limits=[r.deviceLimit,r.ipLimit,r.globalLimit];
+   const keys=[`quota:${r.day}:device:${r.device}`,`quota:${r.day}:global`],limits=[r.deviceLimit,r.globalLimit];
    for(const k of keys)if(expiry.get(k)<=now())values.delete(k);
-   const scope=['device','ip','global'].find((_,i)=>(values.get(keys[i])||0)>=limits[i]);
+   const scope=['device','global'].find((_,i)=>(values.get(keys[i])||0)>=limits[i]);
    if(scope){receipts.set(rk,{state:'blocked'});metric(r.day,'blocked');return scope;}
    for(const k of keys){commands.push(['QUOTA_RESERVE',k]);if(!values.has(k))expire(k,86400000);values.set(k,(values.get(k)||0)+1);}
    receipts.set(rk,{state:'pending',keys,day:r.day});metric(r.day,'calls');return 'reserved';
