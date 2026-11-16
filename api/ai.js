@@ -163,6 +163,7 @@ function sanitizeAgentItem(input = {}) {
   const score = Number(input.base_score);
   const item = {};
   if (input.title !== undefined) item.title = shortText(input.title, 300);
+  if (input.append_note !== undefined) item.append_note = input.append_note;
   if (input.note !== undefined) item.note = shortText(input.note, 500);
   if (input.exec_date !== undefined) item.exec_date = validDate(input.exec_date);
   if (input.time_type !== undefined) item.time_type = timeTypes.includes(input.time_type) ? input.time_type : 'allday';

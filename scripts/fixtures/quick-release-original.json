@@ -1,0 +1,441 @@
+{
+  "source": "origin/codex/issue104-batch1:docs/audit/2026-11-16/issue104-batch1, read only; synthetic data",
+  "tasks": [
+    {
+      "id": "checkup-18",
+      "title": "体检",
+      "execDate": "2026-11-18",
+      "timeType": "allday",
+      "slot": null,
+      "startTime": null,
+      "endTime": null,
+      "endDayOffset": 0,
+      "category": "日常生活",
+      "baseScore": 3,
+      "seriesId": null,
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "materials-13",
+      "title": "递交材料",
+      "execDate": "2026-11-13",
+      "timeType": "allday",
+      "slot": null,
+      "startTime": null,
+      "endTime": null,
+      "endDayOffset": 0,
+      "category": "职场工作",
+      "baseScore": 3,
+      "seriesId": null,
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "math-am-16",
+      "title": "线性代数课",
+      "execDate": "2026-11-16",
+      "timeType": "exact",
+      "slot": null,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "endDayOffset": 0,
+      "category": "学业事务",
+      "baseScore": 7,
+      "seriesId": "math-am",
+      "note": "教授：演示老师甲\n教室：演示楼201",
+      "images": [
+        {
+          "id": "IMG1",
+          "name": "demo.png",
+          "type": "image/png",
+          "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+        }
+      ],
+      "links": [
+        "https://example.com/course"
+      ],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "math-am-23",
+      "title": "线性代数课",
+      "execDate": "2026-11-23",
+      "timeType": "exact",
+      "slot": null,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "endDayOffset": 0,
+      "category": "学业事务",
+      "baseScore": 7,
+      "seriesId": "math-am",
+      "note": "教授：演示老师甲",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "math-pm-16",
+      "title": "线性代数课",
+      "execDate": "2026-11-16",
+      "timeType": "exact",
+      "slot": null,
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "endDayOffset": 0,
+      "category": "学业事务",
+      "baseScore": 7,
+      "seriesId": "math-pm",
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "meeting-17",
+      "title": "项目例会",
+      "execDate": "2026-11-17",
+      "timeType": "exact",
+      "slot": null,
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "endDayOffset": 0,
+      "category": "职场工作",
+      "baseScore": 5.5,
+      "seriesId": null,
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "reading-15",
+      "title": "读书",
+      "execDate": "2026-11-15",
+      "timeType": "slot",
+      "slot": "evening",
+      "startTime": null,
+      "endTime": null,
+      "endDayOffset": 0,
+      "category": "技能学习",
+      "baseScore": 3,
+      "seriesId": null,
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "shift-30",
+      "title": "夜间值班",
+      "execDate": "2026-11-30",
+      "timeType": "exact",
+      "slot": null,
+      "startTime": "23:30",
+      "endTime": "00:30",
+      "endDayOffset": 1,
+      "category": "职场工作",
+      "baseScore": 6,
+      "seriesId": null,
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    },
+    {
+      "id": "utilities-19",
+      "title": "缴水电费",
+      "execDate": "2026-11-19",
+      "timeType": "allday",
+      "slot": null,
+      "startTime": null,
+      "endTime": null,
+      "endDayOffset": 0,
+      "category": "日常生活",
+      "baseScore": 2,
+      "seriesId": null,
+      "note": "",
+      "images": [],
+      "links": [],
+      "status": null,
+      "createdAt": 1794708000000,
+      "aiSource": "synthetic-fixture"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AST10",
+      "inputs": [
+        "明天15点到16点复习。",
+        "不，是16点到17点。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备创建明天15:00到16:00的复习日程。",
+          "used_evidence": [],
+          "action": {
+            "kind": "create_schedule",
+            "target_id": null,
+            "item": {
+              "title": "复习",
+              "note": "",
+              "exec_date": "2026-11-16",
+              "time_type": "exact",
+              "slot": null,
+              "start_time": "15:00",
+              "end_time": "16:00",
+              "category": "学业事务",
+              "base_score": 7
+            }
+          }
+        },
+        {
+          "type": "proposal",
+          "reply": "好的，改为明天（2026-11-16）16:00到17:00复习。",
+          "used_evidence": [],
+          "action": {
+            "kind": "create_schedule",
+            "target_id": null,
+            "item": {
+              "title": "复习",
+              "note": "",
+              "exec_date": "2026-11-16",
+              "time_type": "exact",
+              "slot": null,
+              "start_time": "16:00",
+              "end_time": "17:00",
+              "category": "学业事务",
+              "base_score": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST15",
+      "inputs": [
+        "把11月17日项目例会改到11月18日，时间不变。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备把 11 月 17 日的「项目例会」改到 11 月 18 日，时间保持 14:00–15:00。",
+          "used_evidence": [],
+          "action": {
+            "kind": "update_schedule",
+            "target_id": "meeting-17",
+            "item": {
+              "exec_date": "2026-11-18",
+              "time_type": "exact",
+              "start_time": "14:00",
+              "end_time": "15:00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST16",
+      "inputs": [
+        "只把11月16日上午线性代数课的教室改成演示楼305，教授不变，其他都不动。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备把 11 月 16 日上午 9:00–10:00 的线性代数课教室改为演示楼305，教授保持演示老师甲不变。",
+          "used_evidence": [],
+          "action": {
+            "kind": "update_schedule",
+            "target_id": "math-am-16",
+            "item": {
+              "note": "教授：演示老师甲\n教室：演示楼305"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST17",
+      "inputs": [
+        "把11月16日至23日，上午09:00到10:00那组线性代数课的备注追加‘带计算器’，原备注保留，下午那组不要动。"
+      ],
+      "answers": [
+        {
+          "type": "batch_proposal",
+          "reply": "准备把 11月16日至23日 每周一上午 09:00-10:00 的「线性代数课」整组备注追加「带计算器」，保留原备注；下午那组不动。",
+          "used_evidence": [],
+          "action": {
+            "kind": "update_schedule_batch",
+            "target_id": null,
+            "rule": {
+              "date_from": "2026-11-16",
+              "date_to": "2026-11-23",
+              "weekdays": [
+                1
+              ],
+              "match_title": "线性代数课",
+              "match_start_time": "09:00",
+              "match_end_time": "10:00",
+              "series_id": "math-am",
+              "category": "学业事务"
+            },
+            "item": {
+              "note": "教授：演示老师甲\n教室：演示楼201\n带计算器"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST18",
+      "inputs": [
+        "删除明天上午那节线性代数课。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备删除明天（2026-11-16）上午 09:00-10:00 的「线性代数课」。",
+          "used_evidence": [],
+          "action": {
+            "kind": "delete_schedule",
+            "target_id": "math-am-16",
+            "item": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST19",
+      "inputs": [
+        "只删除11月16日上午09:00到10:00的线性代数课，其他日期和下午那节不要删。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备删除 11 月 16 日上午 09:00 到 10:00 的线性代数课，其他日期和下午那节保留。",
+          "used_evidence": [],
+          "action": {
+            "kind": "delete_schedule",
+            "target_id": "math-am-16",
+            "item": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST20",
+      "inputs": [
+        "删除11月16日至23日，上午09:00到10:00那一组线性代数课，下午那组保留。"
+      ],
+      "answers": [
+        {
+          "type": "batch_proposal",
+          "reply": "准备删除 2026-11-16 至 2026-11-23 每周一上午 09:00-10:00 的「线性代数课」整组，下午那组保留。",
+          "used_evidence": [],
+          "action": {
+            "kind": "delete_schedule_batch",
+            "target_id": null,
+            "rule": {
+              "date_from": "2026-11-16",
+              "date_to": "2026-11-23",
+              "weekdays": [
+                1
+              ],
+              "match_title": "线性代数课",
+              "match_start_time": "09:00",
+              "match_end_time": "10:00",
+              "series_id": "math-am",
+              "category": "学业事务"
+            },
+            "item": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST21",
+      "inputs": [
+        "把11月16日上午那节线性代数课转为待办，备注、图片和链接都保留。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备把 11 月 16 日上午 09:00-10:00 的「线性代数课」转为待办，并保留备注内容。",
+          "used_evidence": [],
+          "action": {
+            "kind": "convert_schedule_to_todo",
+            "target_id": "math-am-16",
+            "item": {
+              "title": "线性代数课",
+              "note": "教授：演示老师甲\n教室：演示楼201",
+              "category": "学业事务",
+              "base_score": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST22",
+      "inputs": [
+        "只删除11月16日上午09:00到10:00的线性代数课。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备删除 11 月 16 日 09:00–10:00 的「线性代数课」，仅此一条，不影响其他日期的课程。",
+          "used_evidence": [],
+          "action": {
+            "kind": "delete_schedule",
+            "target_id": "math-am-16",
+            "item": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "AST23",
+      "inputs": [
+        "把11月17日项目例会改到11月18日，时间不变。"
+      ],
+      "answers": [
+        {
+          "type": "proposal",
+          "reply": "准备把 11 月 17 日的「项目例会」改到 11 月 18 日，时间保持 14:00–15:00。",
+          "used_evidence": [],
+          "action": {
+            "kind": "update_schedule",
+            "target_id": "meeting-17",
+            "item": {
+              "exec_date": "2026-11-18",
+              "time_type": "exact",
+              "start_time": "14:00",
+              "end_time": "15:00"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
