@@ -71,6 +71,7 @@ async function requestJSON(url, options={}, timeoutMs=20000){
 }
 
 async function redis(command) {
+  try {
   const {response,data:payload} = await requestJSON(required('KV_REST_API_URL'), {
     method: 'POST',
     headers: {
@@ -81,6 +82,7 @@ async function redis(command) {
   },3000);
   if (!response.ok) throw new Error('统计服务暂不可用');
   return payload.result;
+  } catch(error) {error.service='redis';throw error;}
 }
 
 async function increaseDaily(key) {
@@ -338,6 +340,8 @@ module.exports = async function handler(req, res) {
   const quotaDate = quotaDay();
   const quota = require('./quota.cjs').createQuota(redis);
   let receipt = null;
+  let stage = 'quota';
+  const started = Date.now();
   const controller = new AbortController();
   const deadline = setTimeout(() => controller.abort(), 45000);
   const usage = {model_requests: 0, search_requests: 0, fetch_requests: 0, prompt_tokens: 0, completion_tokens: 0, complete: true};
@@ -388,6 +392,7 @@ module.exports = async function handler(req, res) {
       { role: 'user', content: `今天是${modelDate}。待办任务：${input}` },
     ];
     const provider = async (url, options) => {
+      stage = url === DEEPSEEK_URL ? 'model' : url.endsWith('/search') ? 'search' : 'fetch';
       if (controller.signal.aborted) throw new Error('请求已过期');
       if (cloud && await redis(['HGET', `quota-request:${deviceId}:${requestId}`, 'state']) !== 'pending') throw new Error('请求已取消');
       if (controller.signal.aborted) throw new Error('请求已过期');
@@ -417,7 +422,7 @@ module.exports = async function handler(req, res) {
       transport: provider,
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
-    if (output.error || cloud && output.choices?.[0]?.finish_reason !== 'stop') throw new Error('模型回答未完整返回');
+    if (output.error || cloud && output.choices?.[0]?.finish_reason !== 'stop') {const error=new Error('模型回答未完整返回');error.code='incomplete_model_reply';throw error;}
     if (Number.isSafeInteger(output.usage?.prompt_tokens) && output.usage.prompt_tokens >= 0 && Number.isSafeInteger(output.usage?.completion_tokens) && output.usage.completion_tokens >= 0) {
       usage.prompt_tokens += output.usage.prompt_tokens; usage.completion_tokens += output.usage.completion_tokens;
     } else usage.complete = false;
@@ -432,6 +437,7 @@ module.exports = async function handler(req, res) {
       const append = () => { if (external) messages.push({role: 'user', content: materials.externalText(external)}); };
       append();
       let raw = await ask();
+      stage = 'model_parse';
       const first = parseJsonContent(raw);
       if (first.type === 'research') {
         const searched = await materials.collect({text: '', query: first.query}, config, controller.signal, provider);
@@ -440,6 +446,7 @@ module.exports = async function handler(req, res) {
         append(); raw = await ask();
         if (parseJsonContent(raw).type === 'research') throw new Error('搜索未形成完整回答');
       }
+      stage = 'result_validation';
       result = {...parseAgentResult(raw, context, input), ...(external ? {materials: external} : {})};
     } else {
       result = parseModelResult(await ask());
@@ -453,6 +460,10 @@ module.exports = async function handler(req, res) {
     receipt = null;
     return sent;
   } catch (error) {
+    if(cloud)console.error(JSON.stringify({event:'ai_request_failed',stage:error.service==='redis'?'redis':stage,
+      category:['request_timeout','incomplete_model_reply'].includes(error.code)?error.code:error.name==='SyntaxError'?'invalid_json':error.status?'upstream_http':'request_failed',
+      upstream_status:Number.isInteger(error.status)?error.status:null,duration_ms:Date.now()-started,
+      model_requests:usage.model_requests,search_requests:usage.search_requests,fetch_requests:usage.fetch_requests}));
     try {
       if (receipt) await quota.finish(receipt.deviceId, receipt.requestId, 'failed', Date.now());
       else await increaseMetric('failures', quotaDate);
