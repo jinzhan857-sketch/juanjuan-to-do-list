@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {openBudget}=require('./helpers/v27-budget.cjs');
 if(!process.argv.includes('--live'))throw Error('Use --live for the budgeted real cloud browser');
+const events=[];const persist=()=>{fs.mkdirSync('.reports/v27',{recursive:true});fs.writeFileSync('.reports/v27/browser-events.json',JSON.stringify({mode:'real-cloud-visible-browser',events},null,2));};
 const root=path.join(__dirname,'..'),budget=openBudget(),endpoint='https://juanjuan-v27-ai.vercel.app/api/ai';
 const bootstrap=`
 const directFetch=window.fetch.bind(window);
@@ -13,7 +14,7 @@ window.fetch=async(url,options={})=>{
  if(response.ok&&result.provider_usage)await directFetch('/__result',{method:'POST',body:JSON.stringify({id:receipt.id,usage:result.provider_usage})});
  return response;
 };
-App.init();`;
+App.init().then(async()=>{UI.switchPage('agent');if(!UI.currentAgentChat())await UI.createAgentChat(false);const panel=document.createElement('div');panel.style='position:fixed;right:8px;top:58px;z-index:20000;padding:6px;background:var(--card);font-size:12px';panel.innerHTML='<button id="v27-audit">核对实际记录</button><span id="v27-audit-result"></span>';document.body.append(panel);document.getElementById('v27-audit').onclick=async()=>{const snapshot=await DB.snapshot([...DATA_STORES,'kv']);await directFetch('/__evidence',{method:'POST',body:JSON.stringify(snapshot)});document.getElementById('v27-audit-result').textContent='已记录 '+snapshot.tasks.length+'日程 '+snapshot.todos.length+'待办';};});`;
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace("indexedDB.open('juanjuan-pet', 3)","indexedDB.open('juanjuan-v27-synthetic', 3)").replace('\nApp.init();','\n'+bootstrap);
 const assets={'/quick-score.mjs':'src/rules/quick-score.mjs','/assistant-workflow.js':'src/assistant/workflow.js','/assistant-materials.js':'src/assistant/materials.js'};
 const server=http.createServer(async(req,res)=>{
@@ -22,11 +23,12 @@ const server=http.createServer(async(req,res)=>{
  if(req.method==='GET'&&req.url==='/'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(html);return;}
  if(req.method==='GET'&&assets[req.url]){res.setHeader('Content-Type','text/javascript');res.end(fs.readFileSync(path.join(root,assets[req.url])));return;}
  if(req.method==='GET'&&req.url==='/__budget'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(budget.totals()));return;}
- if(req.method==='POST'&&['/__reserve','/__result'].includes(req.url)){
-  try{let bytes=0,chunks=[];for await(const chunk of req){bytes+=chunk.length;if(bytes>20000)throw Error('body size');chunks.push(chunk);}
+ if(req.method==='POST'&&['/__reserve','/__result','/__evidence'].includes(req.url)){
+  try{let bytes=0,chunks=[];for await(const chunk of req){bytes+=chunk.length;if(bytes>2*1024*1024)throw Error('body size');chunks.push(chunk);}
    const body=JSON.parse(Buffer.concat(chunks).toString());res.setHeader('Content-Type','application/json');
+   if(req.url==='/__evidence'){events.push({kind:'database',at:new Date().toISOString(),snapshot:body});persist();res.end('{}');return;}
    if(req.url==='/__reserve')res.end(JSON.stringify({id:budget.reserve(body)}));
-   else {budget.finish(body.id,body.usage);res.end('{}');}
+   else {budget.finish(body.id,body.usage);events.push({kind:'usage',at:new Date().toISOString(),usage:body.usage});persist();res.end('{}');}
   }catch{res.writeHead(409).end('{}');}return;
  }
  res.writeHead(404).end();
