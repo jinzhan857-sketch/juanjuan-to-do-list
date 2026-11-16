@@ -156,3 +156,25 @@ test('custom memory proposals share validation and retain complete content',asyn
  const r=a.run('AIService.normalizeAgent(memoryReply)');assert.equal(r.cards[0].content,a.ctx.memoryReply.cards[0].content);
  a.ctx.memoryReply.cards[0].content='长'.repeat(1001);assert.throws(()=>a.run('AIService.normalizeAgent(memoryReply)'),/长度不完整/);
 });
+
+test('first use atomically seeds two ordinary schedules and three todos exactly once',async t=>{
+ const a=await fixture(t);await a.run("Promise.all([...DATA_STORES,'kv'].map(store=>DB.clear(store)))");
+ const results=await a.run('Promise.all([App.initializeFirstUse(),App.initializeFirstUse()])');assert.equal(results.filter(Boolean).length,1);
+ const data=await a.snapshot();assert.equal(data.tasks.length,2);assert.equal(data.todos.length,3);assert.equal(data.tasks[0].execDate,a.run('todayStr()'));
+ const sleep=data.tasks.find(t=>t.title==='今晚早睡哦！');assert.equal(sleep.startTime,'23:00');assert.equal(sleep.endTime,'00:00');assert.equal(sleep.endDayOffset,1);assert.equal(sleep.note,'睡不着可以找卷卷聊天呀！');
+ await a.run("DB.clear('tasks');DB.clear('todos')");assert.equal(await a.run('App.initializeFirstUse()'),false);assert.equal((await a.snapshot()).tasks.length,0);assert.equal((await a.snapshot()).todos.length,0);
+});
+
+test('any existing use or restored profile prevents onboarding from adding records',async t=>{
+ const a=await fixture(t);const before=await a.snapshot();assert.equal(await a.run('App.initializeFirstUse()'),false);assert.deepEqual(await a.snapshot(),before);
+ await a.run("DB.clear('kv');DB.put('chats',{id:'used',title:'已有聊天'})");assert.equal(await a.run('App.initializeFirstUse()'),false);assert.equal((await a.snapshot()).tasks.length,0);
+});
+
+test('onboarding records use normal editing completion rewards and deletion',async t=>{
+ const a=await fixture(t);await a.run("Promise.all([...DATA_STORES,'kv'].map(store=>DB.clear(store)))");await a.run('App.initializeFirstUse()');
+ await a.run("(async()=>{S.tasks=await DB.all('tasks');S.todos=await DB.all('todos');S.pet=await DB.get('kv','pet');S.dayStats={};UI.renderHome=()=>{};UI.renderTodos=()=>{};UI.mask=()=>{};PetView.celebrate=()=>{};})()");
+ const todoId=a.run('S.todos[0].id');a.ctx.todoId=todoId;a.run("UI.openTodoEditor(todoId);UI.cState.resultTitle='已编辑的引导待办';UI.cState.rawText='已编辑的引导待办';UI.cState.resultNote='我自己修改的备注'");a.element('#c-title').value='已编辑的引导待办';await a.run('UI.onSave()');assert.equal(a.run('S.todos.find(t=>t.id===todoId).title'),'已编辑的引导待办');
+ a.run("UI.confirm=(title,body,fn)=>{todoConfirmation=fn()};UI.completeTodo(todoId)");await a.run('todoConfirmation');assert.equal(a.run('S.todos.find(t=>t.id===todoId).done'),true);assert.ok(a.run('S.todos.find(t=>t.id===todoId).finalScore')>0);
+ await a.run("UI.confirmStatus(S.tasks.find(t=>t.title==='欢迎使用卷卷！'),'done',Date.now())");assert.equal(a.run("S.tasks.find(t=>t.title==='欢迎使用卷卷！').status"),'done');
+ await a.run('removeTodo(todoId);removeTask(S.tasks[0].id)');assert.equal((await a.snapshot()).todos.length,2);assert.equal((await a.snapshot()).tasks.length,1);assert.equal(await a.run('App.initializeFirstUse()'),false);
+});

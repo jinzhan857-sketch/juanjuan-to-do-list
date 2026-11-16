@@ -16,11 +16,13 @@ window.fetch=async(url,options={})=>{
 };
 App.init().then(async()=>{UI.switchPage('agent');if(!UI.currentAgentChat())await UI.createAgentChat(false);const panel=document.createElement('div');panel.style='position:fixed;right:8px;top:58px;z-index:20000;padding:6px;background:var(--card);font-size:12px';panel.innerHTML='<button id="v27-audit">核对实际记录</button><span id="v27-audit-result"></span>';document.body.append(panel);document.getElementById('v27-audit').onclick=async()=>{const snapshot=await DB.snapshot([...DATA_STORES,'kv']);await directFetch('/__evidence',{method:'POST',body:JSON.stringify(snapshot)});document.getElementById('v27-audit-result').textContent='已记录 '+snapshot.tasks.length+'日程 '+snapshot.todos.length+'待办';};});`;
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace("indexedDB.open('juanjuan-pet', 3)","indexedDB.open('juanjuan-v27-synthetic', 3)").replace('\nApp.init();','\n'+bootstrap);
+const firstUseHtml=html.replace("indexedDB.open('juanjuan-v27-synthetic', 3)","indexedDB.open('juanjuan-v27-onboarding', 3)").replace("UI.switchPage('agent');","UI.switchPage('home');");
 const assets={'/quick-score.mjs':'src/rules/quick-score.mjs','/assistant-workflow.js':'src/assistant/workflow.js','/assistant-materials.js':'src/assistant/materials.js'};
 const server=http.createServer(async(req,res)=>{
  res.setHeader('Cache-Control','no-store');const authority='127.0.0.1:4297';
  if(req.headers.host!==authority||req.headers.origin&&req.headers.origin!=='http://'+authority){res.writeHead(403).end();return;}
  if(req.method==='GET'&&req.url==='/'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(html);return;}
+ if(req.method==='GET'&&req.url==='/first-use'){res.setHeader('Content-Type','text/html;charset=utf-8');res.end(firstUseHtml);return;}
  if(req.method==='GET'&&assets[req.url]){res.setHeader('Content-Type','text/javascript');res.end(fs.readFileSync(path.join(root,assets[req.url])));return;}
  if(req.method==='GET'&&req.url==='/__budget'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(budget.totals()));return;}
  if(req.method==='POST'&&['/__reserve','/__result','/__evidence'].includes(req.url)){

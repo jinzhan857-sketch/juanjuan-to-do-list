@@ -1422,6 +1422,16 @@ const DB = {
       for(const store of stores){const request=tx.objectStore(store).getAll();request.onsuccess=()=>{result[store]=request.result;};}
     });
   },
+  initializeEmptyProfile(changes){
+    return new Promise((resolve,reject)=>{
+      const stores=[...DATA_STORES,'kv'],tx=this._db.transaction(stores,'readwrite');let remaining=stores.length,empty=true,created=false;
+      tx.oncomplete=()=>resolve(created);tx.onabort=()=>reject(tx.error||new Error('首次使用初始化未完成'));
+      for(const store of stores){const request=tx.objectStore(store).count();request.onsuccess=()=>{
+        if(request.result)empty=false;
+        if(--remaining===0&&empty){for(const change of changes){const object=tx.objectStore(change.store);change.key===undefined?object.put(change.value):object.put(change.value,change.key);}created=true;}
+      };}
+    });
+  },
   batch(changes,expected={}){
     const stores=[...new Set([...changes.map(change=>change.store),...Object.keys(expected)])];
     return new Promise((resolve,reject)=>{
@@ -5307,11 +5317,21 @@ const App = {
     S.pet=migratePet(stored||defaultPet());
     if(stored===undefined)await savePet();
   },
+  async initializeFirstUse(){
+    const now=Date.now(),date=todayStr(),common={createdAt:now,note:'',category:'日常生活',baseScore:1,aiSource:'local',aiReason:'首次使用引导',aiAdvice:'',links:[],images:[]};
+    const schedule=(title,note,time={})=>({...common,id:uid(),title,note,execDate:date,timeType:'allday',slot:null,startTime:null,endTime:null,status:null,statusAt:null,statusEditCount:0,finalScore:0,parts:null,isBackfill:false,...time});
+    const todo=title=>({...common,id:uid(),title,done:false,finalScore:0,completedAt:null,sourceTaskId:null});
+    const tasks=[schedule('欢迎使用卷卷！','你的AI日程助手，和卷卷一起，把生活安排明白'),schedule('今晚早睡哦！','睡不着可以找卷卷聊天呀！',{timeType:'exact',startTime:'23:00',endTime:'00:00',endDayOffset:1,baseScore:2})];
+    const todos=[todo('去试试卷卷助手，对话创建任务吧！'),todo('去其他AI取得个人基础、学业工作、日常休闲、聊天话题的信息，再发给卷卷收录到个人记忆，让卷卷更懂你吧。'),todo('完成自己设定的任务，能给卷卷小猫食物哦！')];
+    tasks.forEach(t=>validateStoredRecord(t,true));todos.forEach(t=>validateStoredRecord(t,false));
+    return DB.initializeEmptyProfile([...tasks.map(value=>({store:'tasks',value})),...todos.map(value=>({store:'todos',value})),{store:'kv',key:'pet',value:defaultPet()}]);
+  },
   async init(){
     this.themeMedia = matchMedia('(prefers-color-scheme: dark)');
     this.themeMedia.addEventListener('change', ()=>this.syncAppearance());
     this.syncAppearance();
     await DB.open();
+    await this.initializeFirstUse();
     S.tasks = await DB.all('tasks');
     S.todos = await DB.all('todos');
     S.chats = await DB.all('chats');
