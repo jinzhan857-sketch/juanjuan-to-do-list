@@ -794,7 +794,7 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
       <button class="theme-choice preview-black" data-mode="dark" data-theme="black">纯黑专注<div class="theme-dots"><i style="background:#000000;border:1px solid #444"></i><i style="background:#69A9E8"></i><i style="background:#121417"></i></div></button>
     </div>
   </div>
-  <div class="hint" style="text-align:center;margin-top:18px">卷卷AI Todo V2.5<br>和卷卷一起，把生活安排明白</div>
+  <div class="hint" style="text-align:center;margin-top:18px">卷卷AI Todo V2.6<br>和卷卷一起，把生活安排明白</div>
 </div>
 
 <!-- ==================== 弹窗：聊天记录 ==================== -->
@@ -3158,7 +3158,7 @@ const UI = {
       const conflicts=meta.status==='done'?[]:this.findAgentScheduleConflicts(meta.action);
       const conflictNotice=conflicts.length?`<div class="hint" style="margin-top:8px;color:var(--red)">⚠️ 有 ${conflicts.length} 条时间与现有日程重叠，请核对后再执行。</div>`:'';
       const state=meta.status||'pending';
-      const actions=state==='pending'?`<div class="agent-card-actions"><button class="primary" data-agent-confirm="${esc(message.id)}">${meta.action.kind.startsWith('update')?'确认修改':'确认创建'}</button><button class="secondary" data-agent-edit="${esc(message.id)}">编辑内容</button><button class="quiet" data-agent-cancel="${esc(message.id)}">取消</button></div>`:`<div class="agent-result-state cancelled">${state==='cancelled'?'已取消':state==='superseded'?'旧版本已失效':state==='done'?'已保存':state==='undone'?'已撤销':'正在处理'}</div>`;
+      const actions=state==='pending'?`<div class="agent-card-actions"><button class="primary" data-agent-confirm="${esc(message.id)}">${meta.action.kind.startsWith('delete')?'确认删除':meta.action.kind.startsWith('update')?'确认修改':'确认创建'}</button><button class="secondary" data-agent-edit="${esc(message.id)}">编辑内容</button><button class="quiet" data-agent-cancel="${esc(message.id)}">取消</button></div>`:`<div class="agent-result-state cancelled">${state==='cancelled'?'已取消':state==='superseded'?'旧版本已失效':state==='done'?'已保存':state==='undone'?'已撤销':'正在处理'}</div>`;
       extra=`<div class="agent-card"><div class="agent-card-title">${esc(this.agentActionTitle(meta.action.kind))}</div>${rows}${dates}${conflictNotice}${actions}${meta.workflow?`<div class="assistant-card-tools">${state==='pending'?`<label class="assistant-card-select"><input type="checkbox" data-assistant-select="${esc(message.id)}" ${this.assistantSelected?.has(message.id)?'checked':''}><span>加入批量</span></label>`:''}${['pending','done'].includes(state)?`<button class="secondary" data-assistant-talk="${esc(message.id)}">继续沟通</button>`:''}${state==='done'&&meta.operationId?`<button class="secondary" data-agent-undo="${esc(message.id)}">撤销操作</button>`:''}${state==='done'?`<button class="secondary" data-assistant-edit="${esc(message.id)}">编辑原记录</button>`:''}</div>`:''}</div>`;
     }
     if(message.type==='query' && Array.isArray(meta.results)){
@@ -3317,9 +3317,7 @@ const UI = {
     const planning=this.planningData(question);
     const selected=this.agentSelectedData(question);
     const candidateCards=globalThis.JuanjuanWorkflow?this.assistantCandidateContext(chatId):[];
-    const cardIds=new Set(candidateCards.map(c=>c.card_id));
-    const representedRecords=new Set(this.assistantCurrentCards(chatId).filter(m=>cardIds.has(m.meta.workflow.cardId)).flatMap(m=>m.meta.recordIds||[]));
-    const tasks=selected.tasks.filter(t=>!representedRecords.has(t.id)),todos=selected.todos.filter(t=>!representedRecords.has(t.id));
+    const tasks=selected.tasks,todos=selected.todos;
     const short=(value,max)=>String(value||'').slice(0,max);
     const memories=planning?planning.memories:(useMemories&&S.pet.memoryEnabled?this.planningMemoryItems(question):[]);
     return {

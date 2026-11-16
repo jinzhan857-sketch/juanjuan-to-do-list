@@ -26,6 +26,7 @@ function build() {
   if (hasGit && status === null) throw Error('Cannot inspect Git worktree');
   const inputs = ['index.html', 'api/ai.js', 'api/quota.cjs', 'package.json', 'package-lock.json', '.node-version', 'scripts/build.cjs', 'src/rules/quick-score.mjs', 'src/assistant/workflow.js', 'src/assistant/materials.js'];
   const manifest = {
+    appVersion: JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version,
     sourceCommit, dirty: hasGit ? status !== '' : null, sourceKind: hasGit ? 'git' : 'archive',
     node: process.version,
     inputs: Object.fromEntries(inputs.map(file => [file, sha256(fs.readFileSync(path.join(root, file)))])),
