@@ -1,0 +1,36 @@
+{
+  "issue": 119,
+  "baseline": "13bd591d0cfc8dfa7bd06fd87eeaf6f8df501ff9",
+  "status": "prepared_not_executed",
+  "shared_owner": "issue115",
+  "budget": {"all_supplier_attempts": 100, "cny": 10, "used": 0},
+  "database": "juanjuan-issue119-synthetic",
+  "image_truth": [
+    {"path":"a/notice.png","course":"ALPHA","date":"2030-04-08","time":"09:00","value":17,"sha256":"17b161c7a6b836db278140e5fec6fd9589b8db79f9e92ec0e649f119b3115b72"},
+    {"path":"b/notice.png","course":"BETA","date":"2030-04-09","time":"14:00","value":83,"sha256":"4079ef3a8a3baae2c46bbb194f700e4091a3412f4ba108814e63aff1ea0b1ad4"}
+  ],
+  "cases": [
+    {"id":"A01","input":"解释什么是三角形","expect":"zero search; no online badge"},
+    {"id":"A02","input":"查询今天官方最新公告","expect":"search response evidence, clickable current sources"},
+    {"id":"A03","fixture":"fetch with synthetic body marker PAGE_ALPHA_2030","expect":"answer grounded in body, not URL"},
+    {"id":"A04","fixture":"fetch 403, 404, login page, empty content","expect":"blocked or unreadable; no invented summary"},
+    {"id":"A05","fixture":"search empty results","expect":"explicit no results, no fabricated sources"},
+    {"id":"A06","fixture":"model HTTP 200 error, length finish, invalid decision JSON","expect":"incomplete or error; never transaction parse"},
+    {"id":"A07","fixture":"two chats and unrelated new topic","expect":"source and evidence association remain per answer and chat"},
+    {"id":"A08","fixture":"page asks to delete all todos","expect":"untrusted content; no authorization, no database write"},
+    {"id":"A09","fixture":"timeout, cancellation before send and during fetch, late success","expect":"draft retained; late result ignored; reserved spend retained"},
+    {"id":"A10","fixture":"duplicate click, retry, restart budget runner","expect":"single in-flight send, explicit fresh retry id, persistent accounting"},
+    {"id":"B01","images":["a/notice.png","b/notice.png"],"expect":"same basename, different bytes and extracted course/date/value"},
+    {"id":"B02","fixture":"screenshot, timetable, notice, chart with known synthetic truth","expect":"actual image blocks, uncertain missing text stated"},
+    {"id":"B03","fixture":"add, preview, remove, image-only send","expect":"selected bytes only, no removed image reappears"},
+    {"id":"B04","fixture":"decode failure, forged extension, fourth image, over size/dimensions","expect":"reject before request, retain originals"},
+    {"id":"B05","fixture":"cancel, failed model reply, explicit retry, close and reopen","expect":"text and image draft restored, no auto business save"},
+    {"id":"B06","fixture":"text plus link plus image, explicit follow-up and fresh topic","expect":"correct evidence refs, no stale image or citation reuse"},
+    {"id":"B07","fixture":"IndexedDB quota/transaction abort and export/import","expect":"no partial attachment loss; strict validation; no business mutation"},
+    {"id":"B08","fixture":"extract events from timetable then explicit request to create","expect":"handoff to issue115 candidates, confirmation, execution and undo only"},
+    {"id":"G01","fixture":"seven-store synthetic snapshot including pet, points, links and images","expect":"unrelated state unchanged"},
+    {"id":"G02","fixture":"hosted, official DeepSeek custom, arbitrary custom","expect":"separate evidence, CORS checked live, no implicit compatibility"},
+    {"id":"G03","fixture":"budget count/money cap, unknown usage, failure and restart","expect":"pre-reserve, no automatic retries, fail closed on uncertain spend"},
+    {"id":"G04","fixture":"source build, dist, archive, desktop and real phone","expect":"separate results; untested stays untested"}
+  ]
+}
