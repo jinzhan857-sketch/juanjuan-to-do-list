@@ -7,7 +7,7 @@ const vm=require('node:vm');
 const {IDBFactory}=require('fake-indexeddb');
 const stores=['tasks','todos','chats','messages','memories','operations','kv'];
 async function fixture(t){
-  const ctx=vm.createContext({crypto:require('node:crypto').webcrypto,console,URL,AbortController,setTimeout,clearTimeout,structuredClone,indexedDB:new IDBFactory()});
+  const ctx=vm.createContext({JuanjuanWorkflow:require('../src/assistant/workflow.js'),crypto:require('node:crypto').webcrypto,console,URL,AbortController,setTimeout,clearTimeout,structuredClone,indexedDB:new IDBFactory()});
   const source=fs.readFileSync(process.env.ISSUE6_SOURCE||path.join(__dirname,'../index.html'),'utf8');
   vm.runInContext([...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n').replace(/^App\.init\(\);$/m,''),ctx);
   const run=code=>vm.runInContext(code,ctx,{timeout:3000});

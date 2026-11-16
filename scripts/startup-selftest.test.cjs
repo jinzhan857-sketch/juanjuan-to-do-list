@@ -10,7 +10,7 @@ async function regression(t){
 test('42 old checks have explicit independent destinations; 37 non-DOM cases run without App.init',async t=>{
  const {runChecks,browserOnly}=await import('./helpers/startup-selftest-checks.mjs');
  const f=await regression(t),results=await runChecks(f.api);
- fs.mkdirSync(require('node:path').join(__dirname,'../.reports'),{recursive:true});fs.writeFileSync(require('node:path').join(__dirname,'../.reports/issue106-node.json'),JSON.stringify({results,knownBaselineFailures:['09','23']},null,2));console.warn('Legacy baseline assertions 09 and 23 still fail; retained as explicit observations, not functional passes.');assert.equal(results.length,37);assert.deepEqual(results.filter(r=>!r.ok).map(r=>r.id),['09','23'],'Keep the two reproduced baseline failures visible; any new failure blocks this migration');
+ fs.mkdirSync(require('node:path').join(__dirname,'../.reports'),{recursive:true});fs.writeFileSync(require('node:path').join(__dirname,'../.reports/issue106-node.json'),JSON.stringify({results,knownBaselineFailures:['09','23','31']},null,2));console.warn('Legacy 09/23 remain unresolved. Legacy 31 rejects all-day repeats and is superseded by approved #115 cases; the original assertion remains unchanged.');assert.equal(results.length,37);assert.deepEqual(results.filter(r=>!r.ok).map(r=>r.id),['09','23','31'],'Keep original failures and the explicitly superseded all-day rule visible; any other failure blocks delivery');
  assert.deepEqual([...results.map(r=>r.id),...browserOnly].sort(),Array.from({length:42},(_,i)=>String(i+1).padStart(2,'0')));
 });
 test('tests before or after an app instance, including interrupted runs, cannot change its storage or state',async t=>{
@@ -21,7 +21,7 @@ test('tests before or after an app instance, including interrupted runs, cannot 
  const before=await snapshot(normal);
  for(const failAt of [null,'27','40']){
   const other=await regression(t);
-  if(failAt)await assert.rejects(runChecks(other.api,{failAt}),/Injected interruption/);else assert.deepEqual((await runChecks(other.api)).filter(r=>!r.ok).map(r=>r.id),['09','23']);
+  if(failAt)await assert.rejects(runChecks(other.api,{failAt}),/Injected interruption/);else assert.deepEqual((await runChecks(other.api)).filter(r=>!r.ok).map(r=>r.id),['09','23','31']);
   assert.equal(await snapshot(normal),before);
  }
  await assert.rejects(runChecks({}),TypeError);assert.equal(await snapshot(normal),before);
@@ -31,7 +31,7 @@ test('production source and built page contain neither selfTest nor regression f
   const html=fs.readFileSync(require('node:path').join(__dirname,'..',file),'utf8');
   assert.doesNotMatch(html,/selfTest|\[自测\]|agent_query_test|agent_series_one|planning_inside_test|startup-selftest/);
  }
- assert.deepEqual(fs.readdirSync(require('node:path').join(__dirname,'../dist')).sort(),['build-info.json','index.html','quick-score.mjs']);
+ assert.deepEqual(fs.readdirSync(require('node:path').join(__dirname,'../dist')).sort(),['assistant-workflow.js','build-info.json','index.html','quick-score.mjs']);
 });
 
 test('synthetic browser entry only serves explicit resources and isolates database and localStorage',async t=>{

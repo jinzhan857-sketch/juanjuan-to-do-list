@@ -43,7 +43,7 @@ async function run(){
  const normal=await create();
  try{
   await seed(normal.api,{crossDay:true});const before=await snapshot(normal.api);
-  const early=await create();try{report.legacyResults=await regression(early);if(typeof early.api.App.selfTest==='function'){early.api.App.selfTest();report.baselineLegacyErrors=early.frame.contentWindow.startupLogs.filter(x=>x.level==='error'&&x.text.includes('[自测]'));}expect(report.legacyResults.length===42,'All 42 legacy checks must run');expect(canonical(report.legacyResults.filter(r=>!r.ok).map(r=>r.id))===canonical(['09','23']),'Unexpected legacy failure: '+canonical(report.legacyResults.filter(r=>!r.ok)));}finally{early.dispose()}
+  const early=await create();try{report.legacyResults=await regression(early);if(typeof early.api.App.selfTest==='function'){early.api.App.selfTest();report.baselineLegacyErrors=early.frame.contentWindow.startupLogs.filter(x=>x.level==='error'&&x.text.includes('[自测]'));}expect(report.legacyResults.length===42,'All 42 legacy checks must run');expect(canonical(report.legacyResults.filter(r=>!r.ok).map(r=>r.id))===canonical(['09','23','31']),'Unexpected legacy failure: '+canonical(report.legacyResults.filter(r=>!r.ok)));}finally{early.dispose()}
   await verifyUnchanged(normal.api,before,'Test before startup');record('自测先运行，正常应用状态与存储不变');
   await normal.api.App.init();const started=await snapshot(normal.api);
   for(const store of normal.api.DATA_STORES)expect(canonical(started.stored[store])===canonical(before.stored[store]),'Startup changed '+store);
@@ -57,7 +57,7 @@ async function run(){
   record('实际日期按钮绑定往返正常');
   const stable=await snapshot(normal.api);
   for(const failAt of [null,'27','40']){
-   const test=await create();try{if(failAt){let error;try{await regression(test,{failAt})}catch(e){error=e}expect(error?.message.includes('Injected interruption'),'Failure injection missing');}else {const results=await regression(test);expect(results.length===42&&canonical(results.filter(r=>!r.ok).map(r=>r.id))===canonical(['09','23']),'Post-start regression results changed');}}finally{test.dispose()}
+   const test=await create();try{if(failAt){let error;try{await regression(test,{failAt})}catch(e){error=e}expect(error?.message.includes('Injected interruption'),'Failure injection missing');}else {const results=await regression(test);expect(results.length===42&&canonical(results.filter(r=>!r.ok).map(r=>r.id))===canonical(['09','23','31']),'Post-start regression results changed');}}finally{test.dispose()}
    await verifyUnchanged(normal.api,stable,'Test after startup '+failAt);record(failAt?'测试中断于'+failAt+'后正常实例不变':'正常启动后自测，正常实例不变');
   }
   const broken=await create();broken.api.DB.open=async()=>{throw Error('Injected initialization failure')};try{await regression(broken);throw Error('Expected failure')}catch(e){expect(e.message==='Injected initialization failure','Wrong initialization failure')}finally{broken.dispose()}

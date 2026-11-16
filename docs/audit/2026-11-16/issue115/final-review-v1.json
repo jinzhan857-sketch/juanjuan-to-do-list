@@ -1,0 +1,68 @@
+{
+  "version": "final-review-v1",
+  "frozenAt": "2026-11-16T06:28:20.349Z",
+  "purpose": "Final source verification after atomic cancel repair; unchanged original expectations.",
+  "cases": [
+    {
+      "id": "A02",
+      "partition": "regression",
+      "date": "2026-11-15",
+      "turns": [
+        "安排两件事：09:00到10:00复习线性代数，14:00到15:00开项目例会；两件的日期稍后告诉你。",
+        "复习放明天，例会放后天。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "dates": [
+        "2026-11-16",
+        "2026-11-17"
+      ],
+      "originalId": "AST06",
+      "batch": "Final-review",
+      "route": "custom"
+    },
+    {
+      "id": "A13",
+      "partition": "stability",
+      "turns": [
+        "帮我创建多个日程：\n6098项目上交日期 12月1号\n7215项目pre 12月3日\n7215项目递交时间 12月7日\n7508智能系统安全期末考 12月8号\n7215编程与应用期末考 12月10号\n7224深度学习期末考 12月11号\nTCL参观 12月15号"
+      ],
+      "tasks": 7,
+      "todos": 0,
+      "dates": [
+        "2026-12-01",
+        "2026-12-03",
+        "2026-12-07",
+        "2026-12-08",
+        "2026-12-10",
+        "2026-12-11",
+        "2026-12-15"
+      ],
+      "titles": [
+        "6098项目上交日期",
+        "7215项目pre",
+        "7215项目递交时间",
+        "7508智能系统安全期末考",
+        "7215编程与应用期末考",
+        "7224深度学习期末考",
+        "TCL参观"
+      ],
+      "allDay": true,
+      "originalId": "seven-all-day",
+      "batch": "Final-review",
+      "route": "hosted"
+    },
+    {
+      "id": "C05",
+      "batch": "Final-review",
+      "route": "hosted",
+      "turns": [
+        "建两个日程，12月6日“复查”，12月8日也叫“复查”。",
+        "复查加备注带清单。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "clarifyLast": true
+    }
+  ]
+}

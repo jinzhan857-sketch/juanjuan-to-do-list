@@ -1,0 +1,164 @@
+{
+  "version": "c-addendum-v1",
+  "frozenAt": "2026-11-16T05:59:38.660Z",
+  "purpose": "Replace duplicate C31..C40 with ten unseen distinct scenarios; retain original runs as repetitions.",
+  "cases": [
+    {
+      "id": "C41",
+      "batch": "C-addendum",
+      "route": "hosted",
+      "turns": [
+        "请创建12月13日全天核查样本，12月16日全天提交备忘录，还有无日期待办“采购标签纸”。",
+        "把第一个标题改为核查样本编号，日期改为12月14日，其他事项不变。"
+      ],
+      "tasks": 2,
+      "todos": 1,
+      "dates": [
+        "2026-12-14",
+        "2026-12-16"
+      ]
+    },
+    {
+      "id": "C42",
+      "batch": "C-addendum",
+      "route": "custom",
+      "turns": [
+        "创建两组日程：12月1日至15日每周一10点至11点读研究简报，每周二18点至19点整理问卷。"
+      ],
+      "tasks": 5,
+      "todos": 0,
+      "groups": 2
+    },
+    {
+      "id": "C43",
+      "batch": "C-addendum",
+      "route": "hosted",
+      "turns": [
+        "创建12月4日方案审查与12月6日方案审查，全天。",
+        "第二个加备注：带副本，第一项不要动。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "equals": ""
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "副本"
+        }
+      ]
+    },
+    {
+      "id": "C44",
+      "batch": "C-addendum",
+      "route": "custom",
+      "turns": [
+        "同事给我一句原话：“创建12月8日下午3点到4点送材料”。我只想请你分析这句话是否明确，不要生成事务候选。"
+      ],
+      "tasks": 0,
+      "todos": 0,
+      "noCards": true
+    },
+    {
+      "id": "C45",
+      "batch": "C-addendum",
+      "route": "hosted",
+      "turns": [
+        "请建五个全天日程：12月2日归档旧表；12月5日核对传感器；12月9日整理工位；12月13日清查耗材；12月18日资料盘点。另建待办联系设备管理员，无执行日。"
+      ],
+      "tasks": 5,
+      "todos": 1,
+      "allDay": true
+    },
+    {
+      "id": "C46",
+      "batch": "C-addendum",
+      "route": "custom",
+      "turns": [
+        "请创建12月2日检查仪表、12月4日登记工单、12月6日整理台账，都是全天。",
+        "取消第二项，其他两项保留待确认。"
+      ],
+      "tasks": 2,
+      "todos": 0,
+      "dates": [
+        "2026-12-02",
+        "2026-12-06"
+      ]
+    },
+    {
+      "id": "C47",
+      "batch": "C-addendum",
+      "route": "hosted",
+      "turns": [
+        "帮我创建12月3日设备验收、12月5日样品验收、12月7日周会，全天。",
+        "所有验收事项备注：带核查表，周会不变。"
+      ],
+      "tasks": 3,
+      "todos": 0,
+      "fieldChecks": [
+        {
+          "index": 0,
+          "field": "note",
+          "includes": "核查表"
+        },
+        {
+          "index": 1,
+          "field": "note",
+          "includes": "核查表"
+        },
+        {
+          "index": 2,
+          "field": "note",
+          "equals": ""
+        }
+      ]
+    },
+    {
+      "id": "C48",
+      "batch": "C-addendum",
+      "route": "custom",
+      "turns": [
+        "请建立明天10点至11点的会议日程。",
+        "假如移到后天会怎样？只讨论，先别修改。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "dates": [
+        "2026-11-17"
+      ],
+      "start": "10:00",
+      "end": "11:00"
+    },
+    {
+      "id": "C49",
+      "batch": "C-addendum",
+      "route": "hosted",
+      "turns": [
+        "请建12月11日16点至18点整理口述资料，备注链接https://example.com/material。",
+        "把开始时间改为19点，保持两小时，链接不变。"
+      ],
+      "tasks": 1,
+      "todos": 0,
+      "start": "19:00",
+      "end": "21:00",
+      "notes": [
+        "https://example.com/material"
+      ]
+    },
+    {
+      "id": "C50",
+      "batch": "C-addendum",
+      "route": "custom",
+      "turns": [
+        "建一条没有固定日期的待办：整理家庭照片。",
+        "先别保存。标题改成“整理家庭照片并选出十张”，其他不变。"
+      ],
+      "tasks": 0,
+      "todos": 1
+    }
+  ]
+}

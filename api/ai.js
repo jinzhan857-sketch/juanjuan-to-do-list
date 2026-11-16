@@ -1,3 +1,4 @@
+function workflowContract(){return require('../src/assistant/workflow.js');}
 const crypto = require('node:crypto');
 
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
@@ -246,8 +247,10 @@ function sanitizeBatchUpdateRule(input = {}) {
   };
 }
 
-function parseAgentResult(content, context) {
+function parseAgentResult(content, context, input) {
   const data = parseJsonContent(content);
+  if(input!==undefined&&['workflow','proposal','batch_proposal'].includes(data.type)){const guarded=workflowContract().guard(data,context,input);if(data.type==='workflow'||guarded.type!==data.type)return guarded;}
+  if(data.type==='workflow')return workflowContract().parse(data);
   const type = ['chat', 'clarify', 'query', 'proposal', 'batch_proposal', 'recommendation'].includes(data.type) ? data.type : 'clarify';
   const fields = type === 'batch_proposal' && !['update_schedule_batch', 'delete_schedule_batch'].includes(data.action?.kind) ? data.action?.rule : data.action?.item;
   if (['proposal', 'batch_proposal'].includes(type) && fields?.title !== undefined && String(fields.title ?? '').trim().length > 300) return {type: 'clarify', reply: '任务定义超过300字，请缩短后再确认，内容未截断保存。'};
@@ -322,6 +325,7 @@ function compactAgentContext(context = {}) {
   const planning = context.planning && typeof context.planning === 'object' ? context.planning : {};
   const examples = value => Array.isArray(value) ? value.slice(0, 3).map(item => shortText(item, 160)).filter(Boolean) : [];
   return {
+    candidate_cards: context.candidate_cards===undefined?[]:workflowContract().contextCards(context.candidate_cards),
     tasks: tasks.map(item => ({
       id: shortText(item.id, 80), series_id: validSeriesId(item.series_id) ? item.series_id : null, title: shortText(item.title, 120), note: shortText(item.note, 160),
       exec_date: validDate(item.exec_date), time_type: shortText(item.time_type, 20), slot: shortText(item.slot, 20),
@@ -397,7 +401,7 @@ module.exports = async function handler(req, res) {
       return json(res, 200, { released: true });
     }
     const input = String(agentMode ? body.message : body.title || '').trim();
-    if (!input || input.length > (agentMode ? 1000 : 300)) return json(res, 400, { error: agentMode ? '消息内容不合法' : '任务内容不合法' });
+    if (!input || input.length > (agentMode ? 10000 : 300)) return json(res, 400, { error: agentMode ? '消息内容不合法' : '任务内容不合法' });
 
     const modelDate = validDate(body.client_date) || quotaDate;
     // Record identity before admission: a lost Redis response may already have reserved quota.
@@ -416,7 +420,7 @@ module.exports = async function handler(req, res) {
     await redis(['EXPIRE', `active:${quotaDate}`, '2678400']);
     const context = agentMode ? compactAgentContext(body.context) : null;
     const agentRole = body.agent_role === 'task' || body.agent_role === 'planning' ? body.agent_role : 'chat';
-    const agentPrompt = agentRole === 'task' ? `${AGENT_SYSTEM_PROMPT}\n${TASK_EXECUTION_RULES}` : agentRole === 'planning' ? PLANNING_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
+    const agentPrompt = agentRole === 'task' ? workflowContract().prompt : agentRole === 'planning' ? PLANNING_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT;
     const messages = agentMode ? [
       { role: 'system', content: agentPrompt + '\n上下文只含按问题选择的有限资料，selection.partial始终为true，不能声称查过完整数据库。查询返回query条件由程序核对；资料不足或目标不唯一时追问。' },
       { role: 'user', content: `今天是${modelDate}。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${input}` },
@@ -434,14 +438,14 @@ module.exports = async function handler(req, res) {
         model: 'deepseek-v4-flash',
         messages,
         temperature: 0.1,
-        max_tokens: agentMode ? 900 : 300,
+        max_tokens: agentMode && agentRole === 'task' ? 6000 : agentMode ? 900 : 300,
         thinking: { type: 'disabled' },
         response_format: { type: 'json_object' },
         stream: false,
       }),
     });
     if (!response.ok) throw new Error(`模型服务返回 ${response.status}`);
-    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context) : parseModelResult(output.choices?.[0]?.message?.content);
+    const result = agentMode ? parseAgentResult(output.choices?.[0]?.message?.content, context, input) : parseModelResult(output.choices?.[0]?.message?.content);
     const completed = await quota.finish(deviceId, requestId, 'success', Date.now());
     if (completed !== 'success') {
       receipt = null;
