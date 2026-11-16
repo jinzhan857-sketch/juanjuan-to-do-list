@@ -347,9 +347,10 @@
   },
   "offline": {
     "original": 1504,
-    "added": 35,
+    "added": 36,
     "prepared_matrix": 26,
-    "matrix_all_completed": false
+    "matrix_all_completed": false,
+    "build_syntax_preservation": true
   },
   "untested": [
     "real phone",

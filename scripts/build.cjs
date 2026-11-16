@@ -17,6 +17,7 @@ function build() {
   scripts.forEach((m, i) => new vm.Script(m[1], {filename: `index.html:script${i}`}));
   new vm.Script(fs.readFileSync(path.join(root, 'api/ai.js'), 'utf8'), {filename: 'api/ai.js'});
   new vm.Script(fs.readFileSync(path.join(root, 'api/quota.cjs'), 'utf8'), {filename: 'api/quota.cjs'});
+  new vm.Script(fs.readFileSync(path.join(root,'src/assistant/materials.js'),'utf8'),{filename:'src/assistant/materials.js'});
   // Do not infer a parent repository's commit for an extracted ZIP.
   const hasGit = fs.existsSync(path.join(root, '.git'));
   const sourceCommit = hasGit ? git('rev-parse', 'HEAD') : fs.readFileSync(path.join(root, '.source-revision'), 'utf8').trim();
@@ -42,7 +43,6 @@ function build() {
   fs.writeFileSync(path.join(dist, 'index.html'), html);
   fs.copyFileSync(path.join(root,'src/rules/quick-score.mjs'),path.join(dist,'quick-score.mjs'));
   fs.copyFileSync(path.join(root,'src/assistant/workflow.js'),path.join(dist,'assistant-workflow.js'));
-  new vm.Script(fs.readFileSync(path.join(root,'src/assistant/materials.js'),'utf8'));
   fs.copyFileSync(path.join(root,'src/assistant/materials.js'),path.join(dist,'assistant-materials.js'));
   fs.writeFileSync(path.join(dist, 'build-info.json'), JSON.stringify(manifest, null, 2) + '\n');
   console.log(`Built dist/index.html from ${sourceCommit}; dirty=${manifest.dirty}; sha256=${manifest.output.sha256}`);

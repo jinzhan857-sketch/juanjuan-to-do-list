@@ -50,6 +50,11 @@ test('missing input fails without producing an output', t => {
   assert.equal(build(dir).status, 1);
   assert.equal(fs.existsSync(path.join(dir, 'dist')), false);
 });
+test('material module syntax failure preserves the previous complete output',t=>{
+ const dir=fixture(t);assert.equal(build(dir).status,0);const before=fs.readFileSync(path.join(dir,'dist/index.html'));
+ fs.appendFileSync(path.join(dir,'src/assistant/materials.js'),'\nconst = broken;');
+ assert.equal(build(dir).status,1);assert.deepEqual(fs.readFileSync(path.join(dir,'dist/index.html')),before);
+});
 test('unknown source revision cannot masquerade as a traced build', t => {
   const dir = fixture(t);
   fs.writeFileSync(path.join(dir, '.source-revision'), '$Format:%H$');
