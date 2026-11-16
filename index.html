@@ -151,14 +151,14 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .empty .big{font-size:40px}
 
 /* ---------- 顶部信息条 ---------- */
-#home-stats{display:flex;gap:10px;margin-bottom:14px}
+#home-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
 #home-stats .stat{
-  flex:1;height:59px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card);border-radius:var(--r-md);padding:5px 6px;text-align:center;box-shadow:var(--shadow);
+  min-width:0;min-height:68px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--card);border-radius:var(--r-md);padding:10px 6px;text-align:center;box-shadow:var(--shadow);
 }
-#home-stats .num{font-size:19px;font-weight:800;color:var(--pink)}
-#home-stats .stat:nth-child(2) .num{color:var(--mint)}
-#home-stats .stat:nth-child(3) .num{color:var(--peach)}
-#home-stats .lbl{font-size:11px;color:var(--text2);margin-top:2px}
+#home-stats .num{max-width:100%;font-size:22px;line-height:1.15;font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:color-mix(in srgb,var(--pink) 55%,var(--text))}
+#home-stats .stat:nth-child(2) .num{color:color-mix(in srgb,var(--mint) 55%,var(--text))}
+#home-stats .stat:nth-child(3) .num{color:color-mix(in srgb,var(--peach) 55%,var(--text))}
+#home-stats .lbl{font-size:12px;line-height:1.4;color:color-mix(in srgb,var(--text2) 65%,var(--text))}
 
 /* ---------- 宠物区 ---------- */
 #pet-card{position:relative;overflow:hidden;background:linear-gradient(165deg,var(--card) 55%,var(--pink-soft));padding:14px 14px 16px;border:1.5px solid var(--line)}
@@ -582,7 +582,7 @@ body.agent-page-active #global-topbar{background:var(--assistant-bg)}body.agent-
 <div class="page active" id="page-home">
   <div id="home-stats">
     <div class="stat"><div class="num" id="st-today-score">0</div><div class="lbl">今日积分</div></div>
-    <div class="stat"><div class="num" id="st-today-done">0</div><div class="lbl">今日完成（日程按开始日，待办按完成日）</div></div>
+    <div class="stat"><div class="num" id="st-today-done">0</div><div class="lbl">今日完成</div></div>
     <div class="stat"><div class="num" id="st-streak">0</div><div class="lbl">连续打卡</div></div>
   </div>
 
