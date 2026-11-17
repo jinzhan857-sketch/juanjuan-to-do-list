@@ -49,7 +49,8 @@ test('lifetime credits ignore public exhaustion, persist across weeks and refund
 test('credit concurrency, duplicate requests and expired pending leases never overdraw',async()=>{
  const g=await grant(1),info=await experience(redis,g.code,device,'redeem');const r=request(700,{credit:info});
  const rows=await Promise.all([quota.reserve(r),quota.reserve(r),quota.reserve(request(701,{credit:info}))]);assert.equal(rows.filter(x=>x==='reserved').length,1);assert.ok(rows.includes('credit'));
- assert.equal(await quota.reserve(request(702,{credit:info,now:r.now+60001})),'reserved');assert.equal(await quota.finish(device,r.id,'success',r.now+60002),'expired');
+ const winner=rows[2]==='reserved'?request(701,{credit:info}):r;
+ assert.equal(await quota.reserve(request(702,{credit:info,now:r.now+60001})),'reserved');assert.equal(await quota.finish(device,winner.id,'success',r.now+60002),'expired');
 });
 test('revoke, expiry and manual rebinding are rechecked at admission without resetting balance',async()=>{
  const g=await grant(),info=await experience(redis,g.code,device,'redeem');
