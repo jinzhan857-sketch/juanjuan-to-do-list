@@ -1,6 +1,10 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const wf=require('../src/assistant/workflow.js');
+test('perfect persona anchors kaomoji to the emotional sentence rather than a reply signature',()=>{
+ const p=wf.personaPrompt(wf.perfectPersona);assert.match(p,/那一句的开头或结尾/);assert.match(p,/不作为结尾签名/);assert.match(p,/没有合适的情绪句就省略/);assert.doesNotMatch(p,/可在合适的开头或结尾点缀/);
+ for(const id of ['default','custom'])assert.ok(!wf.personaPrompt(wf.personas[id]).includes('颜文字属于'));
+});
 test('single newline output guidance is shared across personas and intent hints',()=>{
  for(const persona of Object.values(wf.personas))for(const intent of ['auto','chat','planning','task']){
   const p=wf.assistantPrompt(intent,persona);assert.match(p,/换行只用单个换行符，禁止空白行或连续换行/);assert.match(p,/此排版规则适用于所有人设/);assert.match(p,/代码块内部保留必要的原有格式/);
