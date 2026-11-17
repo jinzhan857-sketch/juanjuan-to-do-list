@@ -323,6 +323,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .week-day-head.today-head{color:var(--pink)}
 .mini-task{background:var(--card);border-radius:var(--r-sm);box-shadow:var(--shadow);padding:9px 12px;margin-bottom:6px;font-size:13px;display:block}
 .mini-task .dotc{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mini-task-cross-day .row{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:7px}
+.mini-task-cross-day .plan-time{grid-column:2;grid-row:2;white-space:nowrap}
+.mini-task-cross-day .plan-score{grid-column:3;grid-row:1}
+.mini-task-cross-day .grow{min-width:0;overflow-wrap:anywhere}
 
 /* ---------- 我的页 ---------- */
 .me-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -1395,6 +1399,10 @@ function slotForTime(hm){ // 精确时间自动归入时段（按开始时间，
   const hit = CONFIG.SLOTS.filter(s=> m>=minOf(s.start) && m<(s.end==='24:00'?1440:minOf(s.end)));
   if(!hit.length) return CONFIG.SLOTS[0];
   return hit.sort((a,b)=>b.bonus-a.bonus || (minOf(a.end==='24:00'?'23:59':a.end)-minOf(a.start))-(minOf(b.end==='24:00'?'23:59':b.end)-minOf(b.start)))[0];
+}
+function planTimeLabel(task,date){
+  if(task.timeType==='exact'&&task.endDayOffset===1)return date===addDays(task.execDate,1)?`前日${task.startTime} 至 ${task.endTime}`:`${task.startTime} 至 次日${task.endTime}`;
+  return timeLabel(task);
 }
 function timeLabel(task){
   if(task.timeType==='exact') return task.endDayOffset===1?`${task.execDate} ${task.startTime} 至 ${addDays(task.execDate,1)} ${task.endTime}`:`${task.startTime}-${task.endTime}`;
@@ -4868,14 +4876,14 @@ const UI = {
       const tip=document.createElement('div'); tip.className='llm-recommend'; tip.innerHTML=`出行与冲突建议：${esc(clash.title)} 与前一项时间重叠，建议预留交通缓冲。<button class="btn ghost sm" style="margin-left:8px" data-plan-buffer="1">创建缓冲日程</button>`;
       tip.querySelector('[data-plan-buffer]').onclick=()=>{this.openPublisher('schedule');$('#c-title').value=`${this.planCursor} ${clash.endTime||'09:00'} 到 ${clash.endTime||'09:30'} 出行缓冲`;toast('已生成草稿，请确认后发布');}; body.appendChild(tip);
     }
-    const mkMini = t => {
+    const mkMini = (t,date) => {
       const el = document.createElement('div');
-      el.className='mini-task';
+      el.className='mini-task'+(t.timeType==='exact'&&t.endDayOffset===1?' mini-task-cross-day':'');
       const color = t.status==='done'?'var(--mint)':t.status?'var(--text3)':'var(--peach)';
       el.innerHTML = `<div class="row" style="gap:7px"><span class="dotc" style="background:${color}"></span>
         <span class="grow" style="${t.status==='done'?'text-decoration:line-through;color:var(--text2)':''}">${esc(t.title)}</span>
-        <span style="font-size:11px;color:var(--text2)">${timeLabel(t)}</span>
-        <span style="font-size:11px;font-weight:700;color:var(--peach)">${t.status? '+'+t.finalScore : '≈'+ScoreEngine.estimate(t).full}</span></div>
+        <span class="plan-time" style="font-size:11px;color:var(--text2)">${planTimeLabel(t,date)}</span>
+        <span class="plan-score" style="font-size:11px;font-weight:700;color:var(--peach)">${t.status? '+'+t.finalScore : '≈'+ScoreEngine.estimate(t).full}</span></div>
         ${t.note?`<div class="mini-note">📝 ${esc(t.note)}</div>`:''}`;
       el.onclick = ()=>this.openTaskDetail(t.id);
       return el;
@@ -4884,7 +4892,7 @@ const UI = {
       $('#plan-title').textContent = `${cur.getMonth()+1}月${cur.getDate()}日 ${weekCN[cur.getDay()]}`;
       const list = S.tasks.filter(t=>taskOnDay(t,this.planCursor)).sort((a,b)=>taskDeadline(a)-taskDeadline(b));
       if(!list.length) body.innerHTML = `<div class="empty"><div class="big">📭</div>这一天没有任务</div>`;
-      else list.forEach(t=>body.appendChild(mkMini(t)));
+      else list.forEach(t=>body.appendChild(mkMini(t,this.planCursor)));
     }
     if(this.planView==='week'){
       const monday = new Date(cur); monday.setDate(cur.getDate() - (cur.getDay()+6)%7);
@@ -4899,7 +4907,7 @@ const UI = {
         blk.appendChild(head);
         const list = S.tasks.filter(t=>taskOnDay(t,ds)).sort((a,b)=>taskDeadline(a)-taskDeadline(b));
         if(!list.length){ const e=document.createElement('div'); e.className='hint'; e.style.cssText='padding:2px 4px 6px;font-size:11px;color:var(--text3)'; e.textContent='暂无安排'; blk.appendChild(e); }
-        else list.forEach(t=>blk.appendChild(mkMini(t)));
+        else list.forEach(t=>blk.appendChild(mkMini(t,ds)));
         body.appendChild(blk);
       }
     }
