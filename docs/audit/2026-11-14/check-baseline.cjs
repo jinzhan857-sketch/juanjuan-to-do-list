@@ -62,7 +62,7 @@ tests.forEach(([name,expr])=>check(name,expr,app));
  ['Custom profile group retained', "UI.normalizeMemoryGroups([{id:'synthetic-group',name:'合成资料',preset:false}]).some(g=>g.id==='synthetic-group'&&g.name==='合成资料')"],
  ['Frontend batch deletion preserves identity', "AIService.normalizeAgent({type:'batch_proposal',action:{kind:'delete_schedule_batch',rule:{series_id:'synthetic-series'}}}).action.rule.series_id==='synthetic-series'"],
 ].forEach(([name,expr])=>check(name,expr,app));
-const api=vm.createContext({require,module:{exports:{}},process:{env:{}},console,URL});
+const api=vm.createContext({require:require('node:module').createRequire(path.join(root,'api/ai.js')),module:{exports:{}},process:{env:{}},console,URL});
 new vm.Script(read('api/ai.js'),{filename:'api/ai.js'}).runInContext(api);
 checks.push({name:'api/ai.js JavaScript syntax',passed:true});
 check('API invalid date rejected',"validDate('2026-02-30')===null",api);

@@ -6,6 +6,8 @@ const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
 fs.mkdirSync(path.join(root, '.reports'), {recursive: true});
 const reportPath = '.reports/baseline.json';
+// A failed audit must never be judged using an earlier run's report.
+if(fs.existsSync(path.join(root,reportPath)))fs.unlinkSync(path.join(root,reportPath));
 const run = cp.spawnSync(process.execPath, ['docs/audit/2026-11-14/check-baseline.cjs', reportPath], {cwd: root, stdio: 'inherit'});
 // The unchanged historical assertion rejects all-day repeats; #115 explicitly authorizes them.
 if (![0,1].includes(run.status)) process.exit(run.status || 1);
