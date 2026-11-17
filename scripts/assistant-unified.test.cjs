@@ -3,6 +3,13 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const {fixture}=require('./publisher-fixture.cjs');
 const {createModelCheck}=require('./ai-simulation.cjs');
 const wf=require('../src/assistant/workflow.js');
+for(const id of ['perfect','default','custom'])test('all persona assistant bodies display single breaks without changing saved or user text: '+id,async t=>{
+ const a=await fixture(t);a.ctx.personaId=id;
+ a.run("UI.persistPersonaPreferences({selected:personaId,notes:{perfect:'',default:'',custom:''}},'selected');reply={id:'reply',role:'assistant',type:'chat',content:'结论：休息。\\n\\n理由：恢复精力。\\n\\n建议：留出时间。',createdAt:1}");
+ const before=a.json('reply');const html=a.run('UI.agentMessageHtml(reply,false)');assert.match(html,/结论：休息。\n理由：恢复精力。\n建议：留出时间。/);assert.doesNotMatch(html,/\n\n/);assert.deepEqual(a.json('reply'),before);
+ a.run("reply.role='user'");assert.ok(a.run('UI.agentMessageHtml(reply,false)').includes(before.content));
+ a.run("reply.role='assistant';reply.type='clarify'");assert.doesNotMatch(a.run('UI.agentMessageHtml(reply,false)'),/\n\n/);
+});
 test('persona notes persist independently, reset only the selected profile and reach hosted requests',async t=>{
  const a=await fixture(t),before=await a.snapshot();
  assert.deepEqual(a.json('UI.currentPersonaSetting()'),{id:'perfect',note:''});
