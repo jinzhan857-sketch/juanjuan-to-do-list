@@ -1384,7 +1384,7 @@ function taskDeadline(task){
   return d.getTime() + (m+(task.timeType==='exact'&&task.endDayOffset===1?1440:0))*60000;
 }
 function taskStart(task){return parseDate(task.execDate).getTime()+(task.timeType==='exact'?minOf(task.startTime)*60000:0);}
-function taskOnDay(task,date){return task.execDate===date||task.timeType==='exact'&&task.endDayOffset===1&&addDays(task.execDate,1)===date;}
+function taskOnDay(task,date){return task.timeType==='exact'&&task.endDayOffset===1?taskSegments(task).some(part=>part.date===date):task.execDate===date;}
 function taskSegments(task){
   if(task.timeType!=='exact'||!validDateStr(task.execDate)||!validTimeStr(task.startTime)||!validTimeStr(task.endTime))return [];
   const start=minOf(task.startTime),end=minOf(task.endTime)+(task.endDayOffset===1?1440:0);
@@ -1401,6 +1401,7 @@ function slotForTime(hm){ // 精确时间自动归入时段（按开始时间，
   return hit.sort((a,b)=>b.bonus-a.bonus || (minOf(a.end==='24:00'?'23:59':a.end)-minOf(a.start))-(minOf(b.end==='24:00'?'23:59':b.end)-minOf(b.start)))[0];
 }
 function planTimeLabel(task,date){
+  if(task.timeType==='exact'&&task.endDayOffset===1&&task.endTime==='00:00')return `${task.startTime}-24:00`;
   if(task.timeType==='exact'&&task.endDayOffset===1)return date===addDays(task.execDate,1)?`前日${task.startTime} 至 ${task.endTime}`:`${task.startTime} 至 次日${task.endTime}`;
   return timeLabel(task);
 }
