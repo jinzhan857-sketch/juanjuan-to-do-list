@@ -16,7 +16,7 @@ Pages 设置选择 GitHub Actions。执行者在 Actions 进入 Publish GitHub P
 
 发布工作流为 .github/workflows/pages.yml，构建仅有 contents: read，部署仅授予 Pages 与 OIDC 必需权限，没有业务 secrets。失败时不继续部署，保留原有站点。回退时从确认的 main 回退提交重新检查和手动部署，不修改用户数据库。
 
-GitHub Pages 仅提供静态文件，不执行 api/ai.js。V2.7分支的托管AI已接通独立Vercel试用接口；业务云端同步仍未实现。正式切换前仍以V2.6发布状态为准。恢复同一网址不需要迁移浏览器数据。历史 Sites 地址仍保留，版本 8 来自 b35936b，手机可访问性未通过，不作为本次正式入口。
+GitHub Pages仅提供静态文件，不执行api/ai.js。V2.7已正式发布，前端调用独立Vercel云端AI；正式来源582aac4、发布运行43942347530，完整[正式交付](../audit/2026-11-17/v27-release-delivery.md)与[#148](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/148)可追溯。业务云端同步仍未实现，同一正式网址升级不需要迁移浏览器数据。新框架未来须使用独立试用链接并行验证，通过#123的P3及该次发布授权后再替换正式入口。历史Sites地址保留，版本8来自b35936b，手机可访问性未通过，不作为正式入口。
 
 ## 当前构建流程
 
