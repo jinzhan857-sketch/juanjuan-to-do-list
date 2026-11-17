@@ -2,6 +2,8 @@
 
 ## 正式说明与来源
 
+[后续需求完整清单](FUTURE_REQUIREMENTS.md)按展的飞书顺序收录，新想到的内容集中保留在前，之后是原六类清单，保留全部星标。来源版本、逐条核对及较新进度说明见[收录记录](../audit/2026-11-17/future-requirements-import.md)。
+
 [具体借鉴方案](agent-learning-plan.md)作为主要取舍入口：Anthropic提供运行架构参考，nanoMuse保留局部实现对照，选中原则已细化到原任务，具体工具仍按需要小试。[nanoMuse研究](nanomuse-research.md)维护重点源码与局限；[版本定位与开源借鉴](../product/VERSION_POSITIONING.md)归纳阶段、未来候选和入口。语言分工见[决策0003](../decisions/0003-javascript-python-boundary.md)，不上传原文或私人资料。
 
 2026年11月15日本轮补充：[用户最终确认规则与问题入口](2026-11-15-confirmed-feedback-rules.md)、[114条完整字段专项测试预期](2026-11-15-confirmed-feedback-tests.md)。均为登记资料，规则尚待对应Issue实施，测试预期不等于已运行通过。

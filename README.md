@@ -16,6 +16,7 @@
 | 代码、AI 和数据如何工作 | [当前架构](docs/architecture/README.md) |
 | 本地怎么启动、检查与发布 | [开发说明](docs/development/README.md) |
 | 开发顺序、勾选进度、下一步与前置条件 | [开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1) |
+| 所有后续需求与新想到的内容，按展的飞书顺序阅读 | [后续需求完整清单](docs/reference/FUTURE_REQUIREMENTS.md) |
 | 3.0 的完整目标与范围 | [3.0 完整共识稿](docs/V3_CONSENSUS_DRAFT.md) |
 | 版本定位与开源借鉴 | [1.0到4.0及参考层级](docs/product/VERSION_POSITIONING.md) |
 | 学什么、不学什么、怎样验证 | [具体借鉴方案与复审修正](docs/reference/agent-learning-plan.md)、[nanoMuse局部研究](docs/reference/nanomuse-research.md) |

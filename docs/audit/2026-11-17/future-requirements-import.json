@@ -1,0 +1,276 @@
+{
+  "recordedDate": "2026-11-17",
+  "recordingIssue": 158,
+  "sourceUrl": "https://my.feishu.cn/wiki/PlUpwAYUeiKPvWk4lKocu4YEnid",
+  "documentId": "SLt7dMgtmoR1fixWTAAcgrginLh",
+  "revisionId": 156,
+  "target": "docs/reference/FUTURE_REQUIREMENTS.md",
+  "sourceXmlSha256": "c869ed658837c445eb4831dbc10bec3865fc85fba89aa6a016cd643750d649cd",
+  "sourceMarkdownSha256": "873a66e291ff48c5f310d5064b049d111097ac536c6f5d0b9e5da762ef35a11b",
+  "importedBodySha256": "5f0ceb56ec852c5c114ec5119437a6f3e036c69aae9af5b45f1a83164b7a2b93",
+  "sourceHeadingOrder": [
+    "新想到的⭐：",
+    "1．事务与AI能力",
+    "2．界面、宠物与陪伴体验",
+    "3．账户、数据与权限",
+    "4．技术底座与开发工具",
+    "5．Bug修复与测试验收",
+    "6．上线、费用与运营",
+    "覆盖核对与阅读边界",
+    "来源入口"
+  ],
+  "sections": [
+    {
+      "heading": "新想到的⭐：",
+      "items": 22,
+      "starredItems": 0
+    },
+    {
+      "heading": "1．事务与AI能力",
+      "items": 32,
+      "starredItems": 10
+    },
+    {
+      "heading": "2．界面、宠物与陪伴体验",
+      "items": 28,
+      "starredItems": 15
+    },
+    {
+      "heading": "3．账户、数据与权限",
+      "items": 28,
+      "starredItems": 3
+    },
+    {
+      "heading": "4．技术底座与开发工具",
+      "items": 27,
+      "starredItems": 0
+    },
+    {
+      "heading": "5．Bug修复与测试验收",
+      "items": 39,
+      "starredItems": 0
+    },
+    {
+      "heading": "6．上线、费用与运营",
+      "items": 21,
+      "starredItems": 0
+    }
+  ],
+  "totalItems": 197,
+  "newItems": 22,
+  "priorSixCategoryItems": 175,
+  "starCount": 29,
+  "starredItems": [
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 13,
+      "title": "⭐开放云端AI识图能力",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 14,
+      "title": "⭐区分图片保存与AI理解",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 15,
+      "title": "⭐提供少量普通事务通知",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 16,
+      "title": "⭐处理通知去重与失效",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 17,
+      "title": "⭐试验有来源的记忆整理",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 18,
+      "title": "⭐允许用户核对记忆变更",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 19,
+      "title": "⭐改善大量个人记忆的检索",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 20,
+      "title": "⭐建设有出处的个人资料问答",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 24,
+      "title": "⭐让卷卷在授权后主动关怀",
+      "stars": 1
+    },
+    {
+      "section": "1．事务与AI能力",
+      "ordinal": 25,
+      "title": "⭐持续跟进长期目标",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 1,
+      "title": "⭐先定新界面的视觉样稿",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 3,
+      "title": "⭐增加灰白专注主题",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 4,
+      "title": "⭐默认关闭装饰性界面阴影",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 6,
+      "title": "⭐完成紧凑输入框的设计和迁入",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 12,
+      "title": "⭐提供三栏电脑工作台",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 16,
+      "title": "⭐让开发板入口清楚可用",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 17,
+      "title": "⭐完善现有宠物基础体验",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 20,
+      "title": "⭐增加可选择的不同宠物",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 21,
+      "title": "⭐丰富宠物互动与养成",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 22,
+      "title": "⭐用宠物表达助手状态（工作映射？聊天中小猫头像会变化？）",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 23,
+      "title": "⭐设置卷卷性格和服务风格",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 24,
+      "title": "⭐决定宠物外形与AI性格是否绑定",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 25,
+      "title": "⭐增强电脑工作台的使用方式",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 27,
+      "title": "⭐保留房间和成长世界创意",
+      "stars": 1
+    },
+    {
+      "section": "2．界面、宠物与陪伴体验",
+      "ordinal": 28,
+      "title": "⭐设计可能的App或小程序体验",
+      "stars": 1
+    },
+    {
+      "section": "3．账户、数据与权限",
+      "ordinal": 3,
+      "title": "⭐实现邮箱账户登录",
+      "stars": 1
+    },
+    {
+      "section": "3．账户、数据与权限",
+      "ordinal": 5,
+      "title": "⭐让手机电脑使用同一份资料",
+      "stars": 1
+    },
+    {
+      "section": "3．账户、数据与权限",
+      "ordinal": 15,
+      "title": "⭐实现图片附件云端保存",
+      "stars": 1
+    }
+  ],
+  "orderedItemTextSha256": "2501f305a4d0a2b2301ebb268c0f497d7a33fa7579102fcb0a7d25ce1e8dc348",
+  "xmlMarkdownItemParity": true,
+  "importTransformations": [
+    "Document title converted to a Markdown heading",
+    "Table separator expanded to three hyphens",
+    "Source and current-progress notes added before the unchanged body"
+  ],
+  "currentProgressNotes": [
+    {
+      "sourceIssue": 155,
+      "sourcePullRequests": [
+        156,
+        157
+      ],
+      "scope": "Current three persona choices and expression notes do not equal all five proposed personas"
+    }
+  ],
+  "mainIssueBodyChanged": false,
+  "sourceDocumentWritten": false,
+  "applicationCodeChanged": false,
+  "newModelCalls": 0,
+  "verification": {
+    "verifiedItems": 197,
+    "newItems": 22,
+    "originalItems": 175,
+    "stars": 29,
+    "starredItems": 28,
+    "sectionItemCounts": [
+      22,
+      32,
+      28,
+      28,
+      27,
+      39,
+      21
+    ],
+    "sourceRevisionAtFinalCheck": 156,
+    "exactBodyMatch": true,
+    "xmlMarkdownItemParity": true,
+    "headingOrderMatch": true,
+    "sourceLinkOrderPreserved": true,
+    "targetSha256": "894d0813ca5f9f47aca0fef83e03210bbdd33251d80bcae7959965624fc81fdc"
+  }
+}
