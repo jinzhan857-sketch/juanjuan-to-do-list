@@ -1,5 +1,11 @@
 # 当前状态与接手说明
 
+## 2026年11月17日：人设、单换行与颜文字调整已正式发布
+
+展已确认并授权上线，[#155](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/155)的人设设置经[PR #156](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/156)、[#157](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/157)、[#160](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/160)交付。完美卷卷为初始选择，默认卷卷及自定义卷卷可切换，各自备注持续保存；助手头像可进入设置页。所有人设正文统一单换行，完美卷卷颜文字跟随对应情绪句。使用方法见[人设与个性化备注](product/README.md#人设与个性化备注)，正式来源、1658项检查、三人设同题实测、展的评价、线上回读及最终累计预算见[正式交付](audit/2026-11-17/persona-comparison.md#正式交付)。原始失败、暂停与复测过程继续保留。
+
+本聊天此前还经[PR #150](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/150)、[#151](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/151)修正窄屏跨日显示及午夜结束边界，结束在午夜的23:00至24:00日程不再重复列入次日；[PR #153](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/153)、[#154](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/154)统一开发者公开署名为JZ，并按先询问、获同意后提供联系方式的流程表达。旧手机专项、跨日后续编辑等其他未完成Issue保持原状态，总计划不改。本条为资料同步，不重新发布、迁移或消耗模型预算。
+
 ## 2026年11月17日：飞书后续需求按原顺序收录
 
 展要求按飞书当前顺序收录后续需求，保留全部星标，新想到的22项集中放在前面，再接原六类175项。完整正文见[后续需求清单](reference/FUTURE_REQUIREMENTS.md)，来源、顺序及197项逐条核对见[#158收录记录](audit/2026-11-17/future-requirements-import.md)。清单开头另注#155及PR #156、#157的人设实际成果，原文状态保留，不把五种预设全部认定为已经实现。本轮仅文档，未改总计划#1正文、应用、飞书源文档或原任务状态，未发布、迁移或新增真实模型调用。
