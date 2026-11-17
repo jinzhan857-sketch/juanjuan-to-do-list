@@ -4,7 +4,7 @@
 
 这是需求收录快照，原文中的状态和版本不因收录而改写，也不代表新增实施授权。实际进展、必要依赖和验收结果以对应Issue及较新成果为准。[同步与核对说明](../audit/2026-11-17/future-requirements-import.md)记录本次范围和来源。
 
-进度补充：“新想到的”第6项及界面类第23项保留原文。较新的[#155](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/155)与[PR #156](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/156)已交付完美卷卷、默认卷卷、自定义卷卷及各自表达备注，[PR #157](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/157)调整按钮间距；这不等于原文五种预设人设及全部远期功能已经完成。实际范围和未测事项见[人设验收记录](../audit/2026-11-17/persona-settings.md)。
+进度补充：“新想到的”第6项及界面类第23项保留原文。较新的[#155](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/155)与[PR #156](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/156)已交付完美卷卷、默认卷卷、自定义卷卷及各自表达备注，[PR #157](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/157)调整按钮间距，[PR #160](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/pull/160)补齐共用单换行及情绪句旁颜文字规则，展确认后已正式上线。来源、实测、人工评价和保留问题见[正式交付](../audit/2026-11-17/persona-comparison.md#正式交付)及[人设验收记录](../audit/2026-11-17/persona-settings.md)；这不等于原文五种预设人设及全部远期功能已经完成。
 
 ---
 

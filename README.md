@@ -6,6 +6,8 @@
 
 ## 从这里开始
 
+本轮已上线的人设切换、个性化备注、单换行和颜文字调整，见[使用方法](docs/product/README.md#人设与个性化备注)及[实测与正式交付](docs/audit/2026-11-17/persona-comparison.md#正式交付)。
+
 看不懂文件名、编号或 GitHub 页面时，先读[GitHub 阅读指南](docs/guide/README.md)。只想知道下一步做什么，可以直接看[卷卷开发总计划](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)。
 
 | 你想了解什么 | 入口 |
