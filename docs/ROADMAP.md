@@ -1,5 +1,7 @@
 # 开发总计划入口
 
+[后续需求完整清单](reference/FUTURE_REQUIREMENTS.md)按展的飞书顺序收录，新想法集中保留，星标和原文状态不改。它是需求阅读入口，不替代下方总计划的执行队列；来源与本轮核对见[#158](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/158)。
+
 [版本定位与开源借鉴](product/VERSION_POSITIONING.md)解释1.0到4.0及过渡阶段；[具体借鉴方案](reference/agent-learning-plan.md)已随PR #75合入，Anthropic作为运行机制主要参考，nanoMuse保留局部参考。选中原则已细化到12个原任务的操作与验收，用户主动周复盘单列3.x候选#78，见[整合报告](audit/2026-11-15/pr75-plan-integration.md)。原任务位置与已完成成果保留，当前排期与必要依赖以#1为准，不拆完成与未完成，3.5、4.0仅为概念。
 
 [打开总计划 Issue #1](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/1)：唯一执行队列、已完成成果、3.0和可选研究都在这里。查看进度直接进入总计划，本文只解释使用方法，不复制进度；页面原生子任务计数不代表后来登记的全部任务。

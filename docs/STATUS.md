@@ -1,5 +1,9 @@
 # 当前状态与接手说明
 
+## 2026年11月17日：飞书后续需求按原顺序收录
+
+展要求按飞书当前顺序收录后续需求，保留全部星标，新想到的22项集中放在前面，再接原六类175项。完整正文见[后续需求清单](reference/FUTURE_REQUIREMENTS.md)，来源、顺序及197项逐条核对见[#158收录记录](audit/2026-11-17/future-requirements-import.md)。清单开头另注#155及PR #156、#157的人设实际成果，原文状态保留，不把五种预设全部认定为已经实现。本轮仅文档，未改总计划#1正文、应用、飞书源文档或原任务状态，未发布、迁移或新增真实模型调用。
+
 ## 2026年11月17日：V2.7已正式发布，版本计划同步
 
 V2.7已正式发布，来源582aac4e605043e6fe0f351f3bb0be5c4ed4ec3f，[Pages运行43942347530](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/actions/runs/43942347530)成功，[正式网址](https://jinzhan857-sketch.github.io/juanjuan-to-do-list/)和Vercel均为2.7.0、同一干净来源。独立发布者完成正式Chrome无痕真实A02，确认后刷新导出核对2日程3待办变3日程4待办、宠物积分保持，详见[正式交付原文](audit/2026-11-17/v27-release-delivery.md)与[#148](https://github.com/jinzhan857-sketch/juanjuan-to-do-list/issues/148)。#82已关闭，下方“尚未发布”段落保留为历史。
