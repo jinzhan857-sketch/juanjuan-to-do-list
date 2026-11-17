@@ -1,6 +1,13 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const wf=require('../src/assistant/workflow.js');
+test('initial persona is perfect, with neutral and custom profiles independently available',()=>{
+ assert.deepEqual(wf.personaSettings(),{id:'perfect',note:''});
+ assert.deepEqual(Object.keys(wf.personas),['perfect','default','custom']);
+ for(const id of ['default','custom']){assert.equal(wf.personaPrompt(wf.personas[id]),'');assert.equal(wf.personas[id].tone,'');}
+ for(const id of Object.keys(wf.personas)){const setting=wf.personaSettings({id,note:'  不要颜文字，回答简短一点  '});assert.equal(setting.note,'不要颜文字，回答简短一点');const prompt=wf.assistantPrompt('chat',wf.personas[id],[],setting.note);assert.match(prompt,/用户个性化备注：不要颜文字，回答简短一点/);assert.match(prompt,/此备注优先于以上预设表达偏好/);assert.match(prompt,/不能改变产品身份事实/);}
+ for(const input of [null,{}, {id:'future',note:''},{id:'perfect',note:123},{id:'custom',note:'x'.repeat(1001)}])assert.throws(()=>wf.personaSettings(input));
+});
 const {createWorkflowFixture}=require('./helpers/workflow-fixture.cjs');
 const names=['6098项目上交日期','7215项目pre','7215项目递交时间','7508智能系统安全期末考','7215编程与应用期末考','7224深度学习期末考','TCL参观'];
 const dates=[1,3,7,8,10,11,15];
@@ -124,3 +131,10 @@ test('cancel button commits card status before publishing memory and preserves b
 test('all assistant roles use only the public developer identity',()=>{for(const role of ['auto','chat','planning','task']){const prompt=wf.assistantPrompt(role);assert.match(prompt,/卷卷由JZ开发/);assert.match(prompt,/开发者的公开署名只使用JZ/);assert.match(prompt,/不要披露或猜测开发者的真实姓名/);assert.match(prompt,/历史对话/);}});
 
 test('developer contact policy asks first and limits background to supplied facts',()=>{for(const role of ['auto','chat','planning','task']){const prompt=wf.assistantPrompt(role);assert.match(prompt,/圣马丁设计和港大计算机背景的个人开发者/);assert.match(prompt,/微信号是jinzhanjz/);assert.match(prompt,/先询问是否需要开发者JZ的微信号/);assert.match(prompt,/明确索要联系方式/);assert.match(prompt,/不要声称已经替用户转达/);assert.match(prompt,/不猜测学历/);}});
+
+test('the default persona owns both tone and context-sensitive kaomoji rules for every intent',()=>{assert.equal(wf.perfectPersona.id,"perfect");for(const role of ['auto','chat','planning','task']){const p=wf.assistantPrompt(role);assert.ok(p.includes(wf.personaPrompt(wf.perfectPersona)));assert.match(p,/闲聊/);assert.match(p,/长回复/);assert.match(p,/每条最多一个/);assert.match(p,/用户要求不用颜文字时立即停止/);assert.match(p,/JZ/);assert.match(p,/所有真实变更均须用户确认/);}});
+test('rendering a separate persona never inherits the default tone or faces',()=>{const custom={name:'合成中性资料员',tone:'直接客观',kaomoji:{rules:'不用颜文字',examples:[]}};const text=wf.assistantPrompt('auto',custom);assert.match(text,/所有真实变更均须用户确认/);assert.match(text,/JZ/);assert.match(text,/直接客观/);assert.match(text,/不用颜文字/);assert.ok(!text.includes('温柔可爱'));assert.ok(!text.includes('(≧▽≦)'));assert.ok(!text.includes('闲聊约'));});
+
+test('recent face guidance follows this persona and assistant history only',()=>{const history=[{role:'assistant',content:'以前开心(≧▽≦)'},{role:'assistant',content:'再见(￣▽￣)ノ'},{role:'user',content:'(๑•́ ₃ •̀๑)'},{role:'assistant',content:'收到(｡･ω･｡)ﾉ♡'}];const p=wf.personaPrompt(wf.perfectPersona,history),recent=p.split('最近助手已用过，本条不再使用的颜文字：')[1];assert.ok(recent.includes('(￣▽￣)ノ'));assert.ok(recent.includes('(｡･ω･｡)ﾉ♡'));assert.ok(!recent.includes('(≧▽≦)'));assert.ok(!recent.includes('(๑•́ ₃ •̀๑)'));const custom={name:'中性',tone:'直接',kaomoji:{rules:'不用颜文字',examples:[],avoidRecentTurns:0}};assert.ok(!wf.personaPrompt(custom,history).includes('最近助手已用过'));assert.ok(!wf.personaPrompt(custom,history).includes('(￣▽￣)ノ'));assert.ok(!wf.perfectPersona.tone.includes('两三个'));});
+
+test('persona prose layout preserves single breaks, content and fenced code while removing blank lines',()=>{const input='第一句\n\n第二句\n第三句';assert.equal(wf.formatReply(input,wf.perfectPersona),'第一句\n第二句\n第三句');assert.equal(input,'第一句\n\n第二句\n第三句');assert.equal(wf.formatReply('一句话'),'一句话');const tick=String.fromCharCode(96).repeat(3);const code='前言\n\n'+tick+'txt\n甲\n\n乙\n'+tick+'\n\n结尾';assert.equal(wf.formatReply(code,wf.perfectPersona),'前言\n'+tick+'txt\n甲\n\n乙\n'+tick+'\n结尾');assert.equal(wf.formatReply('a\n\nb',{layout:{blankLines:'preserve'}}),'a\n\nb');assert.equal(wf.formatReply('a\n\n~~~txt\nx\n\ny\n~~~\n\nb',wf.perfectPersona),'a\n~~~txt\nx\n\ny\n~~~\nb');});

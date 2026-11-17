@@ -281,6 +281,7 @@ function compactAgentContext(context = {}) {
   const planning = context.planning && typeof context.planning === 'object' ? context.planning : {};
   const examples = value => Array.isArray(value) ? value.slice(0, 3).map(item => shortText(item, 160)).filter(Boolean) : [];
   return {
+    persona: workflowContract().personaSettings(context.persona),
     candidate_cards: context.candidate_cards===undefined?[]:workflowContract().contextCards(context.candidate_cards),
     memory_groups: (Array.isArray(context.memory_groups)?context.memory_groups:[]).slice(0,40).map(name=>shortText(name,40)).filter(Boolean),
     tasks: tasks.map(item => ({
@@ -410,7 +411,7 @@ module.exports = async function handler(req, res) {
     const context = agentMode ? compactAgentContext(body.context) : null;
     const agentRole = ['auto','chat','planning','task'].includes(body.agent_role) ? body.agent_role : 'auto';
     const materials = agentMode ? require('../src/assistant/materials.js') : null;
-    const agentPrompt = agentMode ? materials.researchPrompt(workflowContract().assistantPrompt(agentRole)) : '';
+    const agentPrompt = agentMode ? materials.researchPrompt(workflowContract().assistantPrompt(agentRole,workflowContract().personas[context.persona.id],context.history,context.persona.note)) : '';
     const messages = agentMode ? [
       { role: 'system', content: agentPrompt + '\n上下文只含按问题选择的有限资料，selection.partial始终为true，不能声称查过完整数据库。查询返回query条件由程序核对；资料不足或目标不唯一时追问。' },
       { role: 'user', content: `今天是${modelDate}。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n${JSON.stringify(context)}\n\n用户刚刚说：${input}` },

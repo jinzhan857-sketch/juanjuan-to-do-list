@@ -3,6 +3,24 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const {fixture}=require('./publisher-fixture.cjs');
 const {createModelCheck}=require('./ai-simulation.cjs');
 const wf=require('../src/assistant/workflow.js');
+test('persona notes persist independently, reset only the selected profile and reach hosted requests',async t=>{
+ const a=await fixture(t),before=await a.snapshot();
+ assert.deepEqual(a.json('UI.currentPersonaSetting()'),{id:'perfect',note:''});
+ a.run("UI.persistPersonaPreferences({selected:'perfect',notes:{perfect:'不要颜文字',default:'简短',custom:'理性管家'}},'saved')");
+ a.run("UI.persistPersonaPreferences({...UI.personaPreferences(),selected:'custom'},'switched')");
+ assert.deepEqual(a.json('UI.currentPersonaSetting()'),{id:'custom',note:'理性管家'});
+ a.run("document.querySelector('#persona-reset').onclick()");
+ assert.deepEqual(a.json('UI.personaPreferences()'),{selected:'custom',notes:{perfect:'不要颜文字',default:'简短',custom:''}});
+ a.run("UI.persistPersonaPreferences({...UI.personaPreferences(),selected:'perfect'},'switched');sent=[];AIService.source=()=> 'hosted';AIService.hostedRequest=async body=>{sent.push(body);return {type:'chat',reply:'收到'}}");
+ await a.run("AIService.agent('合成测试',{},'chat')");
+ assert.deepEqual(a.json('sent[0].context.persona'),{id:'perfect',note:'不要颜文字'});
+ assert.deepEqual(await a.snapshot(),before);
+});
+for(const id of ['perfect','default','custom'])test('hosted model receives selected persona and its note: '+id,async()=>{
+ let sent;const check=createModelCheck({key:'synthetic',request:async(url,options)=>{sent=JSON.parse(options.body);return {ok:true,json:async()=>({choices:[{message:{content:JSON.stringify({type:'chat',reply:'合成回复'})}}]})}}});
+ let code;await check.handler({method:'POST',headers:{},body:{mode:'agent',request_id:'2'.repeat(32),device_id:'syntheticdevice0123456789abcd',message:'聊聊',context:{persona:{id,note:'不要颜文字，简短回答'}}}},{status(n){code=n;return this},json(v){return v}});
+ assert.equal(code,200);assert.ok(sent.messages[0].content.includes(wf.personaPrompt(wf.personas[id],[],'不要颜文字，简短回答')));
+});
 async function setup(t){
  const a=await fixture(t);a.run("S.chats=[{id:'chat',title:'合成聊天',createdAt:1}];S.messages=[];S.operations=[];S.memories=[];UI.agentChatId='chat';UI.renderAgent=()=>{};UI.resizeAgentInput=()=>{};UI.agentThinking=false;UI.agentSending=null;AIService.source=()=> 'hosted';AIService.setDegraded=()=>{};");
  await a.run("DB.put('chats',S.chats[0])");return a;
@@ -56,7 +74,8 @@ test('plain replies stay compact while candidate cards retain their layout after
  assert.match(a.run('UI.agentMessageHtml(m)'),/class="agent-bubble has-details"/);
  const html=a.run("UI.agentMessageHtml({role:'assistant',type:'chat',content:'好的。',createdAt:1},false)");
  assert.match(html,/class="agent-avatar"/);assert.match(html,/class="agent-bubble">好的。/);
- assert.doesNotMatch(html,/has-details|agent-message-time|卷卷/);
+ assert.doesNotMatch(html,/has-details|agent-message-time/);
+ assert.match(html,/data-open-persona aria-label="查看卷卷信息与人设"/);
 });
 test('candidate revisions retain card identity and saved records retain database identity',async t=>{
  const a=await setup(t);a.run("S.tasks=Array.from({length:23},(_,i)=>({id:'background'+i,title:'其他事项'+i,execDate:'2026-12-10',timeType:'allday',baseScore:3}));");await a.run("DB.batch(S.tasks.map(value=>({store:'tasks',value})))");
