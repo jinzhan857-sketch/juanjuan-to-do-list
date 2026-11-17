@@ -1,6 +1,15 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const wf=require('../src/assistant/workflow.js');
+test('perfect persona anchors kaomoji to the emotional sentence rather than a reply signature',()=>{
+ const p=wf.personaPrompt(wf.perfectPersona);assert.match(p,/那一句的开头或结尾/);assert.match(p,/不作为结尾签名/);assert.match(p,/没有合适的情绪句就省略/);assert.doesNotMatch(p,/可在合适的开头或结尾点缀/);
+ for(const id of ['default','custom'])assert.ok(!wf.personaPrompt(wf.personas[id]).includes('颜文字属于'));
+});
+test('single newline output guidance is shared across personas and intent hints',()=>{
+ for(const persona of Object.values(wf.personas))for(const intent of ['auto','chat','planning','task']){
+  const p=wf.assistantPrompt(intent,persona);assert.match(p,/换行只用单个换行符，禁止空白行或连续换行/);assert.match(p,/此排版规则适用于所有人设/);assert.match(p,/代码块内部保留必要的原有格式/);
+ }
+});
 test('initial persona is perfect, with neutral and custom profiles independently available',()=>{
  assert.deepEqual(wf.personaSettings(),{id:'perfect',note:''});
  assert.deepEqual(Object.keys(wf.personas),['perfect','default','custom']);
@@ -137,4 +146,4 @@ test('rendering a separate persona never inherits the default tone or faces',()=
 
 test('recent face guidance follows this persona and assistant history only',()=>{const history=[{role:'assistant',content:'以前开心(≧▽≦)'},{role:'assistant',content:'再见(￣▽￣)ノ'},{role:'user',content:'(๑•́ ₃ •̀๑)'},{role:'assistant',content:'收到(｡･ω･｡)ﾉ♡'}];const p=wf.personaPrompt(wf.perfectPersona,history),recent=p.split('最近助手已用过，本条不再使用的颜文字：')[1];assert.ok(recent.includes('(￣▽￣)ノ'));assert.ok(recent.includes('(｡･ω･｡)ﾉ♡'));assert.ok(!recent.includes('(≧▽≦)'));assert.ok(!recent.includes('(๑•́ ₃ •̀๑)'));const custom={name:'中性',tone:'直接',kaomoji:{rules:'不用颜文字',examples:[],avoidRecentTurns:0}};assert.ok(!wf.personaPrompt(custom,history).includes('最近助手已用过'));assert.ok(!wf.personaPrompt(custom,history).includes('(￣▽￣)ノ'));assert.ok(!wf.perfectPersona.tone.includes('两三个'));});
 
-test('persona prose layout preserves single breaks, content and fenced code while removing blank lines',()=>{const input='第一句\n\n第二句\n第三句';assert.equal(wf.formatReply(input,wf.perfectPersona),'第一句\n第二句\n第三句');assert.equal(input,'第一句\n\n第二句\n第三句');assert.equal(wf.formatReply('一句话'),'一句话');const tick=String.fromCharCode(96).repeat(3);const code='前言\n\n'+tick+'txt\n甲\n\n乙\n'+tick+'\n\n结尾';assert.equal(wf.formatReply(code,wf.perfectPersona),'前言\n'+tick+'txt\n甲\n\n乙\n'+tick+'\n结尾');assert.equal(wf.formatReply('a\n\nb',{layout:{blankLines:'preserve'}}),'a\n\nb');assert.equal(wf.formatReply('a\n\n~~~txt\nx\n\ny\n~~~\n\nb',wf.perfectPersona),'a\n~~~txt\nx\n\ny\n~~~\nb');});
+test('persona prose layout preserves single breaks, content and fenced code while removing blank lines',()=>{const input='第一句\n\n第二句\n第三句';assert.equal(wf.formatReply(input),'第一句\n第二句\n第三句');assert.equal(input,'第一句\n\n第二句\n第三句');assert.equal(wf.formatReply('一句话'),'一句话');const tick=String.fromCharCode(96).repeat(3);const code='前言\n\n'+tick+'txt\n甲\n\n乙\n'+tick+'\n\n结尾';assert.equal(wf.formatReply(code),'前言\n'+tick+'txt\n甲\n\n乙\n'+tick+'\n结尾');assert.equal(wf.formatReply('a\n\nb'),'a\nb');assert.equal(wf.formatReply('a\n\n~~~txt\nx\n\ny\n~~~\n\nb'),'a\n~~~txt\nx\n\ny\n~~~\nb');});

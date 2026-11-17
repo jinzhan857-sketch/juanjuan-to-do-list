@@ -2945,7 +2945,6 @@ const UI = {
     return raw?JSON.parse(raw):{selected:'perfect',notes:{perfect:'',default:'',custom:''}};
   },
   currentPersonaSetting(){const prefs=this.personaPreferences();return globalThis.JuanjuanWorkflow.personaSettings({id:prefs.selected,note:prefs.notes[prefs.selected]});},
-  currentPersona(){return globalThis.JuanjuanWorkflow.personas[this.currentPersonaSetting().id];},
   renderPersonaSettings(){
     const prefs=this.personaPreferences(),wf=globalThis.JuanjuanWorkflow,selected=wf.personas[prefs.selected];
     const scrollLeft=$('.persona-options')?.scrollLeft;
@@ -3239,7 +3238,7 @@ const UI = {
     if(meta.planningMemory&&meta.planningMemoryStatus==='saved') extra+=`<div class="agentplanbasis"><div class="agentplanline">已记住这条规划信息。</div></div>`;
     const errorClass=message.type==='error'?' agent-error':'';
     if(message.type==='error') extra+=`<div class="agent-card-actions"><button class="secondary" data-agent-retry="${esc(message.id)}">重新尝试</button></div>`;
-    return `<div class="agent-message"><button class="agent-avatar" data-open-persona aria-label="查看卷卷信息与人设">${this.agentRole('auto').icon}</button><div class="agent-bubble${extra?' has-details':''}${errorClass}">${esc(message.type==='chat'?globalThis.JuanjuanWorkflow.formatReply(message.content,this.currentPersona()):message.content)}${extra}</div>${timeHtml}</div>`;
+    return `<div class="agent-message"><button class="agent-avatar" data-open-persona aria-label="查看卷卷信息与人设">${this.agentRole('auto').icon}</button><div class="agent-bubble${extra?' has-details':''}${errorClass}">${esc(globalThis.JuanjuanWorkflow.formatReply(message.content))}${extra}</div>${timeHtml}</div>`;
   },
 
   agentActionTitle(kind){
