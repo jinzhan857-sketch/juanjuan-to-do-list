@@ -18,6 +18,8 @@ Agent 还必须阅读根目录 [AGENTS.md](../AGENTS.md)。
 
 代码结构与多聊天分工先看[结构整理与跨聊天接手](development/STRUCTURE_HANDOFF.md)；任务状态与排期仍只在总计划#1维护，不把拆分计划当作已交付架构。
 
+想了解“现在还有路由吗”“模型怎样调用工具并执行任务”，直接看[V2.7单Agent架构技术问答与图](architecture/V27_AGENT_FLOW.md)，图中区分模型理解、程序分发、用户确认和本地保存。
+
 理解各代产品先看[版本定位与开源借鉴](product/VERSION_POSITIONING.md)；学什么、不学什么及已细化到原任务的原则见[具体借鉴方案](reference/agent-learning-plan.md)，nanoMuse的局部源码证据见[研究记录](reference/nanomuse-research.md)，语言分工见[决策0003](decisions/0003-javascript-python-boundary.md)。这些资料不另建执行队列，3.5与4.0仍是候选方向。
 
 除 AGENTS.md 外，说明均供人和 Agent 共用。先读简要结论，再按工作需要查看具体操作和证据；不按读者身份另建两套资料。

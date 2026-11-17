@@ -2,6 +2,8 @@
 
 本页描述当前代。3.0 的独立后端与可配置系统另见[完整方案](../V3_CONSENSUS_DRAFT.md)，不要把下图读成未来系统已经建成。
 
+关于“V2.7现在还有路由吗”，见[单Agent架构技术问答与完整流程图](V27_AGENT_FLOW.md)：已取消聊天、规划、事务的模式路由，天气规则、有限工具调用、结果分发与确认执行仍保留。
+
 后端实现方向以[决策 0002](../decisions/0002-backend-language.md)为准：优先采用 JavaScript，替代旧共识的 Python 优先偏好；独立后端职责与数据保护要求不变。
 
 Python独立评测、分析与未来在线计算的边界见[决策0003](../decisions/0003-javascript-python-boundary.md)；nanoMuse仅作[研究候选](../reference/nanomuse-research.md)，没有接入当前系统。
@@ -22,7 +24,7 @@ flowchart TD
     UI --> Backup[用户导入导出的 JSON 文件]
 ```
 
-图表示V2.7分支的调用关系。固定Vercel接口已在云端试用站验证，Pages正式发布来源以#82记录为准；它不是浏览器业务数据库，见[V2.7说明](../development/V27_RELEASE.md)。
+图表示V2.7的调用关系。固定Vercel接口已正式接通，Pages发布与线上核对以#82及#148为准；它不是浏览器业务数据库，见[V2.7说明](../development/V27_RELEASE.md)。
 
 ## 模块地图
 
