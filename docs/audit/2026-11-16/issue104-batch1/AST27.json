@@ -1,0 +1,1876 @@
+{
+  "id": "AST27",
+  "name": "关闭记忆后资料不足，原O01，G3加隐私",
+  "group": "G05",
+  "specification": "\n- 准备及完整输入：F5，规划，“按我的个人偏好建议学习方式。”，同时捕获前端与模型出站正文。\n- 回复及指标：明确偏好资料不足，可以问一个最重要的问题或说明后给一般建议；不声称知道习惯。请求不得包含三条关闭记忆的正文或其改写摘要，不引用这些记忆ID。\n- 轮数与条数：用户1轮，不提供续答；发布字段不适用，可执行候选0。\n- 确认前后及重开：业务零修改，记忆只是关闭而非删除；重开仍关闭且三条原件保留。只有前端请求而无真实模型出站时分别记证据层级。\n\n",
+  "started_at": "2026-11-15T17:02:02.933Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [
+    {
+      "number": 46,
+      "body": {
+        "model": "deepseek-v4-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是「卷卷规划」，负责个性化辅助计划。你可以参考用户授权的记忆、近期日程和待办，帮助用户梳理目标、优先级、冲突、空档和可执行步骤。你不能直接创建、修改或删除任务。\n\n严格只返回 JSON。普通讨论返回 {\"type\":\"chat\",\"reply\":\"简洁的个性化方案\",\"used_evidence\":[]}。信息不足时返回 {\"type\":\"clarify\",\"reply\":\"明确缺少什么\",\"used_evidence\":[]}。当用户明确希望把建议转成日程或待办时，返回 {\"type\":\"recommendation\",\"reply\":\"先给出简短方案\",\"used_evidence\":[{\"kind\":\"schedule\",\"id\":\"上下文日程 id\"}],\"recommendations\":[{\"evidence\":\"说明参考了哪些日程、待办或记忆\",\"label\":\"交给卷卷事务创建\",\"action\":{\"kind\":\"create_schedule\",\"item\":{\"title\":\"日程定义\",\"note\":\"备注\",\"exec_date\":\"YYYY-MM-DD\",\"time_type\":\"exact\",\"start_time\":\"10:00\",\"end_time\":\"11:00\",\"category\":\"日常生活\",\"base_score\":3}}}]}。每次规划回复依次说明「卷卷看到的现实」「建议路线」「本周选择」「下一步」。上下文中的 planning 是本次可用资料的摘要，只能根据其中的日程、待办、记忆和 insights 作判断。insights 是程序已计算的事实，必须优先引用其中的冲突、负荷、日程间隔、未定时事项和高价值待办。日程间隔只是候选时间，不能称为确定空档。只有确实使用了上下文资料时才返回 used_evidence，元素只能是 {\"kind\":\"schedule|todo|memory|insight\",\"id\":\"上下文中实际存在的 id 或 insight 键\"}。没有使用资料时必须返回空数组，不能编造资料或依据。没有足够资料时，只追问一个最重要的问题。不能把没有具体时间的日期称为可用空档。批量日程使用 action.kind 为 create_schedule_batch，完整内容放在 rule。recommendation 只提出建议，程序会先让用户点击，再由卷卷事务展示确认卡。不得假装查询过实时信息或外部资料。\n上下文只含按问题选择的有限资料，selection.partial始终为true，不能声称查过完整数据库。查询返回query条件由程序核对；资料不足或目标不唯一时追问。"
+          },
+          {
+            "role": "user",
+            "content": "今天是2026-11-15。以下是当前设备中的事务数据和最近对话，仅用于理解用户请求：\n{\"tasks\":[{\"id\":\"reading-15\",\"series_id\":null,\"title\":\"读书\",\"note\":\"\",\"exec_date\":\"2026-11-15\",\"time_type\":\"slot\",\"slot\":\"evening\",\"start_time\":null,\"end_time\":null,\"end_day_offset\":0,\"category\":\"技能学习\",\"status\":\"\"},{\"id\":\"math-am-16\",\"series_id\":\"math-am\",\"title\":\"线性代数课\",\"note\":\"教授：演示老师甲\\n教室：演示楼201\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"slot\":\"\",\"start_time\":\"09:00\",\"end_time\":\"10:00\",\"end_day_offset\":0,\"category\":\"学业事务\",\"status\":\"\"},{\"id\":\"math-pm-16\",\"series_id\":\"math-pm\",\"title\":\"线性代数课\",\"note\":\"\",\"exec_date\":\"2026-11-16\",\"time_type\":\"exact\",\"slot\":\"\",\"start_time\":\"15:00\",\"end_time\":\"16:00\",\"end_day_offset\":0,\"category\":\"学业事务\",\"status\":\"\"},{\"id\":\"meeting-17\",\"series_id\":null,\"title\":\"项目例会\",\"note\":\"\",\"exec_date\":\"2026-11-17\",\"time_type\":\"exact\",\"slot\":\"\",\"start_time\":\"14:00\",\"end_time\":\"15:00\",\"end_day_offset\":0,\"category\":\"职场工作\",\"status\":\"\"},{\"id\":\"checkup-18\",\"series_id\":null,\"title\":\"体检\",\"note\":\"\",\"exec_date\":\"2026-11-18\",\"time_type\":\"allday\",\"slot\":\"\",\"start_time\":null,\"end_time\":null,\"end_day_offset\":0,\"category\":\"日常生活\",\"status\":\"\"},{\"id\":\"utilities-19\",\"series_id\":null,\"title\":\"缴水电费\",\"note\":\"\",\"exec_date\":\"2026-11-19\",\"time_type\":\"allday\",\"slot\":\"\",\"start_time\":null,\"end_time\":null,\"end_day_offset\":0,\"category\":\"日常生活\",\"status\":\"\"},{\"id\":\"math-am-23\",\"series_id\":\"math-am\",\"title\":\"线性代数课\",\"note\":\"教授：演示老师甲\",\"exec_date\":\"2026-11-23\",\"time_type\":\"exact\",\"slot\":\"\",\"start_time\":\"09:00\",\"end_time\":\"10:00\",\"end_day_offset\":0,\"category\":\"学业事务\",\"status\":\"\"}],\"todos\":[{\"id\":\"parcel\",\"title\":\"取快递\",\"note\":\"\",\"category\":\"日常生活\",\"done\":false},{\"id\":\"resume\",\"title\":\"更新简历\",\"note\":\"\",\"category\":\"职场工作\",\"done\":false},{\"id\":\"photos\",\"title\":\"整理摄影作品\",\"note\":\"\",\"category\":\"休闲娱乐\",\"done\":false},{\"id\":\"milk\",\"title\":\"买牛奶\",\"note\":\"\",\"category\":\"日常生活\",\"done\":false}],\"selection\":{\"tasks_total\":9,\"todos_total\":5,\"tasks_selected\":7,\"todos_selected\":4,\"partial\":true},\"memories\":[],\"history\":[{\"role\":\"user\",\"content\":\"按我的个人偏好建议学习方式。\"}],\"planning\":{\"date_from\":\"2026-11-15\",\"date_to\":\"2026-11-28\",\"schedule_count\":7,\"todo_count\":4,\"memory_count\":0,\"schedule_examples\":[\"2026-11-15 读书\",\"2026-11-16 09:00 线性代数课\",\"2026-11-16 15:00 线性代数课\"],\"todo_examples\":[\"取快递\",\"更新简历\",\"整理摄影作品\"],\"memory_examples\":[],\"insights\":{\"conflict_count\":0,\"busy_days\":[],\"candidate_gaps\":[{\"date\":\"2026-11-16\",\"start\":\"10:00\",\"end\":\"15:00\"}],\"unscheduled_count\":3,\"high_value_todos\":[]}}}\n\n用户刚刚说：按我的个人偏好建议学习方式。"
+          }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 900,
+        "thinking": {
+          "type": "disabled"
+        },
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false
+      },
+      "final_answer": "{\"type\":\"clarify\",\"reply\":\"你希望我按哪种学习偏好来建议？比如：早起型/夜猫子、喜欢短时高频还是长时间专注、偏好独自学习还是讨论式？告诉我最关键的一点即可。\",\"used_evidence\":[]}",
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1347,
+        "completion_tokens": 54,
+        "total_tokens": 1401,
+        "prompt_tokens_details": {
+          "cached_tokens": 896
+        },
+        "prompt_cache_hit_tokens": 896,
+        "prompt_cache_miss_tokens": 451
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "input": "按我的个人偏好建议学习方式。",
+      "role": "planning",
+      "context": {
+        "tasks": [
+          {
+            "id": "reading-15",
+            "series_id": null,
+            "title": "读书",
+            "note": "",
+            "exec_date": "2026-11-15",
+            "time_type": "slot",
+            "slot": "evening",
+            "start_time": null,
+            "end_time": null,
+            "end_day_offset": 0,
+            "category": "技能学习",
+            "status": ""
+          },
+          {
+            "id": "math-am-16",
+            "series_id": "math-am",
+            "title": "线性代数课",
+            "note": "教授：演示老师甲\n教室：演示楼201",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "09:00",
+            "end_time": "10:00",
+            "end_day_offset": 0,
+            "category": "学业事务",
+            "status": ""
+          },
+          {
+            "id": "math-pm-16",
+            "series_id": "math-pm",
+            "title": "线性代数课",
+            "note": "",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "15:00",
+            "end_time": "16:00",
+            "end_day_offset": 0,
+            "category": "学业事务",
+            "status": ""
+          },
+          {
+            "id": "meeting-17",
+            "series_id": null,
+            "title": "项目例会",
+            "note": "",
+            "exec_date": "2026-11-17",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "14:00",
+            "end_time": "15:00",
+            "end_day_offset": 0,
+            "category": "职场工作",
+            "status": ""
+          },
+          {
+            "id": "checkup-18",
+            "series_id": null,
+            "title": "体检",
+            "note": "",
+            "exec_date": "2026-11-18",
+            "time_type": "allday",
+            "slot": null,
+            "start_time": null,
+            "end_time": null,
+            "end_day_offset": 0,
+            "category": "日常生活",
+            "status": ""
+          },
+          {
+            "id": "utilities-19",
+            "series_id": null,
+            "title": "缴水电费",
+            "note": "",
+            "exec_date": "2026-11-19",
+            "time_type": "allday",
+            "slot": null,
+            "start_time": null,
+            "end_time": null,
+            "end_day_offset": 0,
+            "category": "日常生活",
+            "status": ""
+          },
+          {
+            "id": "math-am-23",
+            "series_id": "math-am",
+            "title": "线性代数课",
+            "note": "教授：演示老师甲",
+            "exec_date": "2026-11-23",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "09:00",
+            "end_time": "10:00",
+            "end_day_offset": 0,
+            "category": "学业事务",
+            "status": ""
+          }
+        ],
+        "todos": [
+          {
+            "id": "parcel",
+            "title": "取快递",
+            "note": "",
+            "category": "日常生活",
+            "done": false
+          },
+          {
+            "id": "resume",
+            "title": "更新简历",
+            "note": "",
+            "category": "职场工作",
+            "done": false
+          },
+          {
+            "id": "photos",
+            "title": "整理摄影作品",
+            "note": "",
+            "category": "休闲娱乐",
+            "done": false
+          },
+          {
+            "id": "milk",
+            "title": "买牛奶",
+            "note": "",
+            "category": "日常生活",
+            "done": false
+          }
+        ],
+        "selection": {
+          "tasks_total": 9,
+          "todos_total": 5,
+          "tasks_selected": 7,
+          "todos_selected": 4,
+          "partial": true
+        },
+        "memories": [],
+        "planning": {
+          "date_from": "2026-11-15",
+          "date_to": "2026-11-28",
+          "schedule_count": 7,
+          "todo_count": 4,
+          "memory_count": 0,
+          "schedule_examples": [
+            "2026-11-15 读书",
+            "2026-11-16 09:00 线性代数课",
+            "2026-11-16 15:00 线性代数课"
+          ],
+          "todo_examples": [
+            "取快递",
+            "更新简历",
+            "整理摄影作品"
+          ],
+          "memory_examples": [],
+          "insights": {
+            "conflict_count": 0,
+            "conflicts": [],
+            "busy_days": [],
+            "candidate_gaps": [
+              {
+                "date": "2026-11-16",
+                "start": "10:00",
+                "end": "15:00"
+              }
+            ],
+            "unscheduled_count": 3,
+            "high_value_todos": []
+          }
+        },
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0r514c",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "按我的个人偏好建议学习方式。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "planning"
+          }
+        },
+        {
+          "id": "mwh6szk0py2fh",
+          "chatId": "chat-a",
+          "role": "assistant",
+          "content": "你希望我按哪种学习偏好来建议？比如：早起型/夜猫子、喜欢短时高频还是长时间专注、偏好独自学习还是讨论式？告诉我最关键的一点即可。",
+          "type": "clarify",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "planning"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [
+          {
+            "id": "checkup-18",
+            "title": "体检",
+            "execDate": "2026-11-18",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "materials-13",
+            "title": "递交材料",
+            "execDate": "2026-11-13",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲\n教室：演示楼201",
+            "images": [
+              {
+                "id": "IMG1",
+                "name": "demo.png",
+                "type": "image/png",
+                "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+              }
+            ],
+            "links": [
+              "https://example.com/course"
+            ],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-23",
+            "title": "线性代数课",
+            "execDate": "2026-11-23",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-pm-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "15:00",
+            "endTime": "16:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-pm",
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "meeting-17",
+            "title": "项目例会",
+            "execDate": "2026-11-17",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "14:00",
+            "endTime": "15:00",
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 5.5,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "reading-15",
+            "title": "读书",
+            "execDate": "2026-11-15",
+            "timeType": "slot",
+            "slot": "evening",
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "技能学习",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "shift-30",
+            "title": "夜间值班",
+            "execDate": "2026-11-30",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "23:30",
+            "endTime": "00:30",
+            "endDayOffset": 1,
+            "category": "职场工作",
+            "baseScore": 6,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "utilities-19",
+            "title": "缴水电费",
+            "execDate": "2026-11-19",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 2,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "todos": [
+          {
+            "id": "expense",
+            "title": "报销交通费",
+            "period": "month",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": true,
+            "completedAt": 1794621600000,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "milk",
+            "title": "买牛奶",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "parcel",
+            "title": "取快递",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "photos",
+            "title": "整理摄影作品",
+            "period": "quarter",
+            "category": "休闲娱乐",
+            "baseScore": 4,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "resume",
+            "title": "更新简历",
+            "period": "year",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [
+          {
+            "id": "hobby",
+            "content": "喜欢摄影，周末想留一些休息时间。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "home-city",
+            "content": "常住城市：上海。这是虚构测试资料，不代表用户位置。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "pref-steps",
+            "content": "喜欢把大任务拆成25分钟左右的小步。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          }
+        ],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": false
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [
+          {
+            "id": "checkup-18",
+            "title": "体检",
+            "execDate": "2026-11-18",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "materials-13",
+            "title": "递交材料",
+            "execDate": "2026-11-13",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲\n教室：演示楼201",
+            "images": [
+              {
+                "id": "IMG1",
+                "name": "demo.png",
+                "type": "image/png",
+                "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+              }
+            ],
+            "links": [
+              "https://example.com/course"
+            ],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-23",
+            "title": "线性代数课",
+            "execDate": "2026-11-23",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-pm-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "15:00",
+            "endTime": "16:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-pm",
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "meeting-17",
+            "title": "项目例会",
+            "execDate": "2026-11-17",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "14:00",
+            "endTime": "15:00",
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 5.5,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "reading-15",
+            "title": "读书",
+            "execDate": "2026-11-15",
+            "timeType": "slot",
+            "slot": "evening",
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "技能学习",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "shift-30",
+            "title": "夜间值班",
+            "execDate": "2026-11-30",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "23:30",
+            "endTime": "00:30",
+            "endDayOffset": 1,
+            "category": "职场工作",
+            "baseScore": 6,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "utilities-19",
+            "title": "缴水电费",
+            "execDate": "2026-11-19",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 2,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "todos": [
+          {
+            "id": "expense",
+            "title": "报销交通费",
+            "period": "month",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": true,
+            "completedAt": 1794621600000,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "milk",
+            "title": "买牛奶",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "parcel",
+            "title": "取快递",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "photos",
+            "title": "整理摄影作品",
+            "period": "quarter",
+            "category": "休闲娱乐",
+            "baseScore": 4,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "resume",
+            "title": "更新简历",
+            "period": "year",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "按我的个人偏好建议学习方式。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0py2fh",
+            "chatId": "chat-a",
+            "role": "assistant",
+            "content": "你希望我按哪种学习偏好来建议？比如：早起型/夜猫子、喜欢短时高频还是长时间专注、偏好独自学习还是讨论式？告诉我最关键的一点即可。",
+            "type": "clarify",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "planning"
+            }
+          },
+          {
+            "id": "mwh6szk0r514c",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "按我的个人偏好建议学习方式。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "planning"
+            }
+          }
+        ],
+        "memories": [
+          {
+            "id": "hobby",
+            "content": "喜欢摄影，周末想留一些休息时间。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "home-city",
+            "content": "常住城市：上海。这是虚构测试资料，不代表用户位置。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "pref-steps",
+            "content": "喜欢把大任务拆成25分钟左右的小步。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          }
+        ],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": false
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [
+          {
+            "id": "checkup-18",
+            "title": "体检",
+            "execDate": "2026-11-18",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "materials-13",
+            "title": "递交材料",
+            "execDate": "2026-11-13",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲\n教室：演示楼201",
+            "images": [
+              {
+                "id": "IMG1",
+                "name": "demo.png",
+                "type": "image/png",
+                "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+              }
+            ],
+            "links": [
+              "https://example.com/course"
+            ],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-23",
+            "title": "线性代数课",
+            "execDate": "2026-11-23",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-pm-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "15:00",
+            "endTime": "16:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-pm",
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "meeting-17",
+            "title": "项目例会",
+            "execDate": "2026-11-17",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "14:00",
+            "endTime": "15:00",
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 5.5,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "reading-15",
+            "title": "读书",
+            "execDate": "2026-11-15",
+            "timeType": "slot",
+            "slot": "evening",
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "技能学习",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "shift-30",
+            "title": "夜间值班",
+            "execDate": "2026-11-30",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "23:30",
+            "endTime": "00:30",
+            "endDayOffset": 1,
+            "category": "职场工作",
+            "baseScore": 6,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "utilities-19",
+            "title": "缴水电费",
+            "execDate": "2026-11-19",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 2,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "todos": [
+          {
+            "id": "expense",
+            "title": "报销交通费",
+            "period": "month",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": true,
+            "completedAt": 1794621600000,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "milk",
+            "title": "买牛奶",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "parcel",
+            "title": "取快递",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "photos",
+            "title": "整理摄影作品",
+            "period": "quarter",
+            "category": "休闲娱乐",
+            "baseScore": 4,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "resume",
+            "title": "更新简历",
+            "period": "year",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "按我的个人偏好建议学习方式。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0py2fh",
+            "chatId": "chat-a",
+            "role": "assistant",
+            "content": "你希望我按哪种学习偏好来建议？比如：早起型/夜猫子、喜欢短时高频还是长时间专注、偏好独自学习还是讨论式？告诉我最关键的一点即可。",
+            "type": "clarify",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "planning"
+            }
+          },
+          {
+            "id": "mwh6szk0r514c",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "按我的个人偏好建议学习方式。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "planning"
+            }
+          }
+        ],
+        "memories": [
+          {
+            "id": "hobby",
+            "content": "喜欢摄影，周末想留一些休息时间。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "home-city",
+            "content": "常住城市：上海。这是虚构测试资料，不代表用户位置。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "pref-steps",
+            "content": "喜欢把大任务拆成25分钟左右的小步。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          }
+        ],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": false
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [
+          {
+            "id": "checkup-18",
+            "title": "体检",
+            "execDate": "2026-11-18",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "materials-13",
+            "title": "递交材料",
+            "execDate": "2026-11-13",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲\n教室：演示楼201",
+            "images": [
+              {
+                "id": "IMG1",
+                "name": "demo.png",
+                "type": "image/png",
+                "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+              }
+            ],
+            "links": [
+              "https://example.com/course"
+            ],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-am-23",
+            "title": "线性代数课",
+            "execDate": "2026-11-23",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-am",
+            "note": "教授：演示老师甲",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "math-pm-16",
+            "title": "线性代数课",
+            "execDate": "2026-11-16",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "15:00",
+            "endTime": "16:00",
+            "endDayOffset": 0,
+            "category": "学业事务",
+            "baseScore": 7,
+            "seriesId": "math-pm",
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "meeting-17",
+            "title": "项目例会",
+            "execDate": "2026-11-17",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "14:00",
+            "endTime": "15:00",
+            "endDayOffset": 0,
+            "category": "职场工作",
+            "baseScore": 5.5,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "reading-15",
+            "title": "读书",
+            "execDate": "2026-11-15",
+            "timeType": "slot",
+            "slot": "evening",
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "技能学习",
+            "baseScore": 3,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "shift-30",
+            "title": "夜间值班",
+            "execDate": "2026-11-30",
+            "timeType": "exact",
+            "slot": null,
+            "startTime": "23:30",
+            "endTime": "00:30",
+            "endDayOffset": 1,
+            "category": "职场工作",
+            "baseScore": 6,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "utilities-19",
+            "title": "缴水电费",
+            "execDate": "2026-11-19",
+            "timeType": "allday",
+            "slot": null,
+            "startTime": null,
+            "endTime": null,
+            "endDayOffset": 0,
+            "category": "日常生活",
+            "baseScore": 2,
+            "seriesId": null,
+            "note": "",
+            "images": [],
+            "links": [],
+            "status": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "todos": [
+          {
+            "id": "expense",
+            "title": "报销交通费",
+            "period": "month",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": true,
+            "completedAt": 1794621600000,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "milk",
+            "title": "买牛奶",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "parcel",
+            "title": "取快递",
+            "period": "week",
+            "category": "日常生活",
+            "baseScore": 2,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "photos",
+            "title": "整理摄影作品",
+            "period": "quarter",
+            "category": "休闲娱乐",
+            "baseScore": 4,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          },
+          {
+            "id": "resume",
+            "title": "更新简历",
+            "period": "year",
+            "category": "职场工作",
+            "baseScore": 3,
+            "note": "",
+            "images": [],
+            "links": [],
+            "done": false,
+            "completedAt": null,
+            "createdAt": 1794708000000,
+            "aiSource": "synthetic-fixture"
+          }
+        ],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "按我的个人偏好建议学习方式。",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk0py2fh",
+            "chatId": "chat-a",
+            "role": "assistant",
+            "content": "你希望我按哪种学习偏好来建议？比如：早起型/夜猫子、喜欢短时高频还是长时间专注、偏好独自学习还是讨论式？告诉我最关键的一点即可。",
+            "type": "clarify",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "planning"
+            }
+          },
+          {
+            "id": "mwh6szk0r514c",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "按我的个人偏好建议学习方式。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "planning"
+            }
+          }
+        ],
+        "memories": [
+          {
+            "id": "hobby",
+            "content": "喜欢摄影，周末想留一些休息时间。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "home-city",
+            "content": "常住城市：上海。这是虚构测试资料，不代表用户位置。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          },
+          {
+            "id": "pref-steps",
+            "content": "喜欢把大任务拆成25分钟左右的小步。",
+            "category": "个人基本信息",
+            "createdAt": 1794708000000
+          }
+        ],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": false
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "按我的个人偏好建议学习方式。",
+      "role": "planning",
+      "result": null
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "按我的个人偏好建议学习方式。",
+      "context": {
+        "tasks": [
+          {
+            "id": "reading-15",
+            "series_id": null,
+            "title": "读书",
+            "note": "",
+            "exec_date": "2026-11-15",
+            "time_type": "slot",
+            "slot": "evening",
+            "start_time": null,
+            "end_time": null,
+            "end_day_offset": 0,
+            "category": "技能学习",
+            "status": ""
+          },
+          {
+            "id": "math-am-16",
+            "series_id": "math-am",
+            "title": "线性代数课",
+            "note": "教授：演示老师甲\n教室：演示楼201",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "09:00",
+            "end_time": "10:00",
+            "end_day_offset": 0,
+            "category": "学业事务",
+            "status": ""
+          },
+          {
+            "id": "math-pm-16",
+            "series_id": "math-pm",
+            "title": "线性代数课",
+            "note": "",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "15:00",
+            "end_time": "16:00",
+            "end_day_offset": 0,
+            "category": "学业事务",
+            "status": ""
+          },
+          {
+            "id": "meeting-17",
+            "series_id": null,
+            "title": "项目例会",
+            "note": "",
+            "exec_date": "2026-11-17",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "14:00",
+            "end_time": "15:00",
+            "end_day_offset": 0,
+            "category": "职场工作",
+            "status": ""
+          },
+          {
+            "id": "checkup-18",
+            "series_id": null,
+            "title": "体检",
+            "note": "",
+            "exec_date": "2026-11-18",
+            "time_type": "allday",
+            "slot": null,
+            "start_time": null,
+            "end_time": null,
+            "end_day_offset": 0,
+            "category": "日常生活",
+            "status": ""
+          },
+          {
+            "id": "utilities-19",
+            "series_id": null,
+            "title": "缴水电费",
+            "note": "",
+            "exec_date": "2026-11-19",
+            "time_type": "allday",
+            "slot": null,
+            "start_time": null,
+            "end_time": null,
+            "end_day_offset": 0,
+            "category": "日常生活",
+            "status": ""
+          },
+          {
+            "id": "math-am-23",
+            "series_id": "math-am",
+            "title": "线性代数课",
+            "note": "教授：演示老师甲",
+            "exec_date": "2026-11-23",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "09:00",
+            "end_time": "10:00",
+            "end_day_offset": 0,
+            "category": "学业事务",
+            "status": ""
+          }
+        ],
+        "todos": [
+          {
+            "id": "parcel",
+            "title": "取快递",
+            "note": "",
+            "category": "日常生活",
+            "done": false
+          },
+          {
+            "id": "resume",
+            "title": "更新简历",
+            "note": "",
+            "category": "职场工作",
+            "done": false
+          },
+          {
+            "id": "photos",
+            "title": "整理摄影作品",
+            "note": "",
+            "category": "休闲娱乐",
+            "done": false
+          },
+          {
+            "id": "milk",
+            "title": "买牛奶",
+            "note": "",
+            "category": "日常生活",
+            "done": false
+          }
+        ],
+        "selection": {
+          "tasks_total": 9,
+          "todos_total": 5,
+          "tasks_selected": 7,
+          "todos_selected": 4,
+          "partial": true
+        },
+        "memories": [],
+        "planning": {
+          "date_from": "2026-11-15",
+          "date_to": "2026-11-28",
+          "schedule_count": 7,
+          "todo_count": 4,
+          "memory_count": 0,
+          "schedule_examples": [
+            "2026-11-15 读书",
+            "2026-11-16 09:00 线性代数课",
+            "2026-11-16 15:00 线性代数课"
+          ],
+          "todo_examples": [
+            "取快递",
+            "更新简历",
+            "整理摄影作品"
+          ],
+          "memory_examples": [],
+          "insights": {
+            "conflict_count": 0,
+            "conflicts": [],
+            "busy_days": [],
+            "candidate_gaps": [
+              {
+                "date": "2026-11-16",
+                "start": "10:00",
+                "end": "15:00"
+              }
+            ],
+            "unscheduled_count": 3,
+            "high_value_todos": []
+          }
+        },
+        "history": [
+          {
+            "role": "user",
+            "content": "按我的个人偏好建议学习方式。"
+          }
+        ]
+      },
+      "agent_role": "planning",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "c234ac377fac4ce78a5e4ac34c91e558"
+    }
+  ],
+  "handler_responses": [
+    {
+      "status": 200,
+      "parsed": {
+        "type": "clarify",
+        "reply": "你希望我按哪种学习偏好来建议？比如：早起型/夜猫子、喜欢短时高频还是长时间专注、偏好独自学习还是讨论式？告诉我最关键的一点即可。",
+        "used_evidence": []
+      }
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [],
+  "counts": {
+    "before_tasks": 9,
+    "after_tasks": 9,
+    "before_todos": 5,
+    "after_todos": 5
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T17:02:04.075Z",
+  "review": {
+    "status": "符合本题已核对项",
+    "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+    "raw_model_calls": 1,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [
+      "checkup-18",
+      "materials-13",
+      "math-am-16",
+      "math-am-23",
+      "math-pm-16",
+      "meeting-17",
+      "reading-15",
+      "shift-30",
+      "utilities-19"
+    ],
+    "unchanged_original_todo_ids": [
+      "expense",
+      "milk",
+      "parcel",
+      "photos",
+      "resume"
+    ],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}

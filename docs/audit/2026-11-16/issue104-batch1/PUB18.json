@@ -1,0 +1,366 @@
+{
+  "id": "PUB18",
+  "name": "全站额度拒绝，P1加服务故障",
+  "group": "G02",
+  "specification": "\n- 准备及完整输入：F0，日程，“明天整理演示资料”；手填定义“全站限额保留草稿”、备注“材料：合成清单”、日期2026年11月16日、选时段下午、标签职场工作、IMG1。替身预置全站100次已满、设备和网络未满，再点AI识别。\n- 字段预期：上述字段、原文和图片不变；基础价值分保持拒绝前状态，不造AI分；返回limit_scope=global，提示“今日公共免费AI次数已达上限。”；不派发真实模型。\n- 轮数与条数：提交1轮，真实模型请求0；有效AI候选0，不点主动发布。\n- 确认前后及重开：新增0，拒绝不占新次数；重开数据库仍0，零奖励；不把公共额度退次称为供应商退款。\n\n",
+  "started_at": "2026-11-15T16:59:24.140Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "明天整理演示资料",
+      "draft": {
+        "draftId": "mwh6szk0xz5xf",
+        "userFields": {
+          "title": true,
+          "note": true,
+          "date": true,
+          "time": true,
+          "tag": true
+        },
+        "kind": "schedule",
+        "recognized": false,
+        "rawText": "明天整理演示资料",
+        "resultTitle": "全站限额保留草稿",
+        "resultNote": "材料：合成清单",
+        "images": [
+          {
+            "id": "IMG1",
+            "name": "demo.png",
+            "type": "image/png",
+            "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+          }
+        ],
+        "missingDate": false,
+        "date": "2026-11-16",
+        "calMonth": "2026-11",
+        "timeType": "slot",
+        "slot": "afternoon",
+        "start": "14:00",
+        "end": "15:00",
+        "endDayOffset": 0,
+        "tag": "职场工作",
+        "period": "week",
+        "ai": null,
+        "aiTitle": "",
+        "modelRaw": null,
+        "reviewedResult": null,
+        "dateResult": {
+          "kind": "date",
+          "date": "2026-11-16"
+        },
+        "dateError": "",
+        "dateConflict": "",
+        "timeResult": {
+          "kind": "none"
+        },
+        "timeError": "",
+        "timeConflict": "",
+        "aiFailureReason": "今日公共免费AI次数已达上限。"
+      }
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "final_draft": {
+    "draftId": "mwh6szk0xz5xf",
+    "userFields": {
+      "title": true,
+      "note": true,
+      "date": true,
+      "time": true,
+      "tag": true
+    },
+    "kind": "schedule",
+    "recognized": false,
+    "rawText": "明天整理演示资料",
+    "resultTitle": "全站限额保留草稿",
+    "resultNote": "材料：合成清单",
+    "images": [
+      {
+        "id": "IMG1",
+        "name": "demo.png",
+        "type": "image/png",
+        "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aF1kAAAAASUVORK5CYII="
+      }
+    ],
+    "missingDate": false,
+    "date": "2026-11-16",
+    "calMonth": "2026-11",
+    "timeType": "slot",
+    "slot": "afternoon",
+    "start": "14:00",
+    "end": "15:00",
+    "endDayOffset": 0,
+    "tag": "职场工作",
+    "period": "week",
+    "ai": null,
+    "aiTitle": "",
+    "modelRaw": null,
+    "reviewedResult": null,
+    "dateResult": {
+      "kind": "date",
+      "date": "2026-11-16"
+    },
+    "dateError": "",
+    "dateConflict": "",
+    "timeResult": {
+      "kind": "none"
+    },
+    "timeError": "",
+    "timeConflict": "",
+    "aiFailureReason": "今日公共免费AI次数已达上限。"
+  },
+  "reopen_equal": true,
+  "notices": [
+    "今日公共免费AI次数已达上限。"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:24.158Z",
+  "review": {
+    "status": "受阻",
+    "note": "前端429全站额度替身已验证草稿保留和零模型，未预置真实handler合成额度100及独立设备网络未满条件，额度入门后段未验。",
+    "raw_model_calls": 0,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [],
+    "unchanged_original_todo_ids": [],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}

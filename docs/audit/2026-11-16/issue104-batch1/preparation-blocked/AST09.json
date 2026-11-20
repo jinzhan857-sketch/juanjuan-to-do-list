@@ -1,0 +1,503 @@
+{
+  "id": "AST09",
+  "name": "多轮补齐两组重复，T6扩展，能力核验",
+  "group": "G03",
+  "specification": "\n- 准备及完整输入：F0，事务，第1轮“从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。”；第2轮“两组都到11月30日结束，包含当天。”。系统应先问范围，再分别提供两组可核对卡片。\n- 字段预期：瑜伽组定义“练瑜伽”、备注空、日常生活、精确19:00至20:00，日期16、23、30日，3条；吉他组定义“练吉他”、备注空、技能学习、精确18:00至19:00，日期18、25日，2条；两组均为2026年11月；各组分数分别判、组内一致；附件无。\n- 轮数与条数：用户2轮，目标2组5条；各组确认1次。\n- 确认前后及重开：确认前0，第1组后3，两组后5；重开5且两个不同组ID，不能串时刻。若不能表达两组，明确缺口，不降成一组或静默丢组。\n\n",
+  "started_at": "2026-11-15T16:59:29.400Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+      "role": "task",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": []
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0dfr02",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        }
+      ]
+    },
+    {
+      "input": "两组都到11月30日结束，包含当天。",
+      "role": "task",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。"
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "mwh6szk0dfr02",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        },
+        {
+          "id": "mwh6szk094fld",
+          "chatId": "chat-a",
+          "role": "user",
+          "content": "两组都到11月30日结束，包含当天。",
+          "type": "text",
+          "createdAt": 1794708000000,
+          "meta": {
+            "agentRole": "task"
+          }
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "从11月16日起，两组日程：每周一1…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk094fld",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "两组都到11月30日结束，包含当天。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          },
+          {
+            "id": "mwh6szk0dfr02",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "从11月16日起，两组日程：每周一1…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk094fld",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "两组都到11月30日结束，包含当天。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          },
+          {
+            "id": "mwh6szk0dfr02",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "从11月16日起，两组日程：每周一1…",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [
+          {
+            "id": "mwh6szk094fld",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "两组都到11月30日结束，包含当天。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          },
+          {
+            "id": "mwh6szk0dfr02",
+            "chatId": "chat-a",
+            "role": "user",
+            "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+            "type": "text",
+            "createdAt": 1794708000000,
+            "meta": {
+              "agentRole": "task"
+            }
+          }
+        ],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "local_path": [
+    {
+      "text": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+      "role": "task",
+      "result": {
+        "type": "proposal",
+        "reply": "我已整理好这条日程，请确认后创建。",
+        "action": {
+          "kind": "create_schedule",
+          "target_id": null,
+          "item": {
+            "title": "从起，两组：每周一练瑜伽；每周三练吉他。两组的结束日期稍后补。",
+            "note": "",
+            "exec_date": "2026-11-16",
+            "time_type": "exact",
+            "slot": null,
+            "start_time": "19:00",
+            "end_time": "20:00",
+            "category": "日常生活",
+            "base_score": 3
+          }
+        }
+      }
+    },
+    {
+      "text": "两组都到11月30日结束，包含当天。",
+      "role": "task",
+      "result": null
+    }
+  ],
+  "frontend_requests": [
+    {
+      "mode": "agent",
+      "message": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。"
+          }
+        ]
+      },
+      "agent_role": "task",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "d2a1f9303ee74096a742b20f2953dc20"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "d2a1f9303ee74096a742b20f2953dc20"
+    },
+    {
+      "mode": "agent",
+      "message": "两组都到11月30日结束，包含当天。",
+      "context": {
+        "tasks": [],
+        "todos": [],
+        "selection": {
+          "tasks_total": 0,
+          "todos_total": 0,
+          "tasks_selected": 0,
+          "todos_selected": 0,
+          "partial": true
+        },
+        "memories": [],
+        "planning": null,
+        "history": [
+          {
+            "role": "user",
+            "content": "从11月16日起，两组日程：每周一19:00到20:00练瑜伽；每周三18:00到19:00练吉他。两组的结束日期稍后补。"
+          },
+          {
+            "role": "user",
+            "content": "两组都到11月30日结束，包含当天。"
+          }
+        ]
+      },
+      "agent_role": "task",
+      "client_date": "2026-11-15",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "92315ac495024e3386e0266edd0de434"
+    },
+    {
+      "mode": "cancel",
+      "device_id": "issue104syntheticdevice0123456789",
+      "request_id": "92315ac495024e3386e0266edd0de434"
+    }
+  ],
+  "reopen_equal": true,
+  "notices": [
+    "消息未完成，请检查后重试",
+    "消息未完成，请检查后重试"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 0
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:29.419Z"
+}

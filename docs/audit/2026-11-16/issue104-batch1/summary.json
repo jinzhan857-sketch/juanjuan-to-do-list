@@ -1,0 +1,1606 @@
+{
+  "application_commit": "4047cc455a36d87c7a5b86330953244232d10e77",
+  "main_frozen": "2a6cc3faa0e9e0a22fca26b1c84a0d649a665785",
+  "business_clock": "2026-11-15T10:00:00+08:00",
+  "quota_and_billing_clock": "actual Asia/Shanghai, server Date not frozen",
+  "hashes": {
+    "index.html": "cb75cadf847bcc7c7ae9cb7a8c0eba19a51c9aea022b6905f12b981f28e6fef1",
+    "api/ai.js": "f3dc9b2f97c068c320bf7d1596b2eff1e0ba2bf2b5aee23f037febc11e05e028",
+    "scripts/issue104-batch1.cjs": "0c76db9d6ca851818134670bfb9cda6bfe1e2af65f77f6ecd68294c65981f6f6",
+    "scripts/issue104-finish-evidence.cjs": "363cf862192303eb7733300373d468a4de1d6f11e52a391166af4f9e62c2246b"
+  },
+  "limits": {
+    "calls": 100,
+    "budget_cny": 15
+  },
+  "real_model_requests": 52,
+  "reserved_cny": 1.1122379999999998,
+  "estimated_cny_at_peak": 0.183866,
+  "actual_billed_cny": null,
+  "provider_models": [
+    "deepseek-flash"
+  ],
+  "groups": [
+    {
+      "id": "G01",
+      "requests": 8,
+      "estimated_cny": 0.019476
+    },
+    {
+      "id": "G02",
+      "requests": 9,
+      "estimated_cny": 0.024762
+    },
+    {
+      "id": "G03",
+      "requests": 15,
+      "estimated_cny": 0.05447999999999999
+    },
+    {
+      "id": "G04",
+      "requests": 10,
+      "estimated_cny": 0.05105
+    },
+    {
+      "id": "G05",
+      "requests": 10,
+      "estimated_cny": 0.034098
+    }
+  ],
+  "counts": {
+    "符合本题已核对项": 24,
+    "待判断": 11,
+    "未达": 12,
+    "受阻": 3
+  },
+  "outcomes": [
+    {
+      "id": "PUB01",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB01.json"
+    },
+    {
+      "id": "PUB02",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB02.json"
+    },
+    {
+      "id": "PUB03",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB03.json"
+    },
+    {
+      "id": "PUB04",
+      "status": "待判断",
+      "note": "模型返回vague和空分，手改后主动发布为规则3分；未达成功AI分前提，图片只核字节未验原生解码。",
+      "real_model_requests": 1,
+      "evidence": "PUB04.json"
+    },
+    {
+      "id": "PUB05",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 0,
+      "evidence": "PUB05.json"
+    },
+    {
+      "id": "PUB06",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 0,
+      "evidence": "PUB06.json"
+    },
+    {
+      "id": "PUB07",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB07.json"
+    },
+    {
+      "id": "PUB08",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB08.json"
+    },
+    {
+      "id": "PUB09",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB09.json"
+    },
+    {
+      "id": "PUB10",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB10.json"
+    },
+    {
+      "id": "PUB11",
+      "status": "未达",
+      "note": "跨夜明确起止被本地时间识别拒绝，新增0，见#114。",
+      "real_model_requests": 1,
+      "evidence": "PUB11.json"
+    },
+    {
+      "id": "PUB12",
+      "status": "待判断",
+      "note": "补日后规则3分符合无成功AI分分支；类别实际学业事务，题目预期技能学习，规则待判断。",
+      "real_model_requests": 1,
+      "evidence": "PUB12.json"
+    },
+    {
+      "id": "PUB13",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 2,
+      "evidence": "PUB13.json"
+    },
+    {
+      "id": "PUB14",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB14.json"
+    },
+    {
+      "id": "PUB15",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB15.json"
+    },
+    {
+      "id": "PUB16",
+      "status": "未达",
+      "note": "年待办编辑保存变为周待办，原分3保持，见#112。",
+      "real_model_requests": 0,
+      "evidence": "PUB16.json"
+    },
+    {
+      "id": "PUB17",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "PUB17.json"
+    },
+    {
+      "id": "PUB18",
+      "status": "受阻",
+      "note": "前端429全站额度替身已验证草稿保留和零模型，未预置真实handler合成额度100及独立设备网络未满条件，额度入门后段未验。",
+      "real_model_requests": 0,
+      "evidence": "PUB18.json"
+    },
+    {
+      "id": "AST01",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST01.json"
+    },
+    {
+      "id": "AST02",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST02.json"
+    },
+    {
+      "id": "AST03",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 2,
+      "evidence": "AST03.json"
+    },
+    {
+      "id": "AST04",
+      "status": "待判断",
+      "note": "已创建1条待办，类别为学业事务，题目预期职场工作或技能学习，周期未设置。",
+      "real_model_requests": 1,
+      "evidence": "AST04.json"
+    },
+    {
+      "id": "AST05",
+      "status": "待判断",
+      "note": "两项给齐后只文字确认第一项，无可执行卡，见#115。",
+      "real_model_requests": 1,
+      "evidence": "AST05.json"
+    },
+    {
+      "id": "AST06",
+      "status": "待判断",
+      "note": "补齐日期后仍追问类别，无可执行卡，见#115。",
+      "real_model_requests": 2,
+      "evidence": "AST06.json"
+    },
+    {
+      "id": "AST07",
+      "status": "待判断",
+      "note": "3条有限重复候选正确，类别休闲娱乐，题目预期日常生活，待分类规则判断。",
+      "real_model_requests": 1,
+      "evidence": "AST07.json"
+    },
+    {
+      "id": "AST08",
+      "status": "待判断",
+      "note": "确认保存16、23、30日共3条同组，类别休闲娱乐与预期不同。",
+      "real_model_requests": 2,
+      "evidence": "AST08.json"
+    },
+    {
+      "id": "AST09",
+      "status": "待判断",
+      "note": "两组终止日补齐后仍只文字确认第一组，零写入，见#115。",
+      "real_model_requests": 2,
+      "evidence": "AST09.json"
+    },
+    {
+      "id": "AST10",
+      "status": "未达",
+      "note": "保存新卡后旧卡仍可创建旧时段，离线继续确认后2条，已停止，见#111。",
+      "real_model_requests": 2,
+      "evidence": "AST10.json"
+    },
+    {
+      "id": "AST11",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST11.json"
+    },
+    {
+      "id": "AST12",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST12.json"
+    },
+    {
+      "id": "AST13",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST13.json"
+    },
+    {
+      "id": "AST14",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST14.json"
+    },
+    {
+      "id": "AST15",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST15.json"
+    },
+    {
+      "id": "AST16",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST16.json"
+    },
+    {
+      "id": "AST17",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST17.json"
+    },
+    {
+      "id": "AST18",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST18.json"
+    },
+    {
+      "id": "AST19",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST19.json"
+    },
+    {
+      "id": "AST20",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST20.json"
+    },
+    {
+      "id": "AST21",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST21.json"
+    },
+    {
+      "id": "AST22",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST22.json"
+    },
+    {
+      "id": "AST23",
+      "status": "未达",
+      "note": "模型给出操作，但前端范围校验追问，后段未验；见#113。",
+      "real_model_requests": 1,
+      "evidence": "AST23.json"
+    },
+    {
+      "id": "AST24",
+      "status": "受阻",
+      "note": "本地事务路径接管，未建立传输暂扣和迟到点，零模型请求；本题未执行所要求的竞态。",
+      "real_model_requests": 0,
+      "evidence": "AST24.json"
+    },
+    {
+      "id": "AST25",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST25.json"
+    },
+    {
+      "id": "AST26",
+      "status": "待判断",
+      "note": "本次20分钟停止要求得到保留，但同时建议25分钟以内的小步，口径有歧义，待判断。",
+      "real_model_requests": 1,
+      "evidence": "AST26.json"
+    },
+    {
+      "id": "AST27",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST27.json"
+    },
+    {
+      "id": "AST28",
+      "status": "待判断",
+      "note": "交接确认后新增1条，类别技能学习而非题目学业事务；首轮又建议可延长到10:35，超出给定时间，待判断。",
+      "real_model_requests": 2,
+      "evidence": "AST28.json"
+    },
+    {
+      "id": "AST29",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 1,
+      "evidence": "AST29.json"
+    },
+    {
+      "id": "AST30",
+      "status": "受阻",
+      "note": "天气替身首次缺URLSearchParams而报服务不可用，补证两轮香港小雨80%、上海晴10%正确，但重开残留首次工具故障消息，整题不记通过。",
+      "real_model_requests": 0,
+      "evidence": "AST30.json"
+    },
+    {
+      "id": "AST31",
+      "status": "待判断",
+      "note": "两句话且零写入，但“日程有明确时间点”未涵盖全天日程，概念表述待判断。",
+      "real_model_requests": 1,
+      "evidence": "AST31.json"
+    },
+    {
+      "id": "AST32",
+      "status": "符合本题已核对项",
+      "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+      "real_model_requests": 2,
+      "evidence": "AST32.json"
+    }
+  ],
+  "attempts": [
+    {
+      "number": 1,
+      "case": "PUB01",
+      "group": "G01",
+      "started_at": "2026-11-15T16:58:59.127Z",
+      "reserved_cny": 0.0124,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 692,
+        "completion_tokens": 134,
+        "total_tokens": 826,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 180
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002456,
+      "ended_at": "2026-11-15T16:59:00.955Z"
+    },
+    {
+      "number": 2,
+      "case": "PUB02",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:00.997Z",
+      "reserved_cny": 0.012414,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 697,
+        "completion_tokens": 116,
+        "total_tokens": 813,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 185
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002322,
+      "ended_at": "2026-11-15T16:59:02.418Z"
+    },
+    {
+      "number": 3,
+      "case": "PUB03",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:02.444Z",
+      "reserved_cny": 0.012424,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 695,
+        "completion_tokens": 125,
+        "total_tokens": 820,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 183
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00239,
+      "ended_at": "2026-11-15T16:59:03.931Z"
+    },
+    {
+      "number": 4,
+      "case": "PUB04",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:03.946Z",
+      "reserved_cny": 0.012388,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 689,
+        "completion_tokens": 118,
+        "total_tokens": 807,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 177
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002322,
+      "ended_at": "2026-11-15T16:59:05.291Z"
+    },
+    {
+      "number": 5,
+      "case": "PUB07",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:05.340Z",
+      "reserved_cny": 0.01252,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 704,
+        "completion_tokens": 145,
+        "total_tokens": 849,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 192
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002568,
+      "ended_at": "2026-11-15T16:59:07.034Z"
+    },
+    {
+      "number": 6,
+      "case": "PUB08",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:07.062Z",
+      "reserved_cny": 0.012394,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 131,
+        "total_tokens": 821,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 178
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002428,
+      "ended_at": "2026-11-15T16:59:09.059Z"
+    },
+    {
+      "number": 7,
+      "case": "PUB09",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:09.094Z",
+      "reserved_cny": 0.01243,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 693,
+        "completion_tokens": 158,
+        "total_tokens": 851,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 181
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00265,
+      "ended_at": "2026-11-15T16:59:10.691Z"
+    },
+    {
+      "number": 8,
+      "case": "PUB10",
+      "group": "G01",
+      "started_at": "2026-11-15T16:59:10.707Z",
+      "reserved_cny": 0.012422,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 694,
+        "completion_tokens": 119,
+        "total_tokens": 813,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 182
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00234,
+      "ended_at": "2026-11-15T16:59:12.287Z"
+    },
+    {
+      "number": 9,
+      "case": "PUB11",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:12.319Z",
+      "reserved_cny": 0.01244,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 701,
+        "completion_tokens": 151,
+        "total_tokens": 852,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 189
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00261,
+      "ended_at": "2026-11-15T16:59:13.920Z"
+    },
+    {
+      "number": 10,
+      "case": "PUB12",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:13.934Z",
+      "reserved_cny": 0.01238,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 143,
+        "total_tokens": 833,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 178
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002524,
+      "ended_at": "2026-11-15T16:59:15.447Z"
+    },
+    {
+      "number": 11,
+      "case": "PUB13",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:15.469Z",
+      "reserved_cny": 0.012394,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 133,
+        "total_tokens": 823,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 178
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002444,
+      "ended_at": "2026-11-15T16:59:16.965Z"
+    },
+    {
+      "number": 12,
+      "case": "PUB13",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:16.976Z",
+      "reserved_cny": 0.012436,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 694,
+        "completion_tokens": 158,
+        "total_tokens": 852,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 182
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002652,
+      "ended_at": "2026-11-15T16:59:18.865Z"
+    },
+    {
+      "number": 13,
+      "case": "PUB14",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:18.893Z",
+      "reserved_cny": 0.01244,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 695,
+        "completion_tokens": 145,
+        "total_tokens": 840,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 183
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00255,
+      "ended_at": "2026-11-15T16:59:20.627Z"
+    },
+    {
+      "number": 14,
+      "case": "PUB15",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:20.656Z",
+      "reserved_cny": 0.012364,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 688,
+        "completion_tokens": 159,
+        "total_tokens": 847,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 176
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002648,
+      "ended_at": "2026-11-15T16:59:22.488Z"
+    },
+    {
+      "number": 15,
+      "case": "PUB17",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:22.530Z",
+      "reserved_cny": 0.012402,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 693,
+        "completion_tokens": 140,
+        "total_tokens": 833,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 181
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.002506,
+      "ended_at": "2026-11-15T16:59:24.126Z"
+    },
+    {
+      "number": 16,
+      "case": "AST01",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:24.170Z",
+      "reserved_cny": 0.023938,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1448,
+        "completion_tokens": 110,
+        "total_tokens": 1558,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 424
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003776,
+      "ended_at": "2026-11-15T16:59:25.304Z"
+    },
+    {
+      "number": 17,
+      "case": "AST02",
+      "group": "G02",
+      "started_at": "2026-11-15T16:59:25.336Z",
+      "reserved_cny": 0.023782,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1430,
+        "completion_tokens": 24,
+        "total_tokens": 1454,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 278
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003052,
+      "ended_at": "2026-11-15T16:59:26.283Z"
+    },
+    {
+      "number": 18,
+      "case": "AST03",
+      "group": "G03",
+      "started_at": "2026-11-15T16:59:26.297Z",
+      "reserved_cny": 0.023954,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1458,
+        "completion_tokens": 19,
+        "total_tokens": 1477,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 306
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003068,
+      "ended_at": "2026-11-15T16:59:27.070Z"
+    },
+    {
+      "number": 19,
+      "case": "AST03",
+      "group": "G03",
+      "started_at": "2026-11-15T16:59:27.078Z",
+      "reserved_cny": 0.024116,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1469,
+        "completion_tokens": 106,
+        "total_tokens": 1575,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 317
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003786,
+      "ended_at": "2026-11-15T16:59:28.085Z"
+    },
+    {
+      "number": 20,
+      "case": "AST04",
+      "group": "G03",
+      "started_at": "2026-11-15T16:59:28.111Z",
+      "reserved_cny": 0.024058,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1460,
+        "completion_tokens": 64,
+        "total_tokens": 1524,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 308
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003432,
+      "ended_at": "2026-11-15T16:59:29.301Z"
+    },
+    {
+      "number": 21,
+      "case": "AST05",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:32.369Z",
+      "reserved_cny": 0.024342,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1506,
+        "completion_tokens": 58,
+        "total_tokens": 1564,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 354
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003476,
+      "ended_at": "2026-11-15T17:01:33.564Z"
+    },
+    {
+      "number": 22,
+      "case": "AST06",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:33.600Z",
+      "reserved_cny": 0.024138,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1486,
+        "completion_tokens": 26,
+        "total_tokens": 1512,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 334
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00318,
+      "ended_at": "2026-11-15T17:01:34.788Z"
+    },
+    {
+      "number": 23,
+      "case": "AST06",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:34.794Z",
+      "reserved_cny": 0.024394,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1502,
+        "completion_tokens": 78,
+        "total_tokens": 1580,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 350
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003628,
+      "ended_at": "2026-11-15T17:01:36.179Z"
+    },
+    {
+      "number": 24,
+      "case": "AST07",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:36.197Z",
+      "reserved_cny": 0.023894,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1458,
+        "completion_tokens": 142,
+        "total_tokens": 1600,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 306
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004052,
+      "ended_at": "2026-11-15T17:01:37.589Z"
+    },
+    {
+      "number": 25,
+      "case": "AST08",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:37.617Z",
+      "reserved_cny": 0.023982,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1466,
+        "completion_tokens": 27,
+        "total_tokens": 1493,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 314
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003148,
+      "ended_at": "2026-11-15T17:01:38.636Z"
+    },
+    {
+      "number": 26,
+      "case": "AST08",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:38.643Z",
+      "reserved_cny": 0.024292,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1499,
+        "completion_tokens": 145,
+        "total_tokens": 1644,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 347
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004158,
+      "ended_at": "2026-11-15T17:01:39.720Z"
+    },
+    {
+      "number": 27,
+      "case": "AST09",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:39.750Z",
+      "reserved_cny": 0.024214,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1502,
+        "completion_tokens": 37,
+        "total_tokens": 1539,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 350
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.0033,
+      "ended_at": "2026-11-15T17:01:40.880Z"
+    },
+    {
+      "number": 28,
+      "case": "AST09",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:40.894Z",
+      "reserved_cny": 0.02455,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1528,
+        "completion_tokens": 53,
+        "total_tokens": 1581,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 376
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00348,
+      "ended_at": "2026-11-15T17:01:42.144Z"
+    },
+    {
+      "number": 29,
+      "case": "AST10",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:42.160Z",
+      "reserved_cny": 0.023786,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1434,
+        "completion_tokens": 89,
+        "total_tokens": 1523,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 282
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00358,
+      "ended_at": "2026-11-15T17:01:43.243Z"
+    },
+    {
+      "number": 30,
+      "case": "AST10",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:43.256Z",
+      "reserved_cny": 0.024086,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1472,
+        "completion_tokens": 96,
+        "total_tokens": 1568,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 320
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003712,
+      "ended_at": "2026-11-15T17:01:44.266Z"
+    },
+    {
+      "number": 31,
+      "case": "AST11",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:44.284Z",
+      "reserved_cny": 0.023858,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1448,
+        "completion_tokens": 100,
+        "total_tokens": 1548,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 296
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003696,
+      "ended_at": "2026-11-15T17:01:45.678Z"
+    },
+    {
+      "number": 32,
+      "case": "AST12",
+      "group": "G03",
+      "started_at": "2026-11-15T17:01:45.717Z",
+      "reserved_cny": 0.029738,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2156,
+        "completion_tokens": 59,
+        "total_tokens": 2215,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 1004
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004784,
+      "ended_at": "2026-11-15T17:01:46.472Z"
+    },
+    {
+      "number": 33,
+      "case": "AST13",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:46.507Z",
+      "reserved_cny": 0.029798,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2163,
+        "completion_tokens": 61,
+        "total_tokens": 2224,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 1011
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004814,
+      "ended_at": "2026-11-15T17:01:47.463Z"
+    },
+    {
+      "number": 34,
+      "case": "AST14",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:47.497Z",
+      "reserved_cny": 0.029918,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2178,
+        "completion_tokens": 44,
+        "total_tokens": 2222,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 1026
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004708,
+      "ended_at": "2026-11-15T17:01:48.418Z"
+    },
+    {
+      "number": 35,
+      "case": "AST15",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:48.438Z",
+      "reserved_cny": 0.029878,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2182,
+        "completion_tokens": 94,
+        "total_tokens": 2276,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 1030
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005116,
+      "ended_at": "2026-11-15T17:01:49.447Z"
+    },
+    {
+      "number": 36,
+      "case": "AST16",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:49.485Z",
+      "reserved_cny": 0.030042,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2192,
+        "completion_tokens": 78,
+        "total_tokens": 2270,
+        "prompt_tokens_details": {
+          "cached_tokens": 1280
+        },
+        "prompt_cache_hit_tokens": 1280,
+        "prompt_cache_miss_tokens": 912
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005008,
+      "ended_at": "2026-11-15T17:01:50.645Z"
+    },
+    {
+      "number": 37,
+      "case": "AST17",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:50.662Z",
+      "reserved_cny": 0.03021,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2224,
+        "completion_tokens": 187,
+        "total_tokens": 2411,
+        "prompt_tokens_details": {
+          "cached_tokens": 1920
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 304
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005944,
+      "ended_at": "2026-11-15T17:01:52.108Z"
+    },
+    {
+      "number": 38,
+      "case": "AST18",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:52.141Z",
+      "reserved_cny": 0.02981,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2166,
+        "completion_tokens": 56,
+        "total_tokens": 2222,
+        "prompt_tokens_details": {
+          "cached_tokens": 1920
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 246
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00478,
+      "ended_at": "2026-11-15T17:01:53.456Z"
+    },
+    {
+      "number": 39,
+      "case": "AST19",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:53.493Z",
+      "reserved_cny": 0.030034,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2202,
+        "completion_tokens": 63,
+        "total_tokens": 2265,
+        "prompt_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 154
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004908,
+      "ended_at": "2026-11-15T17:01:54.600Z"
+    },
+    {
+      "number": 40,
+      "case": "AST20",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:54.633Z",
+      "reserved_cny": 0.030018,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2202,
+        "completion_tokens": 169,
+        "total_tokens": 2371,
+        "prompt_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 154
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005756,
+      "ended_at": "2026-11-15T17:01:56.047Z"
+    },
+    {
+      "number": 41,
+      "case": "AST21",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:56.065Z",
+      "reserved_cny": 0.030006,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2192,
+        "completion_tokens": 94,
+        "total_tokens": 2286,
+        "prompt_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 144
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005136,
+      "ended_at": "2026-11-15T17:01:57.379Z"
+    },
+    {
+      "number": 42,
+      "case": "AST22",
+      "group": "G04",
+      "started_at": "2026-11-15T17:01:57.408Z",
+      "reserved_cny": 0.029878,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2184,
+        "completion_tokens": 64,
+        "total_tokens": 2248,
+        "prompt_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 136
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00488,
+      "ended_at": "2026-11-15T17:01:58.018Z"
+    },
+    {
+      "number": 43,
+      "case": "AST23",
+      "group": "G05",
+      "started_at": "2026-11-15T17:01:58.038Z",
+      "reserved_cny": 0.029878,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 2182,
+        "completion_tokens": 94,
+        "total_tokens": 2276,
+        "prompt_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 134
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005116,
+      "ended_at": "2026-11-15T17:01:59.308Z"
+    },
+    {
+      "number": 44,
+      "case": "AST25",
+      "group": "G05",
+      "started_at": "2026-11-15T17:01:59.349Z",
+      "reserved_cny": 0.024208,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1525,
+        "completion_tokens": 279,
+        "total_tokens": 1804,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 1269
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005282,
+      "ended_at": "2026-11-15T17:02:01.390Z"
+    },
+    {
+      "number": 45,
+      "case": "AST26",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:01.414Z",
+      "reserved_cny": 0.023658,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1450,
+        "completion_tokens": 144,
+        "total_tokens": 1594,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 938
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.004052,
+      "ended_at": "2026-11-15T17:02:02.922Z"
+    },
+    {
+      "number": 46,
+      "case": "AST27",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:02.942Z",
+      "reserved_cny": 0.022628,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1347,
+        "completion_tokens": 54,
+        "total_tokens": 1401,
+        "prompt_tokens_details": {
+          "cached_tokens": 896
+        },
+        "prompt_cache_hit_tokens": 896,
+        "prompt_cache_miss_tokens": 451
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.003126,
+      "ended_at": "2026-11-15T17:02:04.063Z"
+    },
+    {
+      "number": 47,
+      "case": "AST28",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:04.086Z",
+      "reserved_cny": 0.023726,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1464,
+        "completion_tokens": 337,
+        "total_tokens": 1801,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 440
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005624,
+      "ended_at": "2026-11-15T17:02:06.577Z"
+    },
+    {
+      "number": 48,
+      "case": "AST28",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:06.589Z",
+      "reserved_cny": 0.026122,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 1801,
+        "completion_tokens": 293,
+        "total_tokens": 2094,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 777
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.005946,
+      "ended_at": "2026-11-15T17:02:08.366Z"
+    },
+    {
+      "number": 49,
+      "case": "AST29",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:08.409Z",
+      "reserved_cny": 0.014738,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 394,
+        "completion_tokens": 29,
+        "total_tokens": 423,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 394
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00102,
+      "ended_at": "2026-11-15T17:02:09.486Z"
+    },
+    {
+      "number": 50,
+      "case": "AST31",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:09.534Z",
+      "reserved_cny": 0.014858,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 408,
+        "completion_tokens": 65,
+        "total_tokens": 473,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 280
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.001336,
+      "ended_at": "2026-11-15T17:02:10.615Z"
+    },
+    {
+      "number": 51,
+      "case": "AST32",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:10.643Z",
+      "reserved_cny": 0.015892,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 510,
+        "completion_tokens": 40,
+        "total_tokens": 550,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 382
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.00134,
+      "ended_at": "2026-11-15T17:02:11.466Z"
+    },
+    {
+      "number": 52,
+      "case": "AST32",
+      "group": "G05",
+      "started_at": "2026-11-15T17:02:11.473Z",
+      "reserved_cny": 0.015568,
+      "status": "response",
+      "http_status": 200,
+      "model": "deepseek-flash",
+      "usage": {
+        "prompt_tokens": 472,
+        "completion_tokens": 39,
+        "total_tokens": 511,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 216
+      },
+      "finish_reason": "stop",
+      "estimated_cny": 0.001256,
+      "ended_at": "2026-11-15T17:02:12.249Z"
+    }
+  ]
+}

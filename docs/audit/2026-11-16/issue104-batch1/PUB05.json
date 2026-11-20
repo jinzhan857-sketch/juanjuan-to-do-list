@@ -1,0 +1,366 @@
+{
+  "id": "PUB05",
+  "name": "快速发布待办，原K01，P5",
+  "group": "G01",
+  "specification": "\n- 准备及完整输入：F0，选择待办和周待办，输入“取快递。”，不点AI，直接点快速发布。\n- 字段预期：任务定义“取快递。”；备注空；日期和时间精度不适用；周期周待办；任务标签日常生活；基础价值分精确2，来源规则simple、版本1.0.2；附件无。\n- 轮数与条数：提交1轮，模型请求0；点击前拟发布1条。\n- 确认前后及重开：点击前新增0；点击后新增1，未完成；重开仍1，零奖励。\n\n",
+  "started_at": "2026-11-15T16:59:05.313Z",
+  "evidence_layer": "actual handler plus isolated VM frontend and fake-indexeddb; no native browser interaction claimed",
+  "requests": [],
+  "rounds": [
+    {
+      "input": "取快递。",
+      "draft": {
+        "draftId": "mwh6szk02rzvq",
+        "userFields": {},
+        "kind": "todo",
+        "recognized": false,
+        "rawText": "",
+        "resultTitle": "",
+        "resultNote": "",
+        "images": [],
+        "missingDate": false,
+        "date": "2026-11-15",
+        "calMonth": "2026-11",
+        "timeType": "allday",
+        "slot": "afternoon",
+        "start": "14:00",
+        "end": "15:00",
+        "endDayOffset": 0,
+        "tag": "",
+        "period": "week",
+        "ai": null,
+        "aiTitle": "",
+        "modelRaw": null,
+        "reviewedResult": null
+      }
+    }
+  ],
+  "phases": [
+    {
+      "label": "before",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "before_confirmation",
+      "data": {
+        "tasks": [],
+        "todos": [],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "after",
+      "data": {
+        "tasks": [],
+        "todos": [
+          {
+            "id": "mwh6szk02rzvq",
+            "title": "取快递。",
+            "note": "",
+            "category": "日常生活",
+            "period": "week",
+            "baseScore": 2,
+            "aiReason": "明确简单操作",
+            "aiAdvice": "",
+            "aiSource": "rule",
+            "aiModelRaw": null,
+            "aiReviewedResult": null,
+            "links": [],
+            "images": [],
+            "done": false,
+            "finalScore": 0,
+            "createdAt": 1794708000000,
+            "completedAt": null,
+            "scoreRule": {
+              "id": "simple",
+              "version": "1.0.2",
+              "fallback": false
+            }
+          }
+        ],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "reopened",
+      "data": {
+        "tasks": [],
+        "todos": [
+          {
+            "id": "mwh6szk02rzvq",
+            "title": "取快递。",
+            "note": "",
+            "category": "日常生活",
+            "period": "week",
+            "baseScore": 2,
+            "aiReason": "明确简单操作",
+            "aiAdvice": "",
+            "aiSource": "rule",
+            "aiModelRaw": null,
+            "aiReviewedResult": null,
+            "links": [],
+            "images": [],
+            "done": false,
+            "finalScore": 0,
+            "createdAt": 1794708000000,
+            "completedAt": null,
+            "scoreRule": {
+              "id": "simple",
+              "version": "1.0.2",
+              "fallback": false
+            }
+          }
+        ],
+        "chats": [
+          {
+            "id": "chat-a",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          },
+          {
+            "id": "chat-b",
+            "title": "新聊天",
+            "createdAt": 1794708000000,
+            "updatedAt": 1794708000000
+          }
+        ],
+        "messages": [],
+        "memories": [],
+        "operations": [],
+        "kv": [
+          [],
+          {},
+          [],
+          {
+            "personType": "P",
+            "satietyTask": 5,
+            "satietyFridge": 0,
+            "growth": 0,
+            "fridge": [],
+            "lastSettle": "2026-11-15",
+            "lowStreakSick": 0,
+            "lowStreakDeath": 0,
+            "sick": false,
+            "alive": true,
+            "streak": 0,
+            "lastStreakDate": null,
+            "todayIntake": 0,
+            "intakeDate": "2026-11-15",
+            "affinity": 5,
+            "behavior": "idle",
+            "hungryStreak": 0,
+            "affNoClickStreak": 0,
+            "clickCount": 0,
+            "lastClickDate": null,
+            "lastClickBonusDate": null,
+            "lastNoon": null,
+            "lastEve": null,
+            "lastDecayDay": null,
+            "bornAt": 1794708000000,
+            "memoryEnabled": true
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [],
+  "final_draft": {
+    "draftId": "mwh6szk0a2luz",
+    "userFields": {},
+    "kind": "todo",
+    "recognized": false,
+    "rawText": "",
+    "resultTitle": "",
+    "resultNote": "",
+    "images": [],
+    "missingDate": false,
+    "date": "2026-11-15",
+    "calMonth": "2026-11",
+    "timeType": "allday",
+    "slot": "afternoon",
+    "start": "14:00",
+    "end": "15:00",
+    "endDayOffset": 0,
+    "tag": "",
+    "period": "week",
+    "ai": null,
+    "aiTitle": "",
+    "modelRaw": null,
+    "reviewedResult": null
+  },
+  "reopen_equal": true,
+  "notices": [
+    "发布成功"
+  ],
+  "counts": {
+    "before_tasks": 0,
+    "after_tasks": 0,
+    "before_todos": 0,
+    "after_todos": 1
+  },
+  "pet_points_unchanged": true,
+  "status": "executed_pending_review",
+  "ended_at": "2026-11-15T16:59:05.323Z",
+  "review": {
+    "status": "符合本题已核对项",
+    "note": "已核对题目关键字段、条数、业务原件及数据库重开；评分合理性不由数值合法直接推出。",
+    "raw_model_calls": 0,
+    "scope": "API专项与原回调的VM证据；没有原生浏览器逐题操作验收",
+    "unchanged_original_task_ids": [],
+    "unchanged_original_todo_ids": [],
+    "pet_points_unchanged": true,
+    "persistence_equal": true
+  }
+}
